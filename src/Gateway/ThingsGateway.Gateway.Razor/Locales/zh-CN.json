@@ -15,7 +15,7 @@
     "WriteVariable": "写入",
     "WriteValue": "写入值",
     "ImportExcel": "导入变量",
-    "ExcelVariable": "在线exexl编辑变量",
+    "ExcelVariable": "在线excel编辑变量",
     "TestVariableCount": "变量数量",
     "TestDeviceCount": "采集设备数量",
     "SlaveUrl": "服务端Url",
