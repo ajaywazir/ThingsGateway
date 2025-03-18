@@ -27,6 +27,9 @@
 
                 <ContextMenuItem Icon="fa-regular fa-pen-to-square" Disabled="(SelectModel.ChannelDevicePluginType >=ChannelDevicePluginTypeEnum.Channel||!AuthorizeButton(AdminOperConst.Edit))" Text="@GatewayLocalizer["BatchEditChannel"]" OnClick=@((a,b)=>BatchEditChannel(a,b))></ContextMenuItem>
 
+                <ContextMenuItem Icon="fa-regular fa-pen-to-square" Disabled="(SelectModel.ChannelDevicePluginType >ChannelDevicePluginTypeEnum.Channel||!AuthorizeButton(AdminOperConst.Add))" Text="@GatewayLocalizer["ExcelChannel"]" OnClick=@((a,b)=>ExcelChannel(a,b))></ContextMenuItem>
+
+
                 <ContextMenuItem Icon="fa-regular fa-pen-to-square" Disabled="(SelectModel.ChannelDevicePluginType !=ChannelDevicePluginTypeEnum.Channel||!AuthorizeButton(AdminOperConst.Edit))" Text="@GatewayLocalizer["UpdateChannel"]" OnClick=@((a,b)=>EditChannel(a,b,ItemChangedType.Update))></ContextMenuItem>
 
                 <ContextMenuItem Icon="fa-regular fa-copy" Disabled="(SelectModel.ChannelDevicePluginType !=ChannelDevicePluginTypeEnum.Channel||!AuthorizeButton(AdminOperConst.Add))" Text="@GatewayLocalizer["CopyChannel"]" OnClick=@((a,b)=>CopyChannel(a,b))></ContextMenuItem>
@@ -42,6 +45,9 @@
                 <ContextMenuItem Disabled="(SelectModel.ChannelDevicePluginType <ChannelDevicePluginTypeEnum.Channel)||!AuthorizeButton(AdminOperConst.Add)" Icon="fa-solid fa-plus device" Text="@GatewayLocalizer["AddDevice"]" OnClick=@((a,b)=>EditDevice(a,b,ItemChangedType.Add))></ContextMenuItem>
 
                 <ContextMenuItem Icon="fa-regular fa-pen-to-square" Text="@GatewayLocalizer["BatchEditDevice"]" Disabled="(SelectModel.ChannelDevicePluginType >=ChannelDevicePluginTypeEnum.Device)||!AuthorizeButton(AdminOperConst.Edit)" OnClick=@((a,b)=>BatchEditDevice(a,b))></ContextMenuItem>
+
+                <ContextMenuItem Disabled="(SelectModel.ChannelDevicePluginType <ChannelDevicePluginTypeEnum.Channel)||!AuthorizeButton(AdminOperConst.Add)" Icon="fa-solid fa-plus" Text="@GatewayLocalizer["ExcelDevice"]" OnClick=@((a,b)=>ExcelDevice(a,b))></ContextMenuItem>
+
 
                 <ContextMenuItem Disabled="(SelectModel.ChannelDevicePluginType !=ChannelDevicePluginTypeEnum.Device)||!AuthorizeButton(AdminOperConst.Edit)" Icon="fa-regular fa-pen-to-square" Text="@GatewayLocalizer["UpdateDevice"]" OnClick=@((a,b)=>EditDevice(a,b,ItemChangedType.Update))></ContextMenuItem>
 

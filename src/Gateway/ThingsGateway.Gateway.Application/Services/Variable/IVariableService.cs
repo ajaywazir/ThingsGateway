@@ -14,6 +14,9 @@ using Microsoft.AspNetCore.Components.Forms;
 
 using SqlSugar;
 
+using System.Collections.Concurrent;
+using System.Reflection;
+
 namespace ThingsGateway.Gateway.Application;
 
 /// <summary>
@@ -59,7 +62,7 @@ internal interface IVariableService
     /// <summary>
     /// 异步导出变量数据到文件流中。
     /// </summary>
-    Task<Dictionary<string, object>> ExportVariableAsync(ExportFilter exportFilter);
+    Task<Dictionary<string, IList<Dictionary<string, object>>>> ExportVariableAsync(ExportFilter exportFilter);
 
     /// <summary>
     /// 异步获取变量。
@@ -110,4 +113,5 @@ internal interface IVariableService
     Task<List<Variable>> GetByDeviceIdAsync(List<long> deviceIds);
     void DeleteVariableCache();
     Task<bool> CopyAsync(List<Variable> variables);
+    Task<ImportPreviewOutput<Dictionary<string, Variable>>> SetVariableData(HashSet<long>? dataScope, Dictionary<string, Device> deviceDicts, Dictionary<string, ImportPreviewOutputBase> ImportPreviews, ImportPreviewOutput<Dictionary<string, Variable>> deviceImportPreview, Dictionary<string, PluginInfo> driverPluginNameDict, ConcurrentDictionary<string, (Type, Dictionary<string, PropertyInfo>, Dictionary<string, PropertyInfo>)> propertysDict, string sheetName, IEnumerable<IDictionary<string, object>> rows);
 }

@@ -20,7 +20,6 @@ using SqlSugar;
 
 using System.ComponentModel.DataAnnotations;
 using System.Data;
-using System.Dynamic;
 using System.Reflection;
 using System.Text;
 
@@ -253,17 +252,17 @@ internal sealed class ChannelService : BaseService<Channel>, IChannelService
 
     /// <inheritdoc/>
     [OperDesc("ExportChannel", isRecordPar: false, localizerType: typeof(Channel))]
-    public async Task<Dictionary<string, object>> ExportChannelAsync(ExportFilter exportFilter)
+    public async Task<Dictionary<string, IList<Dictionary<string, object>>>> ExportChannelAsync(ExportFilter exportFilter)
     {
         var data = await PageAsync(exportFilter).ConfigureAwait(false);
-        return ExportChannelCore(data.Items);
+        return ChannelServiceHelpers.ExportChannelCore(data.Items);
     }
 
     /// <inheritdoc/>
     [OperDesc("ExportChannel", isRecordPar: false, localizerType: typeof(Channel))]
     public async Task<MemoryStream> ExportMemoryStream(List<Channel> data)
     {
-        Dictionary<string, object> sheets = ExportChannelCore(data);
+        var sheets = ChannelServiceHelpers.ExportChannelCore(data);
         var memoryStream = new MemoryStream();
         await memoryStream.SaveAsAsync(sheets).ConfigureAwait(false);
         memoryStream.Seek(0, SeekOrigin.Begin);
@@ -271,54 +270,6 @@ internal sealed class ChannelService : BaseService<Channel>, IChannelService
         return memoryStream;
     }
 
-    private static Dictionary<string, object> ExportChannelCore(IEnumerable<Channel>? data)
-    {
-        //总数据
-        Dictionary<string, object> sheets = new();
-        //通道页
-        List<Dictionary<string, object>> channelExports = new();
-
-        #region 列名称
-
-        var type = typeof(Channel);
-        var propertyInfos = type.GetRuntimeProperties().Where(a => a.GetCustomAttribute<IgnoreExcelAttribute>() == null)
-             .OrderBy(
-            a =>
-            {
-                var order = a.GetCustomAttribute<AutoGenerateColumnAttribute>()?.Order ?? int.MaxValue; ;
-                if (order < 0)
-                {
-                    order = order + 10000000;
-                }
-                else if (order == 0)
-                {
-                    order = 10000000;
-                }
-                return order;
-            }
-            )
-            ;
-
-        #endregion 列名称
-
-        foreach (var device in data)
-        {
-            Dictionary<string, object> channelExport = new();
-            foreach (var item in propertyInfos)
-            {
-                //描述
-                var desc = type.GetPropertyDisplayName(item.Name);
-                //数据源增加
-                channelExport.Add(desc ?? item.Name, item.GetValue(device)?.ToString());
-            }
-
-            //添加完整设备信息
-            channelExports.Add(channelExport);
-        }
-        //添加设备页
-        sheets.Add(ExportString.ChannelName, channelExports);
-        return sheets;
-    }
 
 
     #endregion 导出
@@ -364,93 +315,7 @@ internal sealed class ChannelService : BaseService<Channel>, IChannelService
             foreach (var sheetName in sheetNames)
             {
                 var rows = MiniExcel.Query(path, useHeaderRow: true, sheetName: sheetName).Cast<IDictionary<string, object>>();
-
-                #region sheet
-
-                if (sheetName == ExportString.ChannelName)
-                {
-                    int row = 1;
-                    ImportPreviewOutput<Channel> importPreviewOutput = new();
-                    ImportPreviews.Add(sheetName, importPreviewOutput);
-                    channelImportPreview = importPreviewOutput;
-                    List<Channel> channels = new();
-                    var type = typeof(Channel);
-                    // 获取目标类型的所有属性，并根据是否需要过滤 IgnoreExcelAttribute 进行筛选
-                    var channelProperties = type.GetRuntimeProperties().Where(a => (a.GetCustomAttribute<IgnoreExcelAttribute>() == null) && a.CanWrite)
-                                                .ToDictionary(a => type.GetPropertyDisplayName(a.Name), a => (a, a.IsNullableType()));
-
-                    rows.ForEach(item =>
-                    {
-                        try
-                        {
-                            var channel = ((ExpandoObject)item!).ConvertToEntity<Channel>(channelProperties);
-                            if (channel == null)
-                            {
-                                importPreviewOutput.HasError = true;
-                                importPreviewOutput.Results.Add((row++, false, Localizer["ImportNullError"]));
-                                return;
-                            }
-
-                            // 进行对象属性的验证
-                            var validationContext = new ValidationContext(channel);
-                            var validationResults = new List<ValidationResult>();
-                            validationContext.ValidateProperty(validationResults);
-
-                            // 构建验证结果的错误信息
-                            StringBuilder stringBuilder = new();
-                            foreach (var validationResult in validationResults.Where(v => !string.IsNullOrEmpty(v.ErrorMessage)))
-                            {
-                                foreach (var memberName in validationResult.MemberNames)
-                                {
-                                    stringBuilder.Append(validationResult.ErrorMessage!);
-                                }
-                            }
-
-                            // 如果有验证错误，则添加错误信息到导入预览结果并返回
-                            if (stringBuilder.Length > 0)
-                            {
-                                importPreviewOutput.HasError = true;
-                                importPreviewOutput.Results.Add((row++, false, stringBuilder.ToString()));
-                                return;
-                            }
-
-                            if (channelDicts.TryGetValue(channel.Name, out var collectChannel))
-                            {
-                                channel.Id = collectChannel.Id;
-                                channel.CreateOrgId = collectChannel.CreateOrgId;
-                                channel.CreateUserId = collectChannel.CreateUserId;
-                                channel.IsUp = true;
-                            }
-                            else
-                            {
-                                channel.Id = CommonUtils.GetSingleId();
-                                channel.IsUp = false;
-                                channel.CreateOrgId = UserManager.OrgId;
-                                channel.CreateUserId = UserManager.UserId;
-                            }
-
-                            if (channel.IsUp && ((dataScope != null && dataScope?.Count > 0 && !dataScope.Contains(channel.CreateOrgId)) || dataScope?.Count == 0 && channel.CreateUserId != UserManager.UserId))
-                            {
-                                importPreviewOutput.Results.Add((row++, false, "Operation not permitted"));
-                            }
-                            else
-                            {
-                                channels.Add(channel);
-                                importPreviewOutput.Results.Add((row++, true, null));
-                            }
-                            return;
-                        }
-                        catch (Exception ex)
-                        {
-                            importPreviewOutput.HasError = true;
-                            importPreviewOutput.Results.Add((row++, false, ex.Message));
-                            return;
-                        }
-                    });
-                    importPreviewOutput.Data = channels.ToDictionary(a => a.Name);
-                }
-
-                #endregion sheet
+                SetChannelData(dataScope, channelDicts, ImportPreviews, channelImportPreview, sheetName, rows);
             }
 
             return ImportPreviews;
@@ -460,6 +325,99 @@ internal sealed class ChannelService : BaseService<Channel>, IChannelService
             FileUtility.Delete(path);
         }
     }
+
+    public void SetChannelData(HashSet<long>? dataScope, Dictionary<string, Channel> channelDicts, Dictionary<string, ImportPreviewOutputBase> ImportPreviews, ImportPreviewOutput<Channel> channelImportPreview, string sheetName, IEnumerable<IDictionary<string, object>> rows)
+    {
+        #region sheet
+
+        if (sheetName == ExportString.ChannelName)
+        {
+            int row = 1;
+            ImportPreviewOutput<Channel> importPreviewOutput = new();
+            ImportPreviews.Add(sheetName, importPreviewOutput);
+            channelImportPreview = importPreviewOutput;
+            List<Channel> channels = new();
+            var type = typeof(Channel);
+            // 获取目标类型的所有属性，并根据是否需要过滤 IgnoreExcelAttribute 进行筛选
+            var channelProperties = type.GetRuntimeProperties().Where(a => (a.GetCustomAttribute<IgnoreExcelAttribute>() == null) && a.CanWrite)
+                                        .ToDictionary(a => type.GetPropertyDisplayName(a.Name), a => (a, a.IsNullableType()));
+
+            rows.ForEach(item =>
+            {
+                try
+                {
+                    var channel = item.ConvertToEntity<Channel>(channelProperties);
+                    if (channel == null)
+                    {
+                        importPreviewOutput.HasError = true;
+                        importPreviewOutput.Results.Add((row++, false, Localizer["ImportNullError"]));
+                        return;
+                    }
+
+                    // 进行对象属性的验证
+                    var validationContext = new ValidationContext(channel);
+                    var validationResults = new List<ValidationResult>();
+                    validationContext.ValidateProperty(validationResults);
+
+                    // 构建验证结果的错误信息
+                    StringBuilder stringBuilder = new();
+                    foreach (var validationResult in validationResults.Where(v => !string.IsNullOrEmpty(v.ErrorMessage)))
+                    {
+                        foreach (var memberName in validationResult.MemberNames)
+                        {
+                            stringBuilder.Append(validationResult.ErrorMessage!);
+                        }
+                    }
+
+                    // 如果有验证错误，则添加错误信息到导入预览结果并返回
+                    if (stringBuilder.Length > 0)
+                    {
+                        importPreviewOutput.HasError = true;
+                        importPreviewOutput.Results.Add((row++, false, stringBuilder.ToString()));
+                        return;
+                    }
+
+                    if (channelDicts.TryGetValue(channel.Name, out var collectChannel))
+                    {
+                        channel.Id = collectChannel.Id;
+                        channel.CreateOrgId = collectChannel.CreateOrgId;
+                        channel.CreateUserId = collectChannel.CreateUserId;
+                        channel.IsUp = true;
+                    }
+                    else
+                    {
+                        channel.Id = CommonUtils.GetSingleId();
+                        channel.IsUp = false;
+                        channel.CreateOrgId = UserManager.OrgId;
+                        channel.CreateUserId = UserManager.UserId;
+                    }
+
+                    if (channel.IsUp && ((dataScope != null && dataScope?.Count > 0 && !dataScope.Contains(channel.CreateOrgId)) || dataScope?.Count == 0 && channel.CreateUserId != UserManager.UserId))
+                    {
+                        importPreviewOutput.Results.Add((row++, false, "Operation not permitted"));
+                    }
+                    else
+                    {
+                        channels.Add(channel);
+                        importPreviewOutput.Results.Add((row++, true, null));
+                    }
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    importPreviewOutput.HasError = true;
+                    importPreviewOutput.Results.Add((row++, false, ex.Message));
+                    return;
+                }
+            });
+            importPreviewOutput.Data = channels.ToDictionary(a => a.Name);
+        }
+
+        #endregion sheet
+    }
+
+
+
 
 
     #endregion 导入

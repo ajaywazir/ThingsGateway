@@ -8,7 +8,6 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
-using System.Dynamic; // 引入 System.Dynamic 命名空间
 using System.Reflection;
 
 namespace ThingsGateway.Foundation.Extension.Dynamic;
@@ -25,7 +24,7 @@ public static class ExpandoObjectExtensions
     /// <param name="type">要转换的目标实体类型</param>
     /// <param name="properties"></param>
     /// <returns>转换后的实体对象</returns>
-    public static object ConvertToEntity(this ExpandoObject expandoObject, Type type, Dictionary<string, PropertyInfo> properties)
+    public static object ConvertToEntity(this IDictionary<string, object> expandoObject, Type type, Dictionary<string, PropertyInfo> properties)
     {
         var entity = Activator.CreateInstance(type);
         // 遍历动态对象的属性
@@ -49,7 +48,7 @@ public static class ExpandoObjectExtensions
     /// <param name="expandoObject">动态对象</param>
     /// <param name="properties"></param>
     /// <returns>转换后的实体对象</returns>
-    public static T ConvertToEntity<T>(this ExpandoObject expandoObject, Dictionary<string, (PropertyInfo, bool)> properties) where T : new()
+    public static T ConvertToEntity<T>(this IDictionary<string, object> expandoObject, Dictionary<string, (PropertyInfo, bool)> properties) where T : new()
     {
         var entity = new T(); // 创建目标类型的实例
 

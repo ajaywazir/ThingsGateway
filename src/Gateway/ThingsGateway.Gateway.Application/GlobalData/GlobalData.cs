@@ -110,7 +110,13 @@ public static class GlobalData
                     return true;
                 }
             }
+
+            if (deviceRuntime.Driver?.IdVariableRuntimes?.TryGetValue(a.Id, out var oldVariableRuntime) == true)
+            {
+                return true;
+            }
         }
+
         return a.VariablePropertys?.ContainsKey(businessDeviceId) == true;
 
     }

@@ -20,7 +20,6 @@ using SqlSugar;
 
 using System.Collections.Concurrent;
 using System.ComponentModel.DataAnnotations;
-using System.Dynamic;
 using System.Reflection;
 using System.Text;
 
@@ -432,7 +431,7 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
     [OperDesc("ExportVariable", isRecordPar: false, localizerType: typeof(Variable))]
     public async Task<MemoryStream> ExportMemoryStream(IEnumerable<Variable> data, string deviceName = null)
     {
-        Dictionary<string, object> sheets = await ExportCoreAsync(data, deviceName).ConfigureAwait(false);
+        var sheets = await VariableServiceHelpers.ExportCoreAsync(data, deviceName).ConfigureAwait(false);
 
         var memoryStream = new MemoryStream();
         await memoryStream.SaveAsAsync(sheets).ConfigureAwait(false);
@@ -444,199 +443,14 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
     /// 导出文件
     /// </summary>
     [OperDesc("ExportVariable", isRecordPar: false, localizerType: typeof(Variable))]
-    public async Task<Dictionary<string, object>> ExportVariableAsync(ExportFilter exportFilter)
+    public async Task<Dictionary<string, IList<Dictionary<string, object>>>> ExportVariableAsync(ExportFilter exportFilter)
     {
         var data = (await PageAsync(exportFilter).ConfigureAwait(false));
-        var sheets = await ExportCoreAsync(data.Items).ConfigureAwait(false);
+        var sheets = await VariableServiceHelpers.ExportCoreAsync(data.Items).ConfigureAwait(false);
         return sheets;
     }
 
-    private async Task<Dictionary<string, object>> ExportCoreAsync(IEnumerable<Variable> data, string deviceName = null)
-    {
-        if (data == null || !data.Any())
-        {
-            data = new List<Variable>();
-        }
-        var deviceDicts = (await _deviceService.GetAllAsync().ConfigureAwait(false)).ToDictionary(a => a.Id);
-        var channelDicts = (await _channelService.GetAllAsync().ConfigureAwait(false)).ToDictionary(a => a.Id);
-        var driverPluginDicts = _pluginService.GetList(PluginTypeEnum.Business).ToDictionary(a => a.FullName);
-        //总数据
-        Dictionary<string, object> sheets = new();
-        //变量页
-        ConcurrentList<Dictionary<string, object>> variableExports = new();
-        //变量附加属性，转成Dict<表名,List<Dict<列名，列数据>>>的形式
-        ConcurrentDictionary<string, ConcurrentList<Dictionary<string, object>>> devicePropertys = new();
-        ConcurrentDictionary<string, (VariablePropertyBase, Dictionary<string, PropertyInfo>)> propertysDict = new();
 
-        #region 列名称
-
-        var type = typeof(Variable);
-        var propertyInfos = type.GetRuntimeProperties().Where(a => a.GetCustomAttribute<IgnoreExcelAttribute>() == null)
-             .OrderBy(
-            a =>
-            {
-                var order = a.GetCustomAttribute<AutoGenerateColumnAttribute>()?.Order ?? int.MaxValue; ;
-                if (order < 0)
-                {
-                    order = order + 10000000;
-                }
-                else if (order == 0)
-                {
-                    order = 10000000;
-                }
-                return order;
-            }
-            )
-            ;
-
-        #endregion 列名称
-        var varName = nameof(Variable.Name);
-        data.ParallelForEach((variable, state, index) =>
-        {
-            Dictionary<string, object> varExport = new();
-            deviceDicts.TryGetValue(variable.DeviceId, out var device);
-            //设备实体没有包含设备名称，手动插入
-            varExport.TryAdd(ExportString.DeviceName, device?.Name ?? deviceName);
-            foreach (var item in propertyInfos)
-            {
-                //描述
-                var desc = type.GetPropertyDisplayName(item.Name);
-                if (item.Name == varName)
-                {
-                    varName = desc;
-                }
-                //数据源增加
-                varExport.TryAdd(desc ?? item.Name, item.GetValue(variable)?.ToString());
-            }
-
-            //添加完整设备信息
-            variableExports.Add(varExport);
-
-            #region 插件sheet
-            if (variable.VariablePropertys != null)
-            {
-
-                foreach (var item in variable.VariablePropertys)
-                {
-                    //插件属性
-                    //单个设备的行数据
-                    Dictionary<string, object> driverInfo = new();
-                    if (!(deviceDicts.TryGetValue(item.Key, out var businessDevice) && deviceDicts.TryGetValue(variable.DeviceId, out var collectDevice)))
-                        continue;
-
-                    channelDicts.TryGetValue(businessDevice.ChannelId, out var channel);
-
-                    //没有包含设备名称，手动插入
-                    driverInfo.TryAdd(ExportString.DeviceName, collectDevice.Name);
-                    driverInfo.TryAdd(ExportString.BusinessDeviceName, businessDevice.Name);
-                    driverInfo.TryAdd(ExportString.VariableName, variable.Name);
-
-                    var propDict = item.Value;
-
-                    if (propertysDict.TryGetValue(channel.PluginName, out var propertys))
-                    {
-                    }
-                    else
-                    {
-                        try
-                        {
-
-                            var variableProperty = ((BusinessBase)_pluginService.GetDriver(channel.PluginName))?.VariablePropertys;
-                            propertys.Item1 = variableProperty;
-                            var variablePropertyType = variableProperty.GetType();
-                            propertys.Item2 = variablePropertyType.GetRuntimeProperties()
-               .Where(a => a.GetCustomAttribute<DynamicPropertyAttribute>() != null)
-               .ToDictionary(a => variablePropertyType.GetPropertyDisplayName(a.Name, a => a.GetCustomAttribute<DynamicPropertyAttribute>(true)?.Description));
-                            propertysDict.TryAdd(channel.PluginName, propertys);
-
-                        }
-                        catch
-                        {
-
-                        }
-                    }
-                    if (propertys.Item2?.Count == null)
-                    {
-                        continue;
-                    }
-                    //根据插件的配置属性项生成列，从数据库中获取值或者获取属性默认值
-                    foreach (var item1 in propertys.Item2)
-                    {
-                        if (propDict.TryGetValue(item1.Value.Name, out var dependencyProperty))
-                        {
-                            driverInfo.TryAdd(item1.Key, dependencyProperty);
-                        }
-                        else
-                        {
-                            //添加对应属性数据
-                            driverInfo.TryAdd(item1.Key, ThingsGatewayStringConverter.Default.Serialize(null, item1.Value.GetValue(propertys.Item1)));
-                        }
-                    }
-
-                    if (!driverPluginDicts.ContainsKey(channel.PluginName))
-                        continue;
-
-                    var pluginName = PluginServiceUtil.GetFileNameAndTypeName(channel.PluginName);
-                    //lock (devicePropertys)
-                    {
-                        if (devicePropertys.ContainsKey(pluginName.Item2))
-                        {
-                            if (driverInfo.Count > 0)
-                                devicePropertys[pluginName.Item2].Add(driverInfo);
-                        }
-                        else
-                        {
-                            lock (devicePropertys)
-                            {
-                                if (devicePropertys.ContainsKey(pluginName.Item2))
-                                {
-                                    if (driverInfo.Count > 0)
-                                        devicePropertys[pluginName.Item2].Add(driverInfo);
-                                }
-                                else
-                                {
-                                    if (driverInfo.Count > 0)
-                                        devicePropertys.TryAdd(pluginName.Item2, new() { driverInfo });
-                                }
-
-                            }
-                        }
-                    }
-                }
-            }
-
-            #endregion 插件sheet
-        });
-
-
-
-        variableExports = new(variableExports.OrderBy(a => a[ExportString.DeviceName]).ThenBy(a => a[varName]));
-
-        //添加设备页
-        sheets.Add(ExportString.VariableName, variableExports);
-
-        //HASH
-        foreach (var item in devicePropertys.Keys)
-        {
-            devicePropertys[item] = new(devicePropertys[item].OrderBy(a => a[ExportString.DeviceName]).ThenBy(a => a[ExportString.VariableName]));
-            //HashSet<string> allKeys = item.Value.SelectMany(a => a.Keys).ToHashSet();
-
-            //foreach (var dict in item.Value)
-            //{
-            //    foreach (var key in allKeys)
-            //    {
-            //        if (!dict.ContainsKey(key))
-            //        {
-            //            // 添加缺失的键，并设置默认值
-            //            dict.TryAdd(key, null);
-            //        }
-            //    }
-            //}
-            sheets.Add(item, devicePropertys[item]);
-        }
-
-        return sheets;
-    }
 
     #endregion 导出
 
@@ -739,265 +553,7 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
                 // 获取当前工作表的所有行数据
                 var rows = MiniExcel.Query(path, useHeaderRow: true, sheetName: sheetName).Cast<IDictionary<string, object>>();
 
-                // 变量页处理
-                if (sheetName == ExportString.VariableName)
-                {
-                    int row = 0;
-                    ImportPreviewOutput<Dictionary<string, Variable>> importPreviewOutput = new();
-                    ImportPreviews.Add(sheetName, importPreviewOutput);
-                    deviceImportPreview = importPreviewOutput;
-
-                    // 线程安全的变量列表
-                    var variables = new ConcurrentList<Variable>();
-                    var type = typeof(Variable);
-                    // 获取目标类型的所有属性，并根据是否需要过滤 IgnoreExcelAttribute 进行筛选
-                    var variableProperties = type.GetRuntimeProperties().Where(a => (a.GetCustomAttribute<IgnoreExcelAttribute>() == null) && a.CanWrite)
-                                                .ToDictionary(a => type.GetPropertyDisplayName(a.Name), a => (a, a.IsNullableType()));
-
-                    var dbVariableDicts = await GetVariableImportData().ConfigureAwait(false);
-
-                    // 并行处理每一行数据
-                    rows.ParallelForEach((item, state, index) =>
-                    {
-                        try
-                        {
-                            // 尝试将行数据转换为 Variable 对象
-                            var variable = ((ExpandoObject)item!).ConvertToEntity<Variable>(variableProperties);
-                            variable.Row = index;
-
-                            // 获取设备名称并查找对应的设备
-                            item.TryGetValue(ExportString.DeviceName, out var value);
-                            var deviceName = value?.ToString();
-                            deviceDicts.TryGetValue(deviceName, out var device);
-                            var deviceId = device?.Id;
-
-                            // 如果找不到对应的设备，则添加错误信息到导入预览结果并返回
-                            if (deviceId == null)
-                            {
-                                importPreviewOutput.HasError = true;
-                                importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), false, Localizer["NotNull", deviceName]));
-                                return;
-                            }
-                            // 手动补录变量ID和设备ID
-                            variable.DeviceId = deviceId.Value;
-
-                            // 对 Variable 对象进行验证
-                            var validationContext = new ValidationContext(variable);
-                            var validationResults = new List<ValidationResult>();
-                            validationContext.ValidateProperty(validationResults);
-                            // 构建验证结果的错误信息
-                            StringBuilder stringBuilder = new();
-                            foreach (var validationResult in validationResults.Where(v => !string.IsNullOrEmpty(v.ErrorMessage)))
-                            {
-                                foreach (var memberName in validationResult.MemberNames)
-                                {
-                                    stringBuilder.Append(validationResult.ErrorMessage!);
-                                }
-                            }
-                            // 如果有验证错误，则添加错误信息到导入预览结果并返回
-                            if (stringBuilder.Length > 0)
-                            {
-                                importPreviewOutput.HasError = true;
-                                importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), false, stringBuilder.ToString()));
-                                return;
-                            }
-
-                            if (dbVariableDicts.TryGetValue(variable.DeviceId, out var dbvar1s) && dbvar1s.TryGetValue(variable.Name, out var dbvar1))
-                            {
-                                variable.Id = dbvar1.Id;
-                                variable.CreateOrgId = dbvar1.CreateOrgId;
-                                variable.CreateUserId = dbvar1.CreateUserId;
-                                variable.IsUp = true;
-                            }
-                            else
-                            {
-                                variable.IsUp = false;
-                                variable.CreateOrgId = UserManager.OrgId;
-                                variable.CreateUserId = UserManager.UserId;
-                            }
-                            if (device.IsUp && ((dataScope != null && dataScope?.Count > 0 && !dataScope.Contains(variable.CreateOrgId)) || dataScope?.Count == 0 && variable.CreateUserId != UserManager.UserId))
-                            {
-                                importPreviewOutput.Results.Add((row++, false, "Operation not permitted"));
-                            }
-                            else
-                            {
-                                variables.Add(variable);
-                                importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), true, null));
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            // 捕获异常并添加错误信息到导入预览结果
-                            importPreviewOutput.HasError = true;
-                            importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), false, ex.Message));
-                        }
-                    });
-
-                    // 为未成功上传的变量生成新的ID
-                    foreach (var item in variables.OrderBy(a => a.Row))
-                    {
-                        if (!item.IsUp)
-                            item.Id = CommonUtils.GetSingleId();
-                    }
-
-                    // 将变量列表转换为字典，并赋值给导入预览输出对象的 Data 属性
-                    importPreviewOutput.Data = variables.OrderBy(a => a.Row).GroupBy(a => a.DeviceId.ToString()).ToDictionary(a => a.Key, b => b.ToDictionary(a => a.Name));
-                }
-
-                // 其他工作表处理
-                else
-                {
-                    int row = 1;
-                    ImportPreviewOutput<string> importPreviewOutput = new();
-                    ImportPreviews.Add(sheetName, importPreviewOutput);
-
-                    _ = driverPluginNameDict.TryGetValue(sheetName, out var driverPluginType);
-
-                    try
-                    {
-                        if (driverPluginType == null)
-                        {
-                            importPreviewOutput.HasError = true;
-                            importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), false, Localizer["NotNull", sheetName]));
-                            continue;
-                        }
-
-                        if (propertysDict.TryGetValue(driverPluginType.FullName, out var propertys))
-                        {
-                        }
-                        else
-                        {
-                            try
-                            {
-
-
-                                var variableProperty = ((BusinessBase)_pluginService.GetDriver(driverPluginType.FullName)).VariablePropertys;
-                                var variablePropertyType = variableProperty.GetType();
-                                propertys.Item1 = variablePropertyType;
-                                propertys.Item2 = variablePropertyType.GetRuntimeProperties()
-                                    .Where(a => a.GetCustomAttribute<DynamicPropertyAttribute>() != null)
-                                    .ToDictionary(a => variablePropertyType.GetPropertyDisplayName(a.Name, a => a.GetCustomAttribute<DynamicPropertyAttribute>(true)?.Description));
-
-                                // 获取目标类型的所有属性，并根据是否需要过滤 IgnoreExcelAttribute 进行筛选
-                                var properties = propertys.Item1.GetRuntimeProperties().Where(a => (a.GetCustomAttribute<IgnoreExcelAttribute>() == null) && a.CanWrite)
-                                                .ToDictionary(a => propertys.Item1.GetPropertyDisplayName(a.Name, a => a.GetCustomAttribute<DynamicPropertyAttribute>(true)?.Description));
-
-                                propertys.Item3 = properties;
-                                propertysDict.TryAdd(driverPluginType.FullName, propertys);
-                            }
-                            catch (Exception)
-                            {
-
-                            }
-                        }
-
-                        rows.ParallelForEach(item =>
-                        {
-                            try
-                            {
-                                if (propertys.Item3?.Count == null || propertys.Item1 == null)
-                                {
-                                    importPreviewOutput.HasError = true;
-                                    importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), false, Localizer["ImportNullError"]));
-                                    return;
-                                }
-
-                                // 尝试将导入的项转换为对象
-                                var pluginProp = (item as ExpandoObject)?.ConvertToEntity(propertys.Item1, propertys.Item3);
-
-                                // 如果转换失败，则添加错误信息到导入预览结果并返回
-                                if (pluginProp == null)
-                                {
-                                    importPreviewOutput.HasError = true;
-                                    importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), false, Localizer["ImportNullError"]));
-                                    return;
-                                }
-
-                                // 转化插件名称和变量名称
-                                item.TryGetValue(ExportString.VariableName, out var variableNameObj);
-                                item.TryGetValue(ExportString.BusinessDeviceName, out var businessDevName);
-                                item.TryGetValue(ExportString.DeviceName, out var collectDevName);
-                                deviceDicts.TryGetValue(businessDevName?.ToString(), out var businessDevice);
-                                deviceDicts.TryGetValue(collectDevName?.ToString(), out var collectDevice);
-
-                                // 如果设备名称或变量名称为空，或者找不到对应的设备，则添加错误信息到导入预览结果并返回
-                                if (businessDevName == null || businessDevice == null || collectDevName == null || collectDevice == null)
-                                {
-                                    importPreviewOutput.HasError = true;
-                                    importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), false, Localizer["DeviceNotNull"]));
-                                    return;
-                                }
-                                if (variableNameObj == null)
-                                {
-                                    importPreviewOutput.HasError = true;
-                                    importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), false, Localizer["VariableNotNull"]));
-                                    return;
-                                }
-
-                                // 对对象进行验证
-                                var validationContext = new ValidationContext(pluginProp);
-                                var validationResults = new List<ValidationResult>();
-                                validationContext.ValidateProperty(validationResults);
-
-                                // 构建验证结果的错误信息
-                                StringBuilder stringBuilder = new();
-                                foreach (var validationResult in validationResults.Where(v => !string.IsNullOrEmpty(v.ErrorMessage)))
-                                {
-                                    foreach (var memberName in validationResult.MemberNames)
-                                    {
-                                        stringBuilder.Append(validationResult.ErrorMessage!);
-                                    }
-                                }
-
-                                // 如果有验证错误，则添加错误信息到导入预览结果并返回
-                                if (stringBuilder.Length > 0)
-                                {
-                                    importPreviewOutput.HasError = true;
-                                    importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), false, stringBuilder.ToString()));
-                                    return;
-                                }
-
-                                // 创建依赖属性字典
-                                Dictionary<string, string> dependencyProperties = new();
-                                foreach (var keyValuePair in item)
-                                {
-                                    if (propertys.Item2.TryGetValue(keyValuePair.Key, out var propertyInfo))
-                                    {
-                                        dependencyProperties.Add(propertyInfo.Name, keyValuePair.Value?.ToString());
-                                    }
-                                }
-
-                                // 获取变量名称并检查是否存在于设备导入预览数据中
-                                var variableName = variableNameObj?.ToString();
-                                // 如果存在，则更新变量属性字典，并添加成功信息到导入预览结果；否则，添加错误信息到导入预览结果并返回
-                                if (deviceImportPreview.Data.TryGetValue(collectDevice.Id.ToString(), out var deviceVariables) && deviceVariables.TryGetValue(variableName, out var deviceVariable))
-                                {
-                                    deviceVariable.VariablePropertys ??= new();
-                                    deviceVariable.VariablePropertys?.AddOrUpdate(businessDevice.Id, dependencyProperties);
-                                    importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), true, null));
-                                }
-                                else
-                                {
-                                    importPreviewOutput.HasError = true;
-                                    importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), false, Localizer["VariableNotNull"]));
-                                    return;
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                // 捕获异常并添加错误信息到导入预览结果
-                                importPreviewOutput.HasError = true;
-                                importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), false, ex.Message));
-                            }
-                        });
-                    }
-                    catch (Exception ex)
-                    {
-                        // 捕获异常并添加错误信息到导入预览结果
-                        importPreviewOutput.HasError = true;
-                        importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), false, ex.Message));
-                    }
-                }
+                deviceImportPreview = await SetVariableData(dataScope, deviceDicts, ImportPreviews, deviceImportPreview, driverPluginNameDict, propertysDict, sheetName, rows).ConfigureAwait(false);
             }
 
             return ImportPreviews;
@@ -1007,6 +563,271 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
             // 最终清理：删除临时上传的文件
             FileUtility.Delete(path);
         }
+    }
+
+    public async Task<ImportPreviewOutput<Dictionary<string, Variable>>> SetVariableData(HashSet<long>? dataScope, Dictionary<string, Device> deviceDicts, Dictionary<string, ImportPreviewOutputBase> ImportPreviews, ImportPreviewOutput<Dictionary<string, Variable>> deviceImportPreview, Dictionary<string, PluginInfo> driverPluginNameDict, ConcurrentDictionary<string, (Type, Dictionary<string, PropertyInfo>, Dictionary<string, PropertyInfo>)> propertysDict, string sheetName, IEnumerable<IDictionary<string, object>> rows)
+    {
+        // 变量页处理
+        if (sheetName == ExportString.VariableName)
+        {
+            int row = 0;
+            ImportPreviewOutput<Dictionary<string, Variable>> importPreviewOutput = new();
+            ImportPreviews.Add(sheetName, importPreviewOutput);
+            deviceImportPreview = importPreviewOutput;
+
+            // 线程安全的变量列表
+            var variables = new ConcurrentList<Variable>();
+            var type = typeof(Variable);
+            // 获取目标类型的所有属性，并根据是否需要过滤 IgnoreExcelAttribute 进行筛选
+            var variableProperties = type.GetRuntimeProperties().Where(a => (a.GetCustomAttribute<IgnoreExcelAttribute>() == null) && a.CanWrite)
+                                        .ToDictionary(a => type.GetPropertyDisplayName(a.Name), a => (a, a.IsNullableType()));
+
+            var dbVariableDicts = await GetVariableImportData().ConfigureAwait(false);
+
+            // 并行处理每一行数据
+            rows.ParallelForEach((item, state, index) =>
+            {
+                try
+                {
+                    // 尝试将行数据转换为 Variable 对象
+                    var variable = item.ConvertToEntity<Variable>(variableProperties);
+                    variable.Row = index;
+
+                    // 获取设备名称并查找对应的设备
+                    item.TryGetValue(ExportString.DeviceName, out var value);
+                    var deviceName = value?.ToString();
+                    deviceDicts.TryGetValue(deviceName, out var device);
+                    var deviceId = device?.Id;
+
+                    // 如果找不到对应的设备，则添加错误信息到导入预览结果并返回
+                    if (deviceId == null)
+                    {
+                        importPreviewOutput.HasError = true;
+                        importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), false, Localizer["NotNull", deviceName]));
+                        return;
+                    }
+                    // 手动补录变量ID和设备ID
+                    variable.DeviceId = deviceId.Value;
+
+                    // 对 Variable 对象进行验证
+                    var validationContext = new ValidationContext(variable);
+                    var validationResults = new List<ValidationResult>();
+                    validationContext.ValidateProperty(validationResults);
+                    // 构建验证结果的错误信息
+                    StringBuilder stringBuilder = new();
+                    foreach (var validationResult in validationResults.Where(v => !string.IsNullOrEmpty(v.ErrorMessage)))
+                    {
+                        foreach (var memberName in validationResult.MemberNames)
+                        {
+                            stringBuilder.Append(validationResult.ErrorMessage!);
+                        }
+                    }
+                    // 如果有验证错误，则添加错误信息到导入预览结果并返回
+                    if (stringBuilder.Length > 0)
+                    {
+                        importPreviewOutput.HasError = true;
+                        importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), false, stringBuilder.ToString()));
+                        return;
+                    }
+
+                    if (dbVariableDicts.TryGetValue(variable.DeviceId, out var dbvar1s) && dbvar1s.TryGetValue(variable.Name, out var dbvar1))
+                    {
+                        variable.Id = dbvar1.Id;
+                        variable.CreateOrgId = dbvar1.CreateOrgId;
+                        variable.CreateUserId = dbvar1.CreateUserId;
+                        variable.IsUp = true;
+                    }
+                    else
+                    {
+                        variable.IsUp = false;
+                        variable.CreateOrgId = UserManager.OrgId;
+                        variable.CreateUserId = UserManager.UserId;
+                    }
+                    if (device.IsUp && ((dataScope != null && dataScope?.Count > 0 && !dataScope.Contains(variable.CreateOrgId)) || dataScope?.Count == 0 && variable.CreateUserId != UserManager.UserId))
+                    {
+                        importPreviewOutput.Results.Add((row++, false, "Operation not permitted"));
+                    }
+                    else
+                    {
+                        variables.Add(variable);
+                        importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), true, null));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // 捕获异常并添加错误信息到导入预览结果
+                    importPreviewOutput.HasError = true;
+                    importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), false, ex.Message));
+                }
+            });
+
+            // 为未成功上传的变量生成新的ID
+            foreach (var item in variables.OrderBy(a => a.Row))
+            {
+                if (!item.IsUp)
+                    item.Id = CommonUtils.GetSingleId();
+            }
+
+            // 将变量列表转换为字典，并赋值给导入预览输出对象的 Data 属性
+            importPreviewOutput.Data = variables.OrderBy(a => a.Row).GroupBy(a => a.DeviceId.ToString()).ToDictionary(a => a.Key, b => b.ToDictionary(a => a.Name));
+        }
+
+        // 其他工作表处理
+        else
+        {
+            int row = 1;
+            ImportPreviewOutput<string> importPreviewOutput = new();
+            ImportPreviews.Add(sheetName, importPreviewOutput);
+
+            _ = driverPluginNameDict.TryGetValue(sheetName, out var driverPluginType);
+
+            try
+            {
+                if (driverPluginType == null)
+                {
+                    importPreviewOutput.HasError = true;
+                    importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), false, Localizer["NotNull", sheetName]));
+                    return deviceImportPreview;
+                }
+
+                if (propertysDict.TryGetValue(driverPluginType.FullName, out var propertys))
+                {
+                }
+                else
+                {
+                    try
+                    {
+
+
+                        var variableProperty = ((BusinessBase)_pluginService.GetDriver(driverPluginType.FullName)).VariablePropertys;
+                        var variablePropertyType = variableProperty.GetType();
+                        propertys.Item1 = variablePropertyType;
+                        propertys.Item2 = variablePropertyType.GetRuntimeProperties()
+                            .Where(a => a.GetCustomAttribute<DynamicPropertyAttribute>() != null)
+                            .ToDictionary(a => variablePropertyType.GetPropertyDisplayName(a.Name, a => a.GetCustomAttribute<DynamicPropertyAttribute>(true)?.Description));
+
+                        // 获取目标类型的所有属性，并根据是否需要过滤 IgnoreExcelAttribute 进行筛选
+                        var properties = propertys.Item1.GetRuntimeProperties().Where(a => (a.GetCustomAttribute<IgnoreExcelAttribute>() == null) && a.CanWrite)
+                                        .ToDictionary(a => propertys.Item1.GetPropertyDisplayName(a.Name, a => a.GetCustomAttribute<DynamicPropertyAttribute>(true)?.Description));
+
+                        propertys.Item3 = properties;
+                        propertysDict.TryAdd(driverPluginType.FullName, propertys);
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                }
+
+                rows.ParallelForEach(item =>
+                {
+                    try
+                    {
+                        if (propertys.Item3?.Count == null || propertys.Item1 == null)
+                        {
+                            importPreviewOutput.HasError = true;
+                            importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), false, Localizer["ImportNullError"]));
+                            return;
+                        }
+
+                        // 尝试将导入的项转换为对象
+                        var pluginProp = item.ConvertToEntity(propertys.Item1, propertys.Item3);
+
+                        // 如果转换失败，则添加错误信息到导入预览结果并返回
+                        if (pluginProp == null)
+                        {
+                            importPreviewOutput.HasError = true;
+                            importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), false, Localizer["ImportNullError"]));
+                            return;
+                        }
+
+                        // 转化插件名称和变量名称
+                        item.TryGetValue(ExportString.VariableName, out var variableNameObj);
+                        item.TryGetValue(ExportString.BusinessDeviceName, out var businessDevName);
+                        item.TryGetValue(ExportString.DeviceName, out var collectDevName);
+                        deviceDicts.TryGetValue(businessDevName?.ToString(), out var businessDevice);
+                        deviceDicts.TryGetValue(collectDevName?.ToString(), out var collectDevice);
+
+                        // 如果设备名称或变量名称为空，或者找不到对应的设备，则添加错误信息到导入预览结果并返回
+                        if (businessDevName == null || businessDevice == null || collectDevName == null || collectDevice == null)
+                        {
+                            importPreviewOutput.HasError = true;
+                            importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), false, Localizer["DeviceNotNull"]));
+                            return;
+                        }
+                        if (variableNameObj == null)
+                        {
+                            importPreviewOutput.HasError = true;
+                            importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), false, Localizer["VariableNotNull"]));
+                            return;
+                        }
+
+                        // 对对象进行验证
+                        var validationContext = new ValidationContext(pluginProp);
+                        var validationResults = new List<ValidationResult>();
+                        validationContext.ValidateProperty(validationResults);
+
+                        // 构建验证结果的错误信息
+                        StringBuilder stringBuilder = new();
+                        foreach (var validationResult in validationResults.Where(v => !string.IsNullOrEmpty(v.ErrorMessage)))
+                        {
+                            foreach (var memberName in validationResult.MemberNames)
+                            {
+                                stringBuilder.Append(validationResult.ErrorMessage!);
+                            }
+                        }
+
+                        // 如果有验证错误，则添加错误信息到导入预览结果并返回
+                        if (stringBuilder.Length > 0)
+                        {
+                            importPreviewOutput.HasError = true;
+                            importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), false, stringBuilder.ToString()));
+                            return;
+                        }
+
+                        // 创建依赖属性字典
+                        Dictionary<string, string> dependencyProperties = new();
+                        foreach (var keyValuePair in item)
+                        {
+                            if (propertys.Item2.TryGetValue(keyValuePair.Key, out var propertyInfo))
+                            {
+                                dependencyProperties.Add(propertyInfo.Name, keyValuePair.Value?.ToString());
+                            }
+                        }
+
+                        // 获取变量名称并检查是否存在于设备导入预览数据中
+                        var variableName = variableNameObj?.ToString();
+                        // 如果存在，则更新变量属性字典，并添加成功信息到导入预览结果；否则，添加错误信息到导入预览结果并返回
+                        if (deviceImportPreview.Data.TryGetValue(collectDevice.Id.ToString(), out var deviceVariables) && deviceVariables.TryGetValue(variableName, out var deviceVariable))
+                        {
+                            deviceVariable.VariablePropertys ??= new();
+                            deviceVariable.VariablePropertys?.AddOrUpdate(businessDevice.Id, dependencyProperties);
+                            importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), true, null));
+                        }
+                        else
+                        {
+                            importPreviewOutput.HasError = true;
+                            importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), false, Localizer["VariableNotNull"]));
+                            return;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // 捕获异常并添加错误信息到导入预览结果
+                        importPreviewOutput.HasError = true;
+                        importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), false, ex.Message));
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                // 捕获异常并添加错误信息到导入预览结果
+                importPreviewOutput.HasError = true;
+                importPreviewOutput.Results.Add((Interlocked.Add(ref row, 1), false, ex.Message));
+            }
+        }
+
+        return deviceImportPreview;
     }
 
 

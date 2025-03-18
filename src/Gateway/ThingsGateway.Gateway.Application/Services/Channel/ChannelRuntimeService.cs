@@ -199,7 +199,7 @@ public class ChannelRuntimeService : IChannelRuntimeService
     }
     public Task<Dictionary<string, ImportPreviewOutputBase>> PreviewAsync(IBrowserFile browserFile) => GlobalData.ChannelService.PreviewAsync(browserFile);
 
-    public Task<Dictionary<string, object>> ExportChannelAsync(ExportFilter exportFilter) => GlobalData.ChannelService.ExportChannelAsync(exportFilter);
+    public Task<Dictionary<string, IList<Dictionary<string, object>>>> ExportChannelAsync(ExportFilter exportFilter) => GlobalData.ChannelService.ExportChannelAsync(exportFilter);
     public Task<MemoryStream> ExportMemoryStream(List<Channel> data) =>
       GlobalData.ChannelService.ExportMemoryStream(data);
 
@@ -348,4 +348,5 @@ public class ChannelRuntimeService : IChannelRuntimeService
             WaitLock.Release();
         }
     }
+
 }

@@ -77,11 +77,13 @@ public partial class VariableRuntimeInfo : IDisposable
 
     #region 查询
 
+    private QueryPageOptions _option = new();
     private Task<QueryData<VariableRuntime>> OnQueryAsync(QueryPageOptions options)
     {
         var data = Items
                 .WhereIf(!options.SearchText.IsNullOrWhiteSpace(), a => a.Name.Contains(options.SearchText))
                 .GetQueryData(options);
+        _option = options;
         return Task.FromResult(data);
     }
 
@@ -244,6 +246,61 @@ public partial class VariableRuntimeInfo : IDisposable
         // 返回 true 时自动弹出提示框
         await ToastService.Default();
     }
+
+    async Task ExcelVariableAsync(ITableExportContext<VariableRuntime> tableExportContext)
+    {
+
+        var op = new DialogOption()
+        {
+            IsScrolling = false,
+            ShowMaximizeButton = true,
+            Size = Size.ExtraExtraLarge,
+            Title = Localizer["ExcelVariable"],
+            ShowFooter = false,
+            ShowCloseButton = false,
+        };
+        var models = Items
+                .WhereIf(!_option.SearchText.IsNullOrWhiteSpace(), a => a.Name.Contains(_option.SearchText)).GetData(_option, out var total).ToList();
+        if (models.Count > 50000)
+        {
+            await ToastService.Warning("online Excel max data count 50000");
+            return;
+        }
+        var uSheetDatas = await VariableServiceHelpers.ExportVariableAsync(models);
+
+        op.Component = BootstrapDynamicComponent.CreateComponent<USheet>(new Dictionary<string, object?>
+        {
+             {nameof(USheet.OnSave), async (USheetDatas data) =>
+            {
+                try
+    {
+                await Task.Run(async ()=>
+                {
+              var importData=await  VariableServiceHelpers.ImportAsync(data);
+                await    GlobalData.VariableRuntimeService.ImportVariableAsync(importData,AutoRestartThread);
+                })
+                    ;
+    }
+finally
+                {
+                                 await InvokeAsync( async ()=>
+            {
+
+                    await table.QueryAsync();
+             StateHasChanged();
+                });
+                }
+
+
+            }},
+            {nameof(USheet.Model),uSheetDatas },
+        });
+
+        await DialogService.Show(op);
+
+    }
+
+
 
     private async Task ExcelImportAsync(ITableExportContext<VariableRuntime> tableExportContext)
     {

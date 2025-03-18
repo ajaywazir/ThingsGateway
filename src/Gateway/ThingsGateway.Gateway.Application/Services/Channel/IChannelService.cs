@@ -46,7 +46,7 @@ internal interface IChannelService
     /// 导出通道为文件流结果
     /// </summary>
     /// <returns>文件流结果</returns>
-    Task<Dictionary<string, object>> ExportChannelAsync(ExportFilter exportFilter);
+    Task<Dictionary<string, IList<Dictionary<string, object>>>> ExportChannelAsync(ExportFilter exportFilter);
 
     /// <summary>
     /// 导出通道为内存流
@@ -86,6 +86,7 @@ internal interface IChannelService
     /// <param name="input">通道对象</param>
     /// <param name="type">保存类型</param>
     Task<bool> SaveChannelAsync(Channel input, ItemChangedType type);
+    void SetChannelData(HashSet<long>? dataScope, Dictionary<string, Channel> channelDicts, Dictionary<string, ImportPreviewOutputBase> ImportPreviews, ImportPreviewOutput<Channel> channelImportPreview, string sheetName, IEnumerable<IDictionary<string, object>> rows);
 
     /// <summary>
     /// 保存是否输出日志和日志等级

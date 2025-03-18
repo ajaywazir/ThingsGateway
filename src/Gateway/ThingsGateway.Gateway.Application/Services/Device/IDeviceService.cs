@@ -14,6 +14,9 @@ using Microsoft.AspNetCore.Components.Forms;
 
 using SqlSugar;
 
+using System.Collections.Concurrent;
+using System.Reflection;
+
 namespace ThingsGateway.Gateway.Application;
 
 /// <summary>
@@ -57,7 +60,7 @@ internal interface IDeviceService
     /// 导出设备信息到文件流。
     /// </summary>
     /// <returns>导出的文件流</returns>
-    Task<Dictionary<string, object>> ExportDeviceAsync(ExportFilter exportFilter);
+    Task<Dictionary<string, IList<Dictionary<string, object>>>> ExportDeviceAsync(ExportFilter exportFilter);
 
     /// <summary>
     /// 导出设备信息到内存流。
@@ -108,6 +111,7 @@ internal interface IDeviceService
     /// <param name="type">保存类型</param>
     /// <returns>保存是否成功的异步任务</returns>
     Task<bool> SaveDeviceAsync(Device input, ItemChangedType type);
+    void SetDeviceData(HashSet<long>? dataScope, Dictionary<string, Device> deviceDicts, Dictionary<string, Channel> channelDicts, Dictionary<string, ImportPreviewOutputBase> ImportPreviews, ref ImportPreviewOutput<Device> deviceImportPreview, Dictionary<string, PluginInfo> driverPluginNameDict, ConcurrentDictionary<string, (Type, Dictionary<string, PropertyInfo>, Dictionary<string, PropertyInfo>)> propertysDict, string sheetName, IEnumerable<IDictionary<string, object>> rows);
 
 
     /// <summary>

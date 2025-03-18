@@ -281,6 +281,58 @@ public partial class ChannelDeviceTree : IDisposable
 
     }
 
+
+    async Task ExcelChannel(ContextMenuItem item, object value)
+    {
+
+        var op = new DialogOption()
+        {
+            IsScrolling = false,
+            ShowMaximizeButton = true,
+            Size = Size.ExtraExtraLarge,
+            Title = item.Text,
+            ShowFooter = false,
+            ShowCloseButton = false,
+        };
+
+        var models = await GlobalData.GetCurrentUserChannels().ConfigureAwait(false);
+        var uSheetDatas = ChannelServiceHelpers.ExportChannel(models);
+
+        op.Component = BootstrapDynamicComponent.CreateComponent<USheet>(new Dictionary<string, object?>
+        {
+             {nameof(USheet.OnSave), async (USheetDatas data) =>
+            {
+                try
+    {
+                Spinner.SetRun(true);
+
+                await Task.Run(async ()=>
+                {
+              var importData=await  ChannelServiceHelpers.ImportAsync(data);
+                await    GlobalData.ChannelRuntimeService.ImportChannelAsync(importData,AutoRestartThread);
+                })
+                    ;
+    }
+finally
+                {
+                                 await InvokeAsync( ()=>
+            {
+
+            Spinner.SetRun(false);
+             StateHasChanged();
+                });
+                }
+
+
+            }},
+            {nameof(USheet.Model),uSheetDatas },
+        });
+
+        await DialogService.Show(op);
+
+    }
+
+
     async Task DeleteChannel(ContextMenuItem item, object value)
     {
         var op = new DialogOption();
@@ -750,6 +802,58 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
         await DialogService.Show(op);
 
     }
+
+    async Task ExcelDevice(ContextMenuItem item, object value)
+    {
+
+        var op = new DialogOption()
+        {
+            IsScrolling = false,
+            ShowMaximizeButton = true,
+            Size = Size.ExtraExtraLarge,
+            Title = item.Text,
+            ShowFooter = false,
+            ShowCloseButton = false,
+        };
+
+        var models = await GlobalData.GetCurrentUserDevices().ConfigureAwait(false);
+        var uSheetDatas = await DeviceServiceHelpers.ExportDeviceAsync(models);
+
+        op.Component = BootstrapDynamicComponent.CreateComponent<USheet>(new Dictionary<string, object?>
+        {
+             {nameof(USheet.OnSave), async (USheetDatas data) =>
+            {
+                try
+    {
+                Spinner.SetRun(true);
+
+                await Task.Run(async ()=>
+                {
+              var importData=await  DeviceServiceHelpers.ImportAsync(data);
+                await    GlobalData.DeviceRuntimeService.ImportDeviceAsync(importData,AutoRestartThread);
+                })
+                    ;
+    }
+finally
+                {
+                                 await InvokeAsync( ()=>
+            {
+
+            Spinner.SetRun(false);
+             StateHasChanged();
+                });
+                }
+
+
+            }},
+            {nameof(USheet.Model),uSheetDatas },
+        });
+
+        await DialogService.Show(op);
+
+    }
+
+
     async Task DeleteDevice(ContextMenuItem item, object value)
     {
         var op = new DialogOption();

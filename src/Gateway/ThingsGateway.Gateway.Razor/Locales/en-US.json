@@ -54,6 +54,7 @@
   "ThingsGateway.Gateway.Razor.VariableRuntimeInfo": {
     "WriteVariable": "WriteVariable",
     "WriteValue": "WriteValue",
+    "ExcelVariable": "ExcelVariable",
     "ImportExcel": "ImportExcel",
     "TestVariableCount": "TestVariableCount",
     "TestDeviceCount": "TestDeviceCount",
@@ -126,6 +127,7 @@
     "DeviceList": "Device List",
     "AddChannel": "Add Channel",
     "BatchEditChannel": "Batch Edit Channel",
+    "ExcelChannel": "ExcelChannel",
     "UpdateChannel": "Edit Channel",
     "DeleteChannel": "Delete Channel",
     "DeleteAllChannel": "Delete All Channel",
@@ -135,6 +137,7 @@
     "ImportChannel": "Import Channel",
     "AddDevice": "Add Device",
     "BatchEditDevice": "Batch Edit Device",
+    "ExcelDevice": "ExcelDevice",
     "UpdateDevice": "Edit Device",
     "DeleteDevice": "Delete Device",
     "DeleteCurrentDevice": "Delete Current Device",
