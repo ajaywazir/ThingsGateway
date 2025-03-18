@@ -105,8 +105,8 @@ public partial class TDengineDBProducer : BusinessBaseWithCacheIntervalVariableM
                     {
                         stringBuilder.Append($"""
 
-                     {_driverPropertys.TableName}_{deviceGroup.Key}_{variableGroup.Key} 
-                     USING {_driverPropertys.TableName} TAGS ("{deviceGroup.Key}", "{variableGroup.Key}") 
+                     `{_driverPropertys.TableName}_{deviceGroup.Key}_{variableGroup.Key}` 
+                     USING `{_driverPropertys.TableName}` TAGS ("{deviceGroup.Key}", "{variableGroup.Key}") 
                     VALUES 
 
                     """);
