@@ -80,7 +80,6 @@ public class ModbusSlave : BusinessBase
         _plc.IsWriteMemory = _driverPropertys.IsWriteMemory;
         _plc.MulStation = _driverPropertys.MulStation;
         _plc.ModbusType = _driverPropertys.ModbusType;
-        _plc.DtuId = _driverPropertys.DtuId;
         _plc.InitChannel(channel, LogMessage);
         await base.InitChannelAsync(channel).ConfigureAwait(false);
 

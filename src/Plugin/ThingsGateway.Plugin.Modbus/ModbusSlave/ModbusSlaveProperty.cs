@@ -56,7 +56,4 @@ public class ModbusSlaveProperty : BusinessPropertyBase
     [DynamicProperty]
     public bool IsWriteMemory { get; set; } = true;
 
-    [DynamicProperty]
-    public string DtuId { get; set; } = "DtuId";
-
 }

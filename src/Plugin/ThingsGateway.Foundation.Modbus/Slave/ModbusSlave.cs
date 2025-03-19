@@ -21,7 +21,7 @@ namespace ThingsGateway.Foundation.Modbus;
 public delegate ValueTask<OperResult> ModbusServerWriteEventHandler(ModbusAddress modbusAddress, IThingsGatewayBitConverter bitConverter, IClientChannel channel);
 
 /// <inheritdoc/>
-public class ModbusSlave : DtuServiceDeviceBase
+public class ModbusSlave : DeviceBase
 {
     /// <summary>
     /// 继电器
