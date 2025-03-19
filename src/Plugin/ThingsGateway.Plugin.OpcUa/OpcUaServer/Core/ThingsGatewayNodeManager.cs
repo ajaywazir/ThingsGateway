@@ -15,6 +15,8 @@ using Newtonsoft.Json.Linq;
 using Opc.Ua;
 using Opc.Ua.Server;
 
+using System.Globalization;
+
 using ThingsGateway.Foundation.OpcUa;
 using ThingsGateway.Gateway.Application;
 
@@ -399,28 +401,224 @@ public class ThingsGatewayNodeManager : CustomNodeManager2
         NodeIdTags.AddOrUpdate($"{variableRuntime.DeviceName}.{variableRuntime.Name}", variable);
         return variable;
     }
-
-    /// <summary>
-    /// 网关转OPC数据类型
-    /// </summary>
-    /// <param name="variableRuntime"></param>
-    /// <returns></returns>
-    private NodeId DataNodeType(VariableRuntime variableRuntime)
+    #region 多写
+    public override void Write(OperationContext context, IList<WriteValue> nodesToWrite, IList<ServiceResult> errors)
     {
-        var str = variableRuntime.GetPropertyValue(_businessBase.DeviceId, nameof(OpcUaServerVariableProperty.DataType)) ?? "";
-        Type tp;
-        if (Enum.TryParse(str, out DataTypeEnum result))
+        if (nodesToWrite.Any(a => a.AttributeId != Attributes.Value))
         {
-            tp = result.GetSystemType();
-        }
-        else
-        {
-            tp = variableRuntime.DataType.GetSystemType(); ;
+            base.Write(context, nodesToWrite, errors);
+            return;
         }
 
-        return DataNodeType(tp);
+        ServerSystemContext systemContext = SystemContext.Copy(context);
+        IDictionary<NodeId, NodeState> operationCache = new NodeIdDictionary<NodeState>();
+        List<NodeHandle> nodesToValidate = new List<NodeHandle>();
+
+        lock (Lock)
+        {
+            bool[] writeEnable = new bool[nodesToWrite.Count];
+            Dictionary<string, WriteValue> hashSetNodeId = new();
+
+            for (int ii = 0; ii < nodesToWrite.Count; ii++)
+            {
+                WriteValue nodeToWrite = nodesToWrite[ii];
+
+                // skip items that have already been processed.
+                if (nodeToWrite.Processed)
+                {
+                    continue;
+                }
+
+                // check for valid handle.
+                NodeHandle handle = GetManagerHandle(systemContext, nodeToWrite.NodeId, operationCache);
+
+                if (handle == null)
+                {
+                    continue;
+                }
+
+                // owned by this node manager.
+                nodeToWrite.Processed = true;
+
+                // index range is not supported.
+                if (nodeToWrite.AttributeId != Attributes.Value)
+                {
+                    if (!String.IsNullOrEmpty(nodeToWrite.IndexRange))
+                    {
+                        errors[ii] = StatusCodes.BadWriteNotSupported;
+                        continue;
+                    }
+                }
+
+                // check if the node is a area in memory.
+                if (handle.Node == null)
+                {
+                    errors[ii] = StatusCodes.BadNodeIdUnknown;
+
+                    // must validate node in a separate operation.
+                    handle.Index = ii;
+                    nodesToValidate.Add(handle);
+
+                    continue;
+                }
+
+                // check if the node is AnalogItem and the values are outside the InstrumentRange.
+                AnalogItemState analogItemState = handle.Node as AnalogItemState;
+                if (analogItemState != null && analogItemState.InstrumentRange != null)
+                {
+                    try
+                    {
+                        if (nodeToWrite.Value.Value is Array array)
+                        {
+                            bool isOutOfRange = false;
+                            foreach (var arrayValue in array)
+                            {
+                                double newValue = Convert.ToDouble(arrayValue, CultureInfo.InvariantCulture);
+                                if (newValue > analogItemState.InstrumentRange.Value.High ||
+                                    newValue < analogItemState.InstrumentRange.Value.Low)
+                                {
+                                    isOutOfRange = true;
+                                    break;
+                                }
+                            }
+                            if (isOutOfRange)
+                            {
+                                errors[ii] = StatusCodes.BadOutOfRange;
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            double newValue = Convert.ToDouble(nodeToWrite.Value.Value, CultureInfo.InvariantCulture);
+
+                            if (newValue > analogItemState.InstrumentRange.Value.High ||
+                                newValue < analogItemState.InstrumentRange.Value.Low)
+                            {
+                                errors[ii] = StatusCodes.BadOutOfRange;
+                                continue;
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        //skip the InstrumentRange check if the transformation isn't possible.
+                    }
+
+                }
+
+
+                writeEnable[ii] = true;
+                hashSetNodeId.Add(nodeToWrite.NodeId.Identifier.ToString(), nodeToWrite);
+            }
+            var tags = NodeIdTags.Where(a => hashSetNodeId.ContainsKey(a.Key));
+            List<(VariableRuntime, string)> writeInfos = new();
+
+            foreach (var item in tags)
+            {
+                if (GlobalData.ReadOnlyIdVariables.TryGetValue(item.Value.Id, out var variableRuntime))
+                {
+                    writeInfos.Add((variableRuntime, hashSetNodeId[item.Key].Value.Value?.ToString()));
+                }
+            }
+
+            var writeDatas = writeInfos.GroupBy(a => a.Item1.DeviceName).ToDictionary(a => a.Key, a =>
+                a.ToDictionary(a => a.Item1.Name, a => a.Item2)
+            );
+            var result = GlobalData.RpcService.InvokeDeviceMethodAsync("OpcUaServer - " + context?.Session?.Identity?.DisplayName, writeDatas
+            ).GetAwaiter().GetResult(); ;
+
+            for (int ii = 0; ii < nodesToWrite.Count; ii++)
+            {
+                if (!writeEnable[ii]) continue;
+
+                WriteValue nodeToWrite = nodesToWrite[ii];
+                NodeHandle handle = GetManagerHandle(systemContext, nodeToWrite.NodeId, operationCache);
+                PropertyState propertyState = handle.Node as PropertyState;
+                object previousPropertyValue = null;
+
+                if (propertyState != null)
+                {
+                    ExtensionObject extension = propertyState.Value as ExtensionObject;
+                    if (extension != null)
+                    {
+                        previousPropertyValue = extension.Body;
+                    }
+                    else
+                    {
+                        previousPropertyValue = propertyState.Value;
+                    }
+                }
+
+                DataValue oldValue = null;
+
+                if (Server?.Auditing == true)
+                {
+                    //current server supports auditing 
+                    oldValue = new DataValue();
+                    // read the old value for the purpose of auditing
+                    handle.Node.ReadAttribute(systemContext, nodeToWrite.AttributeId, nodeToWrite.ParsedIndexRange, null, oldValue);
+                }
+
+
+                if (NodeIdTags.TryGetValue(nodeToWrite.NodeId.Identifier.ToString(), out OpcUaTag tag) && GlobalData.ReadOnlyIdVariables.TryGetValue(tag.Id, out var variableRuntime) && result.TryGetValue(variableRuntime.DeviceName, out var deviceResult) && deviceResult.TryGetValue(variableRuntime.Name, out var operResult))
+                {
+                    if (operResult.IsSuccess == true)
+                    {
+                        errors[ii] = StatusCodes.Good;
+                    }
+                    else
+                    {
+                        errors[ii] = new(StatusCodes.BadWaitingForResponse, operResult.ToString());
+                    }
+                    // write the attribute value.
+                }
+
+
+
+                // report the write value audit event 
+                Server.ReportAuditWriteUpdateEvent(systemContext, nodeToWrite, oldValue?.Value, errors[ii]?.StatusCode ?? StatusCodes.Good);
+
+                if (!ServiceResult.IsGood(errors[ii]))
+                {
+                    continue;
+                }
+
+                if (propertyState != null)
+                {
+                    object propertyValue;
+                    ExtensionObject extension = nodeToWrite.Value.Value as ExtensionObject;
+
+                    if (extension != null)
+                    {
+                        propertyValue = extension.Body;
+                    }
+                    else
+                    {
+                        propertyValue = nodeToWrite.Value.Value;
+                    }
+
+                    CheckIfSemanticsHaveChanged(systemContext, propertyState, propertyValue, previousPropertyValue);
+                }
+
+                // updates to source finished - report changes to monitored items.
+                handle.Node.ClearChangeMasks(systemContext, true);
+            }
+
+            // check for nothing to do.
+            if (nodesToValidate.Count == 0)
+            {
+                return;
+            }
+        }
+
+        // validates the nodes and writes the value to the underlying system.
+        Write(
+            systemContext,
+            nodesToWrite,
+            errors,
+            nodesToValidate,
+            operationCache);
     }
-
     private ServiceResult OnWriteDataValue(ISystemContext context, NodeState node, NumericRange indexRange, QualifiedName dataEncoding, ref object value, ref StatusCode statusCode, ref DateTime timestamp)
     {
         try
@@ -447,7 +645,7 @@ public class ThingsGatewayNodeManager : CustomNodeManager2
                                     variableRuntime.DeviceName,   new Dictionary<string, string>() { {opcuaTag.SymbolicName, value?.ToString() } }
                                 }
                             }
-                            ).ConfigureAwait(true).GetAwaiter().GetResult();
+                            ).GetAwaiter().GetResult();
                         if (result.Values.FirstOrDefault()?.FirstOrDefault().Value.IsSuccess == true)
                         {
                             return StatusCodes.Good;
@@ -466,6 +664,87 @@ public class ThingsGatewayNodeManager : CustomNodeManager2
             return StatusCodes.BadTypeMismatch;
         }
     }
+
+    private void CheckIfSemanticsHaveChanged(ServerSystemContext systemContext, PropertyState property, object newPropertyValue, object previousPropertyValue)
+    {
+        // check if the changed property is one that can trigger semantic changes
+        string propertyName = property.BrowseName.Name;
+
+        if (propertyName != BrowseNames.EURange &&
+            propertyName != BrowseNames.InstrumentRange &&
+            propertyName != BrowseNames.EngineeringUnits &&
+            propertyName != BrowseNames.Title &&
+            propertyName != BrowseNames.AxisDefinition &&
+            propertyName != BrowseNames.FalseState &&
+            propertyName != BrowseNames.TrueState &&
+            propertyName != BrowseNames.EnumStrings &&
+            propertyName != BrowseNames.XAxisDefinition &&
+            propertyName != BrowseNames.YAxisDefinition &&
+            propertyName != BrowseNames.ZAxisDefinition)
+        {
+            return;
+        }
+
+        //look for the Parent and its monitoring items
+        foreach (var monitoredNode in MonitoredNodes.Values)
+        {
+            var propertyState = monitoredNode.Node.FindChild(systemContext, property.BrowseName);
+
+            if (propertyState != null && property != null && propertyState.NodeId == property.NodeId && !Utils.IsEqual(newPropertyValue, previousPropertyValue))
+            {
+                foreach (var monitoredItem in monitoredNode.DataChangeMonitoredItems)
+                {
+                    if (monitoredItem.AttributeId == Attributes.Value)
+                    {
+                        NodeState node = monitoredNode.Node;
+
+                        if ((node is AnalogItemState && (propertyName == BrowseNames.EURange || propertyName == BrowseNames.EngineeringUnits)) ||
+                            (node is TwoStateDiscreteState && (propertyName == BrowseNames.FalseState || propertyName == BrowseNames.TrueState)) ||
+                            (node is MultiStateDiscreteState && (propertyName == BrowseNames.EnumStrings)) ||
+                            (node is ArrayItemState && (propertyName == BrowseNames.InstrumentRange || propertyName == BrowseNames.EURange || propertyName == BrowseNames.EngineeringUnits || propertyName == BrowseNames.Title)) ||
+                            ((node is YArrayItemState || node is XYArrayItemState) && (propertyName == BrowseNames.InstrumentRange || propertyName == BrowseNames.EURange || propertyName == BrowseNames.EngineeringUnits || propertyName == BrowseNames.Title || propertyName == BrowseNames.XAxisDefinition)) ||
+                            (node is ImageItemState && (propertyName == BrowseNames.InstrumentRange || propertyName == BrowseNames.EURange || propertyName == BrowseNames.EngineeringUnits || propertyName == BrowseNames.Title || propertyName == BrowseNames.XAxisDefinition || propertyName == BrowseNames.YAxisDefinition)) ||
+                            (node is CubeItemState && (propertyName == BrowseNames.InstrumentRange || propertyName == BrowseNames.EURange || propertyName == BrowseNames.EngineeringUnits || propertyName == BrowseNames.Title || propertyName == BrowseNames.XAxisDefinition || propertyName == BrowseNames.YAxisDefinition || propertyName == BrowseNames.ZAxisDefinition)) ||
+                            (node is NDimensionArrayItemState && (propertyName == BrowseNames.InstrumentRange || propertyName == BrowseNames.EURange || propertyName == BrowseNames.EngineeringUnits || propertyName == BrowseNames.Title || propertyName == BrowseNames.AxisDefinition)))
+                        {
+                            monitoredItem.SetSemanticsChanged();
+
+                            DataValue value = new DataValue();
+                            value.ServerTimestamp = DateTime.UtcNow;
+
+                            monitoredNode.Node.ReadAttribute(systemContext, Attributes.Value, monitoredItem.IndexRange, null, value);
+
+                            monitoredItem.QueueValue(value, ServiceResult.Good, true);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    #endregion 多写
+    /// <summary>
+    /// 网关转OPC数据类型
+    /// </summary>
+    /// <param name="variableRuntime"></param>
+    /// <returns></returns>
+    private NodeId DataNodeType(VariableRuntime variableRuntime)
+    {
+        var str = variableRuntime.GetPropertyValue(_businessBase.DeviceId, nameof(OpcUaServerVariableProperty.DataType)) ?? "";
+        Type tp;
+        if (Enum.TryParse(str, out DataTypeEnum result))
+        {
+            tp = result.GetSystemType();
+        }
+        else
+        {
+            tp = variableRuntime.DataType.GetSystemType(); ;
+        }
+
+        return DataNodeType(tp);
+    }
+
 
     private static byte ProtectTypeTrans(VariableRuntime variableRuntime, bool historizing)
     {

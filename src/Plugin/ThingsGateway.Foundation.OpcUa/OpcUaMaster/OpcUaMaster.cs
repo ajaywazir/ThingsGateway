@@ -78,7 +78,6 @@ public class OpcUaMaster : IDisposable
     {
         var certificateValidator = new CertificateValidator();
         certificateValidator.CertificateValidation += CertificateValidation;
-
         // 构建应用程序配置
         m_configuration = new ApplicationConfiguration
         {
@@ -925,6 +924,8 @@ public class OpcUaMaster : IDisposable
         {
             m_session.KeepAlive -= Session_KeepAlive;
             m_session.Close(10000);
+            m_session.Dispose();
+            m_session = null;
         }
 
         if (state)
