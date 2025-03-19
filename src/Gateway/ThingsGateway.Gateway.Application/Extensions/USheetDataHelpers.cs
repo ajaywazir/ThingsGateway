@@ -14,23 +14,25 @@ namespace ThingsGateway.Gateway.Application
     internal static class USheetDataHelpers
     {
 
-        public static USheetDatas GetUSheetDatas(Dictionary<string, IList<Dictionary<string, object>>> data)
+        public static USheetDatas GetUSheetDatas(Dictionary<string, object> data)
         {
             var uSheetDatas = new USheetDatas();
 
             foreach (var a in data)
             {
+                var value = a.Value as IList<Dictionary<string, object>>;
+
                 var uSheetData = new USheetData();
                 uSheetData.id = a.Key;
                 uSheetData.name = a.Key;
 
-                for (int row1 = 0; row1 < a.Value.Count; row1++)
+                for (int row1 = 0; row1 < value.Count; row1++)
                 {
                     if (row1 == 0)
                     {
                         Dictionary<int, USheetCelldata> usheetColldata = new();
                         int col = 0;
-                        foreach (var colData in a.Value[row1])
+                        foreach (var colData in value[row1])
                         {
                             usheetColldata.Add(col, new USheetCelldata() { v = colData.Key });
                             col++;
@@ -41,7 +43,7 @@ namespace ThingsGateway.Gateway.Application
 
                         Dictionary<int, USheetCelldata> usheetColldata = new();
                         int col = 0;
-                        foreach (var colData in a.Value[row1])
+                        foreach (var colData in value[row1])
                         {
                             usheetColldata.Add(col, new USheetCelldata() { v = colData.Value });
                             col++;

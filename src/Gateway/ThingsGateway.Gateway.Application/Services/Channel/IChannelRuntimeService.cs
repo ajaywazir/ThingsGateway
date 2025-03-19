@@ -43,7 +43,7 @@ public interface IChannelRuntimeService
     /// 导入通道数据
     /// </summary>
     Task ImportChannelAsync(Dictionary<string, ImportPreviewOutputBase> input, bool restart);
-    Task<Dictionary<string, IList<Dictionary<string, object>>>> ExportChannelAsync(ExportFilter exportFilter);
+    Task<Dictionary<string, object>> ExportChannelAsync(ExportFilter exportFilter);
     Task<Dictionary<string, ImportPreviewOutputBase>> PreviewAsync(IBrowserFile browserFile);
     Task<MemoryStream> ExportMemoryStream(List<Channel> data);
     Task RestartChannelAsync(IEnumerable<ChannelRuntime> oldChannelRuntimes);

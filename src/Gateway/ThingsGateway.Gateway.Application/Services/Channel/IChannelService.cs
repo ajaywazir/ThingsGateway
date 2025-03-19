@@ -46,7 +46,7 @@ internal interface IChannelService
     /// 导出通道为文件流结果
     /// </summary>
     /// <returns>文件流结果</returns>
-    Task<Dictionary<string, IList<Dictionary<string, object>>>> ExportChannelAsync(ExportFilter exportFilter);
+    Task<Dictionary<string, object>> ExportChannelAsync(ExportFilter exportFilter);
 
     /// <summary>
     /// 导出通道为内存流

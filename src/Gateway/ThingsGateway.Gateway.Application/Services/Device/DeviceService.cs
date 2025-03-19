@@ -274,7 +274,7 @@ internal sealed class DeviceService : BaseService<Device>, IDeviceService
     /// </summary>
     /// <returns></returns>
     [OperDesc("ExportDevice", isRecordPar: false, localizerType: typeof(Device))]
-    public async Task<Dictionary<string, IList<Dictionary<string, object>>>> ExportDeviceAsync(ExportFilter exportFilter)
+    public async Task<Dictionary<string, object>> ExportDeviceAsync(ExportFilter exportFilter)
     {
         //导出
         var data = await PageAsync(exportFilter).ConfigureAwait(false);

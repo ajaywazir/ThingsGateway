@@ -26,10 +26,10 @@ public static class ChannelServiceHelpers
     }
 
 
-    internal static Dictionary<string, IList<Dictionary<string, object>>> ExportChannelCore(IEnumerable<Channel>? data)
+    internal static Dictionary<string, object> ExportChannelCore(IEnumerable<Channel>? data)
     {
         //总数据
-        Dictionary<string, IList<Dictionary<string, object>>> sheets = new();
+        Dictionary<string, object> sheets = new();
         //通道页
         List<Dictionary<string, object>> channelExports = new();
 

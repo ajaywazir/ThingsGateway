@@ -28,7 +28,7 @@ public static class DeviceServiceHelpers
     }
 
 
-    public static async Task<Dictionary<string, IList<Dictionary<string, object>>>> ExportCoreAsync(IEnumerable<Device>? data, string channelName = null)
+    public static async Task<Dictionary<string, object>> ExportCoreAsync(IEnumerable<Device>? data, string channelName = null)
     {
         if (data == null || !data.Any())
         {
@@ -37,7 +37,7 @@ public static class DeviceServiceHelpers
         var deviceDicts = (await GlobalData.DeviceService.GetAllAsync().ConfigureAwait(false)).ToDictionary(a => a.Id);
         var channelDicts = (await GlobalData.ChannelService.GetAllAsync().ConfigureAwait(false)).ToDictionary(a => a.Id);
         //总数据
-        Dictionary<string, IList<Dictionary<string, object>>> sheets = new();
+        Dictionary<string, object> sheets = new();
         //设备页
         List<Dictionary<string, object>> deviceExports = new();
         //设备附加属性，转成Dict<表名,List<Dict<列名，列数据>>>的形式

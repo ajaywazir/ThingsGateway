@@ -28,7 +28,7 @@ public static class VariableServiceHelpers
         return USheetDataHelpers.GetUSheetDatas(data);
     }
 
-    public static async Task<Dictionary<string, IList<Dictionary<string, object>>>> ExportCoreAsync(IEnumerable<Variable> data, string deviceName = null)
+    public static async Task<Dictionary<string, object>> ExportCoreAsync(IEnumerable<Variable> data, string deviceName = null)
     {
         if (data == null || !data.Any())
         {
@@ -38,7 +38,7 @@ public static class VariableServiceHelpers
         var channelDicts = (await GlobalData.ChannelService.GetAllAsync().ConfigureAwait(false)).ToDictionary(a => a.Id);
         var driverPluginDicts = GlobalData.PluginService.GetList(PluginTypeEnum.Business).ToDictionary(a => a.FullName);
         //总数据
-        Dictionary<string, IList<Dictionary<string, object>>> sheets = new();
+        Dictionary<string, object> sheets = new();
         //变量页
         ConcurrentList<Dictionary<string, object>> variableExports = new();
         //变量附加属性，转成Dict<表名,List<Dict<列名，列数据>>>的形式

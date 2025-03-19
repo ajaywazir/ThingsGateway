@@ -60,7 +60,7 @@ internal interface IDeviceService
     /// 导出设备信息到文件流。
     /// </summary>
     /// <returns>导出的文件流</returns>
-    Task<Dictionary<string, IList<Dictionary<string, object>>>> ExportDeviceAsync(ExportFilter exportFilter);
+    Task<Dictionary<string, object>> ExportDeviceAsync(ExportFilter exportFilter);
 
     /// <summary>
     /// 导出设备信息到内存流。

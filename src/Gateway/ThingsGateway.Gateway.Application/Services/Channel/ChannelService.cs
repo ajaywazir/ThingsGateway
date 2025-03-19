@@ -252,7 +252,7 @@ internal sealed class ChannelService : BaseService<Channel>, IChannelService
 
     /// <inheritdoc/>
     [OperDesc("ExportChannel", isRecordPar: false, localizerType: typeof(Channel))]
-    public async Task<Dictionary<string, IList<Dictionary<string, object>>>> ExportChannelAsync(ExportFilter exportFilter)
+    public async Task<Dictionary<string, object>> ExportChannelAsync(ExportFilter exportFilter)
     {
         var data = await PageAsync(exportFilter).ConfigureAwait(false);
         return ChannelServiceHelpers.ExportChannelCore(data.Items);

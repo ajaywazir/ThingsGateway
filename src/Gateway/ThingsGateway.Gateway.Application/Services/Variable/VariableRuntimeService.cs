@@ -276,7 +276,7 @@ public class VariableRuntimeService : IVariableRuntimeService
 
 
     }
-    public Task<Dictionary<string, IList<Dictionary<string, object>>>> ExportVariableAsync(ExportFilter exportFilter) => GlobalData.VariableService.ExportVariableAsync(exportFilter);
+    public Task<Dictionary<string, object>> ExportVariableAsync(ExportFilter exportFilter) => GlobalData.VariableService.ExportVariableAsync(exportFilter);
 
     public async Task ImportVariableAsync(Dictionary<string, ImportPreviewOutputBase> input, bool restart = true)
     {

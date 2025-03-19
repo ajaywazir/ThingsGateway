@@ -62,7 +62,7 @@ internal interface IVariableService
     /// <summary>
     /// 异步导出变量数据到文件流中。
     /// </summary>
-    Task<Dictionary<string, IList<Dictionary<string, object>>>> ExportVariableAsync(ExportFilter exportFilter);
+    Task<Dictionary<string, object>> ExportVariableAsync(ExportFilter exportFilter);
 
     /// <summary>
     /// 异步获取变量。

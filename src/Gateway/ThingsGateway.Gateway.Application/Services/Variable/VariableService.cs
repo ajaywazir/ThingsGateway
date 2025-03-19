@@ -443,7 +443,7 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
     /// 导出文件
     /// </summary>
     [OperDesc("ExportVariable", isRecordPar: false, localizerType: typeof(Variable))]
-    public async Task<Dictionary<string, IList<Dictionary<string, object>>>> ExportVariableAsync(ExportFilter exportFilter)
+    public async Task<Dictionary<string, object>> ExportVariableAsync(ExportFilter exportFilter)
     {
         var data = (await PageAsync(exportFilter).ConfigureAwait(false));
         var sheets = await VariableServiceHelpers.ExportCoreAsync(data.Items).ConfigureAwait(false);
