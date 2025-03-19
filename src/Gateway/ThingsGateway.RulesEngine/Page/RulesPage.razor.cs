@@ -49,9 +49,15 @@ public partial class RulesPage
     [Inject]
     [NotNull]
     protected BlazorAppContext? AppContext { get; set; }
+    [Inject]
+    [NotNull]
+    private NavigationManager? NavigationManager { get; set; }
+
+    public string RouteName => NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+
     protected bool AuthorizeButton(string operate)
     {
-        return AppContext.IsHasButtonWithRole("/gateway/devicestatus", operate);
+        return AppContext.IsHasButtonWithRole(RouteName, operate);
     }
 
     #region 查询
