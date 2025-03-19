@@ -141,7 +141,7 @@ internal sealed class RpcService : IRpcService
 
                     string parJson = empty ? deviceDatas.Select(x => x.Value).ToJsonNetString() : deviceDatas[driverData.Key.DeviceName][resultItem.Key];
 
-                    if (_rpcLogOptions.SuccessLog)
+                    if (!resultItem.Value.IsSuccess || _rpcLogOptions.SuccessLog)
                         _logQueues.Enqueue(
                             new RpcLog()
                             {
@@ -193,7 +193,7 @@ internal sealed class RpcService : IRpcService
                 foreach (var resultItem in result)
                 {
                     // 写入日志
-                    if (_rpcLogOptions.SuccessLog)
+                    if (!resultItem.Value.IsSuccess || _rpcLogOptions.SuccessLog)
                         _logQueues.Enqueue(
                             new RpcLog()
                             {
