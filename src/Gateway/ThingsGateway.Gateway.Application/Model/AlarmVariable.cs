@@ -80,6 +80,11 @@ public class AlarmVariable : PrimaryIdEntity, IDBHistoryAlarm
     [AutoGenerateColumn(Visible = true, Filterable = true, Sortable = true)]
     public string? AlarmText { get; set; }
 
+    /// <inheritdoc  cref="VariableRuntime.RecoveryCode"/>
+    [SugarColumn(ColumnDescription = "恢复值", IsNullable = false)]
+    [AutoGenerateColumn(Visible = true, Filterable = true, Sortable = true)]
+    public string RecoveryCode { get; set; }
+
     /// <inheritdoc  cref="VariableRuntime.AlarmTime"/>
     [SugarColumn(ColumnDescription = "报警时间", IsNullable = false)]
     [AutoGenerateColumn(Visible = true, Filterable = true, Sortable = true)]

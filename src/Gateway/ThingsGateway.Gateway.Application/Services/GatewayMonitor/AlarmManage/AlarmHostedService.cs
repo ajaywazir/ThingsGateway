@@ -291,6 +291,7 @@ internal sealed class AlarmHostedService : BackgroundService, IAlarmHostedServic
                             item.AlarmType = alarmEnum;
                             item.AlarmLimit = limit.ToString();
                             item.AlarmCode = item.Value.ToString();
+                            item.RecoveryCode = string.Empty;
                             item.AlarmText = text;
                             item.PrepareEventTime = null;
 
@@ -311,6 +312,7 @@ internal sealed class AlarmHostedService : BackgroundService, IAlarmHostedServic
                             item.AlarmType = alarmEnum;
                             item.AlarmLimit = limit.ToString();
                             item.AlarmCode = item.Value.ToString();
+                            item.RecoveryCode = string.Empty;
                             item.AlarmText = text;
                             item.PrepareEventTime = null;
                             changed = true;
@@ -332,6 +334,7 @@ internal sealed class AlarmHostedService : BackgroundService, IAlarmHostedServic
                 item.AlarmType = alarmEnum;
                 item.AlarmLimit = limit.ToString();
                 item.AlarmCode = item.Value.ToString();
+                item.RecoveryCode = string.Empty;
                 item.AlarmText = text;
                 changed = true;
             }
@@ -347,7 +350,8 @@ internal sealed class AlarmHostedService : BackgroundService, IAlarmHostedServic
                 item.AlarmType = oldAlarm.AlarmType;
                 item.EventType = eventEnum;
                 item.AlarmLimit = oldAlarm.AlarmLimit;
-                item.AlarmCode = item.Value.ToString();
+                item.AlarmCode = oldAlarm.AlarmCode;
+                item.RecoveryCode = item.Value.ToString();
                 item.AlarmText = text;
                 item.EventTime = DateTime.Now;
             }
@@ -370,6 +374,7 @@ internal sealed class AlarmHostedService : BackgroundService, IAlarmHostedServic
             {
                 // 如果是需恢复报警事件，则从实时报警列表中移除该变量
                 GlobalData.RealAlarmIdVariables.TryRemove(item.Id, out _);
+                //GlobalData.RealAlarmIdVariables.AddOrUpdate(item.Id, a => item.Adapt<AlarmVariable>(), (a, b) => item.Adapt<AlarmVariable>());
             }
             GlobalData.AlarmChange(item.Adapt<AlarmVariable>());
         }

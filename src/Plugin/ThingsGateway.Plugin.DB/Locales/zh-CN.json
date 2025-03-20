@@ -98,6 +98,7 @@
 
 
     "AlarmCode": "报警值",
+    "RecoveryCode": "恢复值",
     "AlarmLimit": "报警限值",
     "AlarmText": "报警文本",
     "AlarmTime": "报警时间",

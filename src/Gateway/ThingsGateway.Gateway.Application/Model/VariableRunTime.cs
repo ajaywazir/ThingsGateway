@@ -270,7 +270,12 @@ public class VariableRuntime : Variable, IVariable, IDisposable
     /// </summary>
     [AutoGenerateColumn(Visible = false)]
     public string? AlarmCode { get; set; }
-
+    /// <summary>
+    /// 恢复值
+    /// </summary>
+    [AutoGenerateColumn(Visible = false)]
+    public string? RecoveryCode { get; set; }
+    
     /// <summary>
     /// 报警使能
     /// </summary>

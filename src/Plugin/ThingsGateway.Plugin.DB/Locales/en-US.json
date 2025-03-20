@@ -98,6 +98,7 @@
     "RegisterAddress": "RegisterAddress",
 
     "AlarmCode": "AlarmCode",
+    "RecoveryCode": "RecoveryCode",
     "AlarmLimit": "AlarmLimit",
     "AlarmText": "AlarmText",
     "AlarmTime": "AlarmTime",
