@@ -20,7 +20,12 @@ public static class TDengineDBUtil
     /// <returns></returns>
     public static SqlSugarClient GetDb(DbType dbType, string connectionString, string stableName)
     {
-        var db = BusinessDatabaseUtil.GetDb(dbType, connectionString); ;
+        var db = BusinessDatabaseUtil.GetDb(dbType, connectionString);
+        db.CurrentConnectionConfig.MoreSettings = new()
+        {
+            //PgSqlIsAutoToLower = false,
+            //PgSqlIsAutoToLowerCodeFirst = false,
+        };
         db.MappingSTableName<TDengineDBHistoryValue>(stableName);
         return db;
     }
