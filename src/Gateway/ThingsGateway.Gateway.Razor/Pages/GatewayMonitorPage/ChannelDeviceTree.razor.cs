@@ -1464,7 +1464,30 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
 
     }
 
-    private static bool ModelEqualityComparer(ChannelDeviceTreeItem x, ChannelDeviceTreeItem y) => x.Equals(y);
+    private static bool ModelEqualityComparer(ChannelDeviceTreeItem x, ChannelDeviceTreeItem y)
+    {
+        if (x.ChannelDevicePluginType == y.ChannelDevicePluginType)
+        {
+            if (x.ChannelDevicePluginType == ChannelDevicePluginTypeEnum.Device)
+            {
+                return x.DeviceRuntime.Id == y.DeviceRuntime.Id; ;
+            }
+            else if (x.ChannelDevicePluginType == ChannelDevicePluginTypeEnum.PluginType)
+            {
+                return x.PluginType == y.PluginType;
+
+            }
+            else if (x.ChannelDevicePluginType == ChannelDevicePluginTypeEnum.Channel)
+            {
+                return x.ChannelRuntime.Id == y.ChannelRuntime.Id;
+            }
+            else if (x.ChannelDevicePluginType == ChannelDevicePluginTypeEnum.PluginName)
+            {
+                return x.PluginName == y.PluginName;
+            }
+        }
+        return false;
+    }
     private bool Disposed;
     public void Dispose()
     {

@@ -60,7 +60,7 @@
 
                     @* 全屏按钮 *@
                     <FullScreenButton class="layout-header-bar d-none d-lg-flex px-2" Icon="fa fa-arrows-alt"
-                                        TooltipPlacement=Placement.Bottom TooltipText="@Localizer[nameof(FullScreenButton)]" />
+                                      TooltipPlacement=Placement.Bottom TooltipText="@Localizer[nameof(FullScreenButton)]" />
 
                     @if (WebsiteOption.Value.IsShowAbout)
                     {
@@ -87,11 +87,11 @@
                 </Side>
                 <Main>
                     <Tab @ref=Tab ClickTabToNavigation="true" ShowExtendButtons="false" ShowClose="true" AllowDrag=true
-                            AdditionalAssemblies="@App.RazorAssemblies" Menus="@MenuService.AllOwnMenuItems"
-                            DefaultUrl=@("/") Body=@(Body!) OnCloseTabItemAsync=@((a)=>
-                        {
-                        return Task.FromResult(!(a.Url=="/"||a.Url.IsNullOrEmpty()));
-                        })>
+                         AdditionalAssemblies="@App.RazorAssemblies" Menus="@MenuService.AllOwnMenuItems"
+                         DefaultUrl=@("/") Body=@(Body!) OnCloseTabItemAsync=@((a)=>
+                         {
+                         return Task.FromResult(!(a.Url=="/"||a.Url.IsNullOrEmpty()));
+                         })>
                     </Tab>
 
                 </Main>

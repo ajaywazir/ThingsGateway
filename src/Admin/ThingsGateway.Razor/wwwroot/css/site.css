@@ -5,7 +5,7 @@
     --bs-primary-bg1: rgba(var(--bs-blue-rgb),0.1);
     --bs-primary-bg7: rgba(var(--bs-blue-rgb),0.7);
     --bs-nav-link-font-size: 0.8rem;
-    --bb-layout-header-height: 44px;
+    --bb-layout-header-height: 32px;
     --bb-layout-headerbar-background: transparent;
     --bs-navbar-color: var(--bb-layout-header-color);
     --bs-navbar-hover-color: var(--bs-primary);

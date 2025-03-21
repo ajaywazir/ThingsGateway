@@ -1,6 +1,6 @@
 ﻿@inherits BootstrapComponentBase
 @namespace ThingsGateway.Razor
-<div class="flex-xl-fill flex-xl-grow-0 justify-content-xl-end px-2"> 
+<div class="flex-xl-fill flex-xl-grow-0 justify-content-xl-end px-2" style="width:150px">
     <Select Value="@SelectedCulture" OnSelectedItemChanged="@SetCulture" IsPopover>
         <Options>
             @foreach (var kv in BootstrapOptions.CurrentValue.GetSupportedCultures())

@@ -12,20 +12,45 @@ using ThingsGateway.Gateway.Application;
 
 namespace ThingsGateway.Gateway.Razor;
 
-public partial class GatewayMonitorPage
+public partial class GatewayMonitorPage : IDisposable
 {
     private ChannelDeviceTreeItem SelectModel { get; set; } = new() { ChannelDevicePluginType = ChannelDevicePluginTypeEnum.PluginType, PluginType = PluginTypeEnum.Collect };
 
     #region 查询
+    [Inject]
+    private IDispatchService<DeviceRuntime> DeviceRuntimeDispatchService { get; set; }
+    [Inject]
+    private IDispatchService<ChannelRuntime> ChannelRuntimeDispatchService { get; set; }
+
+    protected override void OnInitialized()
+    {
+        ChannelRuntimeDispatchService.Subscribe(Refresh);
+        DeviceRuntimeDispatchService.Subscribe(Refresh);
+        base.OnInitialized();
+    }
+    public void Dispose()
+    {
+        ChannelRuntimeDispatchService.UnSubscribe(Refresh);
+        DeviceRuntimeDispatchService.UnSubscribe(Refresh);
+        GC.SuppressFinalize(this);
+    }
+    private async Task Refresh(DispatchEntry<DeviceRuntime> entry)
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+    private async Task Refresh(DispatchEntry<ChannelRuntime> entry)
+    {
+        await InvokeAsync(StateHasChanged);
+    }
 
     private async Task TreeChangedAsync(ChannelDeviceTreeItem channelDeviceTreeItem)
     {
-        ShowChannelRuntime = null;
-        ShowDeviceRuntime = null;
+        ShowChannelRuntime = 0;
+        ShowDeviceRuntime = 0;
         SelectModel = channelDeviceTreeItem;
         if (channelDeviceTreeItem.TryGetChannelRuntime(out var channelRuntime))
         {
-            ShowChannelRuntime = channelRuntime;
+            ShowChannelRuntime = channelRuntime.Id;
             if (channelRuntime.IsCollect == true)
             {
                 VariableRuntimes = channelRuntime.ReadDeviceRuntimes.SelectMany(a => a.Value.ReadOnlyVariableRuntimes.Select(a => a.Value).Where(a => a != null));
@@ -38,7 +63,7 @@ public partial class GatewayMonitorPage
         }
         else if (channelDeviceTreeItem.TryGetDeviceRuntime(out var deviceRuntime))
         {
-            ShowDeviceRuntime = deviceRuntime;
+            ShowDeviceRuntime = deviceRuntime.Id;
             if (deviceRuntime.IsCollect == true)
             {
                 VariableRuntimes = deviceRuntime.ReadOnlyVariableRuntimes.Select(a => a.Value).Where(a => a != null);
@@ -81,8 +106,8 @@ public partial class GatewayMonitorPage
     }
     public IEnumerable<VariableRuntime> VariableRuntimes { get; set; } = Enumerable.Empty<VariableRuntime>();
 
-    private ChannelRuntime ShowChannelRuntime { get; set; }
-    private DeviceRuntime ShowDeviceRuntime { get; set; }
+    private long ShowChannelRuntime { get; set; }
+    private long ShowDeviceRuntime { get; set; }
     public ShowTypeEnum? ShowType { get; set; }
     private bool AutoRestartThread { get; set; } = true;
 

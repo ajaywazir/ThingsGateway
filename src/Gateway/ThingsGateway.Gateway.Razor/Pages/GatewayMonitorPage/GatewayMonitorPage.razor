@@ -29,13 +29,13 @@
             }
             else
             {
-                if (ShowDeviceRuntime != null)
+                if (GlobalData.ReadOnlyIdDevices.TryGetValue(ShowDeviceRuntime,out var device))
                 {
-                    <DeviceRuntimeInfo DeviceRuntime="ShowDeviceRuntime" />
+                    <DeviceRuntimeInfo DeviceRuntime="device" />
                 }
-                if (ShowChannelRuntime != null)
+                if (GlobalData.ReadOnlyChannels.TryGetValue(ShowChannelRuntime, out var channel))
                 {
-                    <ChannelRuntimeInfo ChannelRuntime="ShowChannelRuntime" />
+                    <ChannelRuntimeInfo ChannelRuntime="channel" />
                 }
             }
         </SecondPaneTemplate>

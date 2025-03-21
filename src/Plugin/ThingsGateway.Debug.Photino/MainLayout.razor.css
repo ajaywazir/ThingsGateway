@@ -1,7 +1,7 @@
 ﻿::deep .avatar {
     border-radius: 1.5rem;
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
     background-color: var(--bs-green);
     color: #fff;
     flex: 0 0 auto;
@@ -23,7 +23,7 @@
     }
 
 .mainlayout ::deep .tabs {
-    --bb-tabs-item-height: 32px;
+    --bb-tabs-item-height: 28px;
     --bb-tabs-body-padding: 0.5rem;
 }
 
@@ -86,7 +86,8 @@
 }
 
 .mainlayout ::deep .tabs-item .tabs-item-close {
-    top: 5px;
+    right: .2rem;
+    top: 2.5px;
 }
 
 .mainlayout ::deep .table-wrapper {
@@ -102,7 +103,7 @@
 }
 
 .mainlayout ::deep .layout {
-    --bb-layout-header-height: 44px;
+    --bb-layout-header-height: 32px;
     --bb-layout-headerbar-background: transparent;
     --bs-navbar-color: var(--bb-layout-header-color);
     --bb-layout-header-color: var(--bs-body-color);
@@ -135,8 +136,8 @@
 }
 
 .mainlayout ::deep .layout-header .dropdown-logout {
-    --bb-logout-avatar-width: 32px;
-    --bb-logout-avatar-height: 32px;
+    --bb-logout-avatar-width: 28px;
+    --bb-logout-avatar-height: 28px;
     --bb-logout-user-bg: rgba(52,58,64,0.7);
     --bb-logout-menu-border-color: var(--bs-border-color);
 }
