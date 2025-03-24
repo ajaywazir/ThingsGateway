@@ -45,7 +45,7 @@
                                 <EditTemplate Context="value">
                                     <div class="col-12  col-md-6 ">
                                         <BootstrapInputGroup>
-                                            <Select IsVirtualize @bind-Value="@value.ChannelId" IsDisabled=BatchEditEnable Items="@_channelItems" OnSelectedItemChanged=OnChannelChanged ShowSearch="true" ShowLabel="true" />
+                                            <Select IsVirtualize DefaultVirtualizeItemText=@(GlobalData.ReadOnlyChannels.TryGetValue(value.ChannelId,out var channelRuntime)?channelRuntime.Name:string.Empty) @bind-Value="@value.ChannelId" IsDisabled=BatchEditEnable Items="@_channelItems" OnSelectedItemChanged=OnChannelChanged ShowSearch="true" ShowLabel="true" />
                                             <Button IsDisabled=BatchEditEnable class="text-end" Icon="fa-solid fa-plus" OnClick="AddChannel"></Button>
                                         </BootstrapInputGroup>
                                     </div>
@@ -65,7 +65,7 @@
                             <EditorItem @bind-Field="@context.RedundantDeviceId">
                                 <EditTemplate Context="value">
                                     <div class="col-12  col-md-6">
-                                        <Select IsVirtualize @bind-Value="@value.RedundantDeviceId" class="w-100"
+                                        <Select IsVirtualize DefaultVirtualizeItemText=@(GlobalData.ReadOnlyIdDevices.TryGetValue(value.RedundantDeviceId??0,out var deviceRuntime)?deviceRuntime.Name:string.Empty) @bind-Value="@value.RedundantDeviceId" class="w-100"
                                                 OnQueryAsync="(a)=>OnRedundantDevicesQuery(a,value)" IsDisabled="BatchEditEnable"
                                                 ShowSearch="true" IsClearable OnClearAsync=@(()=>
                                             {

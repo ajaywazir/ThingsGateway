@@ -275,7 +275,7 @@ public class VariableRuntime : Variable, IVariable, IDisposable
     /// </summary>
     [AutoGenerateColumn(Visible = false)]
     public string? RecoveryCode { get; set; }
-    
+
     /// <summary>
     /// 报警使能
     /// </summary>
@@ -332,6 +332,11 @@ public class VariableRuntime : Variable, IVariable, IDisposable
     #endregion 报警
     public void Init(DeviceRuntime deviceRuntime)
     {
+        if (GlobalData.IdVariables.Count > ThingsGateway.Gateway.Application.DeviceThreadManage.ChannelThreadOptions.MaxVariableCount)
+        {
+            throw new Exception($"The number of variables exceeds the limit {ThingsGateway.Gateway.Application.DeviceThreadManage.ChannelThreadOptions.MaxVariableCount}");
+        }
+
         GlobalData.AlarmEnableIdVariables.TryRemove(Id, out _);
         if (GlobalData.RealAlarmIdVariables.TryRemove(Id, out var oldAlarm))
         {

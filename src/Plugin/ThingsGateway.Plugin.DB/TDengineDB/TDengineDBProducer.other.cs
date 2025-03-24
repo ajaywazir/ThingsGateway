@@ -66,29 +66,15 @@ public partial class TDengineDBProducer : BusinessBaseWithCacheIntervalVariableM
     {
         try
         {
-            var db = TDengineDBUtil.GetDb(_driverPropertys.DbType, _driverPropertys.BigTextConnectStr, _driverPropertys.TableName);
+            var db = TDengineDBUtil.GetDb(_driverPropertys.DbType, _driverPropertys.BigTextConnectStr, _driverPropertys.TableNameLow);
             db.Ado.CancellationToken = cancellationToken;
 
             if (!_driverPropertys.BigTextScriptHistoryTable.IsNullOrEmpty())
             {
                 var getDeviceModel = CSharpScriptEngineExtension.Do<DynamicSQLBase>(_driverPropertys.BigTextScriptHistoryTable);
                 getDeviceModel.LogMessage = LogMessage;
-                if (getDeviceModel.ManualUpload)
-                {
-                    await getDeviceModel.DBInsertable(db, dbInserts, cancellationToken).ConfigureAwait(false);
-                }
-                else
-                {
-                    Stopwatch stopwatch = new();
-                    stopwatch.Start();
-                    var result = await db.InsertableByObject(getDeviceModel.GetList(dbInserts)).ExecuteCommandAsync().ConfigureAwait(false);
-                    //var result = await db.Insertable(dbInserts).SplitTable().ExecuteCommandAsync().ConfigureAwait(false);
-                    stopwatch.Stop();
-                    if (result > 0)
-                    {
-                        LogMessage.Trace($"HistoryTable Data Count：{result}，watchTime:  {stopwatch.ElapsedMilliseconds} ms");
-                    }
-                }
+                await getDeviceModel.DBInsertable(db, dbInserts, cancellationToken).ConfigureAwait(false);
+
             }
             else
             {
@@ -105,8 +91,8 @@ public partial class TDengineDBProducer : BusinessBaseWithCacheIntervalVariableM
                     {
                         stringBuilder.Append($"""
 
-                     `{_driverPropertys.TableName}_{deviceGroup.Key}_{variableGroup.Key}` 
-                     USING `{_driverPropertys.TableName}` TAGS ("{deviceGroup.Key}", "{variableGroup.Key}") 
+                     `{_driverPropertys.TableNameLow}_{deviceGroup.Key}_{variableGroup.Key}` 
+                     USING `{_driverPropertys.TableNameLow}` TAGS ("{deviceGroup.Key}", "{variableGroup.Key}") 
                     VALUES 
 
                     """);
@@ -128,7 +114,7 @@ public partial class TDengineDBProducer : BusinessBaseWithCacheIntervalVariableM
                 //var result = await db.Insertable(dbInserts).SplitTable().ExecuteCommandAsync().ConfigureAwait(false);
                 //if (result > 0)
                 {
-                    LogMessage.Trace($"TableName：{_driverPropertys.TableName}，Count：{dbInserts.Count}，watchTime:  {stopwatch.ElapsedMilliseconds} ms");
+                    LogMessage.Trace($"TableName：{_driverPropertys.TableNameLow}，Count：{dbInserts.Count}，watchTime:  {stopwatch.ElapsedMilliseconds} ms");
                 }
             }
             return OperResult.Success;

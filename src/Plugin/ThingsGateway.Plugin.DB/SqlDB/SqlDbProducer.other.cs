@@ -76,22 +76,9 @@ public partial class SqlDBProducer : BusinessBaseWithCacheIntervalVariableModel<
                 var getDeviceModel = CSharpScriptEngineExtension.Do<DynamicSQLBase>(_driverPropertys.BigTextScriptHistoryTable);
 
                 getDeviceModel.LogMessage = LogMessage;
-                if (getDeviceModel.ManualUpload)
-                {
-                    await getDeviceModel.DBInsertable(db, dbInserts, cancellationToken).ConfigureAwait(false);
-                }
-                else
-                {
-                    Stopwatch stopwatch = new();
-                    stopwatch.Start();
-                    var result = await db.InsertableByObject(getDeviceModel.GetList(dbInserts)).SplitTable().ExecuteCommandAsync().ConfigureAwait(false);
-                    //var result = await db.Insertable(dbInserts).SplitTable().ExecuteCommandAsync().ConfigureAwait(false);
-                    stopwatch.Stop();
-                    if (result > 0)
-                    {
-                        LogMessage.Trace($"HistoryTable Data Count：{result}，watchTime:  {stopwatch.ElapsedMilliseconds} ms");
-                    }
-                }
+
+                await getDeviceModel.DBInsertable(db, dbInserts, cancellationToken).ConfigureAwait(false);
+
             }
             else
             {
@@ -126,44 +113,10 @@ public partial class SqlDBProducer : BusinessBaseWithCacheIntervalVariableModel<
             {
                 var getDeviceModel = CSharpScriptEngineExtension.Do<DynamicSQLBase>(_driverPropertys.BigTextScriptRealTable);
                 getDeviceModel.LogMessage = LogMessage;
-                if (getDeviceModel.ManualUpload)
-                {
-                    await getDeviceModel.DBInsertable(db, datas, cancellationToken).ConfigureAwait(false);
-                    return OperResult.Success;
-                }
-                else
-                {
 
-                    if (!_initRealData)
-                    {
-                        if (datas?.Count > 0)
-                        {
-                            Stopwatch stopwatch = new();
-                            stopwatch.Start();
-                            var result = db.StorageableByObject(getDeviceModel.GetList(datas)).ExecuteCommand();
-                            stopwatch.Stop();
-                            if (result > 0)
-                                LogMessage.Trace($"RealTable Data Count：{result}，watchTime:  {stopwatch.ElapsedMilliseconds} ms");
-                            _initRealData = true;
-                            return OperResult.Success;
-                        }
-                        return OperResult.Success;
-                    }
-                    else
-                    {
-                        if (datas?.Count > 0)
-                        {
-                            Stopwatch stopwatch = new();
-                            stopwatch.Start();
-                            var result = await db.UpdateableByObject(getDeviceModel.GetList(datas)).ExecuteCommandAsync().ConfigureAwait(false);
-                            stopwatch.Stop();
-                            if (result > 0)
-                                LogMessage.Trace($"RealTable Data Count：{result}，watchTime:  {stopwatch.ElapsedMilliseconds} ms");
-                            return OperResult.Success;
-                        }
-                        return OperResult.Success;
-                    }
-                }
+                await getDeviceModel.DBInsertable(db, datas, cancellationToken).ConfigureAwait(false);
+                return OperResult.Success;
+
             }
             else
             {

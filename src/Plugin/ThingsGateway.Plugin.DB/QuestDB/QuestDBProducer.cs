@@ -155,11 +155,7 @@ public partial class QuestDBProducer : BusinessBaseWithCacheIntervalVariableMode
         {
             var hisModel = CSharpScriptEngineExtension.Do<DynamicSQLBase>(_driverPropertys.BigTextScriptHistoryTable);
             hisModel.LogMessage = LogMessage;
-            if (!hisModel.ManualUpload)
-            {
-                var type = hisModel.GetModelType();
-                db.CodeFirst.InitTables(type);
-            }
+            await hisModel.DBInit(db, cancellationToken).ConfigureAwait(false);
 
         }
         else

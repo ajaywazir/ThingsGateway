@@ -68,6 +68,15 @@ public class ChannelRuntimeService : IChannelRuntimeService
             if (restart)
             {
                 await GlobalData.ChannelThreadManage.RestartChannelAsync(newChannelRuntimes).ConfigureAwait(false);
+
+
+                var channelDevice = GlobalData.IdDevices.Where(a => a.Value.Driver?.DriverProperties is IBusinessPropertyAllVariableBase property && property.IsAllVariable);
+
+                foreach (var item in channelDevice)
+                {
+                    await item.Value.Driver.AfterVariablesChangedAsync().ConfigureAwait(false);
+                }
+
             }
 
             return true;

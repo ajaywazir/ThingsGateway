@@ -55,7 +55,7 @@ public static class ExpressionEvaluatorExtension
             {
                 try
                 {
-                    Directory.Delete(tempDir);
+                    Directory.Delete(tempDir, true);
                 }
                 catch
                 {

@@ -215,8 +215,15 @@ public class DeviceRuntime : Device, IDisposable
     [AdaptIgnore]
     public IDriver? Driver { get; internal set; }
 
+
+
     public void Init(ChannelRuntime channelRuntime)
     {
+        if (GlobalData.Devices.Count > ThingsGateway.Gateway.Application.DeviceThreadManage.ChannelThreadOptions.MaxDeviceCount)
+        {
+            throw new Exception($"The number of devices exceeds the limit {ThingsGateway.Gateway.Application.DeviceThreadManage.ChannelThreadOptions.MaxDeviceCount}");
+        }
+
         ChannelRuntime?.DeviceRuntimes?.TryRemove(Id, out _);
 
         ChannelRuntime = channelRuntime;

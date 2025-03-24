@@ -72,7 +72,7 @@
                         <EditTemplate Context="value">
                             <div class="col-12  col-md-6 ">
                                 <BootstrapInputGroup>
-                                    <Select IsVirtualize @bind-Value="@value.DeviceId" IsDisabled=BatchEditEnable Items="@CollectDeviceItems" OnSelectedItemChanged=OnDeviceChanged ShowSearch="true" ShowLabel="true" />
+                                    <Select IsVirtualize @bind-Value="@value.DeviceId" DefaultVirtualizeItemText=@(GlobalData.ReadOnlyIdDevices.TryGetValue(value.DeviceId,out var deviceRuntime)?deviceRuntime.Name:string.Empty) IsDisabled=BatchEditEnable Items="@CollectDeviceItems" OnSelectedItemChanged=OnDeviceChanged ShowSearch="true" ShowLabel="true" />
                                     <Button class="text-end" Icon="fa-solid fa-plus" OnClick="AddDevice" IsDisabled=BatchEditEnable></Button>
                                 </BootstrapInputGroup>
                             </div>
@@ -85,7 +85,7 @@
                     <EditorItem @bind-Field="@context.OtherMethod">
                         <EditTemplate Context="value">
                             <div class="col-12  col-md-6">
-                                <Select IsVirtualize @bind-Value="@value.OtherMethod" Items="@OtherMethods" ShowSearch="true" />
+                                <Select IsVirtualize DefaultVirtualizeItemText=@(OtherMethods.TryGetValue(value.OtherMethod??string.Empty,out var desc)?desc:value.OtherMethod) @bind-Value="@value.OtherMethod" Items="@OtherMethodSelectedItems" ShowSearch="true" />
                             </div>
                         </EditTemplate>
                     </EditorItem>
@@ -172,7 +172,7 @@
                 <div class="row g-2 mx-1 form-inline">
 
                     <div class="col-12 col-md-8">
-                        <Select SkipValidate IsVirtualize @bind-Value="@ChoiceBusinessDeviceId" Items="@BusinessDeviceItems" ShowSearch="true" ShowLabel="true" />
+                        <Select SkipValidate IsVirtualize DefaultVirtualizeItemText=@(GlobalData.ReadOnlyIdDevices.TryGetValue(ChoiceBusinessDeviceId,out var deviceRuntime)?deviceRuntime.Name:string.Empty) @bind-Value="@ChoiceBusinessDeviceId" Items="@BusinessDeviceItems" ShowSearch="true" ShowLabel="true" />
                     </div>
                     <div class="col-12 col-md-4">
                         <Button OnClick="async() =>{

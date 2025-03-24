@@ -25,8 +25,6 @@ using ThingsGateway.NewLife;
 
 using TouchSocket.Core;
 
-using UAParser;
-
 using Yitter.IdGenerator;
 
 namespace ThingsGateway.Gateway.Application;

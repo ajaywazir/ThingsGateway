@@ -69,6 +69,14 @@ public class DeviceRuntimeService : IDeviceRuntimeService
                     if (group.Key?.DeviceThreadManage != null)
                         await group.Key.DeviceThreadManage.RestartDeviceAsync(group, false).ConfigureAwait(false);
                 }
+
+                var channelDevice = GlobalData.IdDevices.Where(a => a.Value.Driver?.DriverProperties is IBusinessPropertyAllVariableBase property && property.IsAllVariable);
+
+                foreach (var item in channelDevice)
+                {
+                    await item.Value.Driver.AfterVariablesChangedAsync().ConfigureAwait(false);
+                }
+
             }
 
             return true;
@@ -214,7 +222,7 @@ public class DeviceRuntimeService : IDeviceRuntimeService
         }
     }
 
-    public Task<Dictionary<string,object>> ExportDeviceAsync(ExportFilter exportFilter) => GlobalData.DeviceService.ExportDeviceAsync(exportFilter);
+    public Task<Dictionary<string, object>> ExportDeviceAsync(ExportFilter exportFilter) => GlobalData.DeviceService.ExportDeviceAsync(exportFilter);
     public Task<Dictionary<string, ImportPreviewOutputBase>> PreviewAsync(IBrowserFile browserFile) => GlobalData.DeviceService.PreviewAsync(browserFile);
     public Task<MemoryStream> ExportMemoryStream(List<Device> data, string channelName) =>
           GlobalData.DeviceService.ExportMemoryStream(data, channelName);

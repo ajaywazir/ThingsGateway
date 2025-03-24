@@ -3,8 +3,8 @@
     "MinCycleInterval": 10, //最小循环间隔
     "MaxCycleInterval": 200, //最大循环间隔
     "CheckInterval": 1800000, //检查间隔
-    "MaxChannelCount": 1000, //检查间隔
-    "MaxDeviceCount": 1000, //检查间隔
-    "MaxVariableCount": 1000000 //检查间隔
+    "MaxChannelCount": 50, //检查间隔
+    "MaxDeviceCount": 50, //检查间隔
+    "MaxVariableCount": 10000 //检查间隔
   }
 }

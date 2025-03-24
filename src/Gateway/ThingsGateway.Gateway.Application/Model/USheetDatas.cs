@@ -20,6 +20,9 @@ public class USheetData
 {
     public string id { get; set; }
     public string name { get; set; }
+    public int rowCount { get; set; }
+    public int columnCount { get; set; }
+
     public Dictionary<int, Dictionary<int, USheetCelldata>> cellData { get; set; } = new();
 }
 

@@ -51,9 +51,10 @@ namespace ThingsGateway.Gateway.Application
                         uSheetData.cellData.Add(row1 + 1, usheetColldata);
                     }
                 }
+                uSheetData.rowCount = uSheetData.cellData.Count;
+                uSheetData.columnCount = uSheetData.cellData.FirstOrDefault().Value?.Count ?? 0;
                 uSheetDatas.sheets.Add(a.Key, uSheetData);
             }
-
             return uSheetDatas;
         }
     }

@@ -15,21 +15,15 @@ namespace ThingsGateway.Plugin.DB;
 public abstract class DynamicSQLBase
 {
     public TouchSocket.Core.ILog LogMessage { get; set; }
-    public virtual IEnumerable<dynamic> GetList(IEnumerable<object> datas)
-    {
-        throw new NotSupportedException();
-    }
-    public virtual Type GetModelType()
-    {
-        throw new NotSupportedException();
-    }
 
     /// <summary>
-    /// false=>实现<see cref="GetList(IEnumerable{object})"/>和<see cref="GetModelType"/>
-    /// 
-    /// true=>实现<see cref="DBInsertable(ISqlSugarClient, IEnumerable{object},CancellationToken)"/>
+    /// 建库建表
     /// </summary>
-    public virtual bool ManualUpload { get; set; }
+    /// <returns></returns>
+    public virtual Task DBInit(ISqlSugarClient db, CancellationToken cancellationToken)
+    {
+        throw new NotSupportedException();
+    }
 
     /// <summary>
     /// 完全自定义上传

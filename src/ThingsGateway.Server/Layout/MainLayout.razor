@@ -86,7 +86,7 @@
                     </div>
                 </Side>
                 <Main>
-                    <Tab @ref=Tab ClickTabToNavigation="true" ShowExtendButtons="false" ShowClose="true" AllowDrag=true
+                    <Tab @ref=Tab ClickTabToNavigation="true" ShowToolbar="true" ShowExtendButtons="false" ShowClose="true" AllowDrag=true
                          AdditionalAssemblies="@App.RazorAssemblies" Menus="@MenuService.AllOwnMenuItems"
                          DefaultUrl=@("/") Body=@(Body!) OnCloseTabItemAsync=@((a)=>
                          {

@@ -23,6 +23,7 @@ namespace ThingsGateway.Debug;
 
 public partial class MainLayout
 {
+    private Tab Tab { get; set; }
 
     private string _versionString = string.Empty;
 

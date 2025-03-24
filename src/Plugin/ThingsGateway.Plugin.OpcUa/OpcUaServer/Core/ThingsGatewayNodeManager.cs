@@ -54,25 +54,14 @@ public class ThingsGatewayNodeManager : CustomNodeManager2
     }
     ConcurrentList<IDriver>? dbDrivers;
     internal FolderState rootFolder;
-    /// <summary>
-    /// 创建服务目录结构
-    /// </summary>
-    /// <param name="externalReferences"></param>
-    public override void CreateAddressSpace(IDictionary<NodeId, IList<IReference>> externalReferences)
+
+    public void RefreshVariable()
     {
         lock (Lock)
         {
-
-            dbDrivers = new(GlobalData.GetEnableDevices().Where(a => a.Driver is IDBHistoryValueService).Select(a => a.Driver));
-            if (!externalReferences.TryGetValue(ObjectIds.ObjectsFolder, out IList<IReference> references))
-            {
-                externalReferences[ObjectIds.ObjectsFolder] = references = new List<IReference>();
-            }
-            //首节点
-            rootFolder = CreateFolder(null, "ThingsGateway", "ThingsGateway");
+            if (rootFolder == null) return;
+            rootFolder.RemoveReferences(ReferenceTypes.Organizes, true);
             rootFolder.AddReference(ReferenceTypes.Organizes, true, ObjectIds.ObjectsFolder);
-            references.Add(new NodeStateReference(ReferenceTypes.Organizes, false, rootFolder.NodeId));
-            rootFolder.EventNotifier = EventNotifiers.SubscribeToEvents;
             AddRootNotifier(rootFolder);
 
             //创建设备树
@@ -95,6 +84,31 @@ public class ThingsGatewayNodeManager : CustomNodeManager2
             }
             AddPredefinedNode(SystemContext, rootFolder);
 
+
+        }
+
+    }
+
+    /// <summary>
+    /// 创建服务目录结构
+    /// </summary>
+    /// <param name="externalReferences"></param>
+    public override void CreateAddressSpace(IDictionary<NodeId, IList<IReference>> externalReferences)
+    {
+        lock (Lock)
+        {
+
+            dbDrivers = new(GlobalData.GetEnableDevices().Where(a => a.Driver is IDBHistoryValueService).Select(a => a.Driver));
+            if (!externalReferences.TryGetValue(ObjectIds.ObjectsFolder, out IList<IReference> references))
+            {
+                externalReferences[ObjectIds.ObjectsFolder] = references = new List<IReference>();
+            }
+            //首节点
+            rootFolder = CreateFolder(null, "ThingsGateway", "ThingsGateway");
+            references.Add(new NodeStateReference(ReferenceTypes.Organizes, false, rootFolder.NodeId));
+            rootFolder.EventNotifier = EventNotifiers.SubscribeToEvents;
+
+            RefreshVariable();
         }
     }
 

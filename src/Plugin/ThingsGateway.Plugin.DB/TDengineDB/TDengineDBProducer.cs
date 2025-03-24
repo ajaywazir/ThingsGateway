@@ -84,7 +84,7 @@ public partial class TDengineDBProducer : BusinessBaseWithCacheIntervalVariableM
 
     internal ISugarQueryable<TDengineDBHistoryValue> Query(DBHistoryValuePageInput input)
     {
-        var db = TDengineDBUtil.GetDb(_driverPropertys.DbType, _driverPropertys.BigTextConnectStr, _driverPropertys.TableName);
+        var db = TDengineDBUtil.GetDb(_driverPropertys.DbType, _driverPropertys.BigTextConnectStr, _driverPropertys.TableNameLow);
         var query = db.Queryable<TDengineDBHistoryValue>()
                              .WhereIF(input.StartTime != null, a => a.CreateTime >= input.StartTime)
                            .WhereIF(input.EndTime != null, a => a.CreateTime <= input.EndTime)
@@ -103,7 +103,7 @@ public partial class TDengineDBProducer : BusinessBaseWithCacheIntervalVariableM
 
     internal async Task<QueryData<TDengineDBHistoryValue>> QueryData(QueryPageOptions option)
     {
-        var db = TDengineDBUtil.GetDb(_driverPropertys.DbType, _driverPropertys.BigTextConnectStr, _driverPropertys.TableName);
+        var db = TDengineDBUtil.GetDb(_driverPropertys.DbType, _driverPropertys.BigTextConnectStr, _driverPropertys.TableNameLow);
         var ret = new QueryData<TDengineDBHistoryValue>()
         {
             IsSorted = option.SortOrder != SortOrder.Unset,
@@ -144,7 +144,7 @@ public partial class TDengineDBProducer : BusinessBaseWithCacheIntervalVariableM
 
     protected override async Task ProtectedStartAsync(CancellationToken cancellationToken)
     {
-        var db = TDengineDBUtil.GetDb(_driverPropertys.DbType, _driverPropertys.BigTextConnectStr, _driverPropertys.TableName);
+        var db = TDengineDBUtil.GetDb(_driverPropertys.DbType, _driverPropertys.BigTextConnectStr, _driverPropertys.TableNameLow);
         db.DbMaintenance.CreateDatabase();
 
 
@@ -152,10 +152,8 @@ public partial class TDengineDBProducer : BusinessBaseWithCacheIntervalVariableM
         if (!_driverPropertys.BigTextScriptHistoryTable.IsNullOrEmpty())
         {
             var hisModel = CSharpScriptEngineExtension.Do<DynamicSQLBase>(_driverPropertys.BigTextScriptHistoryTable);
-            if (!hisModel.ManualUpload)
             {
-                var type = hisModel.GetModelType();
-                db.CodeFirst.InitTables(type);
+                await hisModel.DBInit(db, cancellationToken).ConfigureAwait(false);
             }
 
         }
@@ -163,7 +161,7 @@ public partial class TDengineDBProducer : BusinessBaseWithCacheIntervalVariableM
         {
 
             var sql = $"""
-                CREATE STABLE IF NOT EXISTS  `{_driverPropertys.TableName}`(
+                CREATE STABLE IF NOT EXISTS  `{_driverPropertys.TableNameLow}`(
                 `createtime` TIMESTAMP   ,
                 `collecttime` TIMESTAMP   ,
                 `id` BIGINT   ,

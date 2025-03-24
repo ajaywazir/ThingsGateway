@@ -174,14 +174,10 @@ public partial class SqlDBProducer : BusinessBaseWithCacheIntervalVariableModel<
         if (!_driverPropertys.BigTextScriptHistoryTable.IsNullOrEmpty())
         {
             var hisModel = CSharpScriptEngineExtension.Do<DynamicSQLBase>(_driverPropertys.BigTextScriptHistoryTable);
-            if (!hisModel.ManualUpload)
-            {
 
-                if (_driverPropertys.IsHistoryDB)
-                {
-                    var type = hisModel.GetModelType();
-                    db.CodeFirst.InitTables(type);
-                }
+            if (_driverPropertys.IsHistoryDB)
+            {
+                await hisModel.DBInit(db, cancellationToken).ConfigureAwait(false);
             }
 
         }
@@ -193,14 +189,12 @@ public partial class SqlDBProducer : BusinessBaseWithCacheIntervalVariableModel<
         if (!_driverPropertys.BigTextScriptRealTable.IsNullOrEmpty())
         {
             var realModel = CSharpScriptEngineExtension.Do<DynamicSQLBase>(_driverPropertys.BigTextScriptRealTable);
-            if (!realModel.ManualUpload)
+
+            if (_driverPropertys.IsReadDB)
             {
-                if (_driverPropertys.IsReadDB)
-                {
-                    var type = realModel.GetModelType();
-                    db.CodeFirst.InitTables(type);
-                }
+                await realModel.DBInit(db, cancellationToken).ConfigureAwait(false);
             }
+
         }
         else
         {

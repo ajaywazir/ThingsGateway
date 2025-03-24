@@ -28,6 +28,7 @@ public class RealDBProducerProperty : BusinessPropertyWithCacheInterval
     [DynamicProperty]
     [Required]
     public string TableName { get; set; } = "historyValue";
+    public string TableNameLow => TableName.ToLower();
 
     /// <summary>
     /// 历史表脚本

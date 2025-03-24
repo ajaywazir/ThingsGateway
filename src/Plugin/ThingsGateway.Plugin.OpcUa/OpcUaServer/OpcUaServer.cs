@@ -52,29 +52,29 @@ public partial class OpcUaServer : BusinessBase
 
     public override async Task AfterVariablesChangedAsync()
     {
-        if (m_server != null && m_application != null)
-        {
-            m_server?.Stop();
-            m_server?.SafeDispose();
+        //if (m_server != null && m_application != null)
+        //{
+        //    m_server?.Stop();
+        //    m_server?.SafeDispose();
 
-            ApplicationInstance.MessageDlg = new ApplicationMessageDlg(LogMessage);//默认返回true
+        //    ApplicationInstance.MessageDlg = new ApplicationMessageDlg(LogMessage);//默认返回true
 
-            //Utils.SetLogger(new OpcUaLogger(LogMessage)); //调试用途
-            m_application = new ApplicationInstance();
-            m_configuration = GetDefaultConfiguration();
-            await m_configuration.Validate(ApplicationType.Server).ConfigureAwait(false);
-            m_application.ApplicationConfiguration = m_configuration;
-            if (m_configuration.SecurityConfiguration.AutoAcceptUntrustedCertificates)
-            {
-                m_configuration.CertificateValidator.CertificateValidation += (s, e) =>
-                {
-                    e.Accept = (e.Error.StatusCode == StatusCodes.BadCertificateUntrusted);
-                };
-            }
+        //    //Utils.SetLogger(new OpcUaLogger(LogMessage)); //调试用途
+        //    m_application = new ApplicationInstance();
+        //    m_configuration = GetDefaultConfiguration();
+        //    await m_configuration.Validate(ApplicationType.Server).ConfigureAwait(false);
+        //    m_application.ApplicationConfiguration = m_configuration;
+        //    if (m_configuration.SecurityConfiguration.AutoAcceptUntrustedCertificates)
+        //    {
+        //        m_configuration.CertificateValidator.CertificateValidation += (s, e) =>
+        //        {
+        //            e.Accept = (e.Error.StatusCode == StatusCodes.BadCertificateUntrusted);
+        //        };
+        //    }
 
-            m_server = new(this);
+        //    m_server = new(this);
 
-        }
+        //}
 
 
 
@@ -97,7 +97,7 @@ public partial class OpcUaServer : BusinessBase
         {
             VariableValueChange(a.Value, a.Value.Adapt<VariableBasicData>());
         });
-
+        m_server?.NodeManager?.RefreshVariable();
 
     }
 

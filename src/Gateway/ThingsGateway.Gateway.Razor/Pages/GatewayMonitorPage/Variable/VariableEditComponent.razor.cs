@@ -70,7 +70,6 @@ public partial class VariableEditComponent
     [CascadingParameter]
     private Func<Task>? OnCloseAsync { get; set; }
 
-    public IEnumerable<SelectedItem> OtherMethods { get; set; }
     private ConcurrentDictionary<long, IEnumerable<IEditorItem>>? VariablePropertyEditors { get; set; } = new();
     private ConcurrentDictionary<long, RenderFragment>? VariablePropertyRenderFragments { get; set; } = new();
 
@@ -101,16 +100,16 @@ public partial class VariableEditComponent
         }
     }
 
-
+    Dictionary<string, string> OtherMethods = new Dictionary<string, string>();
+    public IEnumerable<SelectedItem> OtherMethodSelectedItems { get; set; }
     private async Task OnDeviceChanged(SelectedItem selectedItem)
     {
         try
         {
             if (GlobalData.ReadOnlyIdDevices.TryGetValue(selectedItem.Value.ToLong(), out var device))
             {
-                var data = GlobalData.PluginService.GetDriverMethodInfos(device.PluginName);
-                OtherMethods = new List<SelectedItem>() { new SelectedItem(string.Empty, "none") }.Concat(data.Select(a => new SelectedItem(a.Name, a.Description)));
-
+                OtherMethods = GlobalData.PluginService.GetDriverMethodInfos(device.PluginName).ToDictionary(a => a.Name, a => a.Description);
+                OtherMethodSelectedItems = new List<SelectedItem>() { new SelectedItem(string.Empty, "none") }.Concat(OtherMethods.Select(a => new SelectedItem(a.Key, a.Value)));
 
                 AddressUIType = GlobalData.PluginService.GetAddressUI(device.PluginName);
             }

@@ -66,22 +66,9 @@ public partial class QuestDBProducer : BusinessBaseWithCacheIntervalVariableMode
             {
                 var getDeviceModel = CSharpScriptEngineExtension.Do<DynamicSQLBase>(_driverPropertys.BigTextScriptHistoryTable);
                 getDeviceModel.LogMessage = LogMessage;
-                if (getDeviceModel.ManualUpload)
-                {
-                    await getDeviceModel.DBInsertable(db, dbInserts, cancellationToken).ConfigureAwait(false);
-                }
-                else
-                {
-                    Stopwatch stopwatch = new();
-                    stopwatch.Start();
-                    var result = await db.InsertableByObject(getDeviceModel.GetList(dbInserts)).ExecuteCommandAsync().ConfigureAwait(false);
-                    //var result = await db.Insertable(dbInserts).SplitTable().ExecuteCommandAsync().ConfigureAwait(false);
-                    stopwatch.Stop();
-                    if (result > 0)
-                    {
-                        LogMessage.Trace($"HistoryTable Data Count：{result}，watchTime:  {stopwatch.ElapsedMilliseconds} ms");
-                    }
-                }
+
+                await getDeviceModel.DBInsertable(db, dbInserts, cancellationToken).ConfigureAwait(false);
+
             }
             else
             {
