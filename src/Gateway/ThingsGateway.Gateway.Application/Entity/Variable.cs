@@ -47,7 +47,6 @@ public class Variable : BaseDataEntity, IValidatableObject
     [SugarColumn(ColumnDescription = "变量名称", IsNullable = false)]
     [AutoGenerateColumn(Visible = true, Filterable = true, Sortable = true, Order = 1)]
     [Required]
-    [RegularExpression(@"^[^.]*$", ErrorMessage = "The field {0} cannot contain a dot ('.')")]
     public virtual string Name { get; set; }
 
     /// <summary>
