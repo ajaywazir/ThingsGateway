@@ -446,7 +446,7 @@ public abstract class DriverBase : DisposableObject, IDriver
     /// <summary>
     /// 当前关联的变量
     /// </summary>
-    public Dictionary<long, VariableRuntime> IdVariableRuntimes { get; protected set; } = new();
+    public Dictionary<long, VariableRuntime> IdVariableRuntimes { get; } = new();
 
     /// <summary>
     /// 是否连接成功

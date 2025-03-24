@@ -21,7 +21,7 @@ internal static class ManageHelper
 
     public static void CheckChannelCount(int addCount)
     {
-        if (GlobalData.Channels.Count+ addCount > ManageHelper.ChannelThreadOptions.MaxChannelCount)
+        if (GlobalData.Channels.Count + addCount > ManageHelper.ChannelThreadOptions.MaxChannelCount)
         {
             throw new Exception($"The number of channels exceeds the limit {ManageHelper.ChannelThreadOptions.MaxChannelCount}");
         }

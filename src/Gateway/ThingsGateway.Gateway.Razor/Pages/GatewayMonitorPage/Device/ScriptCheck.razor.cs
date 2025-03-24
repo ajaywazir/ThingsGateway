@@ -26,7 +26,6 @@ public partial class ScriptCheck
     public EventCallback<string> ScriptChanged { get; set; }
     private async Task Change(string script)
     {
-
         Script = script;
         if (ScriptChanged.HasDelegate)
             await ScriptChanged.InvokeAsync(script);

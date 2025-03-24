@@ -12,6 +12,7 @@ using BootstrapBlazor.Components;
 
 using Microsoft.Extensions.Localization;
 
+using ThingsGateway.Extension.Generic;
 using ThingsGateway.NewLife;
 using ThingsGateway.NewLife.Extension;
 using ThingsGateway.NewLife.Threading;
@@ -94,8 +95,8 @@ public abstract class BusinessBase : DriverBase
             }
         }
         );
-
-        IdVariableRuntimes = variableRuntimes.ToDictionary();
+        IdVariableRuntimes.Clear();
+        IdVariableRuntimes.AddRange(variableRuntimes);
         var ids = IdVariableRuntimes.Select(b => b.Value.DeviceId).ToHashSet();
         // 获取当前设备需要采集的设备
         CollectDevices = GlobalData.GetEnableDevices().Where(a => ids.Contains(a.Id)).ToDictionary(a => a.Id);

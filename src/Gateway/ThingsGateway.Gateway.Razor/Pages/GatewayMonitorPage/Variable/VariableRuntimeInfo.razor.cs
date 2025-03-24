@@ -213,7 +213,7 @@ public partial class VariableRuntimeInfo : IDisposable
     {
         return Task.FromResult(new VariableRuntime()
         {
-            DeviceId = SelectModel?.DeviceRuntime?.Id ?? 0
+            DeviceId = SelectModel?.DeviceRuntime?.IsCollect == true ? SelectModel?.DeviceRuntime?.Id ?? 0 : 0
         });
     }
 

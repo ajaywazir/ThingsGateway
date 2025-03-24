@@ -10,6 +10,7 @@
 
 using Mapster;
 
+using ThingsGateway.Extension.Generic;
 using ThingsGateway.NewLife;
 
 using TouchSocket.Core;
@@ -68,7 +69,9 @@ public abstract class BusinessBaseWithCacheIntervalAlarmModel<VarModel, DevModel
         if (_businessPropertyWithCacheInterval.IsAllVariable)
         {
             LogMessage?.LogInformation("Refresh variable");
-            IdVariableRuntimes = GlobalData.GetEnableVariables().ToDictionary(a => a.Id);
+
+            IdVariableRuntimes.Clear();
+            IdVariableRuntimes.AddRange(GlobalData.GetEnableVariables().ToDictionary(a => a.Id));
 
             CollectDevices = GlobalData.GetEnableDevices().Where(a => a.IsCollect == true).ToDictionary(a => a.Id);
         }

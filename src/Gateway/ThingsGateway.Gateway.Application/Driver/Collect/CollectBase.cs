@@ -17,6 +17,7 @@ using Newtonsoft.Json.Linq;
 
 using System.Collections.Concurrent;
 
+using ThingsGateway.Extension.Generic;
 using ThingsGateway.Gateway.Application.Extensions;
 using ThingsGateway.NewLife.Json.Extension;
 using ThingsGateway.NewLife.Threading;
@@ -53,7 +54,8 @@ public abstract class CollectBase : DriverBase
     {
         LogMessage?.LogInformation("Refresh variable");
         var currentDevice = CurrentDevice;
-        IdVariableRuntimes = currentDevice.VariableRuntimes.Where(a => a.Value.Enable).ToDictionary(a => a.Value.Id, a => a.Value);
+        IdVariableRuntimes.Clear();
+        IdVariableRuntimes.AddRange(currentDevice.VariableRuntimes.Where(a => a.Value.Enable).ToDictionary(a => a.Value.Id, a => a.Value));
 
         //预热脚本，加速编译
         IdVariableRuntimes.Where(a => !string.IsNullOrWhiteSpace(a.Value.ReadExpressions))

@@ -15,10 +15,7 @@ using Mapster;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Logging;
 
-using ThingsGateway.Extension.Generic;
 using ThingsGateway.NewLife.Collections;
-
-using TouchSocket.Core;
 
 namespace ThingsGateway.Gateway.Application;
 
@@ -42,69 +39,21 @@ public class VariableRuntimeService : IVariableRuntimeService
             await GlobalData.VariableService.AddBatchAsync(input).ConfigureAwait(false);
 
             var newVariableRuntimes = input.Adapt<List<VariableRuntime>>();
-            var ids = newVariableRuntimes.Select(a => a.Id).ToHashSet();
+            var variableIds = newVariableRuntimes.Select(a => a.Id).ToHashSet();
             //获取变量，先找到原插件线程，然后修改插件线程内的字典，再改动全局字典，最后刷新插件
-            var data = GlobalData.IdVariables.Where(a => ids.Contains(a.Key)).GroupBy(a => a.Value.DeviceRuntime);
+
+
 
             ConcurrentHashSet<IDriver> changedDriver = new();
-            foreach (var group in data)
-            {
-                //这里改动的可能是旧绑定设备
-                //需要改动DeviceRuntim的变量字典
-                foreach (var item in group)
-                {
-                    //需要重启业务线程
-                    var deviceRuntimes = GlobalData.IdDevices.Where(a =>
 
-                 GlobalData.ContainsVariable(a.Key, item.Value)
+            RuntimeServiceHelper.AddBusinessChangedDriver(variableIds, changedDriver);
 
-).Select(a => a.Value);
-                    foreach (var deviceRuntime in deviceRuntimes)
-                    {
-                        if (deviceRuntime.Driver != null)
-                        {
-                            changedDriver.TryAdd(deviceRuntime.Driver);
-                        }
-                    }
+            RuntimeServiceHelper.AddCollectChangedDriver(newVariableRuntimes, changedDriver);
 
-                    item.Value.Dispose();
-                }
-                if (group.Key != null)
-                {
-                    if (group.Key.Driver != null)
-                    {
-                        changedDriver.TryAdd(group.Key.Driver);
-                    }
-                }
-            }
-
-            //批量修改之后，需要重新加载
-            foreach (var newVariableRuntime in newVariableRuntimes)
-            {
-                if (GlobalData.IdDevices.TryGetValue(newVariableRuntime.DeviceId, out var deviceRuntime))
-                {
-                    newVariableRuntime.Init(deviceRuntime);
-
-                    if (deviceRuntime.Driver != null && !changedDriver.Contains(deviceRuntime.Driver))
-                    {
-                        changedDriver.TryAdd(deviceRuntime.Driver);
-                    }
-                }
-            }
             if (restart)
             {
                 //根据条件重启通道线程
-                foreach (var driver in changedDriver)
-                {
-                    try
-                    {
-                        await driver.AfterVariablesChangedAsync().ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogWarning(ex, "VariablesChanged");
-                    }
-                }
+                await RuntimeServiceHelper.ChangedDriverAsync(changedDriver, _logger).ConfigureAwait(false);
             }
 
         }
@@ -131,66 +80,18 @@ public class VariableRuntimeService : IVariableRuntimeService
 
             var newVariableRuntimes = (await db.Queryable<Variable>().Where(a => ids.Contains(a.Id)).ToListAsync().ConfigureAwait(false)).Adapt<List<VariableRuntime>>();
 
-            var newVarIds = newVariableRuntimes.Select(a => a.Id).ToHashSet();
-
-            //获取变量，先找到原插件线程，然后修改插件线程内的字典，再改动全局字典，最后刷新插件
-            var data = GlobalData.IdVariables.Where(a => newVarIds.Contains(a.Key)).GroupBy(a => a.Value.DeviceRuntime);
+            var variableIds = newVariableRuntimes.Select(a => a.Id).ToHashSet();
 
             ConcurrentHashSet<IDriver> changedDriver = new();
-            foreach (var group in data)
-            {
-                //这里改动的可能是旧绑定设备
-                //需要改动DeviceRuntim的变量字典
-                foreach (var item in group)
-                {
-                    //需要重启业务线程
-                    var deviceRuntimes = GlobalData.IdDevices.Where(a => GlobalData.ContainsVariable(a.Key, item.Value)).Select(a => a.Value);
-                    foreach (var deviceRuntime in deviceRuntimes)
-                    {
-                        if (deviceRuntime.Driver != null)
-                        {
-                            changedDriver.TryAdd(deviceRuntime.Driver);
-                        }
-                    }
 
-                    item.Value.Dispose();
-                }
-                if (group.Key != null)
-                {
-                    if (group.Key.Driver != null)
-                    {
-                        changedDriver.TryAdd(group.Key.Driver);
-                    }
-                }
-            }
+            RuntimeServiceHelper.AddBusinessChangedDriver(variableIds, changedDriver);
 
-            //批量修改之后，需要重新加载
-            foreach (var newVariableRuntime in newVariableRuntimes)
-            {
-                if (GlobalData.IdDevices.TryGetValue(newVariableRuntime.DeviceId, out var deviceRuntime))
-                {
-                    newVariableRuntime.Init(deviceRuntime);
+            RuntimeServiceHelper.AddCollectChangedDriver(newVariableRuntimes, changedDriver);
 
-                    if (deviceRuntime.Driver != null && !changedDriver.Contains(deviceRuntime.Driver))
-                    {
-                        changedDriver.TryAdd(deviceRuntime.Driver);
-                    }
-                }
-            }
             if (restart)
             {
                 //根据条件重启通道线程
-                foreach (var driver in changedDriver)
-                {
-                    try
-                    {
-                        await driver.AfterVariablesChangedAsync().ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogWarning(ex, "VariablesChanged");
-                    }
-                }
+                await RuntimeServiceHelper.ChangedDriverAsync(changedDriver, _logger).ConfigureAwait(false);
             }
 
             return true;
@@ -209,63 +110,21 @@ public class VariableRuntimeService : IVariableRuntimeService
             // await WaitLock.WaitAsync().ConfigureAwait(false);
 
 
-            ids = ids.ToHashSet();
+            var variableIds = ids.ToHashSet();
 
-            var result = await GlobalData.VariableService.DeleteVariableAsync(ids).ConfigureAwait(false);
+            var result = await GlobalData.VariableService.DeleteVariableAsync(variableIds).ConfigureAwait(false);
 
             var variableRuntimes = GlobalData.IdVariables.Where(a => ids.Contains(a.Key)).Select(a => a.Value);
 
 
-            var data = variableRuntimes.Where(a => a.DeviceRuntime?.Driver != null).GroupBy(a => a.DeviceRuntime).ToDictionary(a => a.Key, a => a.ToList());
-
-            foreach (var variableRuntime in variableRuntimes)
-            {
-                variableRuntime.Dispose();
-            }
-
             ConcurrentHashSet<IDriver> changedDriver = new();
-            foreach (var group in data)
-            {
-                //这里改动的可能是旧绑定设备
-                //需要改动DeviceRuntim的变量字典
-                foreach (var item in group.Value)
-                {
-                    //需要重启业务线程
-                    var deviceRuntimes = GlobalData.IdDevices.Where(a => GlobalData.ContainsVariable(a.Key, item)).Select(a => a.Value);
-                    foreach (var deviceRuntime in deviceRuntimes)
-                    {
-                        if (deviceRuntime.Driver != null)
-                        {
-                            changedDriver.TryAdd(deviceRuntime.Driver);
-                        }
-                    }
 
-                    item.Dispose();
-                }
-                if (group.Key != null)
-                {
-                    if (group.Key.Driver != null)
-                    {
-                        changedDriver.TryAdd(group.Key.Driver);
-                    }
-                }
-            }
+            RuntimeServiceHelper.AddBusinessChangedDriver(variableIds, changedDriver);
+
             if (restart)
             {
-                foreach (var driver in changedDriver)
-                {
-                    try
-                    {
-                        await driver.AfterVariablesChangedAsync().ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogWarning(ex, "VariablesChanged");
-                    }
-                }
+                await RuntimeServiceHelper.ChangedDriverAsync(changedDriver, _logger).ConfigureAwait(false);
             }
-
-
 
             return true;
         }
@@ -291,66 +150,18 @@ public class VariableRuntimeService : IVariableRuntimeService
             using var db = DbContext.GetDB<Variable>();
             var newVariableRuntimes = (await db.Queryable<Variable>().Where(a => result.Contains(a.Id)).ToListAsync().ConfigureAwait(false)).Adapt<List<VariableRuntime>>();
 
-            var newVarIds = newVariableRuntimes.Select(a => a.Id).ToHashSet();
-            //先找出线程管理器，停止
-            var data = GlobalData.IdVariables.Where(a => newVarIds.Contains(a.Key)).GroupBy(a => a.Value.DeviceRuntime);
+            var variableIds = newVariableRuntimes.Select(a => a.Id).ToHashSet();
 
             ConcurrentHashSet<IDriver> changedDriver = new();
-            foreach (var group in data)
-            {
-                //这里改动的可能是旧绑定设备
-                //需要改动DeviceRuntim的变量字典
-                foreach (var item in group)
-                {
-                    //需要重启业务线程
-                    var deviceRuntimes = GlobalData.IdDevices.Where(a => GlobalData.ContainsVariable(a.Key, item.Value)).Select(a => a.Value);
-                    foreach (var deviceRuntime in deviceRuntimes)
-                    {
-                        if (deviceRuntime.Driver != null)
-                        {
-                            changedDriver.TryAdd(deviceRuntime.Driver);
-                        }
-                    }
 
-                    item.Value.Dispose();
-                }
-                if (group.Key != null)
-                {
-                    if (group.Key.Driver != null)
-                    {
-                        changedDriver.TryAdd(group.Key.Driver);
-                    }
-                }
-            }
+            RuntimeServiceHelper.AddBusinessChangedDriver(variableIds, changedDriver);
 
-            //批量修改之后，需要重新加载
-            foreach (var newVariableRuntime in newVariableRuntimes)
-            {
-                if (GlobalData.IdDevices.TryGetValue(newVariableRuntime.DeviceId, out var deviceRuntime))
-                {
-                    newVariableRuntime.Init(deviceRuntime);
-                    //添加新变量所在任务
-                    if (deviceRuntime.Driver != null && !changedDriver.Contains(deviceRuntime.Driver))
-                    {
-                        changedDriver.TryAdd(deviceRuntime.Driver);
-                    }
-                }
-            }
+            RuntimeServiceHelper.AddCollectChangedDriver(newVariableRuntimes, changedDriver);
+
             if (restart)
             {
                 //根据条件重启通道线程
-
-                foreach (var driver in changedDriver)
-                {
-                    try
-                    {
-                        await driver.AfterVariablesChangedAsync().ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogWarning(ex, "VariablesChanged");
-                    }
-                }
+                await RuntimeServiceHelper.ChangedDriverAsync(changedDriver, _logger).ConfigureAwait(false);
             }
 
 
@@ -377,70 +188,18 @@ public class VariableRuntimeService : IVariableRuntimeService
                 var newChannelRuntimes = (datas.Item1).Adapt<List<ChannelRuntime>>();
 
                 //批量修改之后，需要重新加载通道
-                foreach (var newChannelRuntime in newChannelRuntimes)
-                {
-                    if (GlobalData.Channels.TryGetValue(newChannelRuntime.Id, out var channelRuntime))
-                    {
-                        channelRuntime.Dispose();
-                        newChannelRuntime.Init();
-                        channelRuntime.DeviceRuntimes.ForEach(a => a.Value.Init(newChannelRuntime));
-
-                        newChannelRuntime.DeviceRuntimes.AddRange(channelRuntime.DeviceRuntimes);
-                    }
-                    else
-                    {
-                        newChannelRuntime.Init();
-
-                    }
-                }
+                RuntimeServiceHelper.Init(newChannelRuntimes);
 
                 {
 
                     var newDeviceRuntimes = (datas.Item2).Adapt<List<DeviceRuntime>>();
 
-                    //批量修改之后，需要重新加载通道
-                    foreach (var newDeviceRuntime in newDeviceRuntimes)
-                    {
-                        if (GlobalData.IdDevices.TryGetValue(newDeviceRuntime.Id, out var deviceRuntime))
-                        {
-                            deviceRuntime.Dispose();
-                        }
-                        if (GlobalData.Channels.TryGetValue(newDeviceRuntime.ChannelId, out var channelRuntime))
-                        {
-                            newDeviceRuntime.Init(channelRuntime);
-                        }
-                        if (deviceRuntime != null)
-                        {
-                            deviceRuntime.VariableRuntimes.ParallelForEach(a => a.Value.Init(newDeviceRuntime));
-                        }
-                    }
-
+                    RuntimeServiceHelper.Init(newDeviceRuntimes);
 
                 }
                 {
                     var newVariableRuntimes = (datas.Item3).Adapt<List<VariableRuntime>>();
-                    //获取变量，先找到原插件线程，然后修改插件线程内的字典，再改动全局字典，最后刷新插件
-                    var newVarIds = newVariableRuntimes.Select(a => a.Id).ToHashSet();
-                    var data = GlobalData.IdVariables.Where(a => newVarIds.Contains(a.Key)).GroupBy(a => a.Value.DeviceRuntime);
-
-                    foreach (var group in data)
-                    {
-                        //这里改动的可能是旧绑定设备
-                        //需要改动DeviceRuntim的变量字典
-                        foreach (var item in group)
-                        {
-                            item.Value.Dispose();
-                        }
-                    }
-
-                    //批量修改之后，需要重新加载
-                    foreach (var newVariableRuntime in newVariableRuntimes)
-                    {
-                        if (GlobalData.IdDevices.TryGetValue(newVariableRuntime.DeviceId, out var deviceRuntime))
-                        {
-                            newVariableRuntime.Init(deviceRuntime);
-                        }
-                    }
+                    RuntimeServiceHelper.Init(newVariableRuntimes);
 
                 }
                 //根据条件重启通道线程
@@ -449,14 +208,8 @@ public class VariableRuntimeService : IVariableRuntimeService
                 {
                     await GlobalData.ChannelThreadManage.RestartChannelAsync(newChannelRuntimes).ConfigureAwait(false);
 
-                    var channelDevice = GlobalData.IdDevices.Where(a => a.Value.Driver?.DriverProperties is IBusinessPropertyAllVariableBase property && property.IsAllVariable);
-
-                    foreach (var item in channelDevice)
-                    {
-                        await item.Value.Driver.AfterVariablesChangedAsync().ConfigureAwait(false);
-                    }
+                    await RuntimeServiceHelper.ChangedDriverAsync(_logger).ConfigureAwait(false);
                 }
-
 
                 App.GetService<IDispatchService<DeviceRuntime>>().Dispatch(null);
             }
@@ -467,6 +220,8 @@ public class VariableRuntimeService : IVariableRuntimeService
         }
 
     }
+
+
 
     public Task<Dictionary<string, ImportPreviewOutputBase>> PreviewAsync(IBrowserFile browserFile)
     {
@@ -486,63 +241,21 @@ public class VariableRuntimeService : IVariableRuntimeService
 
 
             using var db = DbContext.GetDB<Variable>();
-            var newVariableRuntime = (await db.Queryable<Variable>().Where(a => input.Id == a.Id).FirstAsync().ConfigureAwait(false)).Adapt<VariableRuntime>();
+            var newVariableRuntimes = (await db.Queryable<Variable>().Where(a => a.Id == input.Id).ToListAsync().ConfigureAwait(false)).Adapt<List<VariableRuntime>>();
 
-            if (newVariableRuntime == null) return false;
+            var variableIds = newVariableRuntimes.Select(a => a.Id).ToHashSet();
 
             ConcurrentHashSet<IDriver> changedDriver = new();
 
 
+            RuntimeServiceHelper.AddBusinessChangedDriver(variableIds, changedDriver);
 
-            //这里改动的可能是旧绑定设备
-            //需要改动DeviceRuntim的变量字典
+            RuntimeServiceHelper.AddCollectChangedDriver(newVariableRuntimes, changedDriver);
 
-            if (GlobalData.IdVariables.TryGetValue(newVariableRuntime.Id, out var variableRuntime))
-            {
-                if (variableRuntime.DeviceRuntime?.Driver != null)
-                {
-                    changedDriver.TryAdd(variableRuntime.DeviceRuntime.Driver);
-                }
-                variableRuntime.Dispose();
-            }
-
-            //需要重启业务线程
-            var deviceRuntimes = GlobalData.IdDevices.Where(a => GlobalData.ContainsVariable(a.Key, newVariableRuntime)).Select(a => a.Value);
-            foreach (var businessDeviceRuntime in deviceRuntimes)
-            {
-                if (businessDeviceRuntime.Driver != null)
-                {
-                    changedDriver.TryAdd(businessDeviceRuntime.Driver);
-                }
-            }
-
-            //批量修改之后，需要重新加载
-
-            if (GlobalData.IdDevices.TryGetValue(newVariableRuntime.DeviceId, out var deviceRuntime))
-            {
-                newVariableRuntime.Init(deviceRuntime);
-
-                if (deviceRuntime.Driver != null && !changedDriver.Contains(deviceRuntime.Driver))
-                {
-                    changedDriver.TryAdd(deviceRuntime.Driver);
-                }
-
-            }
-
-            //根据条件重启通道线程
             if (restart)
             {
-                foreach (var driver in changedDriver)
-                {
-                    try
-                    {
-                        await driver.AfterVariablesChangedAsync().ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogWarning(ex, "VariablesChanged");
-                    }
-                }
+                //根据条件重启通道线程
+                await RuntimeServiceHelper.ChangedDriverAsync(changedDriver, _logger).ConfigureAwait(false);
             }
 
 
@@ -567,69 +280,24 @@ public class VariableRuntimeService : IVariableRuntimeService
         try
         {
             // await WaitLock.WaitAsync().ConfigureAwait(false);
-
-            var newVarIds = newVariableRuntimes.Select(a => a.Id).ToHashSet();
-            //获取变量，先找到原插件线程，然后修改插件线程内的字典，再改动全局字典，最后刷新插件
-            var data = GlobalData.IdVariables.Where(a => newVarIds.Contains(a.Key)).GroupBy(a => a.Value.DeviceRuntime);
-
-            ConcurrentHashSet<IDriver> changedDriver = new();
-            foreach (var group in data)
-            {
-                //这里改动的可能是旧绑定设备
-                //需要改动DeviceRuntim的变量字典
-                foreach (var item in group)
-                {
-                    //需要重启业务线程
-                    var deviceRuntimes = GlobalData.IdDevices.Where(a => GlobalData.ContainsVariable(a.Key, item.Value)).Select(a => a.Value);
-                    foreach (var deviceRuntime in deviceRuntimes)
-                    {
-                        if (deviceRuntime.Driver != null)
-                        {
-                            changedDriver.TryAdd(deviceRuntime.Driver);
-                        }
-                    }
-
-                    item.Value.Dispose();
-                }
-                if (group.Key != null)
-                {
-                    if (group.Key.Driver != null)
-                    {
-                        changedDriver.TryAdd(group.Key.Driver);
-                    }
-                }
-            }
-
             //批量修改之后，需要重新加载
             foreach (var newVariableRuntime in newVariableRuntimes)
             {
                 newVariableRuntime.DynamicVariable = true;
-                if (GlobalData.IdDevices.TryGetValue(newVariableRuntime.DeviceId, out var deviceRuntime))
-                {
-                    newVariableRuntime.Init(deviceRuntime);
-
-                    if (deviceRuntime.Driver != null && !changedDriver.Contains(deviceRuntime.Driver))
-                    {
-                        changedDriver.TryAdd(deviceRuntime.Driver);
-                    }
-                }
             }
+            var variableIds = newVariableRuntimes.Select(a => a.Id).ToHashSet();
+
+            ConcurrentHashSet<IDriver> changedDriver = new();
+            RuntimeServiceHelper.AddBusinessChangedDriver(variableIds, changedDriver);
+
+            RuntimeServiceHelper.AddCollectChangedDriver(newVariableRuntimes, changedDriver);
+
             if (restart)
             {
                 //根据条件重启通道线程
-                foreach (var driver in changedDriver)
-                {
-                    try
-                    {
-                        await driver.AfterVariablesChangedAsync().ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogWarning(ex, "VariablesChanged");
-                    }
-                }
-
+                await RuntimeServiceHelper.ChangedDriverAsync(changedDriver, _logger).ConfigureAwait(false);
             }
+
         }
         finally
         {
@@ -639,65 +307,20 @@ public class VariableRuntimeService : IVariableRuntimeService
     }
 
 
-    public async Task DeleteDynamicVariable(IEnumerable<long> variableIds, bool restart = true)
+    public async Task DeleteDynamicVariable(IEnumerable<long> ids, bool restart = true)
     {
         try
         {
             // await WaitLock.WaitAsync().ConfigureAwait(false);
-            var ids = variableIds.ToHashSet();
-
-            var variableRuntimes = GlobalData.IdVariables.Where(a => ids.Contains(a.Key)).Select(a => a.Value).Where(a => a.DynamicVariable);
-
-
-            var data = variableRuntimes.Where(a => a.DeviceRuntime?.Driver != null).GroupBy(a => a.DeviceRuntime).ToDictionary(a => a.Key, a => a.ToList());
-
-            foreach (var variableRuntime in variableRuntimes)
-            {
-                variableRuntime.Dispose();
-            }
+            var variableIds = ids.ToHashSet();
 
             ConcurrentHashSet<IDriver> changedDriver = new();
-            foreach (var group in data)
-            {
-                //这里改动的可能是旧绑定设备
-                //需要改动DeviceRuntim的变量字典
-                foreach (var item in group.Value)
-                {
-                    //需要重启业务线程
-                    var deviceRuntimes = GlobalData.IdDevices.Where(a => GlobalData.ContainsVariable(a.Key, item)).Select(a => a.Value);
-                    foreach (var deviceRuntime in deviceRuntimes)
-                    {
-                        if (deviceRuntime.Driver != null)
-                        {
-                            changedDriver.TryAdd(deviceRuntime.Driver);
-                        }
-                    }
+            RuntimeServiceHelper.AddBusinessChangedDriver(variableIds, changedDriver);
 
-                    item.Dispose();
-                }
-                if (group.Key != null)
-                {
-                    if (group.Key.Driver != null)
-                    {
-                        changedDriver.TryAdd(group.Key.Driver);
-                    }
-                }
-            }
             if (restart)
             {
-                foreach (var driver in changedDriver)
-                {
-                    try
-                    {
-                        await driver.AfterVariablesChangedAsync().ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogWarning(ex, "VariablesChanged");
-                    }
-                }
+                await RuntimeServiceHelper.ChangedDriverAsync(changedDriver, _logger).ConfigureAwait(false);
             }
-
 
 
         }

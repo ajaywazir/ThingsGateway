@@ -15,6 +15,7 @@ using Mapster;
 using SqlSugar;
 
 using ThingsGateway.Admin.Application;
+using ThingsGateway.Extension.Generic;
 using ThingsGateway.Foundation;
 
 using TouchSocket.Core;
@@ -52,7 +53,9 @@ public partial class SqlHistoryAlarm : BusinessBaseWithCacheVariableModel<Histor
     public override async Task AfterVariablesChangedAsync()
     {
         await base.AfterVariablesChangedAsync().ConfigureAwait(false);
-        IdVariableRuntimes = GlobalData.ReadOnlyIdVariables.Where(a => a.Value.AlarmEnable).ToDictionary();
+        IdVariableRuntimes.Clear();
+        IdVariableRuntimes.AddRange(GlobalData.ReadOnlyIdVariables.Where(a => a.Value.AlarmEnable));
+
 
         var ids = IdVariableRuntimes.Select(b => b.Value.DeviceId).ToHashSet();
 

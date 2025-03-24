@@ -44,7 +44,16 @@ public static class LinqExtensions
         }
         return thisValue;
     }
-
+#if NET6_0_OR_GREATER
+    /// <inheritdoc/>
+    public static void AddRange<TKey, TItem>(this Dictionary<TKey, TItem> @this, IEnumerable<KeyValuePair<TKey, TItem>> values)
+    {
+        foreach (var value in values)
+        {
+            @this.TryAdd(value.Key, value.Value);
+        }
+    }
+#endif
     /// <inheritdoc/>
     public static void AddRange<T>(this ICollection<T> @this, IEnumerable<T> values)
     {
