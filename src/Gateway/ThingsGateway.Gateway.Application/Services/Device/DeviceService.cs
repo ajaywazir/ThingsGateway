@@ -57,9 +57,16 @@ internal sealed class DeviceService : BaseService<Device>, IDeviceService
         var result = await db.UseTranAsync(async () =>
         {
 
-            await db.Insertable(devices.Keys.ToList()).ExecuteCommandAsync().ConfigureAwait(false);
 
-            await db.Insertable(devices.SelectMany(a => a.Value).ToList()).ExecuteCommandAsync().ConfigureAwait(false);
+            var device = devices.Keys.ToList();
+            ManageHelper.CheckDeviceCount(device.Count);
+
+            await db.Insertable(device).ExecuteCommandAsync().ConfigureAwait(false);
+
+            var variable = devices.SelectMany(a => a.Value).ToList();
+            ManageHelper.CheckVariableCount(variable.Count);
+
+            await db.Insertable(variable).ExecuteCommandAsync().ConfigureAwait(false);
 
 
         }).ConfigureAwait(false);
@@ -259,6 +266,9 @@ internal sealed class DeviceService : BaseService<Device>, IDeviceService
         if (type == ItemChangedType.Update)
             await GlobalData.SysUserService.CheckApiDataScopeAsync(input.CreateOrgId, input.CreateUserId).ConfigureAwait(false);
 
+
+        ManageHelper.CheckDeviceCount(1);
+
         if (await base.SaveAsync(input, type).ConfigureAwait(false))
         {
             DeleteDeviceFromCache();
@@ -318,6 +328,9 @@ internal sealed class DeviceService : BaseService<Device>, IDeviceService
         }
         var upData = devices.Where(a => a.IsUp).ToList();
         var insertData = devices.Where(a => !a.IsUp).ToList();
+
+        ManageHelper.CheckDeviceCount(insertData.Count);
+
         using var db = GetDB();
         await db.Fastest<Device>().PageSize(100000).BulkCopyAsync(insertData).ConfigureAwait(false);
         await db.Fastest<Device>().PageSize(100000).BulkUpdateAsync(upData).ConfigureAwait(false);

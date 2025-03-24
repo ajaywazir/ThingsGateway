@@ -30,17 +30,13 @@ namespace ThingsGateway.Gateway.Application;
 /// </summary>
 internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
 {
-    #region 动态配置
 
-    /// <summary>
-    /// 线程最大等待间隔时间
-    /// </summary>
-    public static volatile ChannelThreadOptions ChannelThreadOptions = App.GetOptions<ChannelThreadOptions>();
+    #region 动态配置
 
     /// <summary>
     /// 线程等待间隔时间
     /// </summary>
-    public static volatile int CycleInterval = ChannelThreadOptions.MaxCycleInterval;
+    public static volatile int CycleInterval = ManageHelper.ChannelThreadOptions.MaxCycleInterval;
 
     private static IDispatchService<DeviceRuntime> devicelRuntimeDispatchService;
     private static IDispatchService<DeviceRuntime> DeviceRuntimeDispatchService
@@ -77,11 +73,11 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
                     //Console.WriteLine($"CPU平均值：{avg}");
                     if (avg > 80)
                     {
-                        CycleInterval = Math.Max(CycleInterval, (int)(ChannelThreadOptions.MaxCycleInterval * avg / 100));
+                        CycleInterval = Math.Max(CycleInterval, (int)(ManageHelper.ChannelThreadOptions.MaxCycleInterval * avg / 100));
                     }
                     else if (avg < 50)
                     {
-                        CycleInterval = Math.Min(CycleInterval, ChannelThreadOptions.MinCycleInterval);
+                        CycleInterval = Math.Min(CycleInterval, ManageHelper.ChannelThreadOptions.MinCycleInterval);
                     }
                 }
             }
@@ -588,7 +584,7 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
                     if (driver.CurrentDevice.DeviceStatus == DeviceStatusEnum.OffLine && IsCollectChannel == true)
                     {
                         driver.CurrentDevice.CheckEnable = false;
-                        await Task.Delay(Math.Max(Math.Min(((CollectBase)driver).CollectProperties.ReIntervalTime, ChannelThreadOptions.CheckInterval / 2) - CycleInterval, 3000), token).ConfigureAwait(false);
+                        await Task.Delay(Math.Max(Math.Min(((CollectBase)driver).CollectProperties.ReIntervalTime, ManageHelper.ChannelThreadOptions.CheckInterval / 2) - CycleInterval, 3000), token).ConfigureAwait(false);
                         driver.CurrentDevice.CheckEnable = true;
                     }
                     else
@@ -849,7 +845,7 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
             try
             {
                 //检测设备线程假死
-                await Task.Delay(ChannelThreadOptions.CheckInterval, cancellationToken).ConfigureAwait(false);
+                await Task.Delay(ManageHelper.ChannelThreadOptions.CheckInterval, cancellationToken).ConfigureAwait(false);
                 if (Disposed) return;
 
                 var num = Drivers.Count;
@@ -861,7 +857,7 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
                         if (driver.CurrentDevice != null)
                         {
                             //线程卡死/初始化失败检测
-                            if (((driver.IsStarted && driver.CurrentDevice.ActiveTime != DateTime.UnixEpoch.ToLocalTime() && driver.CurrentDevice.ActiveTime.AddMinutes(ChannelThreadOptions.CheckInterval) <= DateTime.Now)
+                            if (((driver.IsStarted && driver.CurrentDevice.ActiveTime != DateTime.UnixEpoch.ToLocalTime() && driver.CurrentDevice.ActiveTime.AddMinutes(ManageHelper.ChannelThreadOptions.CheckInterval) <= DateTime.Now)
                                 || (driver.IsInitSuccess == false)) && !driver.DisposedValue)
                             {
                                 //如果线程处于暂停状态，跳过

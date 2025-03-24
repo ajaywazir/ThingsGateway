@@ -402,8 +402,13 @@ public partial class AdminTable<TItem> where TItem : class, new()
     [NotNull]
     private NavigationManager? NavigationManager { get; set; }
 
+    [Parameter]
+    public Func<Task<TItem>> OnAdd { get; set; }
+
     public Task<TItem> OnAddAsync()
     {
+        if (OnAdd != null)
+            return OnAdd();
         return Task.FromResult(new TItem());
     }
 

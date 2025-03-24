@@ -209,12 +209,12 @@ public partial class VariableRuntimeInfo : IDisposable
 
     #endregion 修改
 
-    private VariableRuntime CreateItemCallback()
+    private Task<VariableRuntime> OnAdd()
     {
-        return new VariableRuntime()
+        return Task.FromResult(new VariableRuntime()
         {
             DeviceId = SelectModel?.DeviceRuntime?.Id ?? 0
-        };
+        });
     }
 
     #region 导出

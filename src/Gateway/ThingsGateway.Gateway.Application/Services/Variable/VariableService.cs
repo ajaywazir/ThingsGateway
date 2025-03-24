@@ -64,6 +64,10 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
         // 计算每个设备分配的默认变量数
         var groupVariableCount = (int)Math.Ceiling((decimal)variableCount / deviceCount);
 
+        ManageHelper.CheckChannelCount(deviceCount);
+        ManageHelper.CheckDeviceCount(deviceCount);
+        ManageHelper.CheckVariableCount(variableCount);
+
         for (int i = 0; i < deviceCount; i++)
         {
             Channel channel = new Channel();
@@ -245,6 +249,8 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
         var result = await db.UseTranAsync(async () =>
         {
 
+            ManageHelper.CheckVariableCount(variables.Count);
+
             await db.Insertable(variables).ExecuteCommandAsync().ConfigureAwait(false);
 
 
@@ -279,7 +285,12 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
     [OperDesc("SaveVariable", isRecordPar: false, localizerType: typeof(Variable))]
     public async Task AddBatchAsync(List<Variable> input)
     {
+
+        ManageHelper.CheckVariableCount(input.Count);
+
         using var db = GetDB();
+
+
         var result = await db.Insertable(input).ExecuteCommandAsync().ConfigureAwait(false);
 
         if (result > 0)
@@ -408,6 +419,7 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
     {
         if (type == ItemChangedType.Update)
             await GlobalData.SysUserService.CheckApiDataScopeAsync(input.CreateOrgId, input.CreateUserId).ConfigureAwait(false);
+        ManageHelper.CheckVariableCount(1);
 
         if (await base.SaveAsync(input, type).ConfigureAwait(false))
         {
@@ -472,6 +484,7 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
         }
         var upData = variables.Where(a => a.IsUp).ToList();
         var insertData = variables.Where(a => !a.IsUp).ToList();
+        ManageHelper.CheckVariableCount(insertData.Count);
         using var db = GetDB();
         await db.Fastest<Variable>().PageSize(100000).BulkCopyAsync(insertData).ConfigureAwait(false);
         await db.Fastest<Variable>().PageSize(100000).BulkUpdateAsync(upData).ConfigureAwait(false);

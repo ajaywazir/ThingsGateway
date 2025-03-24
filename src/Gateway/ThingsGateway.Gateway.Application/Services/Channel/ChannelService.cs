@@ -54,12 +54,19 @@ internal sealed class ChannelService : BaseService<Channel>, IChannelService
         //事务
         var result = await db.UseTranAsync(async () =>
         {
+            ManageHelper.CheckChannelCount(models.Count);
 
             await db.Insertable(models).ExecuteCommandAsync().ConfigureAwait(false);
 
-            await db.Insertable(devices.Keys.ToList()).ExecuteCommandAsync().ConfigureAwait(false);
+            var device = devices.Keys.ToList();
+            ManageHelper.CheckDeviceCount(device.Count);
 
-            await db.Insertable(devices.SelectMany(a => a.Value).ToList()).ExecuteCommandAsync().ConfigureAwait(false);
+            await db.Insertable(device).ExecuteCommandAsync().ConfigureAwait(false);
+
+            var variable = devices.SelectMany(a => a.Value).ToList();
+            ManageHelper.CheckVariableCount(variable.Count);
+
+            await db.Insertable(variable).ExecuteCommandAsync().ConfigureAwait(false);
 
 
         }).ConfigureAwait(false);
@@ -238,6 +245,8 @@ internal sealed class ChannelService : BaseService<Channel>, IChannelService
         if (type == ItemChangedType.Update)
             await GlobalData.SysUserService.CheckApiDataScopeAsync(input.CreateOrgId, input.CreateUserId).ConfigureAwait(false);
 
+        ManageHelper.CheckChannelCount(1);
+
         if (await base.SaveAsync(input, type).ConfigureAwait(false))
         {
             DeleteChannelFromCache();
@@ -292,6 +301,9 @@ internal sealed class ChannelService : BaseService<Channel>, IChannelService
         }
         var upData = channels.Where(a => a.IsUp).ToList();
         var insertData = channels.Where(a => !a.IsUp).ToList();
+
+        ManageHelper.CheckChannelCount(insertData.Count);
+
         using var db = GetDB();
         await db.Fastest<Channel>().PageSize(100000).BulkCopyAsync(insertData).ConfigureAwait(false);
         await db.Fastest<Channel>().PageSize(100000).BulkUpdateAsync(upData).ConfigureAwait(false);

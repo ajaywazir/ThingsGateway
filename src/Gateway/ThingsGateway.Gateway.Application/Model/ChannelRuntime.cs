@@ -111,11 +111,6 @@ public class ChannelRuntime : Channel, IChannelOptions, IDisposable
 
     public void Init()
     {
-        if (GlobalData.Channels.Count > ThingsGateway.Gateway.Application.DeviceThreadManage.ChannelThreadOptions.MaxChannelCount)
-        {
-            throw new Exception($"The number of channels exceeds the limit {ThingsGateway.Gateway.Application.DeviceThreadManage.ChannelThreadOptions.MaxChannelCount}");
-        }
-
         // 通过插件名称获取插件信息
         PluginInfo = GlobalData.PluginService.GetList().FirstOrDefault(A => A.FullName == PluginName);
 
