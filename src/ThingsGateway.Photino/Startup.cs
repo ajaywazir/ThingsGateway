@@ -274,6 +274,8 @@ public class Startup : AppStartup
         services.AddAuthorizationCore();
         services.AddSingleton<IAuthorizationHandler, BlazorHybridAuthorizationHandler>();
         services.AddSingleton<AuthenticationStateProvider, BlazorHybridAuthenticationStateProvider>();
+
+        services.AddSignalR();
         #endregion
     }
 
