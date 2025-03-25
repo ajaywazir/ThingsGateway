@@ -7,7 +7,7 @@ using TouchSocket.Core;
 namespace ThingsGateway.RulesEngine;
 
 [CategoryNode(Category = "Actuator", ImgUrl = "_content/ThingsGateway.RulesEngine/img/CSharpScript.svg", Desc = nameof(ExecuteScriptNode), LocalizerType = typeof(ThingsGateway.RulesEngine._Imports), WidgetType = typeof(CSharpScriptWidget))]
-public class ExecuteScriptNode : TextNode, IActuatorNode, IExexcuteExpressionsBase
+public class ExecuteScriptNode : TextNode, IActuatorNode, IExexcuteExpressionsBase, IDisposable
 {
     public ExecuteScriptNode(string id, Point? position = null) : base(id, position) { Title = "ExecuteScriptNode"; Placeholder = "ExecuteScriptNode.Placeholder"; }
 
@@ -47,5 +47,22 @@ public class ExecuteScriptNode : TextNode, IActuatorNode, IExexcuteExpressionsBa
         exexcuteExpressions.Logger = Logger;
         return exexcuteExpressions.ExecuteAsync(input, cancellationToken);
 
+    }
+
+    public void Dispose()
+    {
+        if (text.IsNullOrWhiteSpace())
+            return;
+        try
+        {
+            var exexcuteExpressions = CSharpScriptEngineExtension.Do<IExexcuteExpressions>(text);
+            exexcuteExpressions.TryDispose();
+        }
+        catch
+        {
+
+        }
+        CSharpScriptEngineExtension.Remove(text);
+        GC.SuppressFinalize(this);
     }
 }
