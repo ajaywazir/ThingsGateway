@@ -8,5 +8,5 @@ public abstract class TextNode : PlaceholderModel
     }
 
     [ModelValue]
-    public string Text { get; set; }
+    public virtual string Text { get; set; }
 }

@@ -2,12 +2,14 @@
 
 public interface INode
 {
-    public TouchSocket.Core.ILog LogMessage { get; set; }
+    public TouchSocket.Core.ILog Logger { get; set; }
 }
+
 public interface IConditionNode : INode
 {
     public Task<bool> ExecuteAsync(NodeInput input, CancellationToken cancellationToken);
 }
+
 public interface IExpressionNode : INode
 {
     public Task<NodeOutput> ExecuteAsync(NodeInput input, CancellationToken cancellationToken);

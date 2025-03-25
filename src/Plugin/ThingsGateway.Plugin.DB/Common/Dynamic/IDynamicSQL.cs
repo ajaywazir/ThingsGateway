@@ -14,7 +14,7 @@ namespace ThingsGateway.Plugin.DB;
 
 public abstract class DynamicSQLBase
 {
-    public TouchSocket.Core.ILog LogMessage { get; set; }
+    public TouchSocket.Core.ILog Logger { get; set; }
 
     /// <summary>
     /// 建库建表

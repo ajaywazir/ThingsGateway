@@ -65,7 +65,7 @@ public partial class QuestDBProducer : BusinessBaseWithCacheIntervalVariableMode
             if (!_driverPropertys.BigTextScriptHistoryTable.IsNullOrEmpty())
             {
                 var getDeviceModel = CSharpScriptEngineExtension.Do<DynamicSQLBase>(_driverPropertys.BigTextScriptHistoryTable);
-                getDeviceModel.LogMessage = LogMessage;
+                getDeviceModel.Logger = LogMessage;
 
                 await getDeviceModel.DBInsertable(db, dbInserts, cancellationToken).ConfigureAwait(false);
 

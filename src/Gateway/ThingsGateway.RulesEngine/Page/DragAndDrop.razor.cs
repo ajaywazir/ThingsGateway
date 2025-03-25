@@ -97,7 +97,6 @@ public partial class DragAndDrop
     {
         try
         {
-            System.Console.WriteLine("1");
             Value = value;
             RuleHelpers.Load(_blazorDiagram, Value);
         }

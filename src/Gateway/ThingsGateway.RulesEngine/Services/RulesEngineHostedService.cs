@@ -111,7 +111,7 @@ internal sealed class RulesEngineHostedService : BackgroundService, IRulesEngine
     private static async Task Start(RulesLog rulesLog, BlazorDiagram item, CancellationToken cancellationToken)
     {
         var startNodes = item.Nodes.Where(a => a is StartNode);
-        startNodes.ForEach(a => (a as INode).LogMessage = rulesLog.Log);
+        startNodes.ForEach(a => (a as INode).Logger = rulesLog.Log);
         foreach (var link in startNodes.SelectMany(a => a.PortLinks))
         {
             rulesLog.Log.Trace("Start");
@@ -121,7 +121,7 @@ internal sealed class RulesEngineHostedService : BackgroundService, IRulesEngine
 
     private static async Task Analysis(NodeModel targetNode, NodeInput input, ILog log, CancellationToken cancellationToken)
     {
-        (targetNode as INode).LogMessage = log;
+        (targetNode as INode).Logger = log;
         try
         {
             if (targetNode == null)

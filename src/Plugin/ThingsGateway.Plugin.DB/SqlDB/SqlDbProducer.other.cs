@@ -75,7 +75,7 @@ public partial class SqlDBProducer : BusinessBaseWithCacheIntervalVariableModel<
             {
                 var getDeviceModel = CSharpScriptEngineExtension.Do<DynamicSQLBase>(_driverPropertys.BigTextScriptHistoryTable);
 
-                getDeviceModel.LogMessage = LogMessage;
+                getDeviceModel.Logger = LogMessage;
 
                 await getDeviceModel.DBInsertable(db, dbInserts, cancellationToken).ConfigureAwait(false);
 
@@ -112,7 +112,7 @@ public partial class SqlDBProducer : BusinessBaseWithCacheIntervalVariableModel<
             if (!_driverPropertys.BigTextScriptRealTable.IsNullOrEmpty())
             {
                 var getDeviceModel = CSharpScriptEngineExtension.Do<DynamicSQLBase>(_driverPropertys.BigTextScriptRealTable);
-                getDeviceModel.LogMessage = LogMessage;
+                getDeviceModel.Logger = LogMessage;
 
                 await getDeviceModel.DBInsertable(db, datas, cancellationToken).ConfigureAwait(false);
                 return OperResult.Success;

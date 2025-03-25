@@ -70,6 +70,10 @@ public static class CSharpScriptEngineExtension
         }
     }
 
+    public static void Remove(string source)
+    {
+        Instance.Remove($"{CacheKey}-{source}");
+    }
 
     private static MemoryCache Instance { get; set; } = new MemoryCache();
 

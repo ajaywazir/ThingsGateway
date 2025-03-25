@@ -15,9 +15,9 @@ public class ConditionNode : TextNode, IConditionNode
 
     Task<bool> IConditionNode.ExecuteAsync(NodeInput input, CancellationToken cancellationToken)
     {
-        var value = Text.GetExpressionsResult(input.Value, LogMessage);
+        var value = Text.GetExpressionsResult(input.Value, Logger);
         var next = value.ToBoolean(false);
-        LogMessage?.Trace($"Condition result: {next}");
+        Logger?.Trace($"Condition result: {next}");
         return Task.FromResult(next);
     }
 

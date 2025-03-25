@@ -19,13 +19,13 @@ public class VariableRpcNode : VariableNode, IActuatorNode
             {
                 var data = await value.RpcAsync(input.JToken.ToString(), $"RulesEngine: {RulesEngineName}", cancellationToken).ConfigureAwait(false);
                 if (data.IsSuccess)
-                    LogMessage?.Trace($" VariableRpcNode - VariableName {Text} : execute success");
+                    Logger?.Trace($" VariableRpcNode - VariableName {Text} : execute success");
                 else
-                    LogMessage?.Warning($" VariableRpcNode - VariableName {Text} : {data.ErrorMessage}");
+                    Logger?.Warning($" VariableRpcNode - VariableName {Text} : {data.ErrorMessage}");
                 return new NodeOutput() { Value = data };
             }
         }
-        LogMessage?.Warning($" VariableRpcNode - VariableName {Text} : not found");
+        Logger?.Warning($" VariableRpcNode - VariableName {Text} : not found");
         return new NodeOutput() { };
     }
 

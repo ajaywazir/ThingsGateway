@@ -1,5 +1,6 @@
 ﻿
 using ThingsGateway.Gateway.Application;
+using ThingsGateway.NewLife;
 
 using TouchSocket.Core;
 
@@ -10,11 +11,40 @@ public class ExecuteScriptNode : TextNode, IActuatorNode, IExexcuteExpressionsBa
 {
     public ExecuteScriptNode(string id, Point? position = null) : base(id, position) { Title = "ExecuteScriptNode"; Placeholder = "ExecuteScriptNode.Placeholder"; }
 
+    private string text;
+
+    [ModelValue]
+    public override string Text
+    {
+        get
+        {
+            return text;
+        }
+        set
+        {
+            if (text != value)
+            {
+                try
+                {
+                    var exexcuteExpressions = CSharpScriptEngineExtension.Do<IExexcuteExpressions>(text);
+                    exexcuteExpressions.TryDispose();
+                }
+                catch
+                {
+
+                }
+                CSharpScriptEngineExtension.Remove(text);
+            }
+
+            text = value;
+        }
+    }
+
     Task<NodeOutput> IActuatorNode.ExecuteAsync(NodeInput input, CancellationToken cancellationToken)
     {
-        LogMessage?.Trace($"Execute script");
+        Logger?.Trace($"Execute script");
         var exexcuteExpressions = CSharpScriptEngineExtension.Do<IExexcuteExpressions>(Text);
-        exexcuteExpressions.Logger = LogMessage;
+        exexcuteExpressions.Logger = Logger;
         return exexcuteExpressions.ExecuteAsync(input, cancellationToken);
 
     }

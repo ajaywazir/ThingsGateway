@@ -71,14 +71,14 @@ public class DeviceChangedTriggerNode : TextNode, ITriggerNode, IDisposable
                          {
                              if (FuncDict.TryGetValue(item, out var func))
                              {
-                                 item.LogMessage?.Trace($"Device changed: {item.Text}");
+                                 item.Logger?.Trace($"Device changed: {item.Text}");
                                  await func.Invoke(new NodeOutput() { Value = deviceDatas }).ConfigureAwait(false);
 
                              }
                          }
                          catch (Exception ex)
                          {
-                             item.LogMessage?.LogWarning(ex);
+                             item.Logger?.LogWarning(ex);
                          }
                      }, Environment.ProcessorCount, token).ConfigureAwait(false);
                 }

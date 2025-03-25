@@ -9,7 +9,7 @@ public class DelayNode : NumberNode, IExpressionNode
 
     async Task<NodeOutput> IExpressionNode.ExecuteAsync(NodeInput input, CancellationToken cancellationToken)
     {
-        LogMessage?.Trace($"Delay {Number} ms");
+        Logger?.Trace($"Delay {Number} ms");
         await Task.Delay(Number ?? 0, cancellationToken).ConfigureAwait(false);
         return new NodeOutput();
     }

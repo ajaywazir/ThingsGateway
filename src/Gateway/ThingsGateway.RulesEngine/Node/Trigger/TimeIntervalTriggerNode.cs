@@ -36,14 +36,14 @@ public class TimeIntervalTriggerNode : TextNode, ITriggerNode, IDisposable
                 {
                     if (Func != null)
                     {
-                        LogMessage?.Trace($"Timer: {Text}");
+                        Logger?.Trace($"Timer: {Text}");
                         await Func.Invoke(new NodeOutput() { Value = TimeTick.LastTime }).ConfigureAwait(false);
                     }
                 }
             }
             catch (Exception ex)
             {
-                LogMessage?.LogWarning(ex);
+                Logger?.LogWarning(ex);
             }
             finally
             {

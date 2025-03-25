@@ -12,10 +12,10 @@ public class DataNode : TextNode, IExpressionNode
 
     Task<NodeOutput> IExpressionNode.ExecuteAsync(NodeInput input, CancellationToken cancellationToken)
     {
-        var value = Text.GetExpressionsResult(input.Value, LogMessage);
+        var value = Text.GetExpressionsResult(input.Value, Logger);
         NodeOutput nodeOutput = new();
         nodeOutput.Value = value;
-        LogMessage?.Trace($"Data result: {nodeOutput.JToken?.ToString(Newtonsoft.Json.Formatting.Indented)}");
+        Logger?.Trace($"Data result: {nodeOutput.JToken?.ToString(Newtonsoft.Json.Formatting.Indented)}");
         return Task.FromResult(nodeOutput);
     }
 }

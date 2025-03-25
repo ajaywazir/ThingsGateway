@@ -153,8 +153,8 @@ public partial class QuestDBProducer : BusinessBaseWithCacheIntervalVariableMode
         //必须为间隔上传
         if (!_driverPropertys.BigTextScriptHistoryTable.IsNullOrEmpty())
         {
-            var hisModel = CSharpScriptEngineExtension.Do<DynamicSQLBase>(_driverPropertys.BigTextScriptHistoryTable);
-            hisModel.LogMessage = LogMessage;
+            DynamicSQLBase? hisModel = CSharpScriptEngineExtension.Do<DynamicSQLBase>(_driverPropertys.BigTextScriptHistoryTable);
+            hisModel.Logger = LogMessage;
             await hisModel.DBInit(db, cancellationToken).ConfigureAwait(false);
 
         }

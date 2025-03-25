@@ -2,10 +2,19 @@
 
 
 <div class="row me-4 script">
-    <div class="col-12  col-md-12">
+    <div class="col-12  col-md-8">
 
         <BootstrapLabel Value=@Localizer["Script"] ShowLabelTooltip="true" />
         <CodeEditor ShowLineNo Value=@Script ValueChanged=@Change Language="csharp" Theme="vs-dark" />
+
+    </div>
+    <div class="col-12  col-md-4">
+
+        <BootstrapLabel Value=@Localizer["Tip"] ShowLabelTooltip="true" />
+        <Alert Icon="fa-solid fa-circle-check" Color="Color.Success">@(new MarkupString("注意  <code>raw</code> 参数 为 <code>object</code> 类型，需要转换为实际类型操作"))</Alert>
+        <Alert Icon="fa-solid fa-circle-check" Color="Color.Success">@(new MarkupString("获取设备类实体，可用  <code>GlobalData.ReadOnlyDevices</code> 字典对象，键为设备名称，值为设备对象"))</Alert>
+        <Alert Icon="fa-solid fa-circle-check" Color="Color.Success">@(new MarkupString("获取变量类实体，可用方法  <code>GlobalData.GetVariable(\"设备名称1\",\"变量名称1\")</code> "))</Alert>
+        <Alert Icon="fa-solid fa-circle-check" Color="Color.Success">@(new MarkupString("详细说明查看文档对应内容页面"))</Alert>
 
     </div>
     <div class="col-6  col-md-6">

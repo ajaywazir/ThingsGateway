@@ -11,5 +11,5 @@ public abstract class BaseNode : NodeModel, INode
     }
 
     public string RulesEngineName { get; set; }
-    public ILog LogMessage { get; set; }
+    public ILog Logger { get; set; }
 }
