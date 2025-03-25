@@ -169,25 +169,6 @@ public partial class MainLayout : IDisposable
         await base.OnInitializedAsync();
     }
     private Tab Tab { get; set; }
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
-        {
-            //var items = Tab.Items.ToList();
-            //var tab = Tab.GetActiveTab();
-            //Tab.CloseAllTabs();
-            //Tab.AddTab("", Localizer["系统首页"], "fas fa-house", false, false);
-            //foreach (var item in items)
-            //{
-            //    if (item.Url == "/" || item.Url.IsNullOrWhiteSpace())
-            //        continue;
-            //    Tab.AddTab(item.Url, item.Text, item.Icon, item.IsActive, item.Closable);
-            //}
-            //if (!(tab.Url == "/" || tab.Url.IsNullOrWhiteSpace()))
-            //    NavigationManager.NavigateTo(ServiceProvider, tab.Url, tab.Text, tab.Icon, true);
-        }
-        base.OnAfterRender(firstRender);
-    }
 
     [Inject]
     IServiceProvider ServiceProvider { get; set; }
