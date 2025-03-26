@@ -18,7 +18,7 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-		<PackageReference Include="BootstrapBlazor.TableExport" Version="9.2.1" />
+		<PackageReference Include="BootstrapBlazor.TableExport" Version="9.2.2" />
 		<!--<PackageReference Include="MiniExcel" Version="1.39.0" />-->
 		<PackageReference Include="UAParser" Version="3.1.47" />
 		<PackageReference Include="Rougamo.Fody" Version="5.0.0" />

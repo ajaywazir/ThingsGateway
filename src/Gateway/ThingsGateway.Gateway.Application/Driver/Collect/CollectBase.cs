@@ -479,7 +479,7 @@ public abstract class CollectBase : DriverBase
                 }
                 else if (variableRuntime.RegisterAddress.Equals("ScriptRead", StringComparison.OrdinalIgnoreCase))
                 {
-                    variableRuntime.SetValue(variableRuntime, dateTime);
+                    variableRuntime.SetValue(variableRuntime.Value, dateTime);
                 }
 
             }

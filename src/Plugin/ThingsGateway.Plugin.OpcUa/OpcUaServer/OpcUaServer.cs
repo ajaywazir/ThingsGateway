@@ -38,6 +38,7 @@ public partial class OpcUaServer : BusinessBase
     internal ApplicationConfiguration m_configuration;
     private ThingsGatewayServer m_server;
     private volatile bool success = true;
+    private volatile bool connect_success = true;
 
     /// <inheritdoc/>
     public override VariablePropertyBase VariablePropertys => _variablePropertys;
@@ -182,7 +183,7 @@ public partial class OpcUaServer : BusinessBase
                     await Task.Delay(3000, cancellationToken).ConfigureAwait(false);
                     await m_application.CheckApplicationInstanceCertificates(true, 1200, cancellationToken).ConfigureAwait(false);
                     await m_application.Start(m_server).ConfigureAwait(false);
-                    success = true;
+                    connect_success = true;
                     IdVariableRuntimes.ForEach(a =>
                     {
                         VariableValueChange(a.Value, a.Value.Adapt<VariableBasicData>());
@@ -190,9 +191,9 @@ public partial class OpcUaServer : BusinessBase
                 }
                 catch (Exception ex)
                 {
-                    if (success)
+                    if (connect_success)
                         LogMessage.LogWarning(ex, Localizer["CanStartService"]);
-                    success = false;
+                    connect_success = false;
                     await Task.Delay(10000, cancellationToken).ConfigureAwait(false);
                 }
             }
