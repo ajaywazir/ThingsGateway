@@ -22,8 +22,8 @@ namespace ThingsGateway.Management;
 [Authorize(AuthenticationSchemes = "Bearer")]
 public class AutoUpdateControler : ControllerBase
 {
-    private IUpdateZipFileService _updateZipFileService;
-    public AutoUpdateControler(IUpdateZipFileService updateZipFileService)
+    private IUpdateZipFileHostedService _updateZipFileService;
+    public AutoUpdateControler(IUpdateZipFileHostedService updateZipFileService)
     {
         _updateZipFileService = updateZipFileService;
     }

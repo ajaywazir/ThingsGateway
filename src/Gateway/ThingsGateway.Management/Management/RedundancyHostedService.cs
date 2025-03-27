@@ -157,10 +157,14 @@ internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHo
                 {
                     var deviceRunTimes = GlobalData.ReadOnlyIdDevices.Where(a => a.Value.IsCollect == true).Select(a => a.Value).Adapt<List<DeviceDataWithValue>>();
 
-                    // 将 GlobalData.CollectDevices 和 GlobalData.Variables 同步到从站
-                    await tcpDmtpService.Clients.FirstOrDefault().GetDmtpRpcActor().InvokeAsync(
-                                     nameof(ReverseCallbackServer.UpdateGatewayData), null, waitInvoke, deviceRunTimes).ConfigureAwait(false);
-                    _log?.LogTrace($"Update StandbyStation data success");
+                    foreach (var item in tcpDmtpService.Clients)
+                    {
+                        // 将 GlobalData.CollectDevices 和 GlobalData.Variables 同步到从站
+                        await item.GetDmtpRpcActor().InvokeAsync(
+                                         nameof(ReverseCallbackServer.UpdateGatewayData), null, waitInvoke, deviceRunTimes).ConfigureAwait(false);
+                        _log?.LogTrace($"{item.GetIPPort()} Update StandbyStation data success");
+                    }
+
                 }
             }
             catch (Exception ex)

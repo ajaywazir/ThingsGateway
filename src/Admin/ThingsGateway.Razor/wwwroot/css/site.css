@@ -54,6 +54,10 @@
     background-color: rgba(0,0,0,0.3);
 }
 
+.table-toolbar .dropdown-menu {
+    overflow: auto;
+}
+
 .tabs-body-content {
     overflow-y: auto;
     height:100%;

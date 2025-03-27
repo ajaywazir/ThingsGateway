@@ -22,8 +22,7 @@ public class Startup : AppStartup
     {
         services.AddSingleton<IRedundancyService, RedundancyService>();
         services.AddGatewayHostedService<IRedundancyHostedService, RedundancyHostedService>();
-        services.AddGatewayHostedService<UpdateZipFileHostedService>();
-        services.AddSingleton<IUpdateZipFileService, UpdateZipFileService>();
+        services.AddGatewayHostedService<IUpdateZipFileHostedService, UpdateZipFileHostedService>();
         services.AddSingleton<GatewayRedundantSerivce>();
         services.AddSingleton<IGatewayRedundantSerivce>(provider => provider.GetRequiredService<GatewayRedundantSerivce>());
         services.AddConfigurableOptions<UpgradeServerOptions>();

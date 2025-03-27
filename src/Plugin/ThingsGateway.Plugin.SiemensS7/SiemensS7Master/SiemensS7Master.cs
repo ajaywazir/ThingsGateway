@@ -42,7 +42,7 @@ public class SiemensS7Master : CollectBase
         get
         {
             if (FoundationDevice.Channel?.ChannelType == ChannelTypeEnum.TcpService)
-                return typeof(ThingsGateway.Gateway.Razor.TcpServicePage);
+                return typeof(ThingsGateway.Gateway.Razor.TcpServiceComponent);
             else
                 return null;
         }

@@ -1,0 +1,23 @@
+﻿@namespace ThingsGateway.Upgrade
+
+
+<div class="h-100">
+
+    <DefaultTable TItem="TcpSessionClientDto" AutoGenerateColumns="true" ShowDefaultButtons=true
+                  AllowResizing="true" IsFixedHeader=true IsMultipleSelect=true
+                  ShowExtendEditButton=false ShowExtendDeleteButton=false ShowExtendButtons=true
+                  ShowDeleteButton="false" ShowAddButton="false" ShowEditButton="false"
+                  ShowExportButton="true" IsAutoQueryFirstRender=false ShowAdvancedSearch=false
+                  OnQueryAsync="OnQueryAsync" IsPagination=true SearchModel="SearchModel">
+
+        <RowButtonTemplate>
+            <TableCellButton Size="Size.ExtraSmall" Color="Color.Success" Icon="fa-solid fa-people-roof" Text="@UpgradeLocalizer["Upgrade"]" OnClick="()=>OnUpgrade(context)" />
+            <TableCellButton Size="Size.ExtraSmall" Color="Color.Success" Icon="fa-solid fa-people-roof" Text="@UpgradeLocalizer["Restart"]" OnClick="()=>OnRestart(context)" />
+        </RowButtonTemplate>
+    </DefaultTable>
+
+</div>
+
+@code {
+    DefaultTable<UpdateZipFile> table;
+}

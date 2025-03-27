@@ -1,0 +1,10 @@
+﻿@page "/autoupdate/index"
+@attribute [Authorize]
+@attribute [RolePermission]
+@inherits ComponentDefault
+@using Microsoft.AspNetCore.Authorization
+@using ThingsGateway.Admin.Application
+@using ThingsGateway.Admin.Razor
+@namespace ThingsGateway.Upgrade
+
+<UpdateZipFilePage/>

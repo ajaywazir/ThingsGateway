@@ -1,0 +1,61 @@
+﻿{
+  "RECORDS": [
+    {
+      "Id": "40",
+      "ParentId": "0",
+      "Module": "0",
+      "Title": "更新管理",
+      "Icon": "fa-solid fa-house-user",
+      "Code": "System",
+      "Category": "0",
+      "Target": "0",
+      "CreateTime": "2025-01-14 20:16:18.361",
+      "CreateUserId": "0",
+      "IsDelete": "0",
+      "SortCode": "0"
+    },
+    {
+      "Id": 17000022001001,
+      "ParentId": 0,
+      "Module": 40,
+      "Title": "更新管理",
+      "Icon": "fa-solid fa-house-user",
+      "Code": "System",
+      "Category": 1,
+      "Target": 0,
+      "NavLinkMatch": 1,
+      "Href": "/autoupdate/index",
+      "CreateTime": "5/11/2024 04:08:09.88",
+      "CreateUser": null,
+      "CreateUserId": 0,
+      "IsDelete": "0",
+      "UpdateTime": "5/11/2024 04:28:42.79",
+      "UpdateUser": null,
+      "UpdateUserId": null,
+      "SortCode": -1,
+      "ExtJson": null
+    },
+    {
+      "Id": 17000022001002,
+      "ParentId": 0,
+      "Module": 40,
+      "Title": "网关管理",
+      "Icon": "fa-solid fa-house-user",
+      "Code": "System",
+      "Category": 1,
+      "Target": 0,
+      "NavLinkMatch": 1,
+      "Href": "/autoupdate/gateway",
+      "CreateTime": "5/11/2024 04:08:09.88",
+      "CreateUser": null,
+      "CreateUserId": 0,
+      "IsDelete": "0",
+      "UpdateTime": "5/11/2024 04:28:42.79",
+      "UpdateUser": null,
+      "UpdateUserId": null,
+      "SortCode": -1,
+      "ExtJson": null
+    }
+
+  ]
+}

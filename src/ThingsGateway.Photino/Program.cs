@@ -121,7 +121,7 @@ internal sealed class Program
             return false;
         };
         hybridApp.Run();
-        Thread.Sleep(3000);
+        Thread.Sleep(2000);
     }
 
 

@@ -22,15 +22,18 @@
 		</EmbeddedResource>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Compile Include="..\ThingsGateway.UpgradeServer\Extensions\LogExtensions.cs" Link="Update\Update\Files\LogExtensions.cs" />
-	  <Compile Include="..\ThingsGateway.UpgradeServer\Model\UpdateZipFile.cs" Link="Update\Update\Files\UpdateZipFile.cs" />
-	  <Compile Include="..\ThingsGateway.UpgradeServer\Model\UpdateZipFileInput.cs" Link="Update\Update\Files\UpdateZipFileInput.cs" />
-	  <Compile Include="..\ThingsGateway.UpgradeServer\Services\FileConst.cs" Link="Update\Update\Files\FileConst.cs" />
-	  <Compile Include="..\ThingsGateway.UpgradeServer\Services\FilePlugin.cs" Link="Update\Update\Files\FilePlugin.cs" />
-	  <Compile Include="..\ThingsGateway.UpgradeServer\Services\UpgradeServerOptions.cs" Link="Update\Update\Files\UpgradeServerOptions.cs" />
-	</ItemGroup>
 
+
+	<ItemGroup>
+		<Compile Include="..\..\Upgrade\ThingsGateway.Upgrade\Extensions\LogExtensions.cs" Link="Update\Files\LogExtensions.cs" />
+		<Compile Include="..\..\Upgrade\ThingsGateway.Upgrade\Model\UpdateZipFile.cs" Link="Update\Files\UpdateZipFile.cs" />
+		<Compile Include="..\..\Upgrade\ThingsGateway.Upgrade\Model\UpdateZipFileInput.cs" Link="Update\Files\UpdateZipFileInput.cs" />
+		<Compile Include="..\..\Upgrade\ThingsGateway.Upgrade\Services\FileConst.cs" Link="Update\Files\FileConst.cs" />
+		<Compile Include="..\..\Upgrade\ThingsGateway.Upgrade\Services\FilePlugin.cs" Link="Update\Files\FilePlugin.cs" />
+		<Compile Include="..\..\Upgrade\ThingsGateway.Upgrade\Services\UpgradeServerOptions.cs" Link="Update\Files\UpgradeServerOptions.cs" />
+	</ItemGroup>
+	
+	
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Foundation\ThingsGateway.Foundation.Razor\ThingsGateway.Foundation.Razor.csproj" />
 	  <ProjectReference Include="..\ThingsGateway.Gateway.Razor\ThingsGateway.Gateway.Razor.csproj" />

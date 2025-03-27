@@ -91,9 +91,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThingsGateway.Management", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThingsGateway.RulesEngine", "Gateway\ThingsGateway.RulesEngine\ThingsGateway.RulesEngine.csproj", "{07D554EF-3D43-4722-84FC-DD3A0B614CA0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThingsGateway.UpgradeServer", "Gateway\ThingsGateway.UpgradeServer\ThingsGateway.UpgradeServer.csproj", "{C9A5E317-65F3-4608-A095-E7A21F1946CF}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThingsGateway.Plugin.Http", "Plugin\ThingsGateway.Plugin.Http\ThingsGateway.Plugin.Http.csproj", "{7E4696E3-1170-6AF6-844C-265BBCEC5DA7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Upgrade", "Upgrade", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThingsGateway.Upgrade", "Upgrade\ThingsGateway.Upgrade\ThingsGateway.Upgrade.csproj", "{7D5E01DE-D6D7-E45D-58FD-E01B38A312B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThingsGateway.UpgradeServer", "Upgrade\ThingsGateway.UpgradeServer\ThingsGateway.UpgradeServer.csproj", "{29DCAC9C-2D0F-E251-E907-F07D804CA117}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -245,14 +249,18 @@ Global
 		{07D554EF-3D43-4722-84FC-DD3A0B614CA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07D554EF-3D43-4722-84FC-DD3A0B614CA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07D554EF-3D43-4722-84FC-DD3A0B614CA0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C9A5E317-65F3-4608-A095-E7A21F1946CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C9A5E317-65F3-4608-A095-E7A21F1946CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C9A5E317-65F3-4608-A095-E7A21F1946CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C9A5E317-65F3-4608-A095-E7A21F1946CF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7E4696E3-1170-6AF6-844C-265BBCEC5DA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7E4696E3-1170-6AF6-844C-265BBCEC5DA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E4696E3-1170-6AF6-844C-265BBCEC5DA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E4696E3-1170-6AF6-844C-265BBCEC5DA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D5E01DE-D6D7-E45D-58FD-E01B38A312B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D5E01DE-D6D7-E45D-58FD-E01B38A312B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D5E01DE-D6D7-E45D-58FD-E01B38A312B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D5E01DE-D6D7-E45D-58FD-E01B38A312B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29DCAC9C-2D0F-E251-E907-F07D804CA117}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29DCAC9C-2D0F-E251-E907-F07D804CA117}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29DCAC9C-2D0F-E251-E907-F07D804CA117}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29DCAC9C-2D0F-E251-E907-F07D804CA117}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -292,12 +300,13 @@ Global
 		{014345C1-116F-4C45-A61B-5BFE257E1D56} = {5948EA23-4B42-4C22-A266-2E0AE5FA575F}
 		{F82B07C6-967F-404D-888A-0611E27D0C98} = {5948EA23-4B42-4C22-A266-2E0AE5FA575F}
 		{07D554EF-3D43-4722-84FC-DD3A0B614CA0} = {5948EA23-4B42-4C22-A266-2E0AE5FA575F}
-		{C9A5E317-65F3-4608-A095-E7A21F1946CF} = {5948EA23-4B42-4C22-A266-2E0AE5FA575F}
 		{7E4696E3-1170-6AF6-844C-265BBCEC5DA7} = {36510D70-161F-4241-B8D0-781E21032816}
+		{7D5E01DE-D6D7-E45D-58FD-E01B38A312B2} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{29DCAC9C-2D0F-E251-E907-F07D804CA117} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {199B1B96-4F56-4828-9531-813BA02DB282}
-		RESX_Rules = {"EnabledRules":[]}
 		RESX_NeutralResourcesLanguage = zh-Hans
+		RESX_Rules = {"EnabledRules":[]}
 	EndGlobalSection
 EndGlobal
