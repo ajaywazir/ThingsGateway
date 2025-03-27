@@ -115,14 +115,16 @@ public class DeviceSingleStreamDataHandleAdapter<TRequest> : CustomDataHandlingA
                 }
                 else if (result == FilterResult.GoOn)
                 {
-                    byteBlock.Position = pos + request.BodyLength + request.HeaderLength;
+                    var addLen = request.HeaderLength + request.BodyLength;
+                    byteBlock.Position = pos + (addLen > 0 ? addLen : 1);
                     Logger?.Trace($"{ToString()}-{request?.ToString()}");
                     request.OperCode = -1;
                     SetResult(request);
                 }
                 else if (result == FilterResult.Success)
                 {
-                    byteBlock.Position = request.HeaderLength + request.BodyLength + pos;
+                    var addLen = request.HeaderLength + request.BodyLength;
+                    byteBlock.Position = pos + (addLen > 0 ? addLen : 1);
                 }
                 return result;
             }
