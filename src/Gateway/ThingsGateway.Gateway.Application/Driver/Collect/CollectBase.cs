@@ -409,7 +409,7 @@ public abstract class CollectBase : DriverBase
 
     protected virtual ValueTask<bool> TestOnline(CancellationToken cancellationToken)
     {
-        return ValueTask.FromResult(true);
+        return ValueTask.FromResult(false);
     }
 
     protected void ScriptVariableRun(CancellationToken cancellationToken)
