@@ -92,6 +92,8 @@
 
 
   "ThingsGateway.Gateway.Razor._Imports": {
+    "CopyVariableNamePrefix": "CopyVariableNamePrefix",
+    "CopyVariableNameSuffixNumber": "CopyVariableNameSuffixNumber",
     "CopyChannelNamePrefix": "CopyChannelNamePrefix",
     "CopyChannelNameSuffixNumber": "CopyChannelNameSuffixNumber",
     "CopyDeviceNamePrefix": "CopyDeviceNamePrefix",

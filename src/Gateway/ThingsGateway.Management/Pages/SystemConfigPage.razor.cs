@@ -9,13 +9,10 @@
 //------------------------------------------------------------------------------
 
 #pragma warning disable CA2007 // 考虑对等待的任务调用 ConfigureAwait
-using Mapster;
-
 namespace ThingsGateway.Management;
 
 public partial class SystemConfigPage
 {
-    private RedundancyOptions RedundancyOptions { get; set; } = new();
 
     [Inject]
     [NotNull]
@@ -25,15 +22,7 @@ public partial class SystemConfigPage
     [Inject]
     [NotNull]
     private SwalService? SwalService { get; set; }
-    [Inject]
-    [NotNull]
-    private IRedundancyService? RedundancyService { get; set; }
 
-    protected override async Task OnParametersSetAsync()
-    {
-        RedundancyOptions = (await RedundancyService.GetRedundancyAsync()).Adapt<RedundancyOptions>();
-        await base.OnParametersSetAsync();
-    }
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)

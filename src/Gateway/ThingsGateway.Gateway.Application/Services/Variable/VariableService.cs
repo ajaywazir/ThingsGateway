@@ -124,33 +124,33 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
             }
         }
 
-        Channel serviceChannel = new Channel();
-        Device serviceDevice = new Device();
+        //Channel serviceChannel = new Channel();
+        //Device serviceDevice = new Device();
 
-        {
-            var id = CommonUtils.GetSingleId();
-            var name = $"modbusSlaveChannel{id}";
-            serviceChannel.ChannelType = ChannelTypeEnum.TcpService;
-            serviceChannel.Name = name;
-            serviceChannel.Enable = true;
-            serviceChannel.Id = id;
-            serviceChannel.CreateUserId = UserManager.UserId;
-            serviceChannel.CreateOrgId = UserManager.OrgId;
-            serviceChannel.BindUrl = "127.0.0.1:502";
-            serviceChannel.PluginName = "ThingsGateway.Plugin.Modbus.ModbusSlave";
-            newChannels.Add(serviceChannel);
-        }
-        {
-            var id = CommonUtils.GetSingleId();
-            var name = $"modbusSlaveDevice{id}";
-            serviceDevice.Name = name;
-            serviceDevice.Id = id;
-            serviceDevice.CreateUserId = UserManager.UserId;
-            serviceDevice.CreateOrgId = UserManager.OrgId;
-            serviceDevice.ChannelId = serviceChannel.Id;
-            serviceDevice.IntervalTime = "1000";
-            newDevices.Add(serviceDevice);
-        }
+        //{
+        //    var id = CommonUtils.GetSingleId();
+        //    var name = $"modbusSlaveChannel{id}";
+        //    serviceChannel.ChannelType = ChannelTypeEnum.TcpService;
+        //    serviceChannel.Name = name;
+        //    serviceChannel.Enable = true;
+        //    serviceChannel.Id = id;
+        //    serviceChannel.CreateUserId = UserManager.UserId;
+        //    serviceChannel.CreateOrgId = UserManager.OrgId;
+        //    serviceChannel.BindUrl = "127.0.0.1:502";
+        //    serviceChannel.PluginName = "ThingsGateway.Plugin.Modbus.ModbusSlave";
+        //    newChannels.Add(serviceChannel);
+        //}
+        //{
+        //    var id = CommonUtils.GetSingleId();
+        //    var name = $"modbusSlaveDevice{id}";
+        //    serviceDevice.Name = name;
+        //    serviceDevice.Id = id;
+        //    serviceDevice.CreateUserId = UserManager.UserId;
+        //    serviceDevice.CreateOrgId = UserManager.OrgId;
+        //    serviceDevice.ChannelId = serviceChannel.Id;
+        //    serviceDevice.IntervalTime = "1000";
+        //    newDevices.Add(serviceDevice);
+        //}
 
         Channel mqttChannel = new Channel();
         Device mqttDevice = new Device();
@@ -183,35 +183,35 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
         }
 
 
-        Channel opcuaChannel = new Channel();
-        Device opcuaDevice = new Device();
+        //Channel opcuaChannel = new Channel();
+        //Device opcuaDevice = new Device();
 
-        {
-            var id = CommonUtils.GetSingleId();
-            var name = $"opcuaChannel{id}";
-            opcuaChannel.ChannelType = ChannelTypeEnum.Other;
-            opcuaChannel.Name = name;
-            opcuaChannel.Id = id;
-            opcuaChannel.CreateUserId = UserManager.UserId;
-            opcuaChannel.CreateOrgId = UserManager.OrgId;
-            opcuaChannel.PluginName = "ThingsGateway.Plugin.OpcUa.OpcUaServer";
-            newChannels.Add(opcuaChannel);
-        }
-        {
-            var id = CommonUtils.GetSingleId();
-            var name = $"opcuaDevice{id}";
-            opcuaDevice.Name = name;
-            opcuaDevice.Id = id;
-            opcuaDevice.CreateUserId = UserManager.UserId;
-            opcuaDevice.CreateOrgId = UserManager.OrgId;
-            opcuaDevice.ChannelId = opcuaChannel.Id;
-            opcuaDevice.IntervalTime = "1000";
-            opcuaDevice.DevicePropertys = new Dictionary<string, string>
-            {
-              {"IsAllVariable", "true"}
-            };
-            newDevices.Add(opcuaDevice);
-        }
+        //{
+        //    var id = CommonUtils.GetSingleId();
+        //    var name = $"opcuaChannel{id}";
+        //    opcuaChannel.ChannelType = ChannelTypeEnum.Other;
+        //    opcuaChannel.Name = name;
+        //    opcuaChannel.Id = id;
+        //    opcuaChannel.CreateUserId = UserManager.UserId;
+        //    opcuaChannel.CreateOrgId = UserManager.OrgId;
+        //    opcuaChannel.PluginName = "ThingsGateway.Plugin.OpcUa.OpcUaServer";
+        //    newChannels.Add(opcuaChannel);
+        //}
+        //{
+        //    var id = CommonUtils.GetSingleId();
+        //    var name = $"opcuaDevice{id}";
+        //    opcuaDevice.Name = name;
+        //    opcuaDevice.Id = id;
+        //    opcuaDevice.CreateUserId = UserManager.UserId;
+        //    opcuaDevice.CreateOrgId = UserManager.OrgId;
+        //    opcuaDevice.ChannelId = opcuaChannel.Id;
+        //    opcuaDevice.IntervalTime = "1000";
+        //    opcuaDevice.DevicePropertys = new Dictionary<string, string>
+        //    {
+        //      {"IsAllVariable", "true"}
+        //    };
+        //    newDevices.Add(opcuaDevice);
+        //}
 
         using var db = GetDB();
 

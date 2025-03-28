@@ -1,0 +1,30 @@
+﻿@namespace ThingsGateway.Gateway.Razor
+@using ThingsGateway.Admin.Application
+@using ThingsGateway.Admin.Razor
+@using ThingsGateway.Foundation
+@using ThingsGateway.Gateway.Application
+@inherits ComponentDefault
+
+<div class="channel">
+
+    <div class="row g-2 mx-1 form-inline">
+
+
+        <div class="col-12  col-md-12">
+            <BootstrapInput @bind-Value="CopyCount" ShowLabel=true ShowLabelTooltip=true DisplayText="@GatewayLocalizer["CopyCount"]"></BootstrapInput>
+        </div>
+
+        <div class="col-12  col-md-6">
+            <BootstrapInput @bind-Value="CopyVariableNamePrefix" ShowLabel=true ShowLabelTooltip=true DisplayText="@GatewayLocalizer["CopyVariableNamePrefix"]"></BootstrapInput>
+        </div>
+
+        <div class="col-12  col-md-6">
+            <BootstrapInput @bind-Value="CopyVariableNameSuffixNumber" ShowLabel=true ShowLabelTooltip=true DisplayText="@GatewayLocalizer["CopyVariableNameSuffixNumber"]"></BootstrapInput>
+        </div>
+
+
+    </div>
+
+    <Button class="mt-2" Icon="fa-solid fa-floppy-disk" IsAsync Text=@RazorLocalizer["Save"] OnClick="Save" />
+
+</div>

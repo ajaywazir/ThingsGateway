@@ -9,6 +9,8 @@
 //------------------------------------------------------------------------------
 
 #pragma warning disable CA2007 // 考虑对等待的任务调用 ConfigureAwait
+using Mapster;
+
 using Microsoft.AspNetCore.Components.Forms;
 
 using TouchSocket.Core;
@@ -31,8 +33,7 @@ public partial class RedundancyOptionsPage
     [Parameter, EditorRequired]
     public string LogPath { get; set; }
 
-    [Parameter, EditorRequired]
-    public RedundancyOptions Model { get; set; }
+    private RedundancyOptions Model { get; set; }
 
     [Parameter, EditorRequired]
     public ILog Logger { get; set; }
@@ -41,12 +42,12 @@ public partial class RedundancyOptionsPage
     [NotNull]
     public IStringLocalizer<ThingsGateway.Management._Imports> ManagementLocalizer { get; set; }
     /// <inheritdoc/>
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
+        await base.OnInitializedAsync();
         HeaderText = ManagementLocalizer[nameof(HeaderText)];
+        Model = (await RedundancyService.GetRedundancyAsync()).Adapt<RedundancyOptions>();
     }
-
 
     [Inject]
     [NotNull]

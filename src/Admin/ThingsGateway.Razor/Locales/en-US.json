@@ -14,6 +14,7 @@
     "Tip": "When the data volume is large (more than 200,000), the import may take more than 1 minute, please be patient"
   },
   "ThingsGateway.Razor._Imports": {
+    "Copy": "Copy",
     "Add": "Add",
     "Remove": "Remove",
     "BatchEdit": "BacthEdit",

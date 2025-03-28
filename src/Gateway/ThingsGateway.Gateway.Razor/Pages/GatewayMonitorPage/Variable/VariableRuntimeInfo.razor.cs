@@ -126,6 +126,37 @@ public partial class VariableRuntimeInfo : IDisposable
     private string SlaveUrl { get; set; }
 
     #region 修改
+    private async Task Copy(IEnumerable<Variable> variables)
+    {
+        var op = new DialogOption()
+        {
+            IsScrolling = false,
+            ShowMaximizeButton = true,
+            Size = Size.ExtraLarge,
+            Title = RazorLocalizer["Copy"],
+            ShowFooter = false,
+            ShowCloseButton = false,
+        };
+        if (!variables.Any())
+        {
+            await ToastService.Warning(null, RazorLocalizer["PleaseSelect"]);
+            return;
+        }
+        op.Component = BootstrapDynamicComponent.CreateComponent<VariableCopyComponent>(new Dictionary<string, object?>
+        {
+             {nameof(VariableCopyComponent.OnSave), async (List<Variable> variables1) =>
+            {
+
+                await Task.Run(() =>GlobalData.VariableRuntimeService.AddBatchAsync(variables1,AutoRestartThread));
+                await InvokeAsync(table.QueryAsync);
+
+            }},
+            {nameof(VariableCopyComponent.Model),variables },
+        });
+
+        await DialogService.Show(op);
+
+    }
 
     private async Task BatchEdit(IEnumerable<Variable> variables)
     {

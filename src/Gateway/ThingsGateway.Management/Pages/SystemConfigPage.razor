@@ -14,7 +14,7 @@
 
 
 <div class="appconfig">
-    <Tab class="h-100" @ref=tabComponent>
+    <Tab class="h-100" @ref=tabComponent IsOnlyRenderActiveTab>
 
         <TabItem Text=@RedundancyLocalizer[nameof(RedundancyOptions)]>
 
@@ -28,7 +28,7 @@
 
                 <BodyTemplate>
 
-                    <RedundancyOptionsPage Logger="@RedundancyHostedService.TextLogger" Model="@RedundancyOptions" LogPath="@RedundancyHostedService.LogPath" />
+                    <RedundancyOptionsPage Logger="@RedundancyHostedService.TextLogger" LogPath="@RedundancyHostedService.LogPath" />
 
                 </BodyTemplate>
 
