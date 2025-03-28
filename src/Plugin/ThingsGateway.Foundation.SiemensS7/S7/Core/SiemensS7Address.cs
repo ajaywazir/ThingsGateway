@@ -232,7 +232,7 @@ public class SiemensS7Address : S7Request
                 {
                     s7AddressData.DataCode = S7Area.DB;
                     string[] strArray = strArr[index].Split('.');
-                    s7AddressData.DbBlock = strArray[index][1] != 'B' ? Convert.ToUInt16(strArray[0].Substring(1)) : Convert.ToUInt16(strArray[0].Substring(2));
+                    s7AddressData.DbBlock = strArr[index][1] != 'B' ? Convert.ToUInt16(strArray[0].Substring(1)) : Convert.ToUInt16(strArray[0].Substring(2));
                     string address1 = strArr[index].Substring(strArr[index].IndexOf('.') + 1);
                     if (address1.StartsWith("DBX") || address1.StartsWith("DBB") || address1.StartsWith("DBW") || address1.StartsWith("DBD"))
                     {

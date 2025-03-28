@@ -186,6 +186,7 @@ public partial class MqttCollect : CollectBase
         var mqttClientOptionsBuilder = mqttFactory.CreateClientOptionsBuilder()
            .WithClientId(_driverPropertys.ConnectId)
            .WithCredentials(_driverPropertys.UserName, _driverPropertys.Password)//账密
+           .WithProtocolVersion(_driverPropertys.MqttProtocolVersion)
            .WithCleanSession(true)
            .WithKeepAlivePeriod(TimeSpan.FromSeconds(120.0));
 #else

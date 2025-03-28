@@ -8,6 +8,8 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
+using MQTTnet.Formatter;
+
 namespace ThingsGateway.Plugin.Mqtt;
 
 /// <summary>
@@ -33,6 +35,8 @@ public class MqttCollectProperty : CollectPropertyBase
     [DynamicProperty]
     public int Port { get; set; } = 1883;
 
+    [DynamicProperty]
+    public MqttProtocolVersion MqttProtocolVersion { get; set; }
     /// <summary>
     /// 是否websocket连接
     /// </summary>

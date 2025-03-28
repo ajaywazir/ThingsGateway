@@ -69,7 +69,7 @@ public partial class MqttClient : BusinessBaseWithCacheIntervalScript<VariableBa
            .WithCredentials(_driverPropertys.UserName, _driverPropertys.Password)//账密
            .WithCleanSession(true)
 
-
+           .WithProtocolVersion(_driverPropertys.MqttProtocolVersion)
 
            .WithKeepAlivePeriod(TimeSpan.FromSeconds(120.0));
 

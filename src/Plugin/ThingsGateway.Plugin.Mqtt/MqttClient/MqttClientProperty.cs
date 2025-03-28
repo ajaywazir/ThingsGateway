@@ -12,6 +12,8 @@ using BootstrapBlazor.Components;
 
 using Microsoft.AspNetCore.Components.Forms;
 
+using MQTTnet.Formatter;
+
 namespace ThingsGateway.Plugin.Mqtt;
 
 /// <summary>
@@ -31,7 +33,8 @@ public class MqttClientProperty : BusinessPropertyWithCacheIntervalScript
     [DynamicProperty]
     public int Port { get; set; } = 1883;
 
-
+    [DynamicProperty]
+    public MqttProtocolVersion MqttProtocolVersion { get; set; }
 
     [DynamicProperty]
     public bool TLS { get; set; } = false;

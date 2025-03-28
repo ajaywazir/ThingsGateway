@@ -5,6 +5,7 @@
   "ThingsGateway.Plugin.Mqtt.MqttClientProperty": {
     "IP": "IP",
     "Port": "Port",
+    "MqttProtocolVersion": "MqttProtocolVersion",
     "DetailLog": "DetailLog",
     "TLS": "TLS",
     "CAFile_BrowserFile": "CAFile",
@@ -70,6 +71,7 @@
   "ThingsGateway.Plugin.Mqtt.MqttCollectProperty": {
     "IP": "IP",
     "Port": "Port",
+    "MqttProtocolVersion": "MqttProtocolVersion",
     "DetailLog": "DetailLog",
     "TLS": "TLS",
     "CAFile_BrowserFile": "CAFile",
