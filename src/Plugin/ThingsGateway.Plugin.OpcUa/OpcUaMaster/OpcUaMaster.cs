@@ -390,7 +390,7 @@ public class OpcUaMaster : CollectBase
                 {
                     if ((item.IsOnline || item.CollectTime == DateTime.UnixEpoch.ToLocalTime()))
                     {
-                        LogMessage.LogWarning($"OPC quality bad:{Environment.NewLine}{data.Item1}");
+                        LogMessage.LogWarning($"OPC quality bad:{Environment.NewLine}{item.Name}");
                     }
                     item.SetValue(null, time, false);
                     item.VariableSource.LastErrorMessage = data.dataValue.StatusCode.ToString();
