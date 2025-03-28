@@ -77,3 +77,10 @@ QQ群：605534569 [跳转](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=NnBjPO-8kcN
 ## Pro插件
 
 [插件列表](https://thingsgateway.cn/docs/1001)
+
+
+## 特别声明
+
+ThingsGateway 项目已加入 [dotNET China](https://gitee.com/dotnetchina)  组织。<br/>
+
+![dotnetchina](https://gitee.com/dotnetchina/home/raw/master/assets/dotnetchina-raw.png "dotNET China LOGO")
