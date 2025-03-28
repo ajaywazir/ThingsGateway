@@ -87,7 +87,7 @@ public partial class TcpServiceComponent : IDriverUIBase
         }
     }
 
-    public ITcpServiceChannel? TcpServiceChannel => (((DriverBase)Driver)?.FoundationDevice?.Channel as ITcpServiceChannel);
+    public ITcpServiceChannel? TcpServiceChannel => (((DriverBase)Driver)?.Channel as ITcpServiceChannel);
 }
 
 public class TcpSessionClientDto

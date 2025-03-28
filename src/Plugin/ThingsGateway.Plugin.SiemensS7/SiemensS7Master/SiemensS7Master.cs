@@ -24,7 +24,7 @@ namespace ThingsGateway.Plugin.SiemensS7;
 /// <summary>
 /// <inheritdoc/>
 /// </summary>
-public class SiemensS7Master : CollectBase
+public class SiemensS7Master : CollectFoundationBase
 {
     private readonly SiemensS7MasterProperty _driverPropertys = new();
 

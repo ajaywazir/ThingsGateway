@@ -27,7 +27,6 @@ namespace ThingsGateway.Gateway.Application
         Type DriverPropertyUIType { get; }
         Type DriverUIType { get; }
         Type DriverVariableAddressUIType { get; }
-        IDevice? FoundationDevice { get; }
         bool? IsCollectDevice { get; }
         bool IsInitSuccess { get; }
         bool IsStarted { get; }

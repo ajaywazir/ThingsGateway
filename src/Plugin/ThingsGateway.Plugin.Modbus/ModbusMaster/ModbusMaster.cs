@@ -16,7 +16,7 @@ namespace ThingsGateway.Plugin.Modbus;
 /// <summary>
 /// <inheritdoc/>
 /// </summary>
-public class ModbusMaster : CollectBase
+public class ModbusMaster : CollectFoundationBase
 {
     private readonly ModbusMasterProperty _driverPropertys = new();
 

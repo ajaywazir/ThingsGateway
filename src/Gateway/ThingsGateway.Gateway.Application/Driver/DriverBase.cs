@@ -106,10 +106,6 @@ public abstract class DriverBase : DisposableObject, IDriver
         }
     }
 
-    /// <summary>
-    /// 底层驱动，有可能为null
-    /// </summary>
-    public virtual IDevice? FoundationDevice { get; }
 
     private IStringLocalizer Localizer { get; }
 
@@ -130,10 +126,7 @@ public abstract class DriverBase : DisposableObject, IDriver
         }
     }
 
-    public override string ToString()
-    {
-        return FoundationDevice?.ToString() ?? base.ToString();
-    }
+
 
     #region 任务管理器传入
 
@@ -435,10 +428,21 @@ public abstract class DriverBase : DisposableObject, IDriver
     #endregion 插件生命周期
 
     #region 插件重写
+
+    /// <summary>
+    /// 开始通讯执行的方法
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    protected virtual Task ProtectedStartAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
+    }
+
     /// <summary>
     /// 内部初始化
     /// </summary>
-    protected virtual void ProtectedInitDevice(DeviceRuntime device)
+    internal virtual void ProtectedInitDevice(DeviceRuntime device)
     {
 
     }
@@ -448,13 +452,9 @@ public abstract class DriverBase : DisposableObject, IDriver
     /// </summary>
     public Dictionary<long, VariableRuntime> IdVariableRuntimes { get; } = new();
 
-    /// <summary>
-    /// 是否连接成功
-    /// </summary>
-    public virtual bool IsConnected()
-    {
-        return FoundationDevice?.OnLine == true;
-    }
+    public abstract bool IsConnected();
+
+    public IChannel? Channel { get; private set; }
 
     /// <summary>
     /// 初始化，在开始前执行，异常时会标识重启
@@ -462,6 +462,7 @@ public abstract class DriverBase : DisposableObject, IDriver
     /// <param name="channel">通道，当通道类型为<see cref="ChannelTypeEnum.Other"/>时，传入null</param>
     internal protected virtual async Task InitChannelAsync(IChannel? channel = null)
     {
+        Channel = channel;
         if (channel != null && channel.PluginManager == null)
             await channel.SetupAsync(channel.Config.Clone()).ConfigureAwait(false);
         await AfterVariablesChangedAsync().ConfigureAwait(false);
@@ -472,23 +473,6 @@ public abstract class DriverBase : DisposableObject, IDriver
     /// </summary>
     public abstract Task AfterVariablesChangedAsync();
 
-    /// <inheritdoc/>
-    protected override void Dispose(bool disposing)
-    {
-        FoundationDevice?.Dispose();
-        base.Dispose(disposing);
-    }
-
-    /// <summary>
-    /// 开始通讯执行的方法
-    /// </summary>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    protected virtual async Task ProtectedStartAsync(CancellationToken cancellationToken)
-    {
-        if (FoundationDevice?.Channel != null)
-            await FoundationDevice.Channel.ConnectAsync(FoundationDevice.Channel.ChannelOptions.ConnectTimeout, cancellationToken).ConfigureAwait(false);
-    }
 
     /// <summary>
     /// 间隔执行

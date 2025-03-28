@@ -10,6 +10,7 @@
 
 using MQTTnet;
 
+
 #if NET6_0
 using MQTTnet.Client;
 #endif
@@ -262,4 +263,6 @@ public partial class MqttCollect : CollectBase
         ScriptVariableRun(cancellationToken);
 
     }
+
+
 }

@@ -61,7 +61,7 @@ public abstract class BusinessBase : DriverBase
     /// 初始化方法，用于初始化设备运行时。
     /// </summary>
     /// <param name="device">设备运行时实例。</param>
-    protected override void ProtectedInitDevice(DeviceRuntime device)
+    internal override void ProtectedInitDevice(DeviceRuntime device)
     {
         BusinessBaseLocalizer = App.CreateLocalizerByType(typeof(BusinessBase))!;
         base.ProtectedInitDevice(device); // 调用基类的初始化方法

@@ -51,15 +51,12 @@ public class ModbusSlave : BusinessBase
     {
         get
         {
-            if (FoundationDevice.Channel?.ChannelType == ChannelTypeEnum.TcpService)
+            if (_plc.Channel?.ChannelType == ChannelTypeEnum.TcpService)
                 return typeof(ThingsGateway.Gateway.Razor.TcpServiceComponent);
             else
                 return null;
         }
     }
-
-    /// <inheritdoc/>
-    public override IDevice FoundationDevice => _plc;
 
     /// <inheritdoc/>
     public override VariablePropertyBase VariablePropertys => _variablePropertys;
@@ -68,6 +65,30 @@ public class ModbusSlave : BusinessBase
     protected override BusinessPropertyBase _businessPropertyBase => _driverPropertys;
 
     protected IStringLocalizer Localizer { get; private set; }
+
+    /// <summary>
+    /// 是否连接成功
+    /// </summary>
+    public override bool IsConnected()
+    {
+        return _plc?.OnLine == true;
+    }
+
+    public override string ToString()
+    {
+        return _plc?.ToString() ?? base.ToString();
+    }
+
+    /// <summary>
+    /// 开始通讯执行的方法
+    /// </summary>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    protected override async Task ProtectedStartAsync(CancellationToken cancellationToken)
+    {
+        if (_plc?.Channel != null)
+            await _plc.Channel.ConnectAsync(_plc.Channel.ChannelOptions.ConnectTimeout, cancellationToken).ConfigureAwait(false);
+    }
 
     /// <inheritdoc/>
     protected override async Task InitChannelAsync(IChannel? channel = null)
@@ -126,8 +147,10 @@ public class ModbusSlave : BusinessBase
         ModbusVariables?.Clear();
         _modbusVariableQueue?.Clear();
         GlobalData.VariableValueChangeEvent -= VariableValueChange;
+        _plc?.SafeDispose();
         base.Dispose(disposing);
     }
+
 
     protected override async ValueTask ProtectedExecuteAsync(CancellationToken cancellationToken)
     {
@@ -144,8 +167,8 @@ public class ModbusSlave : BusinessBase
             {
                 if (cancellationToken.IsCancellationRequested)
                     return;
-                await FoundationDevice.Channel.CloseAsync().ConfigureAwait(false);
-                await FoundationDevice.Channel.ConnectAsync(3000, cancellationToken).ConfigureAwait(false);
+                await _plc.Channel.CloseAsync().ConfigureAwait(false);
+                await _plc.Channel.ConnectAsync(3000, cancellationToken).ConfigureAwait(false);
                 success = true;
             }
             catch (ObjectDisposedException) { }

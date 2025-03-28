@@ -15,7 +15,7 @@ namespace ThingsGateway.Plugin.Dlt645;
 /// <summary>
 /// <inheritdoc/>
 /// </summary>
-public class Dlt645_2007Master : CollectBase
+public class Dlt645_2007Master : CollectFoundationBase
 {
     private readonly Dlt645_2007MasterProperty _driverPropertys = new();
 

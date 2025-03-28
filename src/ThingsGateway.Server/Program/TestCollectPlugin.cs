@@ -18,7 +18,7 @@
 ///// <summary>
 ///// 插件类
 ///// </summary>
-//public class TestCollectPlugin : CollectBase
+//public class TestCollectPlugin : CollectFoundationBase
 //{
 //    /// <summary>
 //    /// 插件配置项，继承<see cref="CollectPropertyBase"/> 返回类实例

@@ -45,7 +45,7 @@ public abstract class CollectBase : DriverBase
 
     public sealed override object DriverProperties => CollectProperties;
 
-    private IStringLocalizer Localizer { get; set; }
+    protected IStringLocalizer Localizer { get; set; }
 
     /// <summary>
     /// 获取设备变量打包列表/特殊方法列表
@@ -157,7 +157,7 @@ public abstract class CollectBase : DriverBase
         }
     }
 
-    protected override void ProtectedInitDevice(DeviceRuntime device)
+    internal override void ProtectedInitDevice(DeviceRuntime device)
     {
         // 调用基类的初始化方法
         base.ProtectedInitDevice(device);
@@ -169,7 +169,7 @@ public abstract class CollectBase : DriverBase
 
     public virtual string GetAddressDescription()
     {
-        return FoundationDevice?.GetAddressDescription();
+        return string.Empty;
     }
 
     /// <summary>
@@ -405,60 +405,12 @@ public abstract class CollectBase : DriverBase
 
     #endregion
 
-    async ValueTask<bool> TestOnline(CancellationToken cancellationToken)
-    {
-        //设备无法连接时
-        // 检查协议是否为空，如果为空则抛出异常
-        if (FoundationDevice != null)
-        {
-            if (FoundationDevice.OnLine == false)
-            {
-                Exception exception = null;
-                try
-                {
-                    await FoundationDevice.Channel.ConnectAsync(FoundationDevice.Channel.ChannelOptions.ConnectTimeout, cancellationToken).ConfigureAwait(false);
-                }
-                catch (Exception ex)
-                {
-                    exception = ex;
-                }
-                if (FoundationDevice.OnLine == false && exception != null)
-                {
-                    foreach (var item in CurrentDevice.VariableSourceReads)
-                    {
-                        if (item.LastErrorMessage != exception.Message)
-                        {
-                            if (!cancellationToken.IsCancellationRequested)
-                                LogMessage?.LogWarning(exception, Localizer["CollectFail", DeviceName, item?.RegisterAddress, item?.Length, exception.Message]);
-                        }
-                        item.LastErrorMessage = exception.Message;
-                        CurrentDevice.SetDeviceStatus(TimerX.Now, true, exception.Message);
-                        var time = DateTime.Now;
-                        item.VariableRuntimes.ForEach(a => a.SetValue(null, time, isOnline: false));
-                    }
-                    foreach (var item in CurrentDevice.ReadVariableMethods)
-                    {
-                        if (item.LastErrorMessage != exception.Message)
-                        {
-                            if (!cancellationToken.IsCancellationRequested)
-                                LogMessage?.LogWarning(exception, Localizer["MethodFail", DeviceName, item.MethodInfo.Name, exception.Message]);
-                        }
-                        item.LastErrorMessage = exception.Message;
-                        CurrentDevice.SetDeviceStatus(TimerX.Now, true, exception.Message);
-                        var time = DateTime.Now;
-                        item.Variable.SetValue(null, time, isOnline: false);
-                    }
-
-                    await Task.Delay(3000, cancellationToken).ConfigureAwait(false);
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
     #endregion
+
+    protected virtual ValueTask<bool> TestOnline(CancellationToken cancellationToken)
+    {
+        return ValueTask.FromResult(true);
+    }
 
     protected void ScriptVariableRun(CancellationToken cancellationToken)
     {
@@ -497,78 +449,24 @@ public abstract class CollectBase : DriverBase
 
 
     protected AsyncReadWriteLock ReadWriteLock = new();
+
+
     /// <summary>
-    /// 采集驱动读取，读取成功后直接赋值变量，失败不做处理，注意非通用设备需重写
+    /// 采集驱动读取，读取成功后直接赋值变量
     /// </summary>
-    protected virtual async ValueTask<OperResult<byte[]>> ReadSourceAsync(VariableSourceRead variableSourceRead, CancellationToken cancellationToken)
+    protected virtual ValueTask<OperResult<byte[]>> ReadSourceAsync(VariableSourceRead variableSourceRead, CancellationToken cancellationToken)
     {
-        try
-        {
-            await ReadWriteLock.ReaderLockAsync(cancellationToken).ConfigureAwait(false);
-
-            if (cancellationToken.IsCancellationRequested)
-                return new(new OperationCanceledException());
-            // 从协议读取数据
-            var read = await FoundationDevice.ReadAsync(variableSourceRead.RegisterAddress, variableSourceRead.Length, cancellationToken).ConfigureAwait(false);
-
-            // 增加变量源的读取次数
-            Interlocked.Increment(ref variableSourceRead.ReadCount);
-
-            // 如果读取成功且有有效内容，则解析结构化内容
-            if (read.IsSuccess)
-            {
-                var prase = variableSourceRead.VariableRuntimes.PraseStructContent(FoundationDevice, read.Content, false);
-                return new OperResult<byte[]>(prase);
-            }
-
-            // 返回读取结果
-            return read;
-        }
-        finally
-        {
-        }
+        return ValueTask.FromResult(new OperResult<byte[]>(new NotImplementedException()));
     }
-
     /// <summary>
-    /// 批量写入变量值,需返回变量名称/结果，注意非通用设备需重写
+    /// 批量写入变量值,需返回变量名称/结果
     /// </summary>
     /// <returns></returns>
-    protected virtual async ValueTask<Dictionary<string, OperResult>> WriteValuesAsync(Dictionary<VariableRuntime, JToken> writeInfoLists, CancellationToken cancellationToken)
+    protected virtual ValueTask<Dictionary<string, OperResult>> WriteValuesAsync(Dictionary<VariableRuntime, JToken> writeInfoLists, CancellationToken cancellationToken)
     {
-        using var writeLock = ReadWriteLock.WriterLock();
-        try
-        {
-            // 检查协议是否为空，如果为空则抛出异常
-            if (FoundationDevice == null)
-                throw new NotSupportedException();
-
-            // 创建用于存储操作结果的并发字典
-            ConcurrentDictionary<string, OperResult> operResults = new();
-
-            // 使用并发方式遍历写入信息列表，并进行异步写入操作
-            await writeInfoLists.ParallelForEachAsync(async (writeInfo, cancellationToken) =>
-            {
-                try
-                {
-                    // 调用协议的写入方法，将写入信息中的数据写入到对应的寄存器地址，并获取操作结果
-                    var result = await FoundationDevice.WriteAsync(writeInfo.Key.RegisterAddress, writeInfo.Value, writeInfo.Key.DataType, cancellationToken).ConfigureAwait(false);
-
-                    // 将操作结果添加到结果字典中，使用变量名称作为键
-                    operResults.TryAdd(writeInfo.Key.Name, result);
-                }
-                catch (Exception ex)
-                {
-                    operResults.TryAdd(writeInfo.Key.Name, new(ex));
-                }
-            }, CollectProperties.MaxConcurrentCount, cancellationToken).ConfigureAwait(false);
-
-            // 返回包含操作结果的字典
-            return new Dictionary<string, OperResult>(operResults);
-        }
-        finally
-        {
-        }
+        throw new NotImplementedException();
     }
+
 
     private sealed class ReadResultCount
     {
