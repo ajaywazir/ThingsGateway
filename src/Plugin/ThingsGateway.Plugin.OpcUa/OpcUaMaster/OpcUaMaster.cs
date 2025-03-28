@@ -262,21 +262,19 @@ public class OpcUaMaster : CollectBase
                         }
                         else
                         {
+                            if (item is VariableRuntime variable && (variable.IsOnline || variable.CollectTime == DateTime.UnixEpoch.ToLocalTime()))
+                            {
+                                LogMessage.LogWarning($"OPC quality bad:{Environment.NewLine}{data.Item1}");
+                            }
                             item.SetValue(null, time, false);
                             item.VariableSource.LastErrorMessage = data.Item2.StatusCode.ToString();
                         }
                     }
-                    LogMessage.Trace($"{ToString()} Change:{Environment.NewLine}{data.Item1} : {data.Item3}");
+                    LogMessage.Trace($"Change:{Environment.NewLine}{data.Item1} : {data.Item3}");
                 }
             }
-            if (result.Any(a => StatusCode.IsBad(a.Item2.StatusCode)))
-            {
-                return new OperResult<byte[]>($"OPC quality bad");
-            }
-            else
-            {
-                return OperResult.CreateSuccessResult<byte[]>(null);
-            }
+
+            return OperResult.CreateSuccessResult<byte[]>(null);
         }
         catch (Exception ex)
         {
@@ -349,7 +347,7 @@ public class OpcUaMaster : CollectBase
                 return;
             }
 
-            LogMessage.Trace($"{ToString()} Change: {Environment.NewLine} {data.monitoredItem.StartNodeId} : {data.jToken?.ToString()}");
+            LogMessage.Trace($"Change: {Environment.NewLine} {data.monitoredItem.StartNodeId} : {data.jToken?.ToString()}");
 
             //尝试固定点位的数据类型
             var type = TypeInfo.GetSystemType(TypeInfo.GetBuiltInType(data.variableNode.DataType, _plc.Session.SystemContext.TypeTable), data.variableNode.ValueRank);
@@ -390,6 +388,10 @@ public class OpcUaMaster : CollectBase
                 }
                 else
                 {
+                    if ((item.IsOnline || item.CollectTime == DateTime.UnixEpoch.ToLocalTime()))
+                    {
+                        LogMessage.LogWarning($"OPC quality bad:{Environment.NewLine}{data.Item1}");
+                    }
                     item.SetValue(null, time, false);
                     item.VariableSource.LastErrorMessage = data.dataValue.StatusCode.ToString();
                 }

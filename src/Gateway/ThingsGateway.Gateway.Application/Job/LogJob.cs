@@ -16,7 +16,7 @@ namespace ThingsGateway.Gateway.Application;
 /// 清理日志作业任务
 /// </summary>
 [JobDetail("gatewayjob_log", Description = "清理网关日志", GroupName = "Log", Concurrent = false)]
-[Daily(TriggerId = "trigger_gatewaylog", Description = "清理网关日志", RunOnStart = true)]
+[Daily(TriggerId = "trigger_gatewaylog", Description = "清理网关日志", RunOnStart = false)]
 public class LogJob : IJob
 {
     public async Task ExecuteAsync(JobExecutingContext context, CancellationToken stoppingToken)
