@@ -29,6 +29,8 @@ public class Program
         // 增加中文编码支持
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
+        ThingsGateway.Admin.Application.ClaimConst.Scheme = typeof(Program).Assembly.GetName().Name;
+
         #region 控制台输出Logo
 
         Console.Write(Environment.NewLine);
