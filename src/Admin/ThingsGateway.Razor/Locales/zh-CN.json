@@ -14,6 +14,9 @@
     "Tip": "数据量较大时(大于20万)，所需导入时间可能超过1分钟，请耐心等待"
   },
   "ThingsGateway.Razor._Imports": {
+    "Refresh": "刷新",
+    "CloseOther": "关闭其他",
+    "CloseAll": "关闭全部",
     "Copy": "复制",
     "Add": "添加",
     "Remove": "移除",

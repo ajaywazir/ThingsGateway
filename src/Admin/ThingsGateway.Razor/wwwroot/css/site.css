@@ -29,7 +29,9 @@
 .dialog-table {
     height: calc(100vh - 200px);
 }
-
+.h-100 > .bb-cm-zone > .tabs {
+    height: 100%;
+}
 .h-100 > .tabs {
     height: 100%;
 }
@@ -102,12 +104,6 @@
     --bs-dropdown-link-active-bg: var(--bs-blue) !important;
 }
 
-
-.tgTree .dropdown-item:has(i.device) {
-    margin-top: 0.1rem;
-    padding-top: 0.1rem;
-    border-top: 1px solid var(--bs-dropdown-link-color);
-}
 .tgTree .dropdown-item{
     margin-top: 0rem;
     padding-top:0rem;

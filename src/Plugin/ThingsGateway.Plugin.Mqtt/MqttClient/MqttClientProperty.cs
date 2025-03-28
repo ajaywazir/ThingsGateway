@@ -34,7 +34,7 @@ public class MqttClientProperty : BusinessPropertyWithCacheIntervalScript
     public int Port { get; set; } = 1883;
 
     [DynamicProperty]
-    public MqttProtocolVersion MqttProtocolVersion { get; set; }
+    public MqttProtocolVersion MqttProtocolVersion { get; set; } = MqttProtocolVersion.V311;
 
     [DynamicProperty]
     public bool TLS { get; set; } = false;

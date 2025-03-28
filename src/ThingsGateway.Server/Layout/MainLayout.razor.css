@@ -11,16 +11,28 @@
 .mainlayout ::deep .menu-icon {
     width: 16px;
 }
+.mainlayout ::deep .layout-main {
+    padding: 0;
+}
+.mainlayout ::deep .layout-main > .bb-cm-zone > .tabs > .tabs-body {
+    background-color: var(--tabs-body-bg);
+}
 
 .mainlayout ::deep .layout-main > .tabs > .tabs-body {
     background-color: var(--tabs-body-bg);
 }
 
-    .mainlayout ::deep .layout-main > .tabs > .tabs-body > .tabs-body-content {
-        height: var(--bb-layout-body-height);
-        background-color: var(--bs-body-bg);
-        padding: 4px;
-    }
+.mainlayout ::deep .layout-main > .bb-cm-zone > .tabs > .tabs-body > .tabs-body-content {
+    height: var(--bb-layout-body-height);
+    background-color: var(--bs-body-bg);
+    padding: 4px;
+}
+
+.mainlayout ::deep .layout-main > .tabs > .tabs-body > .tabs-body-content {
+    height: var(--bb-layout-body-height);
+    background-color: var(--bs-body-bg);
+    padding: 4px;
+}
 
 .mainlayout ::deep .tabs {
     --bb-tabs-item-height: 28px;

@@ -55,9 +55,12 @@ internal sealed class UpdateZipFileHostedService : BackgroundService, IUpdateZip
         {
             try
             {
-                await TcpDmtpClient.ConnectAsync().ConfigureAwait(false);
-                await TcpDmtpClient.ResetIdAsync(upgradeServerOptions.Id).ConfigureAwait(false);
-                success = true;
+                if (upgradeServerOptions.Enable)
+                {
+                    await TcpDmtpClient.ConnectAsync().ConfigureAwait(false);
+                    await TcpDmtpClient.ResetIdAsync(upgradeServerOptions.Id).ConfigureAwait(false);
+                    success = true;
+                }
             }
             catch (Exception ex)
             {
