@@ -47,9 +47,6 @@ public abstract class CollectBase : DriverBase
 
     protected IStringLocalizer Localizer { get; set; }
 
-    /// <summary>
-    /// 获取设备变量打包列表/特殊方法列表
-    /// </summary>
     public override async Task AfterVariablesChangedAsync()
     {
         LogMessage?.LogInformation("Refresh variable");
