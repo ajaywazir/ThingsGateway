@@ -235,7 +235,7 @@ public partial class OpcDaImportVariable
             }
             await App.RootServices.GetRequiredService<IChannelRuntimeService>().SaveChannelAsync(data.Item1, ItemChangedType.Add, true);
             await App.RootServices.GetRequiredService<IDeviceRuntimeService>().SaveDeviceAsync(data.Item2, ItemChangedType.Add, true);
-            await App.RootServices.GetRequiredService<IVariableRuntimeService>().AddBatchAsync(data.Item3, true);
+            await App.RootServices.GetRequiredService<IVariableRuntimeService>().AddBatchAsync(data.Item3, true, default);
             await ToastService.Default();
         }
         catch (Exception ex)

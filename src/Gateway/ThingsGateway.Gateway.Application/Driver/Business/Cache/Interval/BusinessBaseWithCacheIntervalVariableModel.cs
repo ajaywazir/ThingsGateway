@@ -38,7 +38,7 @@ public abstract class BusinessBaseWithCacheIntervalVariableModel<T> : BusinessBa
     /// </summary>
     protected abstract BusinessPropertyWithCacheInterval _businessPropertyWithCacheInterval { get; }
 
-    protected internal override async Task InitChannelAsync(IChannel? channel = null)
+    protected internal override async Task InitChannelAsync(IChannel? channel, CancellationToken cancellationToken)
     {
         // 初始化定时器
         _exTTimerTick = new TimeTick(_businessPropertyWithCacheInterval.BusinessInterval);
@@ -50,9 +50,9 @@ public abstract class BusinessBaseWithCacheIntervalVariableModel<T> : BusinessBa
             GlobalData.VariableValueChangeEvent += VariableValueChange;
         }
 
-        await base.InitChannelAsync(channel).ConfigureAwait(false);
+        await base.InitChannelAsync(channel, cancellationToken).ConfigureAwait(false);
     }
-    public override async Task AfterVariablesChangedAsync()
+    public override async Task AfterVariablesChangedAsync(CancellationToken cancellationToken)
     {
         // 如果业务属性指定了全部变量，则设置当前设备的变量运行时列表和采集设备列表
         if (_businessPropertyWithCacheInterval.IsAllVariable)
@@ -64,7 +64,7 @@ public abstract class BusinessBaseWithCacheIntervalVariableModel<T> : BusinessBa
         }
         else
         {
-            await base.AfterVariablesChangedAsync().ConfigureAwait(false);
+            await base.AfterVariablesChangedAsync(cancellationToken).ConfigureAwait(false);
         }
 
         // 触发一次变量值变化事件

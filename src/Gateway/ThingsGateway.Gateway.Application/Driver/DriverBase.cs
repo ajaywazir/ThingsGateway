@@ -460,18 +460,19 @@ public abstract class DriverBase : DisposableObject, IDriver
     /// 初始化，在开始前执行，异常时会标识重启
     /// </summary>
     /// <param name="channel">通道，当通道类型为<see cref="ChannelTypeEnum.Other"/>时，传入null</param>
-    internal protected virtual async Task InitChannelAsync(IChannel? channel = null)
+    /// <param name="cancellationToken"></param>
+    internal protected virtual async Task InitChannelAsync(IChannel? channel, CancellationToken cancellationToken)
     {
         Channel = channel;
         if (channel != null && channel.PluginManager == null)
             await channel.SetupAsync(channel.Config.Clone()).ConfigureAwait(false);
-        await AfterVariablesChangedAsync().ConfigureAwait(false);
+        await AfterVariablesChangedAsync(cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
     /// 变量更改后， 重新初始化变量列表，获取设备变量打包列表/特殊方法列表等
     /// </summary>
-    public abstract Task AfterVariablesChangedAsync();
+    public abstract Task AfterVariablesChangedAsync(CancellationToken cancellationToken);
 
 
     /// <summary>

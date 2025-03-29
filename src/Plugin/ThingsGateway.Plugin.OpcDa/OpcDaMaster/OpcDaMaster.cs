@@ -41,7 +41,7 @@ public class OpcDaMaster : CollectBase
 
 
     /// <inheritdoc/>
-    protected override async Task InitChannelAsync(IChannel? channel = null)
+    protected override async Task InitChannelAsync(IChannel? channel, CancellationToken cancellationToken)
     {
         //载入配置
         OpcDaProperty opcNode = new()
@@ -61,7 +61,7 @@ public class OpcDaMaster : CollectBase
             _plc.LogEvent = (a, b, c, d) => LogMessage.Log((LogLevel)a, b, c, d);
         }
         _plc.Init(opcNode);
-        await base.InitChannelAsync(channel).ConfigureAwait(false);
+        await base.InitChannelAsync(channel, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
@@ -191,14 +191,20 @@ public class OpcDaMaster : CollectBase
         {
         }
     }
-    public override async Task AfterVariablesChangedAsync()
+    public override async Task AfterVariablesChangedAsync(CancellationToken cancellationToken)
     {
         _plc?.Disconnect();
-        await base.AfterVariablesChangedAsync().ConfigureAwait(false);
+        await base.AfterVariablesChangedAsync(cancellationToken).ConfigureAwait(false);
 
         VariableAddresDicts = IdVariableRuntimes.Select(a => a.Value).Where(it => !it.RegisterAddress.IsNullOrEmpty()).GroupBy(a => a.RegisterAddress).ToDictionary(a => a.Key!, b => b.ToList());
-
-        _plc?.Connect();
+        try
+        {
+            _plc?.Connect();
+        }
+        catch (Exception ex)
+        {
+            LogMessage.LogWarning(ex);
+        }
     }
 
     private Dictionary<string, List<VariableRuntime>> VariableAddresDicts { get; set; } = new();

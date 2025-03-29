@@ -31,11 +31,11 @@ public class DeviceRuntimeService : IDeviceRuntimeService
     private WaitLock WaitLock { get; set; } = new WaitLock();
 
 
-    public async Task<bool> CopyAsync(Dictionary<Device, List<Variable>> devices, bool restart = true)
+    public async Task<bool> CopyAsync(Dictionary<Device, List<Variable>> devices, bool restart, CancellationToken cancellationToken)
     {
         try
         {
-            await WaitLock.WaitAsync().ConfigureAwait(false);
+            await WaitLock.WaitAsync(cancellationToken).ConfigureAwait(false);
 
             var result = await GlobalData.DeviceService.CopyAsync(devices).ConfigureAwait(false);
 
@@ -49,7 +49,7 @@ public class DeviceRuntimeService : IDeviceRuntimeService
             if (restart)
             {
                 await RuntimeServiceHelper.RestartDeviceAsync(newDeviceRuntimes).ConfigureAwait(false);
-                await RuntimeServiceHelper.ChangedDriverAsync(_logger).ConfigureAwait(false);
+                await RuntimeServiceHelper.ChangedDriverAsync(_logger, cancellationToken).ConfigureAwait(false);
 
             }
 
@@ -99,11 +99,11 @@ public class DeviceRuntimeService : IDeviceRuntimeService
         }
     }
 
-    public async Task<bool> DeleteDeviceAsync(IEnumerable<long> ids, bool restart = true)
+    public async Task<bool> DeleteDeviceAsync(IEnumerable<long> ids, bool restart, CancellationToken cancellationToken)
     {
         try
         {
-            await WaitLock.WaitAsync().ConfigureAwait(false);
+            await WaitLock.WaitAsync(cancellationToken).ConfigureAwait(false);
 
 
             ids = ids.ToHashSet();
@@ -119,7 +119,7 @@ public class DeviceRuntimeService : IDeviceRuntimeService
             {
                 await RuntimeServiceHelper.RemoveDeviceAsync(deviceRuntimes).ConfigureAwait(false);
 
-                await RuntimeServiceHelper.ChangedDriverAsync(changedDriver, _logger).ConfigureAwait(false);
+                await RuntimeServiceHelper.ChangedDriverAsync(changedDriver, _logger, cancellationToken).ConfigureAwait(false);
 
             }
 

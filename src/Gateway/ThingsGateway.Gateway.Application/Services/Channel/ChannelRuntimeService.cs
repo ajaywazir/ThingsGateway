@@ -30,11 +30,11 @@ public class ChannelRuntimeService : IChannelRuntimeService
     }
     private WaitLock WaitLock { get; set; } = new WaitLock();
 
-    public async Task<bool> CopyAsync(List<Channel> models, Dictionary<Device, List<Variable>> devices, bool restart = true)
+    public async Task<bool> CopyAsync(List<Channel> models, Dictionary<Device, List<Variable>> devices, bool restart, CancellationToken cancellationToken)
     {
         try
         {
-            await WaitLock.WaitAsync().ConfigureAwait(false);
+            await WaitLock.WaitAsync(cancellationToken).ConfigureAwait(false);
 
             var result = await GlobalData.ChannelService.CopyAsync(models, devices).ConfigureAwait(false);
             var ids = models.Select(a => a.Id).ToHashSet();
@@ -51,7 +51,7 @@ public class ChannelRuntimeService : IChannelRuntimeService
             {
                 await GlobalData.ChannelThreadManage.RestartChannelAsync(newChannelRuntimes).ConfigureAwait(false);
 
-                await RuntimeServiceHelper.ChangedDriverAsync(_logger).ConfigureAwait(false);
+                await RuntimeServiceHelper.ChangedDriverAsync(_logger, cancellationToken).ConfigureAwait(false);
 
             }
 
@@ -92,11 +92,11 @@ public class ChannelRuntimeService : IChannelRuntimeService
         }
     }
 
-    public async Task<bool> DeleteChannelAsync(IEnumerable<long> ids, bool restart = true)
+    public async Task<bool> DeleteChannelAsync(IEnumerable<long> ids, bool restart, CancellationToken cancellationToken)
     {
         try
         {
-            await WaitLock.WaitAsync().ConfigureAwait(false);
+            await WaitLock.WaitAsync(cancellationToken).ConfigureAwait(false);
 
             ids = ids.ToHashSet();
             var result = await GlobalData.ChannelService.DeleteChannelAsync(ids).ConfigureAwait(false);
@@ -108,7 +108,7 @@ public class ChannelRuntimeService : IChannelRuntimeService
             {
                 await GlobalData.ChannelThreadManage.RemoveChannelAsync(ids).ConfigureAwait(false);
 
-                await RuntimeServiceHelper.ChangedDriverAsync(changedDriver, _logger).ConfigureAwait(false);
+                await RuntimeServiceHelper.ChangedDriverAsync(changedDriver, _logger, cancellationToken).ConfigureAwait(false);
             }
 
             return true;

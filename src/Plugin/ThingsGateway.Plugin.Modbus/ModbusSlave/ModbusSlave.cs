@@ -91,7 +91,7 @@ public class ModbusSlave : BusinessBase
     }
 
     /// <inheritdoc/>
-    protected override async Task InitChannelAsync(IChannel? channel = null)
+    protected override async Task InitChannelAsync(IChannel? channel, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(channel);
         //载入配置
@@ -102,7 +102,7 @@ public class ModbusSlave : BusinessBase
         _plc.MulStation = _driverPropertys.MulStation;
         _plc.ModbusType = _driverPropertys.ModbusType;
         _plc.InitChannel(channel, LogMessage);
-        await base.InitChannelAsync(channel).ConfigureAwait(false);
+        await base.InitChannelAsync(channel, cancellationToken).ConfigureAwait(false);
 
         _plc.WriteData -= OnWriteData;
         _plc.WriteData += OnWriteData;
@@ -121,9 +121,9 @@ public class ModbusSlave : BusinessBase
         GlobalData.VariableValueChangeEvent += VariableValueChange;
 
     }
-    public override async Task AfterVariablesChangedAsync()
+    public override async Task AfterVariablesChangedAsync(CancellationToken cancellationToken)
     {
-        await base.AfterVariablesChangedAsync().ConfigureAwait(false);
+        await base.AfterVariablesChangedAsync(cancellationToken).ConfigureAwait(false);
         _modbusVariableQueue.Clear();
         IdVariableRuntimes.ForEach(a =>
         {

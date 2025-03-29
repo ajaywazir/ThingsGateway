@@ -387,7 +387,7 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
                     driver.DeviceThreadManage = this;
 
                     // 初始化驱动程序对象，并加载源读取
-                    await driver.InitChannelAsync(Channel).ConfigureAwait(false);
+                    await driver.InitChannelAsync(Channel, cancellationToken).ConfigureAwait(false);
 
                 }
                 catch (Exception ex)
@@ -422,7 +422,7 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
                 driverTask.Start(token);
 
 
-            }, Environment.ProcessorCount).ConfigureAwait(false);
+            }).ConfigureAwait(false);
 
 
 
@@ -512,7 +512,7 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
                 }
                 driver.Stop();
                 await task.StopAsync().ConfigureAwait(false);
-            }, Environment.ProcessorCount).ConfigureAwait(false);
+            }).ConfigureAwait(false);
 
 
             await Task.Delay(100).ConfigureAwait(false);
@@ -654,7 +654,7 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
                                     if (GlobalData.IsRedundant(deviceRuntime.Id))
                                     {
                                         if (!token.IsCancellationRequested)
-                                            await DeviceRedundantThreadAsync(deviceRuntime.Id).ConfigureAwait(false);
+                                            await DeviceRedundantThreadAsync(deviceRuntime.Id, default).ConfigureAwait(false);
                                     }
                                 }
                             }
@@ -680,7 +680,7 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
     }
 
     /// <inheritdoc/>
-    public async Task DeviceRedundantThreadAsync(long deviceId)
+    public async Task DeviceRedundantThreadAsync(long deviceId, CancellationToken cancellationToken)
     {
         try
         {
@@ -760,21 +760,21 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
 
             //需要重启业务线程
             var businessDeviceRuntimes = GlobalData.IdDevices.Where(a => a.Value.Driver is BusinessBase).Where(a => ((BusinessBase)a.Value.Driver).CollectDevices.ContainsKey(a.Key) == true).Select(a => a.Value);
-            foreach (var businessDeviceRuntime in businessDeviceRuntimes)
-            {
-                if (businessDeviceRuntime.Driver != null)
-                {
-                    try
-                    {
-                        await businessDeviceRuntime.Driver.AfterVariablesChangedAsync().ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        LogMessage?.LogWarning(ex);
-                    }
+            await businessDeviceRuntimes.ParallelForEachAsync(async (businessDeviceRuntime, token) =>
+              {
+                  if (businessDeviceRuntime.Driver != null)
+                  {
+                      try
+                      {
+                          await businessDeviceRuntime.Driver.AfterVariablesChangedAsync(token).ConfigureAwait(false);
+                      }
+                      catch (Exception ex)
+                      {
+                          LogMessage?.LogWarning(ex);
+                      }
 
-                }
-            }
+                  }
+              }, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -811,7 +811,7 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
                                         if (GlobalData.IsRedundant(deviceRuntime.Id))
                                         {
                                             if (!cancellationToken.IsCancellationRequested)
-                                                await DeviceRedundantThreadAsync(deviceRuntime.Id).ConfigureAwait(false);
+                                                await DeviceRedundantThreadAsync(deviceRuntime.Id, cancellationToken).ConfigureAwait(false);
                                         }
                                     }
                                 }

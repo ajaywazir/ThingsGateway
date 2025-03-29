@@ -67,7 +67,7 @@ public abstract class BusinessBase : DriverBase
         base.ProtectedInitDevice(device); // 调用基类的初始化方法
     }
 
-    public override Task AfterVariablesChangedAsync()
+    public override Task AfterVariablesChangedAsync(CancellationToken cancellationToken)
     {
         LogMessage?.LogInformation("Refresh variable");
         // 获取与当前设备相关的变量,CurrentDevice.VariableRuntimes并不适用于业务插件

@@ -54,7 +54,7 @@ public class SiemensS7Master : CollectFoundationBase
     public override Type DriverVariableAddressUIType => typeof(SiemensS7AddressComponent);
 
 
-    protected override async Task InitChannelAsync(IChannel? channel = null)
+    protected override async Task InitChannelAsync(IChannel? channel = null, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(channel);
         //载入配置
@@ -66,7 +66,7 @@ public class SiemensS7Master : CollectFoundationBase
         _plc.Rack = _driverPropertys.Rack;
         _plc.Slot = _driverPropertys.Slot;
         _plc.InitChannel(channel, LogMessage);
-        await base.InitChannelAsync(channel).ConfigureAwait(false);
+        await base.InitChannelAsync(channel, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -177,7 +177,7 @@ public class SiemensS7Master : CollectFoundationBase
                 {
                     operResults.TryAdd(writeInfo.Key.Name, new(ex));
                 }
-            }, Environment.ProcessorCount, cancellationToken).ConfigureAwait(false);
+            }, cancellationToken).ConfigureAwait(false);
 
 
             // 返回包含操作结果的字典

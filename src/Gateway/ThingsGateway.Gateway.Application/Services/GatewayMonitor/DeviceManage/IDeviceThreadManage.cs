@@ -28,5 +28,5 @@ public interface IDeviceThreadManage : IAsyncDisposable
 
     Task RemoveDeviceAsync(IEnumerable<long> deviceIds);
     Task RemoveDeviceAsync(long deviceId);
-    Task DeviceRedundantThreadAsync(long deviceId);
+    Task DeviceRedundantThreadAsync(long deviceId, CancellationToken cancellationToken);
 }

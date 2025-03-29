@@ -150,7 +150,7 @@ public partial class SqlDBProducer : BusinessBaseWithCacheIntervalVariableModel<
         return ret;
     }
 
-    protected override async Task InitChannelAsync(IChannel? channel = null)
+    protected override async Task InitChannelAsync(IChannel? channel, CancellationToken cancellationToken)
     {
         _config = new TypeAdapterConfig();
         _config.ForType<VariableRuntime, SQLHistoryValue>()
@@ -161,7 +161,7 @@ public partial class SqlDBProducer : BusinessBaseWithCacheIntervalVariableModel<
 
         _exRealTimerTick = new(_driverPropertys.RealTableBusinessInterval);
 
-        await base.InitChannelAsync(channel).ConfigureAwait(false);
+        await base.InitChannelAsync(channel, cancellationToken).ConfigureAwait(false);
 
     }
 

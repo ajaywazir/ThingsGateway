@@ -299,7 +299,7 @@ internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHo
                     RedundancyTask = new DoTask(a => DoSlaveWork(TcpDmtpClient, RedundancyOptions, a), _log); // 创建新的任务
                 }
 
-                RedundancyTask?.Start(); // 启动任务
+                RedundancyTask?.Start(default); // 启动任务
             }
 
             return new();

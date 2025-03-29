@@ -59,7 +59,7 @@ public partial class DeviceRuntimeInfo1 : IDisposable
     {
         if (GlobalData.TryGetDeviceThreadManage(DeviceRuntime, out var deviceThreadManage))
         {
-            await Task.Run(() => deviceThreadManage.DeviceRedundantThreadAsync(DeviceRuntime.Id));
+            await Task.Run(() => deviceThreadManage.DeviceRedundantThreadAsync(DeviceRuntime.Id, default));
         }
     }
     private async Task RestartDeviceAsync(bool deleteCache)

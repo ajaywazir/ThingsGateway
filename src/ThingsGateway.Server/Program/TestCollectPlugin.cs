@@ -34,7 +34,7 @@
 //    /// <summary>
 //    /// 在插件初始化时调用，只会执行一次，参数为插件默认的链路通道类，如未实现可忽略l
 //    /// </summary>
-//        protected override Task InitChannelAsync(IChannel? channel = null)
+//        protected override Task InitChannelAsync(IChannel? channel ,CancellationToken cancellationToken)
 //    {
 //        //做一些初始化操作
 //    }

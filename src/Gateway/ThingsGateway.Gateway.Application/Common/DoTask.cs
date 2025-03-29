@@ -41,7 +41,7 @@ public class DoTask
     /// 开始
     /// </summary>
     /// <param name="cancellationToken">调度取消令牌</param>
-    public void Start(CancellationToken cancellationToken = default)
+    public void Start(CancellationToken cancellationToken)
     {
         try
         {

@@ -45,7 +45,7 @@ public class Dlt645_2007Master : CollectFoundationBase
     public override IDevice? FoundationDevice => _plc;
 
 
-    protected override async Task InitChannelAsync(IChannel? channel = null)
+    protected override async Task InitChannelAsync(IChannel? channel, CancellationToken cancellationToken)
     {
 
         ArgumentNullException.ThrowIfNull(channel);
@@ -60,7 +60,7 @@ public class Dlt645_2007Master : CollectFoundationBase
         _plc.Station = _driverPropertys.Station;
         _plc.InitChannel(channel, LogMessage);
 
-        await base.InitChannelAsync(channel).ConfigureAwait(false);
+        await base.InitChannelAsync(channel, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>

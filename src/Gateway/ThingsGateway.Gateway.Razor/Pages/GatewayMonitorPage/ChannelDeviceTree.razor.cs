@@ -193,7 +193,7 @@ public partial class ChannelDeviceTree : IDisposable
              {nameof(ChannelCopyComponent.OnSave), async (List<Channel> channels,Dictionary<Device,List<Variable>> devices) =>
             {
 
-                await Task.Run(() =>GlobalData.ChannelRuntimeService.CopyAsync(channels,devices,AutoRestartThread));
+                await Task.Run(() =>GlobalData.ChannelRuntimeService.CopyAsync(channels,devices,AutoRestartThread, default));
 
             }},
             {nameof(ChannelCopyComponent.Model),oneModel },
@@ -432,7 +432,7 @@ finally
 
                 Spinner.SetRun(true);
 
-                await Task.Run(() => GlobalData.ChannelRuntimeService.DeleteChannelAsync(modelIds.Select(a => a.Id), AutoRestartThread));
+                await Task.Run(() => GlobalData.ChannelRuntimeService.DeleteChannelAsync(modelIds.Select(a => a.Id), AutoRestartThread, default));
                 await InvokeAsync(() =>
                 {
                     Spinner.SetRun(false);
@@ -476,7 +476,7 @@ finally
                 Spinner.SetRun(true);
 
                 var key = await GlobalData.GetCurrentUserChannels().ConfigureAwait(false);
-                await Task.Run(() => GlobalData.ChannelRuntimeService.DeleteChannelAsync(key.Select(a => a.Id), AutoRestartThread));
+                await Task.Run(() => GlobalData.ChannelRuntimeService.DeleteChannelAsync(key.Select(a => a.Id), AutoRestartThread, default));
                 await InvokeAsync(() =>
                 {
                     Spinner.SetRun(false);
@@ -653,7 +653,7 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
              {nameof(DeviceCopyComponent.OnSave), async (Dictionary<Device,List<Variable>> devices) =>
             {
 
-                await Task.Run(() =>GlobalData.DeviceRuntimeService.CopyAsync(devices,AutoRestartThread));
+                await Task.Run(() =>GlobalData.DeviceRuntimeService.CopyAsync(devices,AutoRestartThread, default));
 
             }},
             {nameof(DeviceCopyComponent.Model),oneModel },
@@ -787,7 +787,7 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
 
                 });
                 await Task.Run(() =>GlobalData.DeviceRuntimeService.BatchEditAsync(changedModels,oldModel,oneModel,AutoRestartThread));
-                await OnClickSearch(SearchText);
+                await Notify();
                          await InvokeAsync(() =>
             {
                                 Spinner.SetRun(false);
@@ -958,8 +958,8 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
 
                 Spinner.SetRun(true);
 
-                await Task.Run(() => GlobalData.DeviceRuntimeService.DeleteDeviceAsync(modelIds.Select(a => a.Id), AutoRestartThread));
-                await OnClickSearch(SearchText);
+                await Task.Run(() => GlobalData.DeviceRuntimeService.DeleteDeviceAsync(modelIds.Select(a => a.Id), AutoRestartThread, default));
+                await Notify();
                 await InvokeAsync(() =>
                 {
                     Spinner.SetRun(false);
@@ -1005,8 +1005,8 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
 
                 var data = await GlobalData.GetCurrentUserDevices().ConfigureAwait(false);
 
-                await Task.Run(() => GlobalData.DeviceRuntimeService.DeleteDeviceAsync(data.Select(a => a.Id), AutoRestartThread));
-                await OnClickSearch(SearchText);
+                await Task.Run(() => GlobalData.DeviceRuntimeService.DeleteDeviceAsync(data.Select(a => a.Id), AutoRestartThread, default));
+                await Notify();
                 await InvokeAsync(() =>
                 {
                     Spinner.SetRun(false);
@@ -1136,7 +1136,7 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
             });
 
             await Task.Run(() => GlobalData.DeviceRuntimeService.ImportDeviceAsync(value, AutoRestartThread));
-            await OnClickSearch(SearchText);
+            await Notify();
             await InvokeAsync(() =>
             {
 
@@ -1264,7 +1264,6 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
         }
 
         Items = ZItem;
-        context = ExecutionContext.Capture();
         ChannelRuntimeDispatchService.Subscribe(Refresh);
         DeviceRuntimeDispatchService.Subscribe(Refresh);
 
@@ -1291,8 +1290,6 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
         await base.OnInitializedAsync();
     }
 
-    private ExecutionContext? context;
-
     private WaitLock WaitLock = new();
 
 
@@ -1305,19 +1302,12 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
             await WaitLock.WaitAsync();
             if (WaitLock.CurrentCount > 1) return;
             await Task.Delay(1000);
-            var current = ExecutionContext.Capture();
             try
             {
-                ExecutionContext.Restore(context);
                 await OnClickSearch(SearchText);
-                await InvokeAsync(() =>
-                {
-                    StateHasChanged();
-                });
             }
             finally
             {
-                ExecutionContext.Restore(current);
             }
         }
         finally
@@ -1493,7 +1483,6 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
     public void Dispose()
     {
         Disposed = true;
-        context?.Dispose();
         ChannelRuntimeDispatchService.UnSubscribe(Refresh);
         DeviceRuntimeDispatchService.UnSubscribe(Refresh);
         GC.SuppressFinalize(this);
@@ -1513,6 +1502,9 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
         }
         return Task.CompletedTask;
     }
-
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+    }
 
 }

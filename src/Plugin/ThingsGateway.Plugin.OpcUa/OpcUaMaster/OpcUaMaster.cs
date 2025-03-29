@@ -46,7 +46,7 @@ public class OpcUaMaster : CollectBase
 
 
 
-    protected override async Task InitChannelAsync(IChannel? channel = null)
+    protected override async Task InitChannelAsync(IChannel? channel, CancellationToken cancellationToken)
     {
 
 
@@ -73,7 +73,7 @@ public class OpcUaMaster : CollectBase
             _plc.DataChangedHandler += DataChangedHandler;
         }
         _plc.OpcUaProperty = config;
-        await base.InitChannelAsync(channel).ConfigureAwait(false);
+        await base.InitChannelAsync(channel, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
@@ -302,17 +302,24 @@ public class OpcUaMaster : CollectBase
         LogMessage?.Log((LogLevel)level, sender, message, ex);
     }
 
-    public override async Task AfterVariablesChangedAsync()
+    public override async Task AfterVariablesChangedAsync(CancellationToken cancellationToken)
     {
         try
         {
             _plc?.Disconnect();
-            await base.AfterVariablesChangedAsync().ConfigureAwait(false);
+            await base.AfterVariablesChangedAsync(cancellationToken).ConfigureAwait(false);
         }
         finally
         {
             VariableAddresDicts = IdVariableRuntimes.Select(a => a.Value).Where(it => !it.RegisterAddress.IsNullOrEmpty()).GroupBy(a => a.RegisterAddress).ToDictionary(a => a.Key!, b => b.ToList());
-            await _plc.ConnectAsync(default).ConfigureAwait(false);
+            try
+            {
+                await _plc.ConnectAsync(cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                LogMessage.LogWarning(ex);
+            }
         }
 
     }
@@ -360,7 +367,7 @@ public class OpcUaMaster : CollectBase
             {
                 if (CurrentDevice.Pause)
                     return;
-             if (DisposedValue)
+                if (DisposedValue)
                     return;
                 if (item.DataType == DataTypeEnum.Object)
                     if (type.Namespace.StartsWith("System"))

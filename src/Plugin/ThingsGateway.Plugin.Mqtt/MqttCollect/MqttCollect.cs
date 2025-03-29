@@ -177,7 +177,7 @@ public partial class MqttCollect : CollectBase
 
     }
 
-    protected override async Task InitChannelAsync(IChannel? channel = null)
+    protected override async Task InitChannelAsync(IChannel? channel, CancellationToken cancellationToken)
     {
 
         #region 初始化
@@ -214,7 +214,7 @@ public partial class MqttCollect : CollectBase
         _mqttClient.ApplicationMessageReceivedAsync += MqttClient_ApplicationMessageReceivedAsync;
 
         #endregion 初始化
-        await base.InitChannelAsync(channel).ConfigureAwait(false);
+        await base.InitChannelAsync(channel, cancellationToken).ConfigureAwait(false);
     }
     protected override async Task ProtectedStartAsync(CancellationToken cancellationToken)
     {

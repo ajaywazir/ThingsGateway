@@ -97,10 +97,10 @@ public class AlarmChangedTriggerNode : VariableNode, ITriggerNode, IDisposable
                            {
                                item.Logger?.LogWarning(ex);
                            }
-                       }, Environment.ProcessorCount, token).ConfigureAwait(false);
+                       }, token).ConfigureAwait(false);
                 }
 
-            }), Environment.ProcessorCount / 2 <= 1 ? 2 : Environment.ProcessorCount / 2, default);
+            }), default);
     }
 
     public void Dispose()

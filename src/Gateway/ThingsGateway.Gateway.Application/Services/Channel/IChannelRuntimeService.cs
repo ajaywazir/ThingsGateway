@@ -37,7 +37,7 @@ public interface IChannelRuntimeService
     /// <summary>
     /// 删除通道
     /// </summary>
-    Task<bool> DeleteChannelAsync(IEnumerable<long> ids, bool restart);
+    Task<bool> DeleteChannelAsync(IEnumerable<long> ids, bool restart, CancellationToken cancellationToken);
 
     /// <summary>
     /// 导入通道数据
@@ -47,6 +47,6 @@ public interface IChannelRuntimeService
     Task<Dictionary<string, ImportPreviewOutputBase>> PreviewAsync(IBrowserFile browserFile);
     Task<MemoryStream> ExportMemoryStream(List<Channel> data);
     Task RestartChannelAsync(IEnumerable<ChannelRuntime> oldChannelRuntimes);
-    Task<bool> CopyAsync(List<Channel> models, Dictionary<Device, List<Variable>> devices, bool restart = true);
+    Task<bool> CopyAsync(List<Channel> models, Dictionary<Device, List<Variable>> devices, bool restart, CancellationToken cancellationToken);
 
 }

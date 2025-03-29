@@ -41,6 +41,6 @@ namespace ThingsGateway.Gateway.Application
         bool IsConnected();
         void PauseThread(bool pause);
         Task SetLogAsync(bool enable, LogLevel? logLevel = null, bool upDataBase = true);
-        Task AfterVariablesChangedAsync();
+        Task AfterVariablesChangedAsync(CancellationToken cancellationToken);
     }
 }

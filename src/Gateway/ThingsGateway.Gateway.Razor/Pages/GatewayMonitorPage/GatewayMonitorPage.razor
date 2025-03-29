@@ -23,21 +23,8 @@
         </FirstPaneTemplate>
         <SecondPaneTemplate>
 
-            @if (ShowType == ShowTypeEnum.Variable)
-            {
-                <VariableRuntimeInfo Items="VariableRuntimes" SelectModel="SelectModel" AutoRestartThread="AutoRestartThread" />
-            }
-            else
-            {
-                if (GlobalData.ReadOnlyIdDevices.TryGetValue(ShowDeviceRuntime,out var device))
-                {
-                    <DeviceRuntimeInfo DeviceRuntime="device" />
-                }
-                if (GlobalData.ReadOnlyChannels.TryGetValue(ShowChannelRuntime, out var channel))
-                {
-                    <ChannelRuntimeInfo ChannelRuntime="channel" />
-                }
-            }
+            <GatewayInfo AutoRestartThread=AutoRestartThread SelectModel=SelectModel ShowChannelRuntime=ShowChannelRuntime ShowDeviceRuntime=ShowDeviceRuntime ShowType=ShowType VariableRuntimes=VariableRuntimes />
+
         </SecondPaneTemplate>
     </Split>
 

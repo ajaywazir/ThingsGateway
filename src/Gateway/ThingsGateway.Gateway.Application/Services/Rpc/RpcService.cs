@@ -177,7 +177,7 @@ internal sealed class RpcService : IRpcService
                     return new KeyValuePair<string, OperResult>(a.Key.Name, new OperResult(ex));
                 }));
             }
-        }, Environment.ProcessorCount, cancellationToken).ConfigureAwait(false);
+        }, cancellationToken).ConfigureAwait(false);
 
         // 使用并行方式执行方法
         await writeMethods.ParallelForEachAsync(async (driverData, cancellationToken) =>
@@ -229,7 +229,7 @@ internal sealed class RpcService : IRpcService
                     return new KeyValuePair<string, OperResult>(a.Key.Name, new OperResult(ex));
                 }));
             }
-        }, Environment.ProcessorCount, cancellationToken).ConfigureAwait(false);
+        }, cancellationToken).ConfigureAwait(false);
 
         // 返回结果字典
         return new(results);

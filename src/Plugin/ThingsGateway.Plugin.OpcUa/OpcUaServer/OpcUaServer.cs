@@ -52,7 +52,7 @@ public partial class OpcUaServer : BusinessBase
     private static readonly string[] separator = new string[] { ";" };
 
 
-    public override async Task AfterVariablesChangedAsync()
+    public override async Task AfterVariablesChangedAsync(CancellationToken cancellationToken)
     {
         //if (m_server != null && m_application != null)
         //{
@@ -91,7 +91,7 @@ public partial class OpcUaServer : BusinessBase
         }
         else
         {
-            await base.AfterVariablesChangedAsync().ConfigureAwait(false);
+            await base.AfterVariablesChangedAsync(cancellationToken).ConfigureAwait(false);
         }
 
         CollectVariableRuntimes.Clear();
@@ -105,7 +105,7 @@ public partial class OpcUaServer : BusinessBase
     }
 
 
-    protected override async Task InitChannelAsync(IChannel? channel = null)
+    protected override async Task InitChannelAsync(IChannel? channel, CancellationToken cancellationToken)
     {
         ApplicationInstance.MessageDlg = new ApplicationMessageDlg(LogMessage);//默认返回true
 
@@ -128,7 +128,7 @@ public partial class OpcUaServer : BusinessBase
         GlobalData.VariableValueChangeEvent += VariableValueChange;
 
         Localizer = App.CreateLocalizerByType(typeof(OpcUaServer))!;
-        await base.InitChannelAsync(channel).ConfigureAwait(false);
+        await base.InitChannelAsync(channel, cancellationToken).ConfigureAwait(false);
 
 
     }

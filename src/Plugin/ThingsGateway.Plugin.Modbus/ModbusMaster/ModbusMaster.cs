@@ -46,7 +46,7 @@ public class ModbusMaster : CollectFoundationBase
     public override Type DriverVariableAddressUIType => typeof(ModbusAddressComponent);
 
     /// <inheritdoc/>
-    protected override async Task InitChannelAsync(IChannel? channel = null)
+    protected override async Task InitChannelAsync(IChannel? channel, CancellationToken cancellationToken)
     {
 
         //List<VariableRuntime> variableRuntimes = new();
@@ -72,7 +72,7 @@ public class ModbusMaster : CollectFoundationBase
         _plc.Timeout = _driverPropertys.Timeout;
         _plc.ModbusType = _driverPropertys.ModbusType;
         _plc.InitChannel(channel, LogMessage);
-        await base.InitChannelAsync(channel).ConfigureAwait(false);
+        await base.InitChannelAsync(channel, cancellationToken).ConfigureAwait(false);
 
     }
 

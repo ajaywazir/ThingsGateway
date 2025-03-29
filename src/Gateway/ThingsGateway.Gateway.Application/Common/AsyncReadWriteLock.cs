@@ -20,7 +20,7 @@ public class AsyncReadWriteLock
     /// <summary>
     /// 获取读锁，支持多个线程并发读取，但写入时会阻止所有读取。
     /// </summary>
-    public async Task ReaderLockAsync(CancellationToken cancellationToken = default)
+    public async Task ReaderLockAsync(CancellationToken cancellationToken)
     {
         if (Interlocked.Read(ref _writerCount) > 0)
         {

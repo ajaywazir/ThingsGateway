@@ -251,38 +251,38 @@ internal static class RuntimeServiceHelper
     }
 
 
-    public static async Task ChangedDriverAsync(ILogger logger)
+    public static async Task ChangedDriverAsync(ILogger logger, CancellationToken cancellationToken)
     {
         var channelDevice = GlobalData.IdDevices.Where(a => a.Value.Driver?.DriverProperties is IBusinessPropertyAllVariableBase property && property.IsAllVariable);
 
-        foreach (var item in channelDevice)
-        {
-            try
-            {
-                await item.Value.Driver.AfterVariablesChangedAsync().ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                logger.LogWarning(ex, "VariablesChanged");
-            }
-        }
+        await channelDevice.ParallelForEachAsync(async (item, token) =>
+         {
+             try
+             {
+                 await item.Value.Driver.AfterVariablesChangedAsync(token).ConfigureAwait(false);
+             }
+             catch (Exception ex)
+             {
+                 logger.LogWarning(ex, "VariablesChanged");
+             }
+         }, cancellationToken).ConfigureAwait(false);
     }
-    public static async Task ChangedDriverAsync(ConcurrentHashSet<IDriver> changedDriver, ILogger logger)
+    public static async Task ChangedDriverAsync(ConcurrentHashSet<IDriver> changedDriver, ILogger logger, CancellationToken cancellationToken)
     {
         var drivers = GlobalData.IdDevices.Where(a => a.Value.Driver?.DriverProperties is IBusinessPropertyAllVariableBase property && property.IsAllVariable).Select(a => a.Value.Driver);
 
         var changedDrivers = drivers.Concat(changedDriver).Where(a => a.DisposedValue == false).ToHashSet();
-        foreach (var driver in changedDrivers)
-        {
-            try
-            {
-                await driver.AfterVariablesChangedAsync().ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                logger.LogWarning(ex, "VariablesChanged");
-            }
-        }
+        await changedDrivers.ParallelForEachAsync(async (driver, token) =>
+         {
+             try
+             {
+                 await driver.AfterVariablesChangedAsync(token).ConfigureAwait(false);
+             }
+             catch (Exception ex)
+             {
+                 logger.LogWarning(ex, "VariablesChanged");
+             }
+         }, cancellationToken).ConfigureAwait(false);
     }
 
     public static void AddBusinessChangedDriver(HashSet<long> variableIds, ConcurrentHashSet<IDriver> changedDriver)

@@ -16,23 +16,23 @@ namespace ThingsGateway.Gateway.Application
 {
     public interface IVariableRuntimeService
     {
-        Task<bool> BatchEditAsync(IEnumerable<Variable> models, Variable oldModel, Variable model, bool restart);
-        Task<bool> DeleteVariableAsync(IEnumerable<long> ids, bool restart);
+        Task<bool> BatchEditAsync(IEnumerable<Variable> models, Variable oldModel, Variable model, bool restart, CancellationToken cancellationToken);
+        Task<bool> DeleteVariableAsync(IEnumerable<long> ids, bool restart, CancellationToken cancellationToken);
         Task<Dictionary<string, object>> ExportVariableAsync(ExportFilter exportFilter);
 
-        Task ImportVariableAsync(Dictionary<string, ImportPreviewOutputBase> input, bool restart);
-        Task InsertTestDataAsync(int testVariableCount, int testDeviceCount, string slaveUrl, bool restart);
+        Task ImportVariableAsync(Dictionary<string, ImportPreviewOutputBase> input, bool restart, CancellationToken cancellationToken);
+        Task InsertTestDataAsync(int testVariableCount, int testDeviceCount, string slaveUrl, bool restart, CancellationToken cancellationToken);
 
 
-        Task AddBatchAsync(List<Variable> input, bool restart);
+        Task AddBatchAsync(List<Variable> input, bool restart, CancellationToken cancellationToken);
 
         Task<Dictionary<string, ImportPreviewOutputBase>> PreviewAsync(IBrowserFile browserFile);
 
-        Task<bool> SaveVariableAsync(Variable input, ItemChangedType type, bool restart);
+        Task<bool> SaveVariableAsync(Variable input, ItemChangedType type, bool restart, CancellationToken cancellationToken);
         void PreheatCache();
 
         Task<MemoryStream> ExportMemoryStream(List<Variable> data, string devName);
-        Task AddDynamicVariable(IEnumerable<VariableRuntime> newVariableRuntimes, bool restart);
-        Task DeleteDynamicVariable(IEnumerable<long> variableIds, bool restart);
+        Task AddDynamicVariable(IEnumerable<VariableRuntime> newVariableRuntimes, bool restart, CancellationToken cancellationToken);
+        Task DeleteDynamicVariable(IEnumerable<long> variableIds, bool restart, CancellationToken cancellationToken);
     }
 }

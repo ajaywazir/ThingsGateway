@@ -63,7 +63,7 @@ internal sealed class ChannelThreadManage : IChannelThreadManage
               {
                   _logger.LogWarning(ex, nameof(PrivateRemoveChannelsAsync));
               }
-          }, Environment.ProcessorCount).ConfigureAwait(false);
+          }).ConfigureAwait(false);
 
     }
 
@@ -152,7 +152,7 @@ internal sealed class ChannelThreadManage : IChannelThreadManage
                 _logger.LogWarning(ex, nameof(PrivateRestartChannelAsync));
             }
 
-        }, Environment.ProcessorCount).ConfigureAwait(false);
+        }).ConfigureAwait(false);
 
 
     }

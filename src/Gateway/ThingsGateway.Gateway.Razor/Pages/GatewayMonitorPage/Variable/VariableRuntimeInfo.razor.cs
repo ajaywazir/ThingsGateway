@@ -147,7 +147,7 @@ public partial class VariableRuntimeInfo : IDisposable
              {nameof(VariableCopyComponent.OnSave), async (List<Variable> variables1) =>
             {
 
-                await Task.Run(() =>GlobalData.VariableRuntimeService.AddBatchAsync(variables1,AutoRestartThread));
+                await Task.Run(() =>GlobalData.VariableRuntimeService.AddBatchAsync(variables1,AutoRestartThread,default));
                 await InvokeAsync(table.QueryAsync);
 
             }},
@@ -181,7 +181,7 @@ public partial class VariableRuntimeInfo : IDisposable
         {
              {nameof(VariableEditComponent.OnValidSubmit), async () =>
             {
-                await Task.Run(()=> GlobalData. VariableRuntimeService.BatchEditAsync(variables,oldmodel,model, AutoRestartThread));
+                await Task.Run(()=> GlobalData. VariableRuntimeService.BatchEditAsync(variables,oldmodel,model, AutoRestartThread,default));
 
                 await InvokeAsync(table.QueryAsync);
             }},
@@ -200,7 +200,7 @@ public partial class VariableRuntimeInfo : IDisposable
         {
             return await Task.Run(async () =>
             {
-                return await GlobalData.VariableRuntimeService.DeleteVariableAsync(devices.Select(a => a.Id), AutoRestartThread);
+                return await GlobalData.VariableRuntimeService.DeleteVariableAsync(devices.Select(a => a.Id), AutoRestartThread, default);
             });
 
         }
@@ -229,7 +229,7 @@ public partial class VariableRuntimeInfo : IDisposable
             }
 
             variable.VariablePropertys = PluginServiceUtil.SetDict(variable.VariablePropertyModels);
-            return await Task.Run(() => GlobalData.VariableRuntimeService.SaveVariableAsync(variable, itemChangedType, AutoRestartThread));
+            return await Task.Run(() => GlobalData.VariableRuntimeService.SaveVariableAsync(variable, itemChangedType, AutoRestartThread, default));
         }
         catch (Exception ex)
         {
@@ -316,7 +316,7 @@ public partial class VariableRuntimeInfo : IDisposable
                 await Task.Run(async ()=>
                 {
               var importData=await  VariableServiceHelpers.ImportAsync(data);
-                await    GlobalData.VariableRuntimeService.ImportVariableAsync(importData,AutoRestartThread);
+                await    GlobalData.VariableRuntimeService.ImportVariableAsync(importData,AutoRestartThread, default);
                 })
                     ;
     }
@@ -358,7 +358,7 @@ finally
         };
 
         Func<IBrowserFile, Task<Dictionary<string, ImportPreviewOutputBase>>> preview = (a => GlobalData.VariableRuntimeService.PreviewAsync(a));
-        Func<Dictionary<string, ImportPreviewOutputBase>, Task> import = (value => GlobalData.VariableRuntimeService.ImportVariableAsync(value, AutoRestartThread));
+        Func<Dictionary<string, ImportPreviewOutputBase>, Task> import = (value => GlobalData.VariableRuntimeService.ImportVariableAsync(value, AutoRestartThread, default));
         op.Component = BootstrapDynamicComponent.CreateComponent<ImportExcel>(new Dictionary<string, object?>
         {
              {nameof(ImportExcel.Import),import },
@@ -380,7 +380,7 @@ finally
             await Task.Run(async () =>
             {
 
-                await GlobalData.VariableRuntimeService.DeleteVariableAsync(Items.Select(a => a.Id), AutoRestartThread);
+                await GlobalData.VariableRuntimeService.DeleteVariableAsync(Items.Select(a => a.Id), AutoRestartThread, default);
                 await InvokeAsync(async () =>
                 {
                     await ToastService.Default();
@@ -407,7 +407,7 @@ finally
 
             try
             {
-                await Task.Run(() => GlobalData.VariableRuntimeService.InsertTestDataAsync(TestVariableCount, TestDeviceCount, SlaveUrl, AutoRestartThread));
+                await Task.Run(() => GlobalData.VariableRuntimeService.InsertTestDataAsync(TestVariableCount, TestDeviceCount, SlaveUrl, AutoRestartThread, default));
             }
             finally
             {

@@ -26,7 +26,7 @@ public partial class RabbitMQProducer : BusinessBaseWithCacheIntervalScript<Vari
     public override VariablePropertyBase VariablePropertys => _variablePropertys;
 
     protected override BusinessPropertyWithCacheIntervalScript _businessPropertyWithCacheIntervalScript => _driverPropertys;
-    protected override async Task InitChannelAsync(Foundation.IChannel? channel = null)
+    protected override async Task InitChannelAsync(Foundation.IChannel? channel, CancellationToken cancellationToken)
     {
 
 
@@ -42,7 +42,7 @@ public partial class RabbitMQProducer : BusinessBaseWithCacheIntervalScript<Vari
         };
 
         #endregion 初始化
-        await base.InitChannelAsync(channel).ConfigureAwait(false);
+        await base.InitChannelAsync(channel, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>

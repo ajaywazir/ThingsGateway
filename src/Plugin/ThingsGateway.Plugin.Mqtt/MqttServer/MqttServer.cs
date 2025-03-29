@@ -31,7 +31,7 @@ public partial class MqttServer : BusinessBaseWithCacheIntervalScript<VariableBa
 
     protected override BusinessPropertyWithCacheIntervalScript _businessPropertyWithCacheIntervalScript => _driverPropertys;
 
-    protected override async Task InitChannelAsync(IChannel? channel = null)
+    protected override async Task InitChannelAsync(IChannel? channel, CancellationToken cancellationToken)
     {
 
         #region 初始化
@@ -53,7 +53,7 @@ public partial class MqttServer : BusinessBaseWithCacheIntervalScript<VariableBa
         _webHost.Start();
 
         #endregion 初始化
-        await base.InitChannelAsync(channel).ConfigureAwait(false);
+        await base.InitChannelAsync(channel, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc/>

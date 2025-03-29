@@ -12,36 +12,12 @@ using ThingsGateway.Gateway.Application;
 
 namespace ThingsGateway.Gateway.Razor;
 
-public partial class GatewayMonitorPage : IDisposable
+public partial class GatewayMonitorPage
 {
     private ChannelDeviceTreeItem SelectModel { get; set; } = new() { ChannelDevicePluginType = ChannelDevicePluginTypeEnum.PluginType, PluginType = PluginTypeEnum.Collect };
 
     #region 查询
-    [Inject]
-    private IDispatchService<DeviceRuntime> DeviceRuntimeDispatchService { get; set; }
-    [Inject]
-    private IDispatchService<ChannelRuntime> ChannelRuntimeDispatchService { get; set; }
 
-    protected override void OnInitialized()
-    {
-        ChannelRuntimeDispatchService.Subscribe(Refresh);
-        DeviceRuntimeDispatchService.Subscribe(Refresh);
-        base.OnInitialized();
-    }
-    public void Dispose()
-    {
-        ChannelRuntimeDispatchService.UnSubscribe(Refresh);
-        DeviceRuntimeDispatchService.UnSubscribe(Refresh);
-        GC.SuppressFinalize(this);
-    }
-    private async Task Refresh(DispatchEntry<DeviceRuntime> entry)
-    {
-        await InvokeAsync(StateHasChanged);
-    }
-    private async Task Refresh(DispatchEntry<ChannelRuntime> entry)
-    {
-        await InvokeAsync(StateHasChanged);
-    }
 
     private async Task TreeChangedAsync(ChannelDeviceTreeItem channelDeviceTreeItem)
     {

@@ -47,7 +47,7 @@ public abstract class CollectBase : DriverBase
 
     protected IStringLocalizer Localizer { get; set; }
 
-    public override async Task AfterVariablesChangedAsync()
+    public override async Task AfterVariablesChangedAsync(CancellationToken cancellationToken)
     {
         LogMessage?.LogInformation("Refresh variable");
         var currentDevice = CurrentDevice;
