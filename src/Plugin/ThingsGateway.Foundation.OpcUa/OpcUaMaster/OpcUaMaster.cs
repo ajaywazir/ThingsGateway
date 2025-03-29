@@ -1069,11 +1069,12 @@ public class OpcUaMaster : IDisposable
         var responseHeader = readResponse.ResponseHeader;
         VariableNode variableNode = GetVariableNodes(itemsToRead, values, diagnosticInfos, responseHeader).FirstOrDefault();
 
-        if (OpcUaProperty.LoadType && variableNode.DataType != NodeId.Null)
+        if (OpcUaProperty.LoadType && variableNode.DataType != NodeId.Null && TypeInfo.GetBuiltInType(variableNode.DataType, m_session.SystemContext.TypeTable) == BuiltInType.ExtensionObject)
             await typeSystem.LoadType(variableNode.DataType, ct: cancellationToken).ConfigureAwait(false);
         _variableDicts.AddOrUpdate(nodeIdStr, a => variableNode, (a, b) => variableNode);
         return variableNode;
     }
+
 
     private static List<VariableNode> GetVariableNodes(ReadValueIdCollection itemsToRead, DataValueCollection values, DiagnosticInfoCollection diagnosticInfos, ResponseHeader responseHeader, int count = 1)
     {
@@ -1163,11 +1164,17 @@ public class OpcUaMaster : IDisposable
             for (int i = 0; i < variableNodes.Count; i++)
             {
                 var node = variableNodes[i];
-                if (node.DataType != NodeId.Null)
+                if (_variableDicts.TryGetValue(nodeIdStrs[i], out var value))
                 {
-                    await typeSystem.LoadType(node.DataType, ct: cancellationToken).ConfigureAwait(false);
                 }
-                _variableDicts.AddOrUpdate(nodeIdStrs[i], a => node, (a, b) => node);
+                else
+                {
+                    _variableDicts.AddOrUpdate(nodeIdStrs[i], a => node, (a, b) => node);
+                    if (node.DataType != NodeId.Null && TypeInfo.GetBuiltInType(node.DataType, m_session.SystemContext.TypeTable) == BuiltInType.ExtensionObject)
+                    {
+                        await typeSystem.LoadType(node.DataType, ct: cancellationToken).ConfigureAwait(false);
+                    }
+                }
                 result.Add(node);
             }
         }

@@ -787,10 +787,10 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
 
                 });
                 await Task.Run(() =>GlobalData.DeviceRuntimeService.BatchEditAsync(changedModels,oldModel,oneModel,AutoRestartThread));
-                         await InvokeAsync(async () =>
+                await OnClickSearch(SearchText);
+                         await InvokeAsync(() =>
             {
                                 Spinner.SetRun(false);
-                await OnClickSearch(SearchText);
                 });
             }},
             {nameof(DeviceEditComponent.Model),oneModel },
@@ -959,10 +959,10 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
                 Spinner.SetRun(true);
 
                 await Task.Run(() => GlobalData.DeviceRuntimeService.DeleteDeviceAsync(modelIds.Select(a => a.Id), AutoRestartThread));
-                await InvokeAsync(async () =>
+                await OnClickSearch(SearchText);
+                await InvokeAsync(() =>
                 {
                     Spinner.SetRun(false);
-                    await OnClickSearch(SearchText);
                 });
             }
 
@@ -1006,10 +1006,10 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
                 var data = await GlobalData.GetCurrentUserDevices().ConfigureAwait(false);
 
                 await Task.Run(() => GlobalData.DeviceRuntimeService.DeleteDeviceAsync(data.Select(a => a.Id), AutoRestartThread));
-                await InvokeAsync(async () =>
+                await OnClickSearch(SearchText);
+                await InvokeAsync(() =>
                 {
                     Spinner.SetRun(false);
-                    await OnClickSearch(SearchText);
                 });
             }
 
@@ -1136,11 +1136,11 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
             });
 
             await Task.Run(() => GlobalData.DeviceRuntimeService.ImportDeviceAsync(value, AutoRestartThread));
-            await InvokeAsync(async () =>
+            await OnClickSearch(SearchText);
+            await InvokeAsync(() =>
             {
 
                 Spinner.SetRun(false);
-                await OnClickSearch(SearchText);
             });
 
         });
@@ -1303,14 +1303,15 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
         try
         {
             await WaitLock.WaitAsync();
-            await Task.Delay(500);
+            if (WaitLock.CurrentCount > 1) return;
+            await Task.Delay(1000);
             var current = ExecutionContext.Capture();
             try
             {
                 ExecutionContext.Restore(context);
-                await InvokeAsync(async () =>
+                await OnClickSearch(SearchText);
+                await InvokeAsync(() =>
                 {
-                    await OnClickSearch(SearchText);
                     StateHasChanged();
                 });
             }

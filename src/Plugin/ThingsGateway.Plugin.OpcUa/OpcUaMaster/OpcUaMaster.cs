@@ -33,8 +33,6 @@ public class OpcUaMaster : CollectBase
 
     private ThingsGateway.Foundation.OpcUa.OpcUaMaster _plc;
 
-    private CancellationToken _token;
-
     private volatile bool connectFirstFailLoged;
     private volatile bool success = true;
 
@@ -105,19 +103,6 @@ public class OpcUaMaster : CollectBase
         return _plc?.GetAddressDescription();
     }
 
-    protected override async Task ProtectedStartAsync(CancellationToken cancellationToken)
-    {
-        _token = cancellationToken;
-        try
-        {
-            await _plc.ConnectAsync(cancellationToken).ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            LogMessage?.LogWarning(ex, "Connect Fail");
-        }
-        await base.ProtectedStartAsync(cancellationToken).ConfigureAwait(false);
-    }
     private TimeTick checkTimeTick = new("60000");
     protected override async ValueTask ProtectedExecuteAsync(CancellationToken cancellationToken)
     {
@@ -341,7 +326,7 @@ public class OpcUaMaster : CollectBase
         {
             if (CurrentDevice.Pause)
                 return;
-            if (_token.IsCancellationRequested)
+            if (DisposedValue)
                 return;
 
 
@@ -375,7 +360,7 @@ public class OpcUaMaster : CollectBase
             {
                 if (CurrentDevice.Pause)
                     return;
-                if (_token.IsCancellationRequested)
+             if (DisposedValue)
                     return;
                 if (item.DataType == DataTypeEnum.Object)
                     if (type.Namespace.StartsWith("System"))

@@ -30,8 +30,6 @@ public class OpcDaMaster : CollectBase
 
     private ThingsGateway.Foundation.OpcDa.OpcDaMaster _plc;
 
-    private CancellationToken _token;
-
     private volatile bool success = true;
 
     /// <inheritdoc/>
@@ -89,13 +87,6 @@ public class OpcDaMaster : CollectBase
         return _plc?.GetAddressDescription();
     }
 
-
-    protected override Task ProtectedStartAsync(CancellationToken cancellationToken)
-    {
-        _token = cancellationToken;
-        _plc.Connect();
-        return base.ProtectedStartAsync(cancellationToken);
-    }
 
     protected override async ValueTask ProtectedExecuteAsync(CancellationToken cancellationToken)
     {
@@ -219,7 +210,7 @@ public class OpcDaMaster : CollectBase
         {
             if (CurrentDevice.Pause)
                 return;
-            if (_token.IsCancellationRequested)
+            if (DisposedValue)
                 return;
             LogMessage.Trace($"{ToString()} Change:{Environment.NewLine} {values?.ToJsonNetString()}");
 
@@ -227,7 +218,7 @@ public class OpcDaMaster : CollectBase
             {
                 if (CurrentDevice.Pause)
                     return;
-                if (_token.IsCancellationRequested)
+                if (DisposedValue)
                     return;
                 var type = data.Value.GetType();
                 if (data.Value is Array)
@@ -240,7 +231,7 @@ public class OpcDaMaster : CollectBase
                 {
                     if (CurrentDevice.Pause)
                         return;
-                    if (_token.IsCancellationRequested)
+                    if (DisposedValue)
                         return;
                     var value = data.Value;
                     var quality = data.Quality;
