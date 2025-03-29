@@ -218,11 +218,9 @@ public abstract class DeviceBase : DisposableObject, IDevice
         {
             var dataHandlingAdapter = GetDataAdapter();
             clientChannel.SetDataHandlingAdapter(dataHandlingAdapter);
-            dataHandlingAdapter.Logger = Logger;
         }
         else
         {
-            adapter.Logger = Logger;
         }
     }
 
@@ -385,6 +383,7 @@ public abstract class DeviceBase : DisposableObject, IDevice
                 await BefortSendAsync(channelResult.Content, cancellationToken).ConfigureAwait(false);
 
                 await waitLock.WaitAsync(cancellationToken).ConfigureAwait(false);
+                channelResult.Content.ReadOnlyDataHandlingAdapter.Logger = Logger;
 
                 return await SendAsync(sendMessage, channelResult.Content, endPoint, cancellationToken).ConfigureAwait(false);
             }
@@ -519,6 +518,7 @@ public abstract class DeviceBase : DisposableObject, IDevice
             await BefortSendAsync(clientChannel, cancellationToken).ConfigureAwait(false);
 
             await waitLock.WaitAsync(cancellationToken).ConfigureAwait(false);
+            clientChannel.ReadOnlyDataHandlingAdapter.Logger = Logger;
 
             waitData.SetCancellationToken(cancellationToken);
 
