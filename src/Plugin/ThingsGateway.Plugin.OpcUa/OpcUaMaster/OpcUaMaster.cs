@@ -16,6 +16,7 @@ using Opc.Ua.Client;
 using ThingsGateway.Foundation.Extension.Generic;
 using ThingsGateway.Foundation.OpcUa;
 using ThingsGateway.Gateway.Application;
+using ThingsGateway.NewLife;
 using ThingsGateway.NewLife.Json.Extension;
 using ThingsGateway.NewLife.Threading;
 
@@ -117,7 +118,7 @@ public class OpcUaMaster : CollectBase
         }
         await base.ProtectedStartAsync(cancellationToken).ConfigureAwait(false);
     }
-
+    private TimeTick checkTimeTick = new("60000");
     protected override async ValueTask ProtectedExecuteAsync(CancellationToken cancellationToken)
     {
         if (_plc.Session == null)
@@ -148,32 +149,34 @@ public class OpcUaMaster : CollectBase
 
                 //更新设备活动时间
                 CurrentDevice.SetDeviceStatus(TimerX.Now, false);
-
-                //如果是订阅模式，连接时添加订阅组
-                if (_plc.OpcUaProperty?.ActiveSubscribe == true && CurrentDevice.VariableSourceReads.Count > 0 && _plc.Session.SubscriptionCount < CurrentDevice.VariableSourceReads.Count)
+                if (checkTimeTick.IsTickHappen())
                 {
-                    try
-                    {
 
-                        foreach (var variableSourceRead in CurrentDevice.VariableSourceReads)
+                    //如果是订阅模式，连接时添加订阅组
+                    if (_plc.OpcUaProperty?.ActiveSubscribe == true && CurrentDevice.VariableSourceReads.Count > 0 && _plc.Session.SubscriptionCount < CurrentDevice.VariableSourceReads.Count)
+                    {
+                        try
                         {
-                            if (_plc.Session.Subscriptions.FirstOrDefault(a => a.DisplayName == variableSourceRead.RegisterAddress) == null)
+
+                            foreach (var variableSourceRead in CurrentDevice.VariableSourceReads)
                             {
-                                await _plc.AddSubscriptionAsync(variableSourceRead.RegisterAddress, variableSourceRead.VariableRuntimes.Where(a => !a.RegisterAddress.IsNullOrEmpty()).Select(a => a.RegisterAddress!).ToHashSet().ToArray(), _plc.OpcUaProperty.LoadType, cancellationToken).ConfigureAwait(false);
+                                if (_plc.Session.Subscriptions.FirstOrDefault(a => a.DisplayName == variableSourceRead.RegisterAddress) == null)
+                                {
+                                    await _plc.AddSubscriptionAsync(variableSourceRead.RegisterAddress, variableSourceRead.VariableRuntimes.Where(a => !a.RegisterAddress.IsNullOrEmpty()).Select(a => a.RegisterAddress!).ToHashSet().ToArray(), _plc.OpcUaProperty.LoadType, cancellationToken).ConfigureAwait(false);
 
-                                LogMessage?.LogInformation($"AddSubscription index  {CurrentDevice.VariableSourceReads.IndexOf(variableSourceRead)}  done");
+                                    LogMessage?.LogInformation($"AddSubscription index  {CurrentDevice.VariableSourceReads.IndexOf(variableSourceRead)}  done");
 
+                                }
                             }
+                            LogMessage?.LogInformation("AddSubscriptions done");
                         }
-                        LogMessage?.LogInformation("AddSubscriptions done");
-                    }
-                    catch (Exception ex)
-                    {
-                        LogMessage?.LogWarning(ex, "AddSubscriptions");
-                    }
-                    finally
-                    {
-                        await Task.Delay(30000, cancellationToken).ConfigureAwait(false);
+                        catch (Exception ex)
+                        {
+                            LogMessage?.LogWarning(ex, "AddSubscriptions");
+                        }
+                        finally
+                        {
+                        }
                     }
                 }
 

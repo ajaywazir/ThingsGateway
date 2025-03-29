@@ -1069,7 +1069,7 @@ public class OpcUaMaster : IDisposable
         var responseHeader = readResponse.ResponseHeader;
         VariableNode variableNode = GetVariableNodes(itemsToRead, values, diagnosticInfos, responseHeader).FirstOrDefault();
 
-        if (OpcUaProperty.LoadType)
+        if (OpcUaProperty.LoadType && variableNode.DataType != NodeId.Null)
             await typeSystem.LoadType(variableNode.DataType, ct: cancellationToken).ConfigureAwait(false);
         _variableDicts.AddOrUpdate(nodeIdStr, a => variableNode, (a, b) => variableNode);
         return variableNode;
@@ -1163,7 +1163,10 @@ public class OpcUaMaster : IDisposable
             for (int i = 0; i < variableNodes.Count; i++)
             {
                 var node = variableNodes[i];
-                await typeSystem.LoadType(node.DataType, ct: cancellationToken).ConfigureAwait(false);
+                if (node.DataType != NodeId.Null)
+                {
+                    await typeSystem.LoadType(node.DataType, ct: cancellationToken).ConfigureAwait(false);
+                }
                 _variableDicts.AddOrUpdate(nodeIdStrs[i], a => node, (a, b) => node);
                 result.Add(node);
             }
