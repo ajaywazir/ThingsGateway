@@ -17,25 +17,25 @@ public static class ExportString
     /// <summary>
     /// 通道名称
     /// </summary>
-    public static string ChannelName = Localizer["ChannelName"];
+    public static string ChannelName => Localizer["ChannelName"];
 
     /// <summary>
     /// 设备名称
     /// </summary>
-    public static string DeviceName = Localizer["DeviceName"];
+    public static string DeviceName => Localizer["DeviceName"];
     /// <summary>
     /// 设备名称
     /// </summary>
-    public static string BusinessDeviceName = Localizer["BusinessDeviceName"];
+    public static string BusinessDeviceName => Localizer["BusinessDeviceName"];
     /// <summary>
     /// 冗余设备名称
     /// </summary>
-    public static string RedundantDeviceName = Localizer["RedundantDeviceName"];
+    public static string RedundantDeviceName => Localizer["RedundantDeviceName"];
 
     /// <summary>
     /// 变量表名称
     /// </summary>
-    public static string VariableName = Localizer["VariableName"];
+    public static string VariableName => Localizer["VariableName"];
 
 
     public static IStringLocalizer localizer;

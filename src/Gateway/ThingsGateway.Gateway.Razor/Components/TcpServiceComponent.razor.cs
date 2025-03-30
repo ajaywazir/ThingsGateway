@@ -67,7 +67,7 @@ public partial class TcpServiceComponent : IDriverUIBase
                     foreach (var item in propertyInfos)
                     {
                         var type = item.PropertyType;
-                        if (type.IsPrimitive || type.IsEnum || type == TouchSocketCoreUtility.stringType)
+                        if (type.IsPrimitive || type.IsEnum || type == TouchSocketCoreUtility.StringType)
                         {
                             data.Dict.Add(item.Name, item.GetValue(a)?.ToString());
                         }

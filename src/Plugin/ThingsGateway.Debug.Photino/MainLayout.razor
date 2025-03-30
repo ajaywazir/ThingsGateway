@@ -55,22 +55,14 @@
         </Side>
         <Main>
 
-            <ContextMenuZone>
-                <Tab @ref=_tab ClickTabToNavigation="true" ShowToolbar="true" ShowExtendButtons="false" ShowClose="true" AllowDrag=true
+            <Tab @ref=_tab ClickTabToNavigation="true" ShowToolbar="true" ShowContextMenu="true"  ShowContextMenuFullScreen="true" ShowExtendButtons="false" ShowClose="true" AllowDrag=true
                      AdditionalAssemblies="@App.RazorAssemblies" Menus="@MenuService.AllOwnMenuItems"
                      DefaultUrl=@("/") Body=@(Body!) OnCloseTabItemAsync=@((a)=>
                      {
                      return Task.FromResult(!(a.Url=="/"||a.Url.IsNullOrEmpty()));
                      })>
                 </Tab>
-                <ContextMenu>
-                    <ContextMenuItem Icon="fa-solid fa-rotate-right" Text=@(RazorLocalizer["Refresh"]) OnClick="OnRefresh"></ContextMenuItem>
-                    <ContextMenuDivider></ContextMenuDivider>
-                    <ContextMenuItem Icon="fa-solid fa-xmark" Text=@(RazorLocalizer["Close"]) OnClick="OnClose"></ContextMenuItem>
-                    <ContextMenuItem Icon="fa-solid fa-left-right" Text=@(RazorLocalizer["CloseOther"]) OnClick="OnCloseOther"></ContextMenuItem>
-                    <ContextMenuItem Icon="fa-solid fa-arrows-left-right-to-line" Text=@(RazorLocalizer["CloseAll"]) OnClick="OnCloseAll"></ContextMenuItem>
-                </ContextMenu>
-            </ContextMenuZone>
+ 
 
         </Main>
         <NotAuthorized>

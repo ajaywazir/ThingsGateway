@@ -101,17 +101,17 @@ public static class ResourceUtil
         //筛选插件名称
         foreach (var pluginName in channelRuntimes.Select(a => a.PluginName).ToHashSet())
         {
-            var pluginItem = new TreeViewItem<ChannelDeviceTreeItem>(new ChannelDeviceTreeItem() { ChannelDevicePluginType = ChannelDevicePluginTypeEnum.PluginName, PluginName = pluginName })
-            {
-                Text = PluginServiceUtil.GetFileNameAndTypeName(pluginName).TypeName,
-                IsExpand = true,
-                Parent = parent,
-            };
-            var samePluginItem = items.FirstOrDefault(a => a.Value.Equals(pluginItem.Value));
+            var pluginItemValue = new ChannelDeviceTreeItem() { ChannelDevicePluginType = ChannelDevicePluginTypeEnum.PluginName, PluginName = pluginName };
+            var pluginItem = items.FirstOrDefault(a => a.Value.Equals(pluginItemValue));
 
-            if (samePluginItem != null)
+            if (pluginItem == null)
             {
-                pluginItem = samePluginItem;
+                pluginItem = new TreeViewItem<ChannelDeviceTreeItem>(pluginItemValue)
+                {
+                    Text = PluginServiceUtil.GetFileNameAndTypeName(pluginName).TypeName,
+                    IsExpand = true,
+                    Parent = parent,
+                };
             }
 
             var channelOldItems = pluginItem.Items.ToList();
@@ -121,20 +121,19 @@ public static class ResourceUtil
 
 
                 var channelRuntimeTreeItem = new ChannelDeviceTreeItem() { ChannelDevicePluginType = ChannelDevicePluginTypeEnum.Channel, ChannelRuntime = channelRuntime, Id = channelRuntime.Id };
-                var channelTreeItemItem = new TreeViewItem<ChannelDeviceTreeItem>(channelRuntimeTreeItem)
-                {
-                    Text = channelRuntime.ToString(),
-                    Parent = pluginItem,
-                    IsExpand = true,
-                    IsActive = selectedItems.Contains(channelRuntimeTreeItem),
-                    Template = render,
-                };
 
-                var sameChannelItem = channelOldItems.FirstOrDefault(a => a.Value.Equals(channelTreeItemItem.Value));
+                var channelTreeItemItem = channelOldItems.FirstOrDefault(a => a.Value.Equals(channelRuntimeTreeItem));
 
-                if (sameChannelItem != null)
+                if (channelTreeItemItem == null)
                 {
-                    channelTreeItemItem = sameChannelItem;
+                    channelTreeItemItem = new TreeViewItem<ChannelDeviceTreeItem>(channelRuntimeTreeItem)
+                    {
+                        Text = channelRuntime.ToString(),
+                        Parent = pluginItem,
+                        IsExpand = true,
+                        IsActive = selectedItems.Contains(channelRuntimeTreeItem),
+                        Template = render,
+                    };
                 }
 
 
@@ -146,20 +145,19 @@ public static class ResourceUtil
                 {
                     var deviceRuntime = keyValue.Value;
                     var deviceRuntimeTreeItem = new ChannelDeviceTreeItem() { ChannelDevicePluginType = ChannelDevicePluginTypeEnum.Device, DeviceRuntime = deviceRuntime, Id = deviceRuntime.Id };
-                    var deviceTreeItemItem = new TreeViewItem<ChannelDeviceTreeItem>(deviceRuntimeTreeItem)
-                    {
-                        Text = keyValue.Value.Name,
-                        Parent = pluginItem,
-                        IsExpand = false,
-                        IsActive = selectedItems.Contains(deviceRuntimeTreeItem),
-                        Template = render,
-                    };
 
-                    var sameDeviceItem = deviceOldItems.FirstOrDefault(a => a.Value.Equals(deviceTreeItemItem.Value));
+                    var deviceTreeItemItem = deviceOldItems.FirstOrDefault(a => a.Value.Equals(deviceRuntimeTreeItem));
 
-                    if (sameDeviceItem != null)
+                    if (deviceTreeItemItem == null)
                     {
-                        deviceTreeItemItem = sameDeviceItem;
+                        deviceTreeItemItem = new TreeViewItem<ChannelDeviceTreeItem>(deviceRuntimeTreeItem)
+                        {
+                            Text = keyValue.Value.Name,
+                            Parent = pluginItem,
+                            IsExpand = false,
+                            IsActive = selectedItems.Contains(deviceRuntimeTreeItem),
+                            Template = render,
+                        };
                     }
 
                     channelTreeItemItem.Items.Add(deviceTreeItemItem);
@@ -189,19 +187,19 @@ public static class ResourceUtil
 
         foreach (var pluginName in dict.Select(a => a.Key.PluginName).ToHashSet())
         {
+            var pluginItemValue = new ChannelDeviceTreeItem() { ChannelDevicePluginType = ChannelDevicePluginTypeEnum.PluginName, PluginName = pluginName };
 
-            var pluginItem = new TreeViewItem<ChannelDeviceTreeItem>(new ChannelDeviceTreeItem() { ChannelDevicePluginType = ChannelDevicePluginTypeEnum.PluginName, PluginName = pluginName })
+
+            var pluginItem = items.FirstOrDefault(a => a.Value.Equals(pluginItemValue));
+
+            if (pluginItem == null)
             {
-                Text = PluginServiceUtil.GetFileNameAndTypeName(pluginName).TypeName,
-                IsExpand = true,
-                Parent = parent,
-            };
-
-            var samePluginItem = items.FirstOrDefault(a => a.Value.Equals(pluginItem.Value));
-
-            if (samePluginItem != null)
-            {
-                pluginItem = samePluginItem;
+                pluginItem = new TreeViewItem<ChannelDeviceTreeItem>(pluginItemValue)
+                {
+                    Text = PluginServiceUtil.GetFileNameAndTypeName(pluginName).TypeName,
+                    IsExpand = true,
+                    Parent = parent,
+                };
             }
             var channelOldItems = pluginItem.Items.ToList();
             pluginItem.Items.Clear();
@@ -209,20 +207,20 @@ public static class ResourceUtil
             foreach (var channelRuntime in dict.Where(a => a.Key.PluginName == pluginName))
             {
                 var channelRuntimeTreeItem = new ChannelDeviceTreeItem() { ChannelDevicePluginType = ChannelDevicePluginTypeEnum.Channel, ChannelRuntime = channelRuntime.Key, Id = channelRuntime.Key.Id };
-                var channelTreeItemItem = new TreeViewItem<ChannelDeviceTreeItem>(channelRuntimeTreeItem)
-                {
-                    Text = channelRuntime.ToString(),
-                    Parent = pluginItem,
-                    IsExpand = true,
-                    IsActive = selectedItems.Contains(channelRuntimeTreeItem),
-                    Template = render,
-                };
 
-                var sameChannelItem = channelOldItems.FirstOrDefault(a => a.Value.Equals(channelTreeItemItem.Value));
 
-                if (sameChannelItem != null)
+                var channelTreeItemItem = channelOldItems.FirstOrDefault(a => a.Value.Equals(channelRuntimeTreeItem));
+
+                if (channelTreeItemItem == null)
                 {
-                    channelTreeItemItem = sameChannelItem;
+                    channelTreeItemItem = new TreeViewItem<ChannelDeviceTreeItem>(channelRuntimeTreeItem)
+                    {
+                        Text = channelRuntime.ToString(),
+                        Parent = pluginItem,
+                        IsExpand = true,
+                        IsActive = selectedItems.Contains(channelRuntimeTreeItem),
+                        Template = render,
+                    };
                 }
 
                 var deviceOldItems = channelTreeItemItem.Items.ToList();
@@ -231,21 +229,21 @@ public static class ResourceUtil
                 foreach (var deviceRuntime in channelRuntime.Value.OrderBy(a => a.DeviceStatus))
                 {
                     var deviceRuntimeTreeItem = new ChannelDeviceTreeItem() { ChannelDevicePluginType = ChannelDevicePluginTypeEnum.Device, DeviceRuntime = deviceRuntime, Id = deviceRuntime.Id };
-                    var deviceTreeItemItem = new TreeViewItem<ChannelDeviceTreeItem>(deviceRuntimeTreeItem)
+
+
+
+                    var deviceTreeItemItem = deviceOldItems.FirstOrDefault(a => a.Value.Equals(deviceRuntimeTreeItem));
+
+                    if (deviceTreeItemItem == null)
                     {
-                        Text = deviceRuntime.Name,
-                        Parent = pluginItem,
-                        IsExpand = false,
-                        IsActive = selectedItems.Contains(deviceRuntimeTreeItem),
-                        Template = render,
-                    };
-
-
-                    var sameDeviceItem = deviceOldItems.FirstOrDefault(a => a.Value.Equals(deviceTreeItemItem.Value));
-
-                    if (sameDeviceItem != null)
-                    {
-                        deviceTreeItemItem = sameDeviceItem;
+                        deviceTreeItemItem = new TreeViewItem<ChannelDeviceTreeItem>(deviceRuntimeTreeItem)
+                        {
+                            Text = deviceRuntime.Name,
+                            Parent = pluginItem,
+                            IsExpand = false,
+                            IsActive = selectedItems.Contains(deviceRuntimeTreeItem),
+                            Template = render,
+                        };
                     }
 
                     channelTreeItemItem.Items.Add(deviceTreeItemItem);

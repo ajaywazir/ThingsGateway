@@ -16,6 +16,14 @@
     padding: 0;
 }
 
+    .mainlayout ::deep .layout-main > .bb-cm-zone > .tabs {
+        margin: 0;
+    }
+
+    .mainlayout ::deep .layout-main > .tabs {
+        margin: 0;
+    }
+
     .mainlayout ::deep .layout-main > .bb-cm-zone > .tabs > .tabs-body {
         background-color: var(--tabs-body-bg);
     }

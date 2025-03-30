@@ -1292,22 +1292,28 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
 
     private WaitLock WaitLock = new();
 
-
+    private volatile bool _isExecuting = false;
 
     private async Task Notify()
     {
-        if (WaitLock.Waited) return;
+        if (_isExecuting) return;
         try
         {
             await WaitLock.WaitAsync();
-            if (WaitLock.CurrentCount > 1) return;
-            await Task.Delay(1000);
+
+            if (_isExecuting) return;
+
+            _isExecuting = true;
+
             try
             {
                 await OnClickSearch(SearchText);
+                await InvokeAsync(StateHasChanged);
             }
             finally
             {
+                await Task.Delay(2000);
+                _isExecuting = false;
             }
         }
         finally

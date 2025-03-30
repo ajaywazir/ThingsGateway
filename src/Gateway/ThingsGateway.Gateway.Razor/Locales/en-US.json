@@ -132,6 +132,7 @@
     "ExcelChannel": "ExcelChannel",
     "UpdateChannel": "Edit Channel",
     "DeleteChannel": "Delete Channel",
+    "DeleteCurrentChannel": "Delete Current Channel",
     "DeleteAllChannel": "Delete All Channel",
     "ExportChannel": "Export Channel",
     "ExportCurrentChannel": "Export Current Channel",

@@ -12,7 +12,7 @@ namespace ThingsGateway.Gateway.Application;
 
 public class USheetDatas
 {
-    public string locale { get; set; } = "zh-CN";
+    public string locale { get; set; } = System.Globalization.CultureInfo.CurrentUICulture.Name;
     public Dictionary<string, USheetData> sheets { get; set; } = new();
 }
 
