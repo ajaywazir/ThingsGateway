@@ -123,13 +123,18 @@ internal sealed class RulesEngineHostedService : BackgroundService, IRulesEngine
         foreach (var link in startNodes.SelectMany(a => a.PortLinks))
         {
             rulesLog.Log.Trace("Start");
-            await Analysis((link.Target.Model as PortModel)?.Parent, new NodeInput(), rulesLog.Log, cancellationToken).ConfigureAwait(false);
+            await Analysis((link.Target.Model as PortModel)?.Parent, new NodeInput(), rulesLog, cancellationToken).ConfigureAwait(false);
         }
     }
 
-    private static async Task Analysis(NodeModel targetNode, NodeInput input, ILog log, CancellationToken cancellationToken)
+    private static async Task Analysis(NodeModel targetNode, NodeInput input, RulesLog rulesLog, CancellationToken cancellationToken)
     {
-        (targetNode as INode).Logger = log;
+        if (targetNode is INode node)
+        {
+            node.Logger = rulesLog.Log;
+            node.RulesEngineName = rulesLog.Rules.Name;
+        }
+
         try
         {
             if (targetNode == null)
@@ -141,7 +146,7 @@ internal sealed class RulesEngineHostedService : BackgroundService, IRulesEngine
                 {
                     foreach (var link in targetNode.PortLinks.Where(a => ((a.Target.Model as PortModel)?.Parent) != targetNode))
                     {
-                        await Analysis((link.Target.Model as PortModel)?.Parent, input, log, cancellationToken).ConfigureAwait(false);
+                        await Analysis((link.Target.Model as PortModel)?.Parent, input, rulesLog, cancellationToken).ConfigureAwait(false);
                     }
                 }
             }
@@ -150,7 +155,7 @@ internal sealed class RulesEngineHostedService : BackgroundService, IRulesEngine
                 var nodeOutput = await expressionNode.ExecuteAsync(input, cancellationToken).ConfigureAwait(false);
                 foreach (var link in targetNode.PortLinks.Where(a => ((a.Target.Model as PortModel)?.Parent) != targetNode))
                 {
-                    await Analysis((link.Target.Model as PortModel)?.Parent, new NodeInput() { Value = nodeOutput.Value, }, log, cancellationToken).ConfigureAwait(false);
+                    await Analysis((link.Target.Model as PortModel)?.Parent, new NodeInput() { Value = nodeOutput.Value, }, rulesLog, cancellationToken).ConfigureAwait(false);
                 }
             }
             else if (targetNode is IActuatorNode actuatorNode)
@@ -158,7 +163,7 @@ internal sealed class RulesEngineHostedService : BackgroundService, IRulesEngine
                 var nodeOutput = await actuatorNode.ExecuteAsync(input, cancellationToken).ConfigureAwait(false);
                 foreach (var link in targetNode.PortLinks.Where(a => ((a.Target.Model as PortModel)?.Parent) != targetNode))
                 {
-                    await Analysis((link.Target.Model as PortModel)?.Parent, new NodeInput() { Value = nodeOutput.Value }, log, cancellationToken).ConfigureAwait(false);
+                    await Analysis((link.Target.Model as PortModel)?.Parent, new NodeInput() { Value = nodeOutput.Value }, rulesLog, cancellationToken).ConfigureAwait(false);
                 }
             }
             else if (targetNode is ITriggerNode triggerNode)
@@ -168,7 +173,7 @@ internal sealed class RulesEngineHostedService : BackgroundService, IRulesEngine
                 {
                     foreach (var link in targetNode.PortLinks.Where(a => ((a.Target.Model as PortModel)?.Parent) != targetNode))
                     {
-                        await Analysis((link.Target.Model as PortModel)?.Parent, new NodeInput() { Value = a.Value }, log, cancellationToken).ConfigureAwait(false);
+                        await Analysis((link.Target.Model as PortModel)?.Parent, new NodeInput() { Value = a.Value }, rulesLog, cancellationToken).ConfigureAwait(false);
                     }
                 });
                 await triggerNode.StartAsync(func).ConfigureAwait(false);
@@ -180,7 +185,7 @@ internal sealed class RulesEngineHostedService : BackgroundService, IRulesEngine
         catch (OperationCanceledException) { }
         catch (Exception ex)
         {
-            log.LogWarning(ex);
+            rulesLog.Log?.LogWarning(ex);
         }
     }
 
