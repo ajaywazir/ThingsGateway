@@ -42,5 +42,7 @@ namespace ThingsGateway.Gateway.Application
         void PauseThread(bool pause);
         Task SetLogAsync(bool enable, LogLevel? logLevel = null, bool upDataBase = true);
         Task AfterVariablesChangedAsync(CancellationToken cancellationToken);
+        string GetAuthString();
+        bool Authentication();
     }
 }

@@ -242,6 +242,8 @@
   },
 
   "ThingsGateway.Gateway.Application.DriverBase": {
+    "Authorized": "Authorized",
+    "Unauthorized": "Unauthorized",
     "DeviceTaskStart": "Device {0} thread started",
     "DeviceTaskStartTimeout": "Device {0} thread start timeout {1} s",
     "DeviceTaskStop": "Device {0} thread stopped",

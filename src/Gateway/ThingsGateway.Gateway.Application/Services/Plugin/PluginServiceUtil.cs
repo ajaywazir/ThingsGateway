@@ -133,6 +133,7 @@ public static class PluginServiceUtil
     /// <returns></returns>
     public static bool IsEducation(Type type)
     {
+        if (type == null) return false;
         return Attribute.IsDefined(type, typeof(EducationPluginAttribute));
     }
     /// <summary>

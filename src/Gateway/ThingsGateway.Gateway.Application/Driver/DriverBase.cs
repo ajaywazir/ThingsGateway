@@ -429,6 +429,16 @@ public abstract class DriverBase : DisposableObject, IDriver
 
     #region 插件重写
 
+    public virtual bool Authentication()
+    {
+        return true;
+    }
+
+    public string GetAuthString()
+    {
+        return PluginServiceUtil.IsEducation(this.GetType()) ? Authentication() ? Localizer["Authorized"] : Localizer["Unauthorized"] : string.Empty;
+    }
+
     /// <summary>
     /// 开始通讯执行的方法
     /// </summary>

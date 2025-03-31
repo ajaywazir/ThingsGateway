@@ -13,7 +13,13 @@
         <HeaderTemplate>
 
             <span class=@((DeviceRuntime?.Driver!=null?"enable--text mx-1 text-h6 overflow-y-auto":"disabled--text mx-1 text-h6 overflow-y-auto"))>
-                <span class="text-truncate" title=@Name>@(Name)</span>
+                @if (PluginServiceUtil.IsEducation(DeviceRuntime?.Driver?.GetType())==true)
+                {
+                    <div style="flex-grow: 1;"></div>
+                    <Tag Color="Color.Primary" >PRO</Tag>
+                }
+                <span class="ms-2 text-truncate" title=@Name>@(Name)</span>
+                <span class=@(DeviceRuntime?.Driver?.Authentication()==true?"green--text ms-3":"red--text ms-3")>@(DeviceRuntime?.Driver?.GetAuthString())</span>
             </span>
 
             <div style="flex-grow: 1;"></div>
@@ -131,7 +137,7 @@
 
                 </EditorFormObject>
 
-                <div class="col-12">
+                <div class="col-12 mt-2">
                     <h6>@GatewayLocalizer["PluginInformation"]</h6>
                 </div>
                 @if (DeviceRuntime.Driver != null)

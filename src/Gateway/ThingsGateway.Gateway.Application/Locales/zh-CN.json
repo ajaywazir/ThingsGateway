@@ -256,6 +256,8 @@
   },
 
   "ThingsGateway.Gateway.Application.DriverBase": {
+    "Authorized": "已授权",
+    "Unauthorized": "未授权",
     "DeviceTaskStart": "设备 {0} 线程开始",
     "DeviceTaskStartTimeout": "设备 {0} 线程启动超时 {1} s",
     "DeviceTaskStop": "设备 {0} 线程停止",
