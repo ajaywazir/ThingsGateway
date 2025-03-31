@@ -277,7 +277,7 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
         if (variables.Count > 0)
         {
             using var db = GetDB();
-            var result = await db.Updateable<Variable>(variables).UpdateColumns(a => a.Value).ExecuteCommandAsync().ConfigureAwait(false);
+            var result = await db.Updateable<Variable>(variables).UpdateColumns(a => a.InitValue).ExecuteCommandAsync().ConfigureAwait(false);
         }
     }
 

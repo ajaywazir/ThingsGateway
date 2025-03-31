@@ -137,8 +137,8 @@ public class Variable : BaseDataEntity, IValidatableObject
     /// 初始值
     /// </summary>
     [SugarColumn(IsJson = true, ColumnDataType = StaticConfig.CodeFirst_BigString, ColumnDescription = "初始值", IsNullable = true)]
-    [AutoGenerateColumn(Visible = true, Filterable = true, Sortable = true)]
-    public virtual object? Value
+    [AutoGenerateColumn(Ignore = true)]
+    public object? InitValue
     {
         get
         {

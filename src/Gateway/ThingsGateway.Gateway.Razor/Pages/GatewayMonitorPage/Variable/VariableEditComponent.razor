@@ -50,10 +50,10 @@
                     <EditorItem @bind-Field="@context.Enable" />
                     <EditorItem @bind-Field="@context.RpcWriteEnable" />
 
-                    <EditorItem @bind-Field="@context.Value">
+                    <EditorItem @bind-Field="@context.InitValue">
                         <EditTemplate Context="value">
                             <div class="col-12  col-md-6 ">
-                                <BootstrapInput @bind-Value="@value.Value" DisplayText="@(context.Description(a=>a.Value))" ShowLabel="true" Formatter=@(JsonFormatter) />
+                                <BootstrapInput @bind-Value="@value.InitValue" DisplayText="@(context.Description(a=>a.InitValue))" ShowLabel="true" Formatter=@(JsonFormatter) />
                             </div>
                         </EditTemplate>
                     </EditorItem>

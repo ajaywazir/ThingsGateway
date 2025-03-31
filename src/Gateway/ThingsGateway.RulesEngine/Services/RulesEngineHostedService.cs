@@ -111,7 +111,15 @@ internal sealed class RulesEngineHostedService : BackgroundService, IRulesEngine
     private static async Task Start(RulesLog rulesLog, BlazorDiagram item, CancellationToken cancellationToken)
     {
         var startNodes = item.Nodes.Where(a => a is StartNode);
-        startNodes.ForEach(a => (a as INode).Logger = rulesLog.Log);
+        startNodes.ForEach(a =>
+        {
+            if (a is INode node)
+            {
+                node.Logger = rulesLog.Log;
+                node.RulesEngineName = rulesLog.Rules.Name;
+            }
+        }
+            );
         foreach (var link in startNodes.SelectMany(a => a.PortLinks))
         {
             rulesLog.Log.Trace("Start");

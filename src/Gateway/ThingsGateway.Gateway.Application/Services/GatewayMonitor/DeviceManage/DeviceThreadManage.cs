@@ -12,6 +12,8 @@ using BootstrapBlazor.Components;
 
 using Mapster;
 
+using MapsterMapper;
+
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
 
@@ -523,8 +525,13 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
                 try
                 {
                     //添加保存数据变量读取操作
-                    var saveVariable = saveDevices.Select(a => (Variable)a).ToList();
-
+                    var saveVariable = new List<Variable>();
+                    foreach (var item in saveDevices)
+                    {
+                        var data = item.Adapt<Variable>();
+                        data.InitValue = item.Value;
+                        saveVariable.Add(data);
+                    }
                     await GlobalData.VariableService.UpdateInitValueAsync(saveVariable).ConfigureAwait(false);
                 }
                 catch (Exception ex)

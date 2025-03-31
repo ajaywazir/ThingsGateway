@@ -3,6 +3,7 @@
 public interface INode
 {
     public TouchSocket.Core.ILog Logger { get; set; }
+    string RulesEngineName { get; set; }
 }
 
 public interface IConditionNode : INode

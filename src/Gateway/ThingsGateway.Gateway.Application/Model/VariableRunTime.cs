@@ -139,7 +139,7 @@ public class VariableRuntime : Variable, IVariable, IDisposable
     /// 实时值
     /// </summary>
     [AutoGenerateColumn(Visible = true, Order = 6)]
-    public override object? Value { get => _value; set => _value = value; }
+    public object? Value { get => _value; set => _value = value; }
 
     /// <summary>
     /// 设置变量值与时间/质量戳
