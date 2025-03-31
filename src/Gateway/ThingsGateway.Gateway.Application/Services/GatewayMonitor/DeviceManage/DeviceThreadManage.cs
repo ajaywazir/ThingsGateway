@@ -12,8 +12,6 @@ using BootstrapBlazor.Components;
 
 using Mapster;
 
-using MapsterMapper;
-
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
 
@@ -403,7 +401,6 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
                 // 创建令牌并与驱动程序对象的设备ID关联，用于取消操作
                 var cts = new CancellationTokenSource();
                 var token = cts.Token;
-
                 if (!CancellationTokenSources.TryAdd(driver.DeviceId, cts))
                 {
                     try
@@ -420,6 +417,7 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
                 var driverTask = new DoTask(t => DoWork(driver, t), driver.LogMessage, null);
                 DriverTasks.TryAdd(driver.DeviceId, driverTask);
 
+                token.Register(driver.Stop);
 
                 driverTask.Start(token);
 
@@ -491,7 +489,7 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
     {
         try
         {
-            ConcurrentList<VariableRuntime> saveDevices = new();
+            ConcurrentList<VariableRuntime> saveVariableRuntimes = new();
             await deviceIds.ParallelForEachAsync(async (deviceId, cancellationToken) =>
             {
                 // 查找具有指定设备ID的驱动程序对象
@@ -500,7 +498,7 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
 
                 if (IsCollectChannel == true)
                 {
-                    saveDevices.AddRange(driver.IdVariableRuntimes.Where(a => a.Value.SaveValue && !a.Value.DynamicVariable).Select(a => a.Value));
+                    saveVariableRuntimes.AddRange(driver.IdVariableRuntimes.Where(a => a.Value.SaveValue && !a.Value.DynamicVariable).Select(a => a.Value));
                 }
 
                 // 取消驱动程序的操作
@@ -512,7 +510,6 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
                         token.Dispose();
                     }
                 }
-                driver.Stop();
                 await task.StopAsync().ConfigureAwait(false);
             }).ConfigureAwait(false);
 
@@ -525,14 +522,14 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
                 try
                 {
                     //添加保存数据变量读取操作
-                    var saveVariable = new List<Variable>();
-                    foreach (var item in saveDevices)
+                    var saveVariables = new List<Variable>();
+                    foreach (var item in saveVariableRuntimes)
                     {
                         var data = item.Adapt<Variable>();
                         data.InitValue = item.Value;
-                        saveVariable.Add(data);
+                        saveVariables.Add(data);
                     }
-                    await GlobalData.VariableService.UpdateInitValueAsync(saveVariable).ConfigureAwait(false);
+                    await GlobalData.VariableService.UpdateInitValueAsync(saveVariables).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
@@ -570,12 +567,6 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
     {
         try
         {
-            if (token.IsCancellationRequested)
-            {
-                driver.Stop();
-                return;
-            }
-
             // 只有当驱动成功初始化后才执行操作
             if (driver.IsInitSuccess)
             {
@@ -605,8 +596,7 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
                 }
                 else if (result == ThreadRunReturnTypeEnum.Break && token.IsCancellationRequested)
                 {
-                    driver.Stop(); // 执行驱动的释放操作
-                    return; // 结束当前循环
+                    return;
                 }
             }
             else
@@ -616,15 +606,11 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
         }
         catch (OperationCanceledException)
         {
-            if (token.IsCancellationRequested)
-                driver.Stop();
-            return;
+                    return;
         }
         catch (ObjectDisposedException)
         {
-            if (token.IsCancellationRequested)
-                driver.Stop();
-            return;
+                    return;
         }
 
 

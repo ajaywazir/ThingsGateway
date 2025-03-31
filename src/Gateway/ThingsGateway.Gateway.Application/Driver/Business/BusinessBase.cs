@@ -202,11 +202,6 @@ public abstract class BusinessBase : DriverBase
         return base.StartAsync(cancellationToken);
     }
 
-    internal override void Stop()
-    {
-        base.Stop();
-    }
-
     private TimeTick TimeTick;
 
 }
