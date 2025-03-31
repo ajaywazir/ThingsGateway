@@ -28,19 +28,15 @@ public partial class USheet
 
     private async Task OnPushExcelData()
     {
-        _ = Task.Run(async () =>
+        await Task.Delay(100);
+        await InvokeAsync(async () =>
         {
-            await Task.Delay(500);
-            await InvokeAsync(async () =>
+            await _sheetExcel.PushDataAsync(new UniverSheetData()
             {
-                await _sheetExcel.PushDataAsync(new UniverSheetData()
-                {
-                    CommandName = "SetWorkbook",
-                    Data = Model.ToJsonNetString()
-                });
+                CommandName = "SetWorkbook",
+                WorkbookData = Model.ToJsonNetString(),
             });
         });
-        await Task.Delay(10);
     }
     [Inject]
     private IStringLocalizer<ThingsGateway.Razor._Imports> RazorLocalizer { get; set; }
