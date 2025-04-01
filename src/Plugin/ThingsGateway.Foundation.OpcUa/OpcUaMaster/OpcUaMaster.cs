@@ -389,12 +389,15 @@ public class OpcUaMaster : IDisposable
         {
             m_session = null;
         }
+
     }
 
     /// <inheritdoc/>
     public void Dispose()
     {
         Disconnect();
+        _variableDicts?.Clear();
+        _subscriptionDicts?.Clear();
     }
 
     /// <summary>
@@ -855,7 +858,6 @@ public class OpcUaMaster : IDisposable
             if (LastServerUrl != serverUrl)
             {
                 _variableDicts.Clear();
-                _subscriptionDicts.Clear();
             }
             LastServerUrl = serverUrl;
             if (m_configuration == null)

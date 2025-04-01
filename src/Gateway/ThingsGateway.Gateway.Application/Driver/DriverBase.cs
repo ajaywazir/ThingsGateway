@@ -36,8 +36,8 @@ public abstract class DriverBase : DisposableObject, IDriver
     /// <summary>
     /// 当前设备
     /// </summary>
-    public DeviceRuntime? CurrentDevice { get; private set; }
-
+    public DeviceRuntime? CurrentDevice => WeakReferenceCurrentDevice?.TryGetTarget(out var target) == true ? target : null;
+    private WeakReference<DeviceRuntime> WeakReferenceCurrentDevice { get; set; }
     /// <summary>
     /// 当前设备Id
     /// </summary>
@@ -223,7 +223,7 @@ public abstract class DriverBase : DisposableObject, IDriver
     /// </summary>
     internal void InitDevice(DeviceRuntime device)
     {
-        CurrentDevice = device;
+        WeakReferenceCurrentDevice = new WeakReference<DeviceRuntime>(device);
 
         _logger = App.RootServices.GetService<Microsoft.Extensions.Logging.ILoggerFactory>().CreateLogger($"Driver[{CurrentDevice.Name}]");
 
@@ -388,6 +388,8 @@ public abstract class DriverBase : DisposableObject, IDriver
         }
         catch (Exception ex)
         {
+            if (cancellationToken.IsCancellationRequested)
+                return ThreadRunReturnTypeEnum.Break;
             // 记录异常信息，并更新设备状态为异常
             LogMessage?.LogError(ex, "Execute");
             CurrentDevice.SetDeviceStatus(TimerX.Now, true, ex.Message);
@@ -417,7 +419,6 @@ public abstract class DriverBase : DisposableObject, IDriver
                         // 记录 Dispose 方法执行失败的错误信息
                         LogMessage?.LogError(ex, "Dispose");
                     }
-                    CurrentDevice.Driver = null;
                     // 记录设备线程已停止的信息
                     LogMessage?.LogInformation(Localizer["DeviceTaskStop", DeviceName]);
                 }
@@ -425,6 +426,18 @@ public abstract class DriverBase : DisposableObject, IDriver
         }
     }
 
+    protected override void Dispose(bool disposing)
+    {
+        IdVariableRuntimes?.Clear();
+        IdVariableRuntimes = null;
+        CurrentDevice.Driver = null;
+        LogMessage?.Logs?.ForEach(a => a.TryDispose());
+        LogMessage = null;
+        pluginPropertyEditorItems?.Clear();
+        pluginPropertyEditorItems = null;
+        DeviceThreadManage = null;
+        base.Dispose(disposing);
+    }
     #endregion 插件生命周期
 
     #region 插件重写
@@ -460,7 +473,7 @@ public abstract class DriverBase : DisposableObject, IDriver
     /// <summary>
     /// 当前关联的变量
     /// </summary>
-    public Dictionary<long, VariableRuntime> IdVariableRuntimes { get; } = new();
+    public Dictionary<long, VariableRuntime> IdVariableRuntimes { get; private set; } = new();
 
     public abstract bool IsConnected();
 
@@ -483,7 +496,6 @@ public abstract class DriverBase : DisposableObject, IDriver
     /// 变量更改后， 重新初始化变量列表，获取设备变量打包列表/特殊方法列表等
     /// </summary>
     public abstract Task AfterVariablesChangedAsync(CancellationToken cancellationToken);
-
 
     /// <summary>
     /// 间隔执行

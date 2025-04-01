@@ -124,7 +124,7 @@ public class ModbusSlave : BusinessBase
     public override async Task AfterVariablesChangedAsync(CancellationToken cancellationToken)
     {
         await base.AfterVariablesChangedAsync(cancellationToken).ConfigureAwait(false);
-        _modbusVariableQueue.Clear();
+        _modbusVariableQueue?.Clear();
         IdVariableRuntimes.ForEach(a =>
         {
             VariableValueChange(a.Value, null);

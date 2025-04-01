@@ -43,6 +43,7 @@ public partial class MqttCollect : CollectBase
     protected override void Dispose(bool disposing)
     {
         _mqttClient?.SafeDispose();
+        TopicItemDict?.Clear();
         base.Dispose(disposing);
     }
 

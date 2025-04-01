@@ -79,6 +79,8 @@ public class OpcDaMaster : CollectBase
         if (_plc != null)
             _plc.DataChangedHandler -= DataChangedHandler;
         _plc?.SafeDispose();
+
+        VariableAddresDicts?.Clear();
         base.Dispose(disposing);
     }
 
@@ -285,4 +287,6 @@ public class OpcDaMaster : CollectBase
             success = false;
         }
     }
+
+
 }

@@ -42,7 +42,7 @@ public class AppService : IAppService
         {
         }
     }
-
+    public Parser Parser = Parser.GetDefault();
     public ClientInfo? ClientInfo
     {
         get
@@ -51,7 +51,7 @@ public class AppService : IAppService
             ClientInfo? clientInfo = null;
             if (!string.IsNullOrEmpty(str))
             {
-                clientInfo = Parser.GetDefault().Parse(str);
+                clientInfo = Parser.Parse(str);
             }
             return clientInfo;
         }

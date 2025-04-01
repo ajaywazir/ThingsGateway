@@ -95,6 +95,8 @@ public class OpcUaMaster : CollectBase
             _plc.Disconnect();
             _plc.SafeDispose();
         }
+
+        VariableAddresDicts?.Clear();
         base.Dispose(disposing);
     }
 
