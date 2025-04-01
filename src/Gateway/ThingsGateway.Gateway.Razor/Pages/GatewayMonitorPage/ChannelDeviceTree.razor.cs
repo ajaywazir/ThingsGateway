@@ -23,7 +23,7 @@ using ThingsGateway.NewLife.Json.Extension;
 
 namespace ThingsGateway.Gateway.Razor;
 
-public partial class ChannelDeviceTree : IDisposable
+public partial class ChannelDeviceTree
 {
     SpinnerComponent Spinner;
     [Inject]
@@ -1486,12 +1486,12 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
         return false;
     }
     private bool Disposed;
-    public void Dispose()
+    protected override ValueTask DisposeAsync(bool disposing)
     {
         Disposed = true;
         ChannelRuntimeDispatchService.UnSubscribe(Refresh);
         DeviceRuntimeDispatchService.UnSubscribe(Refresh);
-        GC.SuppressFinalize(this);
+        return base.DisposeAsync(disposing);
     }
 
     ChannelDeviceTreeItem? SelectModel = default;
