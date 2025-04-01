@@ -352,7 +352,7 @@ internal sealed class AlarmHostedService : BackgroundService, IAlarmHostedServic
                 item.AlarmLimit = oldAlarm.AlarmLimit;
                 item.AlarmCode = oldAlarm.AlarmCode;
                 item.RecoveryCode = item.Value.ToString();
-                item.AlarmText = text;
+                item.AlarmText = oldAlarm.AlarmText;
                 item.EventTime = DateTime.Now;
             }
             changed = true;
