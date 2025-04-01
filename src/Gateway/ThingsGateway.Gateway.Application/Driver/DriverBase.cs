@@ -430,7 +430,9 @@ public abstract class DriverBase : DisposableObject, IDriver
     {
         IdVariableRuntimes?.Clear();
         IdVariableRuntimes = null;
-        CurrentDevice.Driver = null;
+        var device = CurrentDevice;
+        if (device!=null)
+            device.Driver = null;
         LogMessage?.Logs?.ForEach(a => a.TryDispose());
         LogMessage = null;
         pluginPropertyEditorItems?.Clear();
