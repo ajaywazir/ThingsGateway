@@ -107,8 +107,11 @@
       {
         "Url": "/VigorMaster",
         "Text": "VigorMaster"
+      },
+      {
+        "Url": "/InovanceMaster",
+        "Text": "InovanceMaster"
       }
-
 
 
     ]

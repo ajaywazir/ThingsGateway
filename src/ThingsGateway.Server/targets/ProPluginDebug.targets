@@ -26,7 +26,8 @@
 		<ProjectReference Include="..\PluginPro\ThingsGateway.Plugin.YPSFSK\ThingsGateway.Plugin.YPSFSK.csproj" />
 
 		<ProjectReference Include="..\PluginPro\ThingsGateway.Plugin.TIANXIN\ThingsGateway.Plugin.TIANXIN.csproj" />
-
+		<ProjectReference Include="..\PluginPro\ThingsGateway.Plugin.Inovance\ThingsGateway.Plugin.Inovance.csproj" />
+		
 	</ItemGroup>
 
 

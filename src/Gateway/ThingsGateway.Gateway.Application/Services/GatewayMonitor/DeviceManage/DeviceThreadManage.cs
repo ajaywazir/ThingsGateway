@@ -12,8 +12,6 @@ using BootstrapBlazor.Components;
 
 using Mapster;
 
-using MapsterMapper;
-
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
 

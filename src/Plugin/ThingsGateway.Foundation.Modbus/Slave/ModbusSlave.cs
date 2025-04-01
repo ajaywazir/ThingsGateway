@@ -21,7 +21,7 @@ namespace ThingsGateway.Foundation.Modbus;
 public delegate ValueTask<OperResult> ModbusServerWriteEventHandler(ModbusAddress modbusAddress, IThingsGatewayBitConverter bitConverter, IClientChannel channel);
 
 /// <inheritdoc/>
-public class ModbusSlave : DeviceBase
+public class ModbusSlave : DeviceBase, IModbusAddress
 {
     /// <summary>
     /// 继电器
@@ -214,6 +214,8 @@ public class ModbusSlave : DeviceBase
     {
         try
         {
+            var f = mAddress.FunctionCode > 0x30 ? mAddress.FunctionCode - 0x30 : mAddress.FunctionCode;
+
             if (MulStation)
             {
                 Init(mAddress);
@@ -236,7 +238,7 @@ public class ModbusSlave : DeviceBase
                 {
                     int len = mAddress.Length;
 
-                    switch (mAddress.FunctionCode)
+                    switch (f)
                     {
                         case 1:
                             return OperResult.CreateSuccessResult(ModbusServer01ByteBlock.Memory.Slice(mAddress.StartAddress, len));
@@ -256,7 +258,7 @@ public class ModbusSlave : DeviceBase
             {
                 using (new WriteLock(_lockSlim))
                 {
-                    switch (mAddress.FunctionCode)
+                    switch (f)
                     {
                         case 2:
                             ModbusServer02ByteBlock.Position = mAddress.StartAddress;
@@ -296,7 +298,7 @@ public class ModbusSlave : DeviceBase
     /// <inheritdoc/>
     public override ValueTask<OperResult<byte[]>> ReadAsync(string address, int length, CancellationToken cancellationToken = default)
     {
-        ModbusAddress mAddress = ModbusAddress.ParseFrom(address, Station);
+        var mAddress = GetModbusAddress(address, Station);
         mAddress.Length = (ushort)(length * RegisterByteLength);
         var result = ModbusRequest(mAddress, true, cancellationToken);
         if (result.IsSuccess)
@@ -308,14 +310,18 @@ public class ModbusSlave : DeviceBase
             return EasyValueTask.FromResult(new OperResult<byte[]>(result));
         }
     }
-
+    public virtual ModbusAddress GetModbusAddress(string address, byte? station, bool isCache = true)
+    {
+        var mAddress = ModbusAddress.ParseFrom(address, station, isCache);
+        return mAddress;
+    }
     /// <inheritdoc/>
     public override async ValueTask<OperResult> WriteAsync(string address, byte[] value, DataTypeEnum dataType, CancellationToken cancellationToken = default)
     {
         try
         {
             await EasyValueTask.CompletedTask.ConfigureAwait(false);
-            var mAddress = ModbusAddress.ParseFrom(address, Station);
+            var mAddress = GetModbusAddress(address, Station);
             mAddress.Data = value;
             return ModbusRequest(mAddress, false, cancellationToken);
         }
@@ -331,7 +337,7 @@ public class ModbusSlave : DeviceBase
         try
         {
             await EasyValueTask.CompletedTask.ConfigureAwait(false);
-            var mAddress = ModbusAddress.ParseFrom(address, Station);
+            var mAddress = GetModbusAddress(address, Station);
             if (mAddress.IsBitFunction)
             {
                 mAddress.Data = new ReadOnlyMemory<byte>(value.Select(a => a ? (byte)0xff : (byte)0).ToArray());
@@ -403,8 +409,9 @@ public class ModbusSlave : DeviceBase
         {
             return;
         }
+        var f = modbusRequest.FunctionCode > 0x30 ? modbusRequest.FunctionCode - 0x30 : modbusRequest.FunctionCode;
 
-        if (modbusRequest.FunctionCode <= 4)
+        if (f <= 4)
         {
             var data = ModbusRequest(modbusRequest, true);
             if (data.IsSuccess)
@@ -461,7 +468,7 @@ public class ModbusSlave : DeviceBase
         }
         else//写入
         {
-            if (modbusRequest.FunctionCode == 5 || modbusRequest.FunctionCode == 15)
+            if (f == 5 || f == 15)
             {
                 //写入继电器
                 if (WriteData != null)
@@ -501,7 +508,7 @@ public class ModbusSlave : DeviceBase
                     }
                 }
             }
-            else if (modbusRequest.FunctionCode == 6 || modbusRequest.FunctionCode == 16)
+            else if (f == 6 || f == 16)
             {
                 //写入寄存器
                 if (WriteData != null)

@@ -11,7 +11,7 @@
 namespace ThingsGateway.Foundation.Modbus;
 
 /// <inheritdoc/>
-public partial class ModbusMaster : DtuServiceDeviceBase
+public partial class ModbusMaster : DtuServiceDeviceBase, IModbusAddress
 {
 
     public override void InitChannel(IChannel channel, ILog? deviceLog = null)
@@ -116,31 +116,9 @@ public partial class ModbusMaster : DtuServiceDeviceBase
     {
         try
         {
-            var mAddress = ModbusAddress.ParseFrom(address, Station);
+            var mAddress = GetModbusAddress(address, Station);
             mAddress.Length = (ushort)length;
             return await ModbusRequestAsync(mAddress, true, cancellationToken).ConfigureAwait(false);
-
-            //if (mAddress.BitIndex == null || mAddress.FunctionCode <= 2)
-            //{
-            //    return await ModbusRequestAsync(mAddress, true, cancellationToken).ConfigureAwait(false);
-            //}
-            //if (mAddress.BitIndex < 2)
-            //{
-            //    mAddress.Length = 1; //请求寄存器数量
-            //    var readData = await ModbusRequestAsync(mAddress, true, cancellationToken).ConfigureAwait(false);
-            //    if (!readData.IsSuccess) return readData;
-            //    var data = readData.Content;
-            //    if (mAddress.BitIndex == 0)
-            //        readData.Content = new byte[] { data[1] };
-            //    else
-            //        readData.Content = new byte[] { data[0] };
-            //    return readData;
-            //}
-            //else
-            //{
-            //    return new(ModbusResource.Localizer["ValueOverlimit", nameof(mAddress.BitIndex), 2]);
-            //}
-
         }
         catch (Exception ex)
         {
@@ -155,7 +133,7 @@ public partial class ModbusMaster : DtuServiceDeviceBase
     {
         try
         {
-            var mAddress = ModbusAddress.ParseFrom(address, Station);
+            var mAddress = GetModbusAddress(address, Station);
             mAddress.Data = value;
 
             if (mAddress.BitIndex == null)
@@ -185,14 +163,18 @@ public partial class ModbusMaster : DtuServiceDeviceBase
             return new OperResult(ex);
         }
     }
-
+    public virtual ModbusAddress GetModbusAddress(string address, byte? station, bool isCache = true)
+    {
+        var mAddress = ModbusAddress.ParseFrom(address, station, isCache);
+        return mAddress;
+    }
     /// <inheritdoc/>
     public override async ValueTask<OperResult> WriteAsync(string address, bool[] value, CancellationToken cancellationToken = default)
     {
         try
         {
-            var mAddress = ModbusAddress.ParseFrom(address, Station);
-            if (value.Length > 1 && mAddress.FunctionCode == 1)
+            var mAddress = GetModbusAddress(address, Station);
+            if (value.Length > 1 && (mAddress.FunctionCode == 1 || mAddress.FunctionCode == 0x31))
             {
                 mAddress.WriteFunctionCode = 15;
                 mAddress.Data = value.BoolArrayToByte();

@@ -23,6 +23,7 @@ public class ModbusTcpMessage : MessageBase, IResultMessage
     public override FilterResult CheckBody<TByteBlock>(ref TByteBlock byteBlock)
     {
 
+        var f = Response.FunctionCode > 0x30 ? Response.FunctionCode - 0x30 : Response.FunctionCode;
         if (error)
         {
             Response.ErrorCode = byteBlock.ReadByte();
@@ -33,7 +34,7 @@ public class ModbusTcpMessage : MessageBase, IResultMessage
         else
         {
             Response.ErrorCode = null;
-            if (Response.FunctionCode <= 4)
+            if (f <= 4)
             {
                 Response.Length = byteBlock.ReadByte();
             }
@@ -47,14 +48,14 @@ public class ModbusTcpMessage : MessageBase, IResultMessage
             return FilterResult.Success;
         }
 
-        if (Response.FunctionCode <= 4)
+        if (f <= 4)
         {
             OperCode = 0;
             Content = byteBlock.ToArrayTake(BodyLength - 1);
             Response.Data = Content;
             return FilterResult.Success;
         }
-        else if (Response.FunctionCode == 5 || Response.FunctionCode == 6)
+        else if (f == 5 || f == 6)
         {
             byteBlock.Position = HeaderLength - 1;
             Response.StartAddress = byteBlock.ReadUInt16();
@@ -63,7 +64,7 @@ public class ModbusTcpMessage : MessageBase, IResultMessage
             Response.Data = Content;
             return FilterResult.Success;
         }
-        else if (Response.FunctionCode == 15 || Response.FunctionCode == 16)
+        else if (f == 15 || f == 16)
         {
             byteBlock.Position = HeaderLength - 1;
             Response.StartAddress = byteBlock.ReadUInt16(EndianType.Big);

@@ -27,7 +27,7 @@ public class PackHelper
     /// <param name="defaultIntervalTime">默认间隔时间</param>
     /// <param name="station">默认站点</param>
     /// <returns></returns>
-    public static List<T> LoadSourceRead<T>(IDevice device, IEnumerable<IVariable> deviceVariables, int maxPack, string defaultIntervalTime, byte? station = null) where T : IVariableSource, new()
+    public static List<T> LoadSourceRead<T>(IModbusAddress device, IEnumerable<IVariable> deviceVariables, int maxPack, string defaultIntervalTime, byte? station = null) where T : IVariableSource, new()
     {
         // 检查参数是否为空
         if (deviceVariables == null)
@@ -83,7 +83,7 @@ public class PackHelper
 
                 // 解析地址，并设置字节长度
                 var address = it.RegisterAddress;
-                var result = ModbusAddress.ParseFrom(address, station, isCache: false);
+                var result = device.GetModbusAddress(address, station, isCache: false);
 
                 // 如果是数组，需要乘以数组长度
                 if ((result.FunctionCode == 3 || result.FunctionCode == 4) && it.DataType == DataTypeEnum.Boolean)

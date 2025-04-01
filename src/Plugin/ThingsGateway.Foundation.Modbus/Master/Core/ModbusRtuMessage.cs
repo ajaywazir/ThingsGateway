@@ -41,15 +41,15 @@ public class ModbusRtuMessage : MessageBase, IResultMessage
 
         var pos = byteBlock.Position - HeaderLength;
         var crcLen = 0;
-
-        if (Response.FunctionCode <= 4)
+        var f = Response.FunctionCode > 0x30 ? Response.FunctionCode - 0x30 : Response.FunctionCode;
+        if (f <= 4)
         {
             OperCode = 0;
             Content = byteBlock.ToArrayTake(BodyLength - 2);
             Response.Data = Content;
             crcLen = 3 + Response.Length;
         }
-        else if (Response.FunctionCode == 5 || Response.FunctionCode == 6)
+        else if (f == 5 || f == 6)
         {
             byteBlock.Position = HeaderLength - 1;
             Response.StartAddress = byteBlock.ReadUInt16(EndianType.Big);
@@ -58,7 +58,7 @@ public class ModbusRtuMessage : MessageBase, IResultMessage
             Response.Data = Content;
             crcLen = 6;
         }
-        else if (Response.FunctionCode == 15 || Response.FunctionCode == 16)
+        else if (f == 15 || f == 16)
         {
             byteBlock.Position = HeaderLength - 1;
             Response.StartAddress = byteBlock.ReadUInt16(EndianType.Big);
@@ -92,7 +92,7 @@ public class ModbusRtuMessage : MessageBase, IResultMessage
                         ErrorMessage = ModbusResource.Localizer["StationNotSame", Request.Station, Response.Station];
                         return FilterResult.GoOn;
                     }
-                    if (Response.FunctionCode > 4 ? Request.WriteFunctionCode != Response.FunctionCode : Request.FunctionCode != Response.FunctionCode)
+                    if (f > 4 ? Request.WriteFunctionCode != Response.FunctionCode : Request.FunctionCode != Response.FunctionCode)
                     {
                         OperCode = 999;
                         Response.ErrorCode = 1;
@@ -134,18 +134,19 @@ public class ModbusRtuMessage : MessageBase, IResultMessage
         else
         {
             Response.ErrorCode = null;
+            var f = Response.FunctionCode > 0x30 ? Response.FunctionCode - 0x30 : Response.FunctionCode;
 
-            if (Response.FunctionCode == 5 || Response.FunctionCode == 6)
+            if (f == 5 || f == 6)
             {
                 BodyLength = 5;
                 return true;
             }
-            else if (Response.FunctionCode == 15 || Response.FunctionCode == 16)
+            else if (f == 15 || f == 16)
             {
                 BodyLength = 5;
                 return true;
             }
-            else if (Response.FunctionCode <= 4)
+            else if (f <= 4)
             {
                 Response.Length = byteBlock.ReadByte();
                 BodyLength = Response.Length + 2; //数据区+crc

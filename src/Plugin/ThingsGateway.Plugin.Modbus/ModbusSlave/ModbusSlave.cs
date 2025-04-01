@@ -132,7 +132,7 @@ public class ModbusSlave : BusinessBase
 
         ModbusVariables = IdVariableRuntimes.ToDictionary(a =>
         {
-            ModbusAddress address = ModbusAddress.ParseFrom(
+            ModbusAddress address = _plc.GetModbusAddress(
                 a.Value.GetPropertyValue(DeviceId,
                 nameof(_variablePropertys.ServiceAddress)), _driverPropertys.Station, isCache: false);
             return address!;

@@ -32,35 +32,36 @@ public class ModbusTcpSlaveMessage : MessageBase, IResultMessage
         BodyLength = byteBlock.ReadUInt16(EndianType.Big) - 6;
         Request.Station = byteBlock.ReadByte();
         Request.FunctionCode = byteBlock.ReadByte();
+        var f = Request.FunctionCode > 0x30 ? Request.FunctionCode - 0x30 : Request.FunctionCode;
 
         Request.StartAddress = byteBlock.ReadUInt16(EndianType.Big);
 
-        if (Request.FunctionCode == 3 || Request.FunctionCode == 4)
+        if (f == 3 || f == 4)
         {
             Request.Length = (ushort)(byteBlock.ReadUInt16(EndianType.Big) * 2);
             return true;
         }
-        else if (Request.FunctionCode == 1 || Request.FunctionCode == 2)
+        else if (f == 1 || f == 2)
         {
             Request.Length = byteBlock.ReadUInt16(EndianType.Big);
             return true;
         }
-        else if (Request.FunctionCode == 5)
+        else if (f == 5)
         {
             Request.Data = byteBlock.AsSegmentTake(1);
             return true;
         }
-        else if (Request.FunctionCode == 6)
+        else if (f == 6)
         {
             Request.Data = byteBlock.AsSegmentTake(2);
             return true;
         }
-        else if (Request.FunctionCode == 15)
+        else if (f == 15)
         {
             Request.Length = byteBlock.ReadUInt16(EndianType.Big);
             return true;
         }
-        else if (Request.FunctionCode == 16)
+        else if (f == 16)
         {
             Request.Length = (ushort)(byteBlock.ReadUInt16(EndianType.Big) * 2);
             return true;
@@ -74,13 +75,14 @@ public class ModbusTcpSlaveMessage : MessageBase, IResultMessage
         var pos = byteBlock.Position - HeaderLength;
         Bytes = byteBlock.AsSegment(pos, HeaderLength + BodyLength);
 
+        var f = Request.FunctionCode > 0x30 ? Request.FunctionCode - 0x30 : Request.FunctionCode;
 
-        if (Request.FunctionCode == 15)
+        if (f == 15)
         {
             byteBlock.Position += 1;
             Request.Data = byteBlock.AsSegmentTake(Request.Length).AsSpan().ByteToBoolArray(Request.Length).Select(a => a ? (byte)0xff : (byte)0).ToArray();
         }
-        else if (Request.FunctionCode == 16)
+        else if (f == 16)
         {
             byteBlock.Position += 1;
             Request.Data = byteBlock.AsSegmentTake(Request.Length);

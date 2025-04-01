@@ -436,7 +436,7 @@ public abstract class DriverBase : DisposableObject, IDriver
 
     public string GetAuthString()
     {
-        return PluginServiceUtil.IsEducation(this.GetType()) ? Authentication() ? Localizer["Authorized"] : Localizer["Unauthorized"] : string.Empty;
+        return PluginServiceUtil.IsEducation(GetType()) ? Authentication() ? Localizer["Authorized"] : Localizer["Unauthorized"] : string.Empty;
     }
 
     /// <summary>

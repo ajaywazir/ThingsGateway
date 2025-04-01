@@ -1,6 +1,7 @@
 <Project>
 
 	<ItemGroup>
+		<PackageReference Include="ThingsGateway.Plugin.Inovance" Version="$(ProPluginVersion)" GeneratePathProperty="true" Private="false"  IncludeAssets=" native;" />
 		<PackageReference Include="ThingsGateway.Plugin.TIANXIN" Version="$(ProPluginVersion)" GeneratePathProperty="true" Private="false"  IncludeAssets=" native;" />
 		<PackageReference Include="ThingsGateway.Plugin.HJ212" Version="$(ProPluginVersion)" GeneratePathProperty="true" Private="false"  IncludeAssets=" native;" />
 		<PackageReference Include="ThingsGateway.Plugin.BACnet" Version="$(ProPluginVersion)" GeneratePathProperty="true" Private="false"  IncludeAssets=" native;" />
@@ -41,6 +42,7 @@
 		<ItemGroup>
 			<!-- setting up the variable for convenience -->
 
+			<PkgThingsGateway_Plugin_InovancePackageFiles Include="$(PkgThingsGateway_Plugin_Inovance)\Content\$(PluginTargetFramework)\**\*.*" />
 			<PkgThingsGateway_Plugin_TIANXINPackageFiles Include="$(PkgThingsGateway_Plugin_TIANXIN)\Content\$(PluginTargetFramework)\**\*.*" />
 			<PkgThingsGateway_Plugin_HJ212PackageFiles Include="$(PkgThingsGateway_Plugin_HJ212)\Content\$(PluginTargetFramework)\**\*.*" />
 			<PkgThingsGateway_Plugin_BACnetPackageFiles Include="$(PkgThingsGateway_Plugin_BACnet)\Content\$(PluginTargetFramework)\**\*.*" />
@@ -64,7 +66,8 @@
 			<PluginFolder>$(TargetDir)GatewayPlugins\</PluginFolder>
 		</PropertyGroup>
 		<Message Text="将插件复制到插件目录 $(PluginFolder)" Importance="high" />
-
+		
+		<Copy SourceFiles="@(PkgThingsGateway_Plugin_InovancePackageFiles)" DestinationFolder="$(PluginFolder)ThingsGateway.Plugin.Inovance%(RecursiveDir)" />
 		<Copy SourceFiles="@(PkgThingsGateway_Plugin_TIANXINPackageFiles)" DestinationFolder="$(PluginFolder)ThingsGateway.Plugin.TIANXIN%(RecursiveDir)" />
 		<Copy SourceFiles="@(PkgThingsGateway_Plugin_HJ212PackageFiles)" DestinationFolder="$(PluginFolder)ThingsGateway.Plugin.HJ212%(RecursiveDir)" />
 		<Copy SourceFiles="@(PkgThingsGateway_Plugin_BACnetPackageFiles)" DestinationFolder="$(PluginFolder)ThingsGateway.Plugin.BACnet%(RecursiveDir)" />
