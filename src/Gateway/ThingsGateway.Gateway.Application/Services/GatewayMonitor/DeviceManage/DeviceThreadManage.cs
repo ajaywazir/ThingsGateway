@@ -130,10 +130,18 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
         GlobalData.DeviceStatusChangeEvent += GlobalData_DeviceStatusChangeEvent;
 
         LogMessage?.LogInformation(Localizer["ChannelCreate", channelRuntime.Name]);
-        _ = Task.Run(() => CheckThreadAsync(CancellationTokenSource.Token));
-        _ = Task.Run(() => CheckRedundantAsync(CancellationTokenSource.Token));
+
+        CancellationToken = CancellationTokenSource.Token;
+
+        CancellationToken.Register(() => GlobalData.DeviceStatusChangeEvent -= GlobalData_DeviceStatusChangeEvent);
+
+        _ = Task.Run(() => CheckThreadAsync(CancellationToken));
+        _ = Task.Run(() => CheckRedundantAsync(CancellationToken));
     }
     private CancellationTokenSource CancellationTokenSource = new();
+
+    private CancellationToken CancellationToken;
+
     #region 日志
 
     private WaitLock SetLogLock = new();
@@ -606,11 +614,11 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
         }
         catch (OperationCanceledException)
         {
-                    return;
+            return;
         }
         catch (ObjectDisposedException)
         {
-                    return;
+            return;
         }
 
 
@@ -629,7 +637,6 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
         try
         {
 
-            var token = CancellationTokenSource.Token;
             if (GlobalData.IsRedundant(deviceRuntime.Id) && deviceRuntime.Driver != null)
             {
                 if (deviceRuntime.RedundantSwitchType == RedundantSwitchTypeEnum.OffLine)
@@ -640,19 +647,19 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
                         {
                             if (deviceRuntime.DeviceStatus == DeviceStatusEnum.OffLine && (deviceRuntime.Driver?.IsInitSuccess == false || deviceRuntime.Driver?.IsStarted == true) && deviceRuntime.Driver?.DisposedValue != true)
                             {
-                                await Task.Delay(deviceRuntime.RedundantScanIntervalTime, token).ConfigureAwait(false);//10s后再次检测
+                                await Task.Delay(deviceRuntime.RedundantScanIntervalTime, CancellationToken).ConfigureAwait(false);//10s后再次检测
                                 if (deviceRuntime.DeviceStatus == DeviceStatusEnum.OffLine && (deviceRuntime.Driver?.IsInitSuccess == false || deviceRuntime.Driver?.IsStarted == true) && deviceRuntime.Driver?.DisposedValue != true && deviceRuntime.RedundantType != RedundantTypeEnum.Standby)
                                 {
                                     //冗余切换
                                     if (GlobalData.IsRedundant(deviceRuntime.Id))
                                     {
-                                        if (!token.IsCancellationRequested)
+                                        if (!CancellationToken.IsCancellationRequested)
                                             await DeviceRedundantThreadAsync(deviceRuntime.Id, default).ConfigureAwait(false);
                                     }
                                 }
                             }
                         }
-                    }, token);
+                    }, CancellationToken);
                 }
 
             }
