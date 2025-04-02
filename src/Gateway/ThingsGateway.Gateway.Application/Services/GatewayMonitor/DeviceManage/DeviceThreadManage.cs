@@ -917,7 +917,7 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
 
             await PrivateRemoveDevicesAsync(Drivers.Keys).ConfigureAwait(false);
             Channel?.SafeDispose();
-
+           
             LogMessage?.LogInformation(Localizer["ChannelDispose", CurrentChannel?.Name ?? string.Empty]);
 
         }

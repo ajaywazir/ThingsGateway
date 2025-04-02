@@ -59,6 +59,7 @@ public class TextFileLogger : ThingsGateway.NewLife.Log.TextFileLog, TouchSocket
     private TextFileLogger(string path, bool isfile, string? fileFormat = null) : base(path, isfile, fileFormat)
     {
         _headEnable = false;
+        CacheKey = (path + fileFormat).ToLower();
     }
 
 
@@ -69,7 +70,12 @@ public class TextFileLogger : ThingsGateway.NewLife.Log.TextFileLog, TouchSocket
     {
         if (path.IsNullOrEmpty()) throw new ArgumentNullException(nameof(path));
 
-        return cache.GetOrAdd(path, k => new TextFileLogger(k, true));
+        return cache.GetOrAdd(path, k =>
+        {
+            var log = new TextFileLogger(path, true);
+            log.CacheKey = k;
+            return log;
+        });
     }
     /// <summary>每个目录的日志实例应该只有一个，所以采用静态创建</summary>
     /// <param name="path">日志目录或日志文件路径</param>
@@ -81,9 +87,14 @@ public class TextFileLogger : ThingsGateway.NewLife.Log.TextFileLog, TouchSocket
         if (path.IsNullOrEmpty()) path = "Log";
 
         var key = (path + fileFormat).ToLower();
-        return cache.GetOrAdd(key, k => new TextFileLogger(path, false, fileFormat));
+        return cache.GetOrAdd(key, k =>
+        {
+            var log = new TextFileLogger(path, false, fileFormat);
+            log.CacheKey = k;
+            return log;
+        });
     }
-
+    private string CacheKey;
     /// <summary>
     /// TimeFormat
     /// </summary>
@@ -136,5 +147,9 @@ public class TextFileLogger : ThingsGateway.NewLife.Log.TextFileLog, TouchSocket
         }
         WriteLog(logLevel, source, message, exception);
     }
-
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        cache.Remove(CacheKey);
+    }
 }
