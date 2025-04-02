@@ -59,10 +59,12 @@
 .table-toolbar .dropdown-menu {
     overflow: auto;
 }
-
+.layout.is-page .layout-main > .tabs {
+    min-height: auto;
+}
 .tabs-body-content {
     overflow-y: auto;
-    height:100%;
+    height: 100%;
 }
 .card-body{
     height:100%;
