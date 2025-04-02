@@ -69,7 +69,7 @@
       "InitTable": true, //是否初始化数据库,适用于codefirst
       "InitSeedData": true, //是否初始化种子数据
       "IsUpdateSeedData": false, //是否更新种子数据
-      "IsShowSql": true //是否控制台显示Sql语句
+      "IsShowSql": false //是否控制台显示Sql语句
     }
 
   ]
