@@ -1,4 +1,17 @@
 ﻿{
+  "ThingsGateway.Gateway.Razor.GatewayAbout": {
+    "UUID": "UUID",
+    "RegisterStatus": "RegisterStatus",
+    "Authorized": "Authorized",
+    "Unauthorized": "Unauthorized",
+    "ExpireTime": "ExpireTime",
+    "AuthName": "AuthName",
+    "Register": "Register",
+    "Unregister": "Unregister",
+    "Password": "Password"
+  },
+
+
   "ThingsGateway.Gateway.Razor.PluginPage": {
     "Reload": "Reload"
   },

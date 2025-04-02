@@ -12,31 +12,53 @@ using Microsoft.Extensions.Options;
 
 using ThingsGateway.Authentication;
 
-namespace ThingsGateway.Razor;
+namespace ThingsGateway.Gateway.Razor;
 
 /// <inheritdoc/>
 public partial class GatewayAbout
 {
     [Inject]
     [NotNull]
-    private IStringLocalizer<About>? Localizer { get; set; }
-
+    private IStringLocalizer<GatewayAbout>? Localizer { get; set; }
+    [Inject]
+    [NotNull]
+    private IStringLocalizer<About>? AboutLocalizer { get; set; }
     [Inject]
     [NotNull]
     private IOptions<WebsiteOptions>? WebsiteOption { get; set; }
 
     private string Password { get; set; }
+    private AuthorizeInfo AuthorizeInfo { get; set; }
     [Inject]
     ToastService ToastService { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        ProAuthentication.TryGetAuthorizeInfo(out var authorizeInfo);
+        AuthorizeInfo = authorizeInfo;
+        base.OnParametersSet();
+    }
+
     private async Task Register()
     {
-        var result = ProAuthentication.Auth(Password);
+        var result = ProAuthentication.TryAuthorize(Password, out var authorizeInfo);
         if (result)
+        {
+            AuthorizeInfo = authorizeInfo;
             await ToastService.Default();
+        }
         else
             await ToastService.Default(false);
 
         Password = string.Empty;
+        await InvokeAsync(StateHasChanged);
+    }
+    private async Task Unregister()
+    {
+        ProAuthentication.UnAuthorize();
+        var result = ProAuthentication.TryGetAuthorizeInfo(out var authorizeInfo);
+        AuthorizeInfo = authorizeInfo;
+
         await InvokeAsync(StateHasChanged);
     }
 

@@ -1,4 +1,16 @@
 ﻿{
+  "ThingsGateway.Gateway.Razor.GatewayAbout": {
+    "UUID": "唯一编码",
+    "RegisterStatus": "注册状态",
+    "Authorized": "已授权",
+    "Unauthorized": "未授权",
+    "ExpireTime": "过期时间",
+    "AuthName": "公司名称",
+    "Register": "注册",
+    "Unregister": "取消注册",
+    "Password": "注册码"
+  },
+
   "ThingsGateway.Gateway.Razor.PluginPage": {
     "Reload": "重载"
   },

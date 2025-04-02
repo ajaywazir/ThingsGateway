@@ -1,10 +1,10 @@
-﻿@namespace ThingsGateway.Razor
+﻿@namespace ThingsGateway.Gateway.Razor
 @using ThingsGateway
 @using ThingsGateway.Authentication
 @if (!string.IsNullOrEmpty(WebsiteOption.Value.WikiUrl))
 {
     <div>
-        <div class=" ps-1 mb-2">@Localizer["Docs"]</div>
+        <div class=" ps-1 mb-2">@AboutLocalizer["Docs"]</div>
     </div>
     <div class="my-2 ms-4">
         <a target="_blank" href="@WebsiteOption.Value.WikiUrl">@WebsiteOption.Value.WikiUrl</a>
@@ -14,9 +14,9 @@
 @if (!string.IsNullOrEmpty(WebsiteOption.Value.QQGroup1Link))
 {
     <div class="my-4">
-        <div class=" ps-1 mb-2">@Localizer["Community"]</div>
+        <div class=" ps-1 mb-2">@AboutLocalizer["Community"]</div>
         <div class="my-2 ms-4">
-            <span>@Localizer["QQGroup"]</span> <a target="_blank" href="@WebsiteOption.Value.QQGroup1Link">@WebsiteOption.Value.QQGroup1Number</a>
+            <span>@AboutLocalizer["QQGroup"]</span> <a target="_blank" href="@WebsiteOption.Value.QQGroup1Link">@WebsiteOption.Value.QQGroup1Number</a>
         </div>
     </div>
 }
@@ -34,26 +34,77 @@
     <div class="mt-4">
         <span>@Localizer["UUID"]</span>
         <div class="my-2 ms-4 text-truncate">
-
-            <Textarea Value="@ProAuthentication.UUID" IsDisabled rows="5" />
-
+            <Textarea Value="@ProAuthentication.UUID" rows="5" />
         </div>
     </div>
+
     <div class="mt-4">
-        <span>@Localizer["RegisterStatus"]</span>
-        <div class="my-2 ms-4">
-            <span>@ProAuthentication.IsAuth()</span>
-        </div>
-    </div>
-    <div class="mt-4">
-        <PopConfirmButton Size="Size.Small" Color="Color.Warning" Icon="fa-solid fa-bars" Text="Register" IsAsync OnConfirm="Register">
+        <PopConfirmButton Size="Size.Small" Color="Color.Success" Icon="fa-solid fa-bars" Text="@Localizer["Register"]" IsAsync OnConfirm="Register">
 
             <BodyTemplate>
-                <Textarea @bind-Value=Password ShowLabel="true" ShowLabelTooltip="true" />
+                <Textarea rows="10" @bind-Value=Password ShowLabel="true" ShowLabelTooltip="true" />
             </BodyTemplate>
 
         </PopConfirmButton>
+
+
+        <PopConfirmButton class="  ms-3" Size="Size.Small" Color="Color.Warning" Icon="fa-solid fa-bars" Text="@Localizer["Unregister"]" IsAsync OnConfirm="Unregister">
+
+        </PopConfirmButton>
+
     </div>
+
+
+    <div class="mt-4">
+
+        <div class="row g-3 form-inline">
+            <div class="col-12 col-sm-12">
+
+                <label class="form-label">
+
+                    @Localizer["RegisterStatus"]
+                </label>
+
+                <label class="form-control">
+                    @(AuthorizeInfo != null ? Localizer["Authorized"] : Localizer["Unauthorized"])
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="mt-4">
+
+        @if (AuthorizeInfo != null)
+        {
+            <div class="row g-3 form-inline">
+                <div class="col-12 col-sm-12">
+
+                    <label class="form-label">
+
+                        @Localizer["AuthName"]
+                    </label>
+
+                    <label class="form-control">
+                        @AuthorizeInfo?.AuthName
+                    </label>
+                </div>
+
+                <div class="col-12 col-sm-12">
+
+                    <label class="form-label">
+
+                        @Localizer["ExpireTime"]
+                    </label>
+
+                    <label class="form-control">
+                        @AuthorizeInfo?.ExpireTime
+                    </label>
+                </div>
+
+            </div>
+        }
+
+    </div>
+
 
 
 }

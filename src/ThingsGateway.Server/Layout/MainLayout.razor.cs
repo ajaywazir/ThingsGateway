@@ -19,6 +19,7 @@ using System.Diagnostics.CodeAnalysis;
 
 using ThingsGateway.Admin.Application;
 using ThingsGateway.Admin.Razor;
+using ThingsGateway.Gateway.Razor;
 using ThingsGateway.Razor;
 
 namespace ThingsGateway.Server;
