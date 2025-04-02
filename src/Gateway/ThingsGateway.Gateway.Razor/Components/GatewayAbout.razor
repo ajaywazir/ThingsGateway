@@ -1,5 +1,6 @@
 ﻿@namespace ThingsGateway.Razor
 @using ThingsGateway
+@using ThingsGateway.Authentication
 @if (!string.IsNullOrEmpty(WebsiteOption.Value.WikiUrl))
 {
     <div>
@@ -26,6 +27,35 @@
     <div class="mt-4">
         <span>@WebsiteOption.Value.Copyright</span>
     </div>
+}
+
+@if (WebsiteOption.Value.ShowAuthorize)
+{
+    <div class="mt-4">
+        <span>@Localizer["UUID"]</span>
+        <div class="my-2 ms-4 text-truncate">
+
+            <Textarea Value="@ProAuthentication.UUID" IsDisabled rows="5" />
+
+        </div>
+    </div>
+    <div class="mt-4">
+        <span>@Localizer["RegisterStatus"]</span>
+        <div class="my-2 ms-4">
+            <span>@ProAuthentication.IsAuth()</span>
+        </div>
+    </div>
+    <div class="mt-4">
+        <PopConfirmButton Size="Size.Small" Color="Color.Warning" Icon="fa-solid fa-bars" Text="Register" IsAsync OnConfirm="Register">
+
+            <BodyTemplate>
+                <Textarea @bind-Value=Password ShowLabel="true" ShowLabelTooltip="true" />
+            </BodyTemplate>
+
+        </PopConfirmButton>
+    </div>
+
+
 }
 
 

@@ -20,7 +20,7 @@ namespace ThingsGateway.Gateway.Application
         Task<bool> CopyAsync(Dictionary<Device, List<Variable>> devices, bool restart, CancellationToken cancellationToken);
         Task<bool> DeleteDeviceAsync(IEnumerable<long> ids, bool restart, CancellationToken cancellationToken);
         Task<Dictionary<string, object>> ExportDeviceAsync(ExportFilter exportFilter);
-        Task<MemoryStream> ExportMemoryStream(List<Device> data, string channelName);
+        Task<MemoryStream> ExportMemoryStream(List<Device> data, string channelName, string plugin);
         Task ImportDeviceAsync(Dictionary<string, ImportPreviewOutputBase> input, bool restart);
         Task<Dictionary<string, ImportPreviewOutputBase>> PreviewAsync(IBrowserFile browserFile);
         Task<bool> SaveDeviceAsync(Device input, ItemChangedType type, bool restart);

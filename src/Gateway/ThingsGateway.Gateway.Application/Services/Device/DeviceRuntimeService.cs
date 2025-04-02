@@ -136,8 +136,8 @@ public class DeviceRuntimeService : IDeviceRuntimeService
 
     public Task<Dictionary<string, object>> ExportDeviceAsync(ExportFilter exportFilter) => GlobalData.DeviceService.ExportDeviceAsync(exportFilter);
     public Task<Dictionary<string, ImportPreviewOutputBase>> PreviewAsync(IBrowserFile browserFile) => GlobalData.DeviceService.PreviewAsync(browserFile);
-    public Task<MemoryStream> ExportMemoryStream(List<Device> data, string channelName) =>
-          GlobalData.DeviceService.ExportMemoryStream(data, channelName);
+    public Task<MemoryStream> ExportMemoryStream(List<Device> data, string channelName, string plugin) =>
+          GlobalData.DeviceService.ExportMemoryStream(data, channelName, plugin);
 
 
     public async Task ImportDeviceAsync(Dictionary<string, ImportPreviewOutputBase> input, bool restart = true)

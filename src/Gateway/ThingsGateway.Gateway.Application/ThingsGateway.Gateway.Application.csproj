@@ -11,6 +11,7 @@
 		<PackageReference Include="Rougamo.Fody" Version="5.0.0" />
 		<PackageReference Include="TouchSocket.Dmtp" Version="3.0.20" />
 		<PackageReference Include="TouchSocket.WebApi.Swagger" Version="3.0.20" />
+		<PackageReference Include="ThingsGateway.Authentication" Version="$(AuthenticationVersion)" />
 
 	</ItemGroup>
 

@@ -296,9 +296,9 @@ internal sealed class DeviceService : BaseService<Device>, IDeviceService
     /// 导出文件
     /// </summary>
     [OperDesc("ExportDevice", isRecordPar: false, localizerType: typeof(Device))]
-    public async Task<MemoryStream> ExportMemoryStream(IEnumerable<Device>? data, string channelName = null)
+    public async Task<MemoryStream> ExportMemoryStream(IEnumerable<Device>? data, string channelName = null, string plugin = null)
     {
-        var sheets = await DeviceServiceHelpers.ExportCoreAsync(data, channelName).ConfigureAwait(false);
+        var sheets = await DeviceServiceHelpers.ExportCoreAsync(data, channelName, plugin).ConfigureAwait(false);
         var memoryStream = new MemoryStream();
         await memoryStream.SaveAsAsync(sheets).ConfigureAwait(false);
         memoryStream.Seek(0, SeekOrigin.Begin);

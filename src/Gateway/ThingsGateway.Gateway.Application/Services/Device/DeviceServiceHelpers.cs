@@ -28,7 +28,7 @@ public static class DeviceServiceHelpers
     }
 
 
-    public static async Task<Dictionary<string, object>> ExportCoreAsync(IEnumerable<Device>? data, string channelName = null)
+    public static async Task<Dictionary<string, object>> ExportCoreAsync(IEnumerable<Device>? data, string channelName = null, string plugin = null)
     {
         if (data == null || !data.Any())
         {
@@ -96,20 +96,20 @@ public static class DeviceServiceHelpers
             Dictionary<string, object> driverInfo = new();
 
             var propDict = device.DevicePropertys;
-            if (propertysDict.TryGetValue(channel.PluginName, out var propertys))
+            if (propertysDict.TryGetValue(plugin, out var propertys))
             {
             }
             else
             {
                 try
                 {
-                    var driverProperties = GlobalData.PluginService.GetDriver(channel.PluginName).DriverProperties;
+                    var driverProperties = GlobalData.PluginService.GetDriver(plugin).DriverProperties;
                     propertys.Item1 = driverProperties;
                     var driverPropertyType = driverProperties.GetType();
                     propertys.Item2 = driverPropertyType.GetRuntimeProperties()
     .Where(a => a.GetCustomAttribute<DynamicPropertyAttribute>() != null)
     .ToDictionary(a => driverPropertyType.GetPropertyDisplayName(a.Name, a => a.GetCustomAttribute<DynamicPropertyAttribute>(true)?.Description), a => a);
-                    propertysDict.TryAdd(channel.PluginName, propertys);
+                    propertysDict.TryAdd(plugin, propertys);
 
                 }
                 catch (Exception)
@@ -141,7 +141,7 @@ public static class DeviceServiceHelpers
                 }
             }
 
-            var pluginName = PluginServiceUtil.GetFileNameAndTypeName(channel.PluginName);
+            var pluginName = PluginServiceUtil.GetFileNameAndTypeName(plugin);
             if (devicePropertys.ContainsKey(pluginName.TypeName))
             {
                 if (driverInfo.Count > 0)

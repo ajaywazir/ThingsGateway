@@ -9,6 +9,6 @@
     "QQGroup1Number": "605534569",
     "Title": "ThingsGateway",
     "Demo": false,
-    "ShowAuthorize": false
+    "ShowAuthorize": true
   }
 }

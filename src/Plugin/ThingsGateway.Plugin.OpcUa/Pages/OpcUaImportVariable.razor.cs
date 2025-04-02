@@ -240,7 +240,7 @@ public partial class OpcUaImportVariable
             }
 
             await DownChannelExportAsync(data.Item1);
-            await DownDeviceExportAsync(data.Item2, data.Item1.Name);
+            await DownDeviceExportAsync(data.Item2, data.Item1.Name, data.Item1.PluginName);
             await DownDeviceVariableExportAsync(data.Item3.ToList(), data.Item2.Name);
             await ToastService.Default();
         }
@@ -384,9 +384,9 @@ public partial class OpcUaImportVariable
     /// 导出到excel
     /// </summary>
     /// <returns></returns>
-    public async Task DownDeviceExportAsync(Device data, string channelName)
+    public async Task DownDeviceExportAsync(Device data, string channelName, string plugin)
     {
-        using var memoryStream = await App.RootServices.GetRequiredService<IDeviceRuntimeService>().ExportMemoryStream(new List<Device>() { data }, channelName);
+        using var memoryStream = await App.RootServices.GetRequiredService<IDeviceRuntimeService>().ExportMemoryStream(new List<Device>() { data }, channelName, plugin);
         await DownloadService.DownloadFromStreamAsync($"device{DateTime.Now.ToFileDateTimeFormat()}.xlsx", memoryStream);
     }
 

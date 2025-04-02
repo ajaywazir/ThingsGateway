@@ -8,10 +8,14 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
+using Microsoft.Extensions.Options;
+
+using ThingsGateway.Authentication;
+
 namespace ThingsGateway.Razor;
 
 /// <inheritdoc/>
-public partial class About
+public partial class GatewayAbout
 {
     [Inject]
     [NotNull]
@@ -21,6 +25,19 @@ public partial class About
     [NotNull]
     private IOptions<WebsiteOptions>? WebsiteOption { get; set; }
 
+    private string Password { get; set; }
     [Inject]
     ToastService ToastService { get; set; }
+    private async Task Register()
+    {
+        var result = ProAuthentication.Auth(Password);
+        if (result)
+            await ToastService.Default();
+        else
+            await ToastService.Default(false);
+
+        Password = string.Empty;
+        await InvokeAsync(StateHasChanged);
+    }
+
 }

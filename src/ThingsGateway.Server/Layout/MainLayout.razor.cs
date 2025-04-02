@@ -238,7 +238,7 @@ public partial class MainLayout : IDisposable
             Size = Size.Medium,
             ShowFooter = false,
             Title = Localizer["About"],
-            BodyTemplate = BootstrapDynamicComponent.CreateComponent<About>().Render(),
+            BodyTemplate = BootstrapDynamicComponent.CreateComponent<GatewayAbout>().Render(),
         };
         await DialogService.Show(op);
     }

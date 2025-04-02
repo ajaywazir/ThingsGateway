@@ -431,7 +431,7 @@ public abstract class DriverBase : DisposableObject, IDriver
         IdVariableRuntimes?.Clear();
         IdVariableRuntimes = null;
         var device = CurrentDevice;
-        if (device!=null)
+        if (device != null)
             device.Driver = null;
         LogMessage?.Logs?.ForEach(a => a.TryDispose());
         LogMessage = null;
@@ -451,7 +451,7 @@ public abstract class DriverBase : DisposableObject, IDriver
 
     public string GetAuthString()
     {
-        return PluginServiceUtil.IsEducation(GetType()) ? Authentication() ? Localizer["Authorized"] : Localizer["Unauthorized"] : string.Empty;
+        return PluginServiceUtil.IsEducation(GetType()) ? ThingsGateway.Authentication.ProAuthentication.IsAuth() ? Localizer["Authorized"] : Localizer["Unauthorized"] : string.Empty;
     }
 
     /// <summary>
