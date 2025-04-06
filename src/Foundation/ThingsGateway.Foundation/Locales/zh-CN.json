@@ -40,9 +40,9 @@
     "UnknownError": "未知错误，错误代码：{0}",
     "StringTypePackError": "数据类型为字符串时，必须指定字符串长度，才能进行打包",
 
-    "RemoteUrlNotNull": "远程IP地址不可为空",
-    "BindUrlNotNull": "本地绑定IP地址不可为空",
-    "BindUrlOrRemoteUrlNotNull": "远程IP地址或本地绑定IP地址不可为空",
+    "RemoteUrlNotNull": "远程url不可为空",
+    "BindUrlNotNull": "本地url不可为空",
+    "BindUrlOrRemoteUrlNotNull": "远程url或本地url不可为空",
     "PortNameNotNull": "COM口不可为空",
     "BaudRateNotNull": "波特率不可为空",
     "DataBitsNotNull": "数据位可为空",
@@ -56,8 +56,8 @@
     "Name.Required": " {0} 不可为空",
     "ChannelType": "通道类型",
 
-    "RemoteUrl": "远程IP地址",
-    "BindUrl": "本地绑定IP地址",
+    "RemoteUrl": "远程url",
+    "BindUrl": "本地url",
 
     "PortName": "COM口",
     "BaudRate": "波特率",

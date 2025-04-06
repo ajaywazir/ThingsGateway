@@ -14,8 +14,6 @@ using Mapster;
 
 using SqlSugar;
 
-using ThingsGateway.Extension;
-
 namespace ThingsGateway.Admin.Application;
 
 internal sealed class SessionService : BaseService<SysUser>, ISessionService
@@ -74,7 +72,6 @@ internal sealed class SessionService : BaseService<SysUser>, ISessionService
                 var reuslt = it.Adapt<SessionOutput>();
                 if (verificatInfoDicts.TryGetValue(it.Id, out var verificatInfos))
                 {
-                    SessionService.GetTokenInfos(verificatInfos);//获取剩余时间
                     reuslt.VerificatCount = verificatInfos.Count;//令牌数量
                     reuslt.VerificatSignList = verificatInfos;//令牌列表
 
@@ -100,7 +97,6 @@ internal sealed class SessionService : BaseService<SysUser>, ISessionService
                 var reuslt = it.Adapt<SessionOutput>();
                 if (verificatInfoDicts.TryGetValue(it.Id, out var verificatInfos))
                 {
-                    SessionService.GetTokenInfos(verificatInfos);//获取剩余时间
                     reuslt.VerificatCount = verificatInfos.Count;//令牌数量
                     reuslt.VerificatSignList = verificatInfos;//令牌列表
 
@@ -124,7 +120,6 @@ internal sealed class SessionService : BaseService<SysUser>, ISessionService
                 var reuslt = it.Adapt<SessionOutput>();
                 if (verificatInfoDicts.TryGetValue(it.Id, out var verificatInfos))
                 {
-                    SessionService.GetTokenInfos(verificatInfos);//获取剩余时间
                     reuslt.VerificatCount = verificatInfos.Count;//令牌数量
                     reuslt.VerificatSignList = verificatInfos;//令牌列表
 
@@ -178,19 +173,6 @@ internal sealed class SessionService : BaseService<SysUser>, ISessionService
     #endregion 修改
 
     #region 方法
-
-    /// <summary>
-    /// 获取verificat剩余时间信息
-    /// </summary>
-    /// <param name="verificatInfos">verificat列表</param>
-    private static void GetTokenInfos(List<VerificatInfo> verificatInfos)
-    {
-        verificatInfos.ForEach(it =>
-        {
-            var now = DateTime.Now;
-            it.VerificatRemain = now.GetDiffTime(it.VerificatTimeout);//获取时间差
-        });
-    }
 
     /// <summary>
     /// 通知用户下线

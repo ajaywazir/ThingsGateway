@@ -1,0 +1,81 @@
+﻿@namespace ThingsGateway.Management
+@using ThingsGateway
+@using ThingsGateway.Authentication
+@if (WebsiteOption.Value.ShowAuthorize)
+{
+
+    <Card class="mb-2">
+        <BodyTemplate>
+            <div class="ma-1">
+                <span>@Localizer["UUID"]</span>
+                <div class="my-2 ms-4 text-truncate">
+                    <Textarea Value="@ProAuthentication.UUID" rows="5" />
+                </div>
+
+                <PopConfirmButton Size="Size.Small" Color="Color.Success" Icon="fa-solid fa-bars" Text="@Localizer["Register"]" IsAsync OnConfirm="Register">
+
+                    <BodyTemplate>
+                        <Textarea rows="10" @bind-Value=Password ShowLabel="true" ShowLabelTooltip="true" />
+                    </BodyTemplate>
+
+                </PopConfirmButton>
+
+            </div>
+
+            <div class="ma-1">
+
+                <div class="row g-3 form-inline">
+                    <div class="col-12 col-sm-12">
+
+                        <label class="form-label">
+
+                            @Localizer["RegisterStatus"]
+                        </label>
+
+                        <label class="form-control">
+                            @(AuthorizeInfo != null ? Localizer["Authorized"] : Localizer["Unauthorized"])
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="ma-1">
+
+                @if (AuthorizeInfo != null)
+                {
+                    <div class="row g-3 form-inline">
+                        <div class="col-12 col-sm-12">
+
+                            <label class="form-label">
+
+                                @Localizer["AuthName"]
+                            </label>
+
+                            <label class="form-control">
+                                @AuthorizeInfo?.AuthName
+                            </label>
+                        </div>
+
+                        <div class="col-12 col-sm-12">
+
+                            <label class="form-label">
+
+                                @Localizer["ExpireTime"]
+                            </label>
+
+                            <label class="form-control">
+                                @AuthorizeInfo?.ExpireTime
+                            </label>
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+        </BodyTemplate>
+
+    </Card>
+
+}
+
+
+

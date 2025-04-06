@@ -36,7 +36,8 @@ public class MqttCollectProperty : CollectPropertyBase
     public int Port { get; set; } = 1883;
 
     [DynamicProperty]
-    public MqttProtocolVersion MqttProtocolVersion { get; set; }
+    public MqttProtocolVersion MqttProtocolVersion { get; set; } = MqttProtocolVersion.V311;
+
     /// <summary>
     /// 是否websocket连接
     /// </summary>

@@ -72,7 +72,6 @@ public partial class Login
     {
         var model = loginModel.Adapt<LoginInput>();
         model.Password = DESEncryption.Encrypt(model.Password);
-        model.Device = AppService.ClientInfo.Device.Family;
 
         try
         {

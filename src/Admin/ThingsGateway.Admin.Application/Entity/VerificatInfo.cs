@@ -73,15 +73,6 @@ public class VerificatInfo : PrimaryIdEntity
     public int Expire { get; set; }
 
     /// <summary>
-    /// verificat剩余有效期
-    /// </summary>
-    [AutoGenerateColumn(Filterable = true, Sortable = true)]
-    [SugarColumn(IsIgnore = true)]
-    [Newtonsoft.Json.JsonIgnore]
-    [System.Text.Json.Serialization.JsonIgnore]
-    public string VerificatRemain { get; set; }
-
-    /// <summary>
     /// 超时时间
     /// </summary>
     [AutoGenerateColumn(Filterable = true, Sortable = true)]

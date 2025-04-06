@@ -5,7 +5,7 @@
     background-color: var(--bs-green);
     color: #fff;
     flex: 0 0 auto;
-    font-size: 1rem;
+    font-size: 12px;
 }
 
 .mainlayout ::deep .layout-main {

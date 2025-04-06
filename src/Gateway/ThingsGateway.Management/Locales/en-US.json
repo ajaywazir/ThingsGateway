@@ -1,4 +1,17 @@
 ﻿{
+
+  "ThingsGateway.Management.Authentication": {
+    "UUID": "UUID",
+    "RegisterStatus": "RegisterStatus",
+    "Authorized": "Authorized",
+    "Unauthorized": "Unauthorized",
+    "ExpireTime": "ExpireTime",
+    "AuthName": "AuthName",
+    "Register": "Register",
+    "Unregister": "Unregister",
+    "Password": "Password"
+  },
+
   "ThingsGateway.Management.AutoUpdateControler": {
     "AutoUpdateControler": "AutoUpdate",
     "Update": "Update"
@@ -51,6 +64,7 @@
 
   "ThingsGateway.Management._Imports": {
     "CheckUpdate": "CheckUpdates",
+    "Authentication": "Authentication",
     "Update": "Download Update",
     "Restart": "Restart Gateway",
     "HeaderText": "Communication Log",

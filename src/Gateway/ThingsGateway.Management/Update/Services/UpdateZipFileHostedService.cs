@@ -320,6 +320,7 @@ internal sealed class UpdateZipFileHostedService : BackgroundService, IUpdateZip
                    .UsePolling(TimeSpan.FromSeconds(5))//使用轮询，每3秒检测一次
                    .SetActionForCheck(async (c, i) =>//重新定义检活策略
                    {
+                       if (!upgradeServerOptions.Enable) return true;
                        //方法1，直接判断是否在握手状态。使用该方式，最好和心跳插件配合使用。因为如果直接断网，则检测不出来
                        //await Task.CompletedTask;//消除Task
                        //return c.Online;//判断是否在握手状态

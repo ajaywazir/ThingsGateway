@@ -215,10 +215,6 @@ public class Startup : AppStartup
             {
                 var httpContext = context.HttpContext;//获取httpContext
 
-                //获取头
-                var userAgent = httpContext.Request.Headers["User-Agent"];
-                if (string.IsNullOrEmpty(userAgent)) userAgent = "Other";//如果没有这个头就指定一个
-
                 //获取客户端信息
                 var client = App.GetService<IAppService>().ClientInfo;
                 // 获取控制器/操作描述器

@@ -96,20 +96,20 @@ public static class DeviceServiceHelpers
             Dictionary<string, object> driverInfo = new();
 
             var propDict = device.DevicePropertys;
-            if (propertysDict.TryGetValue(plugin, out var propertys))
+            if (propertysDict.TryGetValue(channel?.PluginName ?? plugin, out var propertys))
             {
             }
             else
             {
                 try
                 {
-                    var driverProperties = GlobalData.PluginService.GetDriver(plugin).DriverProperties;
+                    var driverProperties = GlobalData.PluginService.GetDriver(channel?.PluginName ?? plugin).DriverProperties;
                     propertys.Item1 = driverProperties;
                     var driverPropertyType = driverProperties.GetType();
                     propertys.Item2 = driverPropertyType.GetRuntimeProperties()
     .Where(a => a.GetCustomAttribute<DynamicPropertyAttribute>() != null)
     .ToDictionary(a => driverPropertyType.GetPropertyDisplayName(a.Name, a => a.GetCustomAttribute<DynamicPropertyAttribute>(true)?.Description), a => a);
-                    propertysDict.TryAdd(plugin, propertys);
+                    propertysDict.TryAdd(channel?.PluginName ?? plugin, propertys);
 
                 }
                 catch (Exception)
@@ -141,7 +141,7 @@ public static class DeviceServiceHelpers
                 }
             }
 
-            var pluginName = PluginServiceUtil.GetFileNameAndTypeName(plugin);
+            var pluginName = PluginServiceUtil.GetFileNameAndTypeName(channel?.PluginName ?? plugin);
             if (devicePropertys.ContainsKey(pluginName.TypeName))
             {
                 if (driverInfo.Count > 0)

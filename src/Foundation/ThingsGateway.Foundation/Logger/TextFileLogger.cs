@@ -149,7 +149,7 @@ public class TextFileLogger : ThingsGateway.NewLife.Log.TextFileLog, TouchSocket
     }
     protected override void Dispose(bool disposing)
     {
-        base.Dispose(disposing);
         cache.Remove(CacheKey);
+        base.Dispose(disposing);
     }
 }

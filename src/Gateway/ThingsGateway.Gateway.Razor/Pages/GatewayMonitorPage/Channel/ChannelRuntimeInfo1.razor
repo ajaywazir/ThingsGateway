@@ -63,7 +63,12 @@
 
                             <EditTemplate Context="value">
                                 <div class="col-12 col-sm-6 col-md-6">
-                                    <Select SkipValidate="true" @bind-Value="@value.ChannelType" IsDisabled OnSelectedItemChanged=@((a)=>InvokeAsync(StateHasChanged)) />
+                                    <Select SkipValidate="true" @bind-Value="@value.ChannelType" OnSelectedItemChanged=@((a)=>
+                                            {
+                                            value.BindUrl = string.Empty;
+                                            value.RemoteUrl = string.Empty;
+                                            return InvokeAsync(StateHasChanged);
+                                            }) />
                                 </div>
                             </EditTemplate>
 

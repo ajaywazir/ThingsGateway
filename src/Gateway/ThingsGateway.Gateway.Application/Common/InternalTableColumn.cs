@@ -127,4 +127,5 @@ internal sealed class InternalTableColumn(string fieldName, Type fieldType, stri
 
 
     public bool IsFixedSearchWhenSelect { get; set; } = true;
+    public int Cols { get; set; }
 }

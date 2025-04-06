@@ -336,7 +336,6 @@
   "ThingsGateway.Admin.Application.VerificatInfo": {
     "Expire": "Expire(min)",
     "Online": "Online",
-    "VerificatRemain": "VerificatRemain",
     "VerificatTimeout": "VerificatTimeout",
     "Device": "Device",
     "LoginIp": "LoginIp",

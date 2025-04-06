@@ -5,6 +5,7 @@
 @using BootstrapBlazor.Components
 @using Microsoft.AspNetCore.Authorization
 @using ThingsGateway.Admin.Razor
+@using ThingsGateway.Authentication
 @using ThingsGateway.Upgrade
 @using ThingsGateway.Debug
 @using ThingsGateway.Gateway.Application
@@ -60,6 +61,13 @@
                 </BodyTemplate>
 
             </Card>
+
+            <Authentication />
+        </TabItem>
+
+        <TabItem Text=@ManagementLocalizer["Authentication"]>
+
+            <Authentication />
 
         </TabItem>
 

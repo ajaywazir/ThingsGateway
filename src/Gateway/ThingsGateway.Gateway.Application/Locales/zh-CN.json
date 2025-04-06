@@ -376,8 +376,8 @@
     "PluginName": "插件名称",
     "PluginName.Required": "{0} 插件名称不可为空",
 
-    "RemoteUrl": "远程IP地址",
-    "BindUrl": "本地绑定IP地址",
+    "RemoteUrl": "远程url",
+    "BindUrl": "本地url",
 
     "PortName": "COM口",
     "BaudRate": "波特率",
@@ -428,8 +428,8 @@
     "PluginName.Required": "{0} 插件名称不可为空",
     "LogLevel": "日志等级",
 
-    "RemoteUrl": "远程IP地址",
-    "BindUrl": "本地绑定IP地址",
+    "RemoteUrl": "远程url",
+    "BindUrl": "本地url",
 
     "PortName": "COM口",
     "BaudRate": "波特率",

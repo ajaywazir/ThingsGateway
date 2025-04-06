@@ -64,9 +64,4 @@ public class LoginInput
     ///<example>252885263003720</example>
     public long? TenantId { get; set; } = RoleConst.DefaultTenantId;
 
-    /// <summary>
-    /// 设备类型，默认PC
-    /// </summary>
-    /// <example>0</example>
-    public string Device { get; set; } = "PC";
 }

@@ -6,8 +6,8 @@
     "Enable": "启用",
     "LogEnable": "启用调试日志",
 
-    "RemoteUrl": "远程IP地址",
-    "BindUrl": "本地绑定IP地址",
+    "RemoteUrl": "远程url",
+    "BindUrl": "本地url",
 
     "PortName": "COM口",
     "BaudRate": "波特率",
@@ -37,8 +37,8 @@
     "Name.Required": " {0} 不可为空",
     "ChannelType": "通道类型",
 
-    "RemoteUrl": "远程IP地址",
-    "BindUrl": "本地绑定IP地址",
+    "RemoteUrl": "远程url",
+    "BindUrl": "本地url",
 
     "PortName": "COM口",
     "BaudRate": "波特率",

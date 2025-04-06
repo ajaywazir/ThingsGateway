@@ -1,4 +1,15 @@
 ﻿{
+  "ThingsGateway.Management.Authentication": {
+    "UUID": "唯一编码",
+    "RegisterStatus": "注册状态",
+    "Authorized": "已授权",
+    "Unauthorized": "未授权",
+    "ExpireTime": "过期时间",
+    "AuthName": "公司名称",
+    "Register": "注册",
+    "Unregister": "取消注册",
+    "Password": "注册码"
+  },
   "ThingsGateway.Management.AutoUpdateControler": {
     "AutoUpdateControler": "程序更新",
     "Update": "更新"
@@ -53,7 +64,7 @@
 
   "ThingsGateway.Management._Imports": {
     "CheckUpdate": "检查更新",
-
+    "Authentication": "注册授权",
     "Update": "下载更新",
     "Restart": "重启网关",
     "HeaderText": "通讯日志",
