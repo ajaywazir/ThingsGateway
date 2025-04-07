@@ -37,7 +37,7 @@
     <div class="col-9 ">
         @if (Logger != null)
         {
-            <LogConsole HeightString="500px" Enable="true" LogLevel=@(Logger.LogLevel) LogLevelChanged="(a)=>{
+            <LogConsole HeightString="500px" LogLevel=@(Logger.LogLevel) LogLevelChanged="(a)=>{
 Logger.LogLevel=a;
 }" LogPath=@LogPath HeaderText=@HeaderText></LogConsole>
         }

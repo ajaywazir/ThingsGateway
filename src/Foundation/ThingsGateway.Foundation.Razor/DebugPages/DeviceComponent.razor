@@ -107,7 +107,7 @@
 
     </div>
     <div class="col-12 col-md-7 ">
-        <LogConsole HeightString="500px" Enable="true" LogLevel=@((Plc?.Logger??Logger)?.LogLevel??TouchSocket.Core.LogLevel.Trace)
+        <LogConsole HeightString="500px" LogLevel=@((Plc?.Logger??Logger)?.LogLevel??TouchSocket.Core.LogLevel.Trace)
                     LogLevelChanged="(a)=>
         {
             var log=Plc?.Logger??Logger;
