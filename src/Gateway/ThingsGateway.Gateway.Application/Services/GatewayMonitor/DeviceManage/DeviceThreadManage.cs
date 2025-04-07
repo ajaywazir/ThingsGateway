@@ -589,13 +589,19 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
                     // 如果驱动处于离线状态且为采集驱动，则根据配置的间隔时间进行延迟
                     if (driver.CurrentDevice.DeviceStatus == DeviceStatusEnum.OffLine && IsCollectChannel == true)
                     {
-                        driver.CurrentDevice.CheckEnable = false;
-                        await Task.Delay(Math.Max(Math.Min(((CollectBase)driver).CollectProperties.ReIntervalTime, ManageHelper.ChannelThreadOptions.CheckInterval / 2) - CycleInterval, 3000), token).ConfigureAwait(false);
-                        driver.CurrentDevice.CheckEnable = true;
+                        var collectBase = (CollectBase)driver;
+                        if (collectBase.CollectProperties.ReIntervalTime > 0)
+                        {
+                            await Task.Delay(Math.Max(Math.Min(collectBase.CollectProperties.ReIntervalTime, ManageHelper.ChannelThreadOptions.CheckInterval / 2) - CycleInterval, 3000), token).ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            await Task.Delay(CycleInterval, token).ConfigureAwait(false);
+                        }
                     }
                     else
                     {
-                        await Task.Delay(CycleInterval, token).ConfigureAwait(false); // 默认延迟一段时间后再继续执行
+                        await Task.Delay(CycleInterval, token).ConfigureAwait(false);
                     }
                 }
                 else if (result == ThreadRunReturnTypeEnum.Continue)
@@ -620,7 +626,6 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
         {
             return;
         }
-
 
     }
 
@@ -857,7 +862,7 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
                         if (driver.CurrentDevice != null)
                         {
                             //线程卡死/初始化失败检测
-                            if (((driver.IsStarted && driver.CurrentDevice.ActiveTime != DateTime.UnixEpoch.ToLocalTime() && driver.CurrentDevice.ActiveTime.AddMinutes(ManageHelper.ChannelThreadOptions.CheckInterval) <= DateTime.Now)
+                            if (((driver.IsStarted && driver.CurrentDevice.ActiveTime != DateTime.UnixEpoch.ToLocalTime() && driver.CurrentDevice.ActiveTime.AddMilliseconds(ManageHelper.ChannelThreadOptions.CheckInterval) <= DateTime.Now)
                                 || (driver.IsInitSuccess == false)) && !driver.DisposedValue)
                             {
                                 //如果线程处于暂停状态，跳过
