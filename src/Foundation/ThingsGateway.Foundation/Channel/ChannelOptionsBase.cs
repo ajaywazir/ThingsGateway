@@ -11,8 +11,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.IO.Ports;
 
-using ThingsGateway.NewLife.Extension;
-
 namespace ThingsGateway.Foundation
 {
     public abstract class ChannelOptionsBase : IValidatableObject

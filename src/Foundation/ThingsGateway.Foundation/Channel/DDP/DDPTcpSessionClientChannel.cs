@@ -46,7 +46,7 @@ public class DDPTcpSessionClientChannel : TcpSessionClientChannel
     }
     protected Task DefaultSendAsync(ReadOnlyMemory<byte> memory)
     {
-        return DDPAdapter.SendInputAsync(new DDPSend(memory, Id,true));
+        return DDPAdapter.SendInputAsync(new DDPSend(memory, Id, true));
     }
     protected Task DDPSendAsync(ReadOnlyMemory<byte> memory)
     {

@@ -24,7 +24,7 @@ public class DDPSend : ISendMessage
     string Id;
     byte Command;
     bool Tcp;
-    public DDPSend(ReadOnlyMemory<byte> readOnlyMemory, string id,bool tcp, byte command = 0x89)
+    public DDPSend(ReadOnlyMemory<byte> readOnlyMemory, string id, bool tcp, byte command = 0x89)
     {
         Tcp = tcp;
         ReadOnlyMemory = readOnlyMemory;
@@ -35,9 +35,9 @@ public class DDPSend : ISendMessage
     {
         byteBlock.WriteByte(0x7b);
         byteBlock.WriteByte(Command);
-        byteBlock.WriteUInt16(0x10,EndianType.Big);//len
+        byteBlock.WriteUInt16(0x10, EndianType.Big);//len
         byteBlock.Write(PadTo11Byte(Id.Remove(0, 3)));
-        if(Tcp)
+        if (Tcp)
         {
             byteBlock.Write(ReadOnlyMemory.Span);
             byteBlock.WriteByte(0x7b);
@@ -55,7 +55,7 @@ public class DDPSend : ISendMessage
     {
         var bytes = Encoding.UTF8.GetBytes(id);
 
-        if(bytes.Length<11)
+        if (bytes.Length < 11)
         {
             byte[] newBytes = new byte[11];
             Array.Copy(bytes, newBytes, bytes.Length);

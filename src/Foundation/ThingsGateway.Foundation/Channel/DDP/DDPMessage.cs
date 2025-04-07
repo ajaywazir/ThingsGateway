@@ -8,8 +8,6 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
-using TouchSocket.Core;
-
 namespace ThingsGateway.Foundation;
 
 /// <summary>

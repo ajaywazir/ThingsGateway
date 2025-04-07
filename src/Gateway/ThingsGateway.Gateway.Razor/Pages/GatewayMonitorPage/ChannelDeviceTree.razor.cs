@@ -1307,7 +1307,7 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
 
             try
             {
-                if(Disposed) return;
+                if (Disposed) return;
                 await OnClickSearch(SearchText);
                 await InvokeAsync(StateHasChanged);
             }
