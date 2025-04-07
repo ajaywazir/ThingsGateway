@@ -23,9 +23,10 @@ public class DDPSend : ISendMessage
     ReadOnlyMemory<byte> ReadOnlyMemory;
     string Id;
     byte Command;
-    public DDPSend(ReadOnlyMemory<byte> readOnlyMemory, string id, byte command = 0x89)
+    bool Tcp;
+    public DDPSend(ReadOnlyMemory<byte> readOnlyMemory, string id,bool tcp, byte command = 0x89)
     {
-
+        Tcp = tcp;
         ReadOnlyMemory = readOnlyMemory;
         Id = id;
         Command = command;
@@ -34,11 +35,37 @@ public class DDPSend : ISendMessage
     {
         byteBlock.WriteByte(0x7b);
         byteBlock.WriteByte(Command);
-        byteBlock.WriteUInt16(0x00);//len
-        byteBlock.WriteNormalString(Id.Remove(0, 3), Encoding.UTF8);
-        byteBlock.Write(ReadOnlyMemory.Span);
-        byteBlock.WriteByte(0x7b);
-        byteBlock.Position = 2;
-        byteBlock.WriteUInt16((ushort)byteBlock.Length);//len
+        byteBlock.WriteUInt16(0x10,EndianType.Big);//len
+        byteBlock.Write(PadTo11Byte(Id.Remove(0, 3)));
+        if(Tcp)
+        {
+            byteBlock.Write(ReadOnlyMemory.Span);
+            byteBlock.WriteByte(0x7b);
+            byteBlock.Position = 2;
+            byteBlock.WriteUInt16((ushort)byteBlock.Length, EndianType.Big);//len
+        }
+        else
+        {
+            byteBlock.WriteByte(0x7b);
+            byteBlock.Write(ReadOnlyMemory.Span);
+        }
+    }
+
+    private static byte[] PadTo11Byte(string id)
+    {
+        var bytes = Encoding.UTF8.GetBytes(id);
+
+        if(bytes.Length<11)
+        {
+            byte[] newBytes = new byte[11];
+            Array.Copy(bytes, newBytes, bytes.Length);
+            for (int i = bytes.Length; i < 11; i++)
+            {
+                newBytes[i] = 0;
+            }
+            return newBytes;
+        }
+        return bytes;
+
     }
 }

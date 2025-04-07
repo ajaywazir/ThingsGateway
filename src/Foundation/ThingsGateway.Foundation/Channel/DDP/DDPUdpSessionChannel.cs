@@ -39,7 +39,11 @@ public class DDPUdpSessionChannel : UdpSessionChannel, IClientChannel, IDtuUdpSe
 
         // 将当前实例的日志记录器和加载回调设置到适配器中
         DDPAdapter.Logger = Logger;
-        DDPAdapter.OnLoaded(this);
+
+        if (DDPAdapter.Owner != null)
+        {
+            DDPAdapter.OnLoaded(this);
+        }
 
         DDPAdapter.SendCallBackAsync = DDPSendAsync;
         DDPAdapter.ReceivedCallBack = DDPHandleReceivedData;
@@ -52,7 +56,7 @@ public class DDPUdpSessionChannel : UdpSessionChannel, IClientChannel, IDtuUdpSe
     {
         if (TryGetId(endPoint, out var id))
         {
-            return DDPAdapter.SendInputAsync(endPoint, new DDPSend(memory, id));
+            return DDPAdapter.SendInputAsync(endPoint, new DDPSend(memory, id, false));
         }
         else
         {
@@ -77,7 +81,7 @@ public class DDPUdpSessionChannel : UdpSessionChannel, IClientChannel, IDtuUdpSe
         return EasyTask.CompletedTask;
     }
 
-    private DeviceUdpDataHandleAdapter<DDPMessage> DDPAdapter = new();
+    private DeviceUdpDataHandleAdapter<DDPUdpMessage> DDPAdapter = new();
 
 
     public EndPoint DefaultEndpoint => RemoteIPHost?.EndPoint;
@@ -145,12 +149,12 @@ public class DDPUdpSessionChannel : UdpSessionChannel, IClientChannel, IDtuUdpSe
                         }
 
                         //发送成功
-                        await DDPAdapter.SendInputAsync(endPoint, new DDPSend(ReadOnlyMemory<byte>.Empty, id, 0x81)).ConfigureAwait(false);
+                        await DDPAdapter.SendInputAsync(endPoint, new DDPSend(ReadOnlyMemory<byte>.Empty, id, false, 0x81)).ConfigureAwait(false);
                         Logger?.Info(DefaultResource.Localizer["DtuConnected", id]);
                     }
                     else if (message.Type == 0x02)
                     {
-                        await DDPAdapter.SendInputAsync(endPoint, new DDPSend(ReadOnlyMemory<byte>.Empty, id, 0x82)).ConfigureAwait(false);
+                        await DDPAdapter.SendInputAsync(endPoint, new DDPSend(ReadOnlyMemory<byte>.Empty, id, false, 0x82)).ConfigureAwait(false);
                         Logger?.Info(DefaultResource.Localizer["DtuDisconnecting", id]);
                         await Task.Delay(100).ConfigureAwait(false);
                         IdDict.TryRemove(endPoint, out _);

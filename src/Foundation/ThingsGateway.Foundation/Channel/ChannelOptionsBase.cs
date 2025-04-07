@@ -11,6 +11,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.IO.Ports;
 
+using ThingsGateway.NewLife.Extension;
+
 namespace ThingsGateway.Foundation
 {
     public abstract class ChannelOptionsBase : IValidatableObject
@@ -142,7 +144,7 @@ namespace ThingsGateway.Foundation
                 case ChannelTypeEnum.SerialPort:
                     return PortName;
                 case ChannelTypeEnum.UdpSession:
-                    return RemoteUrl;
+                    return BindUrl.IsNullOrEmpty() ? RemoteUrl : BindUrl;
                 case ChannelTypeEnum.Other:
                     return string.Empty;
             }

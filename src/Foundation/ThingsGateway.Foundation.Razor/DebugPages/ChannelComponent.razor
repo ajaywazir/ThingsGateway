@@ -1,4 +1,4 @@
-﻿@namespace ThingsGateway.Debug
+@namespace ThingsGateway.Debug
 @using Microsoft.AspNetCore.Components.Web;
 @using System.IO.Ports;
 @using ThingsGateway.Foundation
@@ -19,8 +19,6 @@
                             <div class="col-12 col-sm-6 col-md-4">
                                 <Select SkipValidate="true" @bind-Value="@value.ChannelType" OnSelectedItemChanged=@((a)=>
                                     {
-                                        value.BindUrl = string.Empty;
-                                        value.RemoteUrl = string.Empty;
                                         return InvokeAsync(StateHasChanged);
                                     }) />
                             </div>

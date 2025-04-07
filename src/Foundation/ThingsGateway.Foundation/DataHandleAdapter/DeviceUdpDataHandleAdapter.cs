@@ -68,7 +68,7 @@ public class DeviceUdpDataHandleAdapter<TRequest> : UdpDataHandlingAdapter where
             byteBlock.Position = 0;
 
             if (Logger?.LogLevel <= LogLevel.Trace)
-                Logger?.Trace($"{ToString()}- Receive:{(IsHexLog ? byteBlock.AsSegmentTake().ToHexString() : byteBlock.ToString(byteBlock.Position))}");
+                Logger?.Trace($"{remoteEndPoint}- Receive:{(IsHexLog ? byteBlock.AsSegmentTake().ToHexString() : byteBlock.ToString(byteBlock.Position))}");
 
             TRequest request = null;
             if (IsSingleThread)
@@ -172,7 +172,7 @@ public class DeviceUdpDataHandleAdapter<TRequest> : UdpDataHandlingAdapter where
         {
             sendMessage.Build(ref byteBlock);
             if (Logger?.LogLevel <= LogLevel.Trace)
-                Logger?.Trace($"{ToString()}- Send:{(IsHexLog ? byteBlock.Span.ToHexString() : (byteBlock.Span.ToString(Encoding.UTF8)))}");
+                Logger?.Trace($"{endPoint}- Send:{(IsHexLog ? byteBlock.Span.ToHexString() : (byteBlock.Span.ToString(Encoding.UTF8)))}");
 
             if (IsSingleThread)
             {

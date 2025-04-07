@@ -8,12 +8,14 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
+using TouchSocket.Core;
+
 namespace ThingsGateway.Foundation;
 
 /// <summary>
 /// <inheritdoc/>
 /// </summary>
-public class DDPMessage : MessageBase, IResultMessage
+public abstract class DDPMessage : MessageBase, IResultMessage
 {
     /// <inheritdoc/>
     public override int HeaderLength => 4;
@@ -21,7 +23,7 @@ public class DDPMessage : MessageBase, IResultMessage
     public string Id;
     public override FilterResult CheckBody<TByteBlock>(ref TByteBlock byteBlock)
     {
-        Id = byteBlock.ToString(byteBlock.Position, 11);
+        Id = byteBlock.ToString(byteBlock.Position, 11).Replace("\0", "");
         OperCode = 0;
         Content = byteBlock.Span.Slice(byteBlock.Position + 11, BodyLength - 12).ToArray();
         return FilterResult.Success;
@@ -44,4 +46,23 @@ public class DDPMessage : MessageBase, IResultMessage
 
     }
 
+    public abstract int GetBodyLength<TByteBlock>(ref TByteBlock byteBlock) where TByteBlock : IByteBlock;
+
+}
+
+
+public class DDPTcpMessage : DDPMessage
+{
+    public override int GetBodyLength<TByteBlock>(ref TByteBlock byteBlock)
+    {
+        return byteBlock.ReadUInt16(EndianType.Big) - 4;
+    }
+}
+
+public class DDPUdpMessage : DDPMessage
+{
+    public override int GetBodyLength<TByteBlock>(ref TByteBlock byteBlock)
+    {
+        return byteBlock.Length - 4;
+    }
 }

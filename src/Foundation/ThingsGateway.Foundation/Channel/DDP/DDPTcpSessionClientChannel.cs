@@ -46,7 +46,7 @@ public class DDPTcpSessionClientChannel : TcpSessionClientChannel
     }
     protected Task DefaultSendAsync(ReadOnlyMemory<byte> memory)
     {
-        return DDPAdapter.SendInputAsync(new DDPSend(memory, Id));
+        return DDPAdapter.SendInputAsync(new DDPSend(memory, Id,true));
     }
     protected Task DDPSendAsync(ReadOnlyMemory<byte> memory)
     {
@@ -64,7 +64,7 @@ public class DDPTcpSessionClientChannel : TcpSessionClientChannel
 
 
 
-    private DeviceSingleStreamDataHandleAdapter<DDPMessage> DDPAdapter = new();
+    private DeviceSingleStreamDataHandleAdapter<DDPTcpMessage> DDPAdapter = new();
     private WaitLock _waitLock = new();
     protected override async ValueTask<bool> OnTcpReceiving(ByteBlock byteBlock)
     {
@@ -101,13 +101,13 @@ public class DDPTcpSessionClientChannel : TcpSessionClientChannel
                         await ResetIdAsync(id).ConfigureAwait(false);
 
                         //发送成功
-                        await DDPAdapter.SendInputAsync(new DDPSend(ReadOnlyMemory<byte>.Empty, id, 0x81)).ConfigureAwait(false);
+                        await DDPAdapter.SendInputAsync(new DDPSend(ReadOnlyMemory<byte>.Empty, id, true, 0x81)).ConfigureAwait(false);
 
                         Logger?.Info(DefaultResource.Localizer["DtuConnected", Id]);
                     }
                     else if (message.Type == 0x02)
                     {
-                        await DDPAdapter.SendInputAsync(new DDPSend(ReadOnlyMemory<byte>.Empty, Id, 0x82)).ConfigureAwait(false);
+                        await DDPAdapter.SendInputAsync(new DDPSend(ReadOnlyMemory<byte>.Empty, Id, true, 0x82)).ConfigureAwait(false);
                         Logger?.Info(DefaultResource.Localizer["DtuDisconnecting", Id]);
                         await Task.Delay(100).ConfigureAwait(false);
                         await this.CloseAsync().ConfigureAwait(false);

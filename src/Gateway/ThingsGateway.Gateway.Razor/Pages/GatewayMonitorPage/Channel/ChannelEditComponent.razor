@@ -1,4 +1,4 @@
-﻿@namespace ThingsGateway.Gateway.Razor
+@namespace ThingsGateway.Gateway.Razor
 @using ThingsGateway.Admin.Application
 @using ThingsGateway.Admin.Razor
 @using ThingsGateway.Foundation
@@ -76,8 +76,6 @@
                             <div class="col-12 col-sm-6 col-md-6">
                                 <Select SkipValidate="true" @bind-Value="@value.ChannelType" OnSelectedItemChanged=@((a)=>
                                     {
-                                    value.BindUrl = string.Empty;
-                                    value.RemoteUrl = string.Empty;
                                     return InvokeAsync(StateHasChanged);
                                     }) />
                             </div>
