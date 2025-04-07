@@ -10,11 +10,14 @@
 
 using BootstrapBlazor.Components;
 
+using Mapster;
+
 using SqlSugar;
 
 using System.ComponentModel.DataAnnotations;
 
 using ThingsGateway.NewLife.Extension;
+using ThingsGateway.Razor;
 
 namespace ThingsGateway.Gateway.Application;
 
@@ -73,13 +76,6 @@ public class Device : BaseDataEntity, IValidatableObject
     [SugarColumn(ColumnDescription = "设备使能")]
     [AutoGenerateColumn(Visible = true, Filterable = true, Sortable = true)]
     public virtual bool Enable { get; set; } = true;
-
-    /// <summary>
-    /// LogEnable
-    /// </summary>
-    [SugarColumn(ColumnDescription = "调试日志")]
-    [AutoGenerateColumn(Visible = true, Filterable = true, Sortable = true)]
-    public virtual bool LogEnable { get; set; } = true;
 
     /// <summary>
     /// LogLevel
@@ -186,7 +182,13 @@ public class Device : BaseDataEntity, IValidatableObject
     [AutoGenerateColumn(Ignore = true)]
     internal bool IsUp { get; set; }
 
-
+    /// <summary>
+    /// 额外属性
+    /// </summary>
+    [System.Text.Json.Serialization.JsonIgnore]
+    [Newtonsoft.Json.JsonIgnore]
+    [AdaptIgnore]
+    public ModelValueValidateForm? ModelValueValidateForm;
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
         if (RedundantEnable && RedundantDeviceId == null)

@@ -189,6 +189,7 @@ public partial class DeviceTable : IDisposable
     {
         try
         {
+            device.DevicePropertys = PluginServiceUtil.SetDict(device.ModelValueValidateForm.Value);
             return await Task.Run(() => GlobalData.DeviceRuntimeService.SaveDeviceAsync(device, itemChangedType, AutoRestartThread));
         }
         catch (Exception ex)

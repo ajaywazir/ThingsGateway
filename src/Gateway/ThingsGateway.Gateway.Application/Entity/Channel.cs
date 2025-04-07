@@ -66,13 +66,6 @@ public class Channel : ChannelOptionsBase, IPrimaryIdEntity, IBaseDataEntity, IB
     public virtual bool Enable { get; set; } = true;
 
     /// <summary>
-    /// LogEnable
-    /// </summary>
-    [SugarColumn(ColumnDescription = "调试日志")]
-    [AutoGenerateColumn(Visible = true, Filterable = true, Sortable = true)]
-    public bool LogEnable { get; set; } = true;
-
-    /// <summary>
     /// LogLevel
     /// </summary>
     [SugarColumn(ColumnDescription = "日志等级")]

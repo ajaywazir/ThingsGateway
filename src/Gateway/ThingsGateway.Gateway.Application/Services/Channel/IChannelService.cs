@@ -91,6 +91,6 @@ internal interface IChannelService
     /// <summary>
     /// 保存是否输出日志和日志等级
     /// </summary>
-    Task UpdateLogAsync(long channelId, bool logEnable, TouchSocket.Core.LogLevel logLevel);
+    Task UpdateLogAsync(long channelId, TouchSocket.Core.LogLevel logLevel);
 
 }

@@ -123,7 +123,7 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
         Channel = ichannel;
 
         //初始设置输出文本日志
-        SetLog(CurrentChannel.LogEnable, CurrentChannel.LogLevel);
+        SetLog(CurrentChannel.LogLevel);
 
         channelRuntime.DeviceThreadManage = this;
 
@@ -145,28 +145,27 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
     #region 日志
 
     private WaitLock SetLogLock = new();
-    public async Task SetLogAsync(bool enable, LogLevel? logLevel = null, bool upDataBase = true)
+    public async Task SetLogAsync(LogLevel? logLevel = null, bool upDataBase = true)
     {
         try
         {
             await SetLogLock.WaitAsync().ConfigureAwait(false);
             bool up = false;
 
-            if (upDataBase && (CurrentChannel.LogEnable != enable || (logLevel != null && CurrentChannel.LogLevel != logLevel)))
+            if (upDataBase && ((logLevel != null && CurrentChannel.LogLevel != logLevel)))
             {
                 up = true;
             }
 
-            CurrentChannel.LogEnable = enable;
             if (logLevel != null)
                 CurrentChannel.LogLevel = logLevel.Value;
             if (up)
             {
                 //更新数据库
-                await GlobalData.ChannelService.UpdateLogAsync(CurrentChannel.Id, CurrentChannel.LogEnable, CurrentChannel.LogLevel).ConfigureAwait(false);
+                await GlobalData.ChannelService.UpdateLogAsync(CurrentChannel.Id, CurrentChannel.LogLevel).ConfigureAwait(false);
             }
 
-            SetLog(CurrentChannel.LogEnable, CurrentChannel.LogLevel);
+            SetLog(CurrentChannel.LogLevel);
 
         }
         catch (Exception ex)
@@ -178,38 +177,22 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
             SetLogLock.Release();
         }
     }
-    private void SetLog(bool enable, LogLevel? logLevel = null)
+    private void SetLog(LogLevel? logLevel = null)
     {
-        // 如果日志使能状态为 true
-        if (enable)
+        LogMessage.LogLevel = logLevel ?? TouchSocket.Core.LogLevel.Trace;
+        // 移除旧的文件日志记录器并释放资源
+        if (TextLogger != null)
         {
-
-            LogMessage.LogLevel = logLevel ?? TouchSocket.Core.LogLevel.Trace;
-            // 移除旧的文件日志记录器并释放资源
-            if (TextLogger != null)
-            {
-                LogMessage.RemoveLogger(TextLogger);
-                TextLogger?.Dispose();
-            }
-
-            // 创建新的文件日志记录器，并设置日志级别为 Trace
-            TextLogger = TextFileLogger.GetMultipleFileLogger(LogPath);
-            TextLogger.LogLevel = logLevel ?? TouchSocket.Core.LogLevel.Trace;
-            // 将文件日志记录器添加到日志消息组中
-            LogMessage.AddLogger(TextLogger);
+            LogMessage.RemoveLogger(TextLogger);
+            TextLogger?.Dispose();
         }
-        else
-        {
-            if (logLevel != null)
-                LogMessage.LogLevel = logLevel.Value;
-            //LogMessage.LogLevel = TouchSocket.Core.LogLevel.Warning;
-            // 如果日志使能状态为 false，移除文件日志记录器并释放资源
-            if (TextLogger != null)
-            {
-                LogMessage.RemoveLogger(TextLogger);
-                TextLogger?.Dispose();
-            }
-        }
+
+        // 创建新的文件日志记录器，并设置日志级别为 Trace
+        TextLogger = TextFileLogger.GetMultipleFileLogger(LogPath);
+        TextLogger.LogLevel = logLevel ?? TouchSocket.Core.LogLevel.Trace;
+        // 将文件日志记录器添加到日志消息组中
+        LogMessage.AddLogger(TextLogger);
+
     }
 
     private TextFileLogger? TextLogger;

@@ -141,28 +141,27 @@ public abstract class DriverBase : DisposableObject, IDriver
     #region 日志
 
     private WaitLock SetLogLock = new();
-    public async Task SetLogAsync(bool enable, LogLevel? logLevel = null, bool upDataBase = true)
+    public async Task SetLogAsync(LogLevel? logLevel = null, bool upDataBase = true)
     {
         try
         {
             await SetLogLock.WaitAsync().ConfigureAwait(false);
             bool up = false;
 
-            if (upDataBase && (CurrentDevice.LogEnable != enable || (logLevel != null && CurrentDevice.LogLevel != logLevel)))
+            if (upDataBase && ((logLevel != null && CurrentDevice.LogLevel != logLevel)))
             {
                 up = true;
             }
 
-            CurrentDevice.LogEnable = enable;
             if (logLevel != null)
                 CurrentDevice.LogLevel = logLevel.Value;
             if (up)
             {
                 //更新数据库
-                await GlobalData.DeviceService.UpdateLogAsync(CurrentDevice.Id, CurrentDevice.LogEnable, CurrentDevice.LogLevel).ConfigureAwait(false);
+                await GlobalData.DeviceService.UpdateLogAsync(CurrentDevice.Id, CurrentDevice.LogLevel).ConfigureAwait(false);
             }
 
-            SetLog(CurrentDevice.LogEnable, CurrentDevice.LogLevel);
+            SetLog(CurrentDevice.LogLevel);
 
         }
         catch (Exception ex)
@@ -174,38 +173,22 @@ public abstract class DriverBase : DisposableObject, IDriver
             SetLogLock.Release();
         }
     }
-    private void SetLog(bool enable, LogLevel? logLevel = null)
+    private void SetLog(LogLevel? logLevel = null)
     {
-        // 如果日志使能状态为 true
-        if (enable)
-        {
 
-            LogMessage.LogLevel = logLevel ?? TouchSocket.Core.LogLevel.Trace;
-            // 移除旧的文件日志记录器并释放资源
-            if (TextLogger != null)
-            {
-                LogMessage.RemoveLogger(TextLogger);
-                TextLogger?.Dispose();
-            }
-
-            // 创建新的文件日志记录器，并设置日志级别为 Trace
-            TextLogger = TextFileLogger.GetMultipleFileLogger(LogPath);
-            TextLogger.LogLevel = logLevel ?? TouchSocket.Core.LogLevel.Trace;
-            // 将文件日志记录器添加到日志消息组中
-            LogMessage.AddLogger(TextLogger);
-        }
-        else
+        LogMessage.LogLevel = logLevel ?? TouchSocket.Core.LogLevel.Trace;
+        // 移除旧的文件日志记录器并释放资源
+        if (TextLogger != null)
         {
-            if (logLevel != null)
-                LogMessage.LogLevel = logLevel.Value;
-            //LogMessage.LogLevel = TouchSocket.Core.LogLevel.Warning;
-            // 如果日志使能状态为 false，移除文件日志记录器并释放资源
-            if (TextLogger != null)
-            {
-                LogMessage.RemoveLogger(TextLogger);
-                TextLogger?.Dispose();
-            }
+            LogMessage.RemoveLogger(TextLogger);
+            TextLogger?.Dispose();
         }
+
+        // 创建新的文件日志记录器，并设置日志级别为 Trace
+        TextLogger = TextFileLogger.GetMultipleFileLogger(LogPath);
+        TextLogger.LogLevel = logLevel ?? TouchSocket.Core.LogLevel.Trace;
+        // 将文件日志记录器添加到日志消息组中
+        LogMessage.AddLogger(TextLogger);
     }
 
     private TextFileLogger? TextLogger;
@@ -232,7 +215,7 @@ public abstract class DriverBase : DisposableObject, IDriver
         // 添加默认日志记录器
         LogMessage.AddLogger(new EasyLogger(Log_Out) { LogLevel = TouchSocket.Core.LogLevel.Trace });
 
-        SetLog(CurrentDevice.LogEnable, CurrentDevice.LogLevel);
+        SetLog(CurrentDevice.LogLevel);
 
         device.Driver = this;
 

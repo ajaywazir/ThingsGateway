@@ -10,12 +10,7 @@
     <HeaderTemplate>
         <div class="flex-fill">
         </div>
-        @if (EnableChanged.HasDelegate)
-        {
-            <Tooltip class=" col-auto" Title="@RazorLocalizer[!Enable?"Enable":"Disabled"]" Placement="Placement.Bottom">
-                <Button Color="Color.None" style="color: var(--bs-card-title-color);" Icon=@(!Enable?"fa fa-play":"fa fa-pause") OnClick="OnEnable" />
-            </Tooltip>
-        }
+
         @if (LogLevelChanged.HasDelegate)
         {
             <Select Value="@LogLevel" ValueChanged="LogLevelChanged" IsPopover></Select>
@@ -46,8 +41,7 @@
                 <ItemContent>
                     @*       <Tooltip Placement="Placement.Bottom" Title=@itemMessage.Message.Substring(0, Math.Min(itemMessage.Message.Length, 500))> *@
                     <div class=@(itemMessage.Level<(byte)Microsoft.Extensions.Logging.LogLevel.Information?"":
-                         itemMessage.Level>=(byte)Microsoft.Extensions.Logging.LogLevel.Warning? " red--text   text-truncate":"green--text text-truncate")
-                          
+                         itemMessage.Level>=(byte)Microsoft.Extensions.Logging.LogLevel.Warning? " red--text text-truncate":"green--text text-truncate")
                          title=@itemMessage.Message.Substring(0, Math.Min(itemMessage.Message.Length, 500))>
 
                         @itemMessage.Message.Substring(0, Math.Min(itemMessage.Message.Length, 150))

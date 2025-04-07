@@ -49,16 +49,14 @@ public partial class DeviceEditComponent
         base.OnParametersSet();
     }
 
-    public ModelValueValidateForm PluginPropertyModel;
-
     public async Task ValidSubmit(EditContext editContext)
     {
         try
         {
-            var result = (!PluginServiceUtil.HasDynamicProperty(PluginPropertyModel.Value)) || (PluginPropertyModel.ValidateForm?.Validate() != false);
+            var result = (!PluginServiceUtil.HasDynamicProperty(Model.ModelValueValidateForm.Value)) || (Model.ModelValueValidateForm.ValidateForm?.Validate() != false);
             if (!result) return;
 
-            Model.DevicePropertys = PluginServiceUtil.SetDict(PluginPropertyModel.Value);
+            Model.DevicePropertys = PluginServiceUtil.SetDict(Model.ModelValueValidateForm.Value);
 
             if (OnValidSubmit != null)
                 await OnValidSubmit.Invoke();
@@ -134,7 +132,7 @@ public partial class DeviceEditComponent
             var pluginName = GlobalData.ReadOnlyChannels.TryGetValue(selectedItem.Value.ToLong(), out var channel) ? channel.PluginName : string.Empty;
             if (pluginName.IsNullOrEmpty()) return;
             var data = GlobalData.PluginService.GetDriverPropertyTypes(pluginName);
-            PluginPropertyModel = new ModelValueValidateForm() { Value = data.Model };
+            Model.ModelValueValidateForm = new ModelValueValidateForm() { Value = data.Model };
             PluginPropertyEditorItems = data.EditorItems;
             if (data.PropertyUIType != null)
             {
@@ -142,14 +140,14 @@ public partial class DeviceEditComponent
                 {
                     [nameof(IPropertyUIBase.Id)] = Model.Id.ToString(),
                     [nameof(IPropertyUIBase.CanWrite)] = true,
-                    [nameof(IPropertyUIBase.Model)] = PluginPropertyModel,
+                    [nameof(IPropertyUIBase.Model)] = Model.ModelValueValidateForm,
                     [nameof(IPropertyUIBase.PluginPropertyEditorItems)] = PluginPropertyEditorItems,
                 });
                 PluginPropertyRenderFragment = component.Render();
             }
             if (Model.DevicePropertys?.Count > 0)
             {
-                PluginServiceUtil.SetModel(PluginPropertyModel.Value, Model.DevicePropertys);
+                PluginServiceUtil.SetModel(Model.ModelValueValidateForm.Value, Model.DevicePropertys);
             }
         }
         catch (Exception ex)

@@ -5,13 +5,10 @@
 
 <DeviceRuntimeInfo1 DeviceRuntime="DeviceRuntime" />
 
-<LogConsole CardStyle="height: calc(100% - 330px);" Enable="DeviceRuntime.LogEnable" LogLevel=@((DeviceRuntime?.Driver?.LogMessage)?.LogLevel??TouchSocket.Core.LogLevel.Trace)
+<LogConsole CardStyle="height: calc(100% - 330px);" LogLevel=@((DeviceRuntime?.Driver?.LogMessage)?.LogLevel??TouchSocket.Core.LogLevel.Trace)
             LogLevelChanged="(logLevel)=>
         {
-                DeviceRuntime.Driver?.SetLogAsync(DeviceRuntime.LogEnable, logLevel);
+                DeviceRuntime.Driver?.SetLogAsync(logLevel);
         }"
-            EnableChanged="(logEnable)=>
-        {
-                DeviceRuntime.Driver?.SetLogAsync(logEnable);
-        }"
+
             LogPath=@DeviceRuntime.LogPath></LogConsole>

@@ -118,6 +118,6 @@ internal interface IDeviceService
     /// <summary>
     /// 保存是否输出日志和日志等级
     /// </summary>
-    Task UpdateLogAsync(long deviceId, bool logEnable, TouchSocket.Core.LogLevel logLevel);
+    Task UpdateLogAsync(long deviceId, TouchSocket.Core.LogLevel logLevel);
 
 }

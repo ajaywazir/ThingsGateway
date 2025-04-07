@@ -47,7 +47,6 @@
                     <EditorItem @bind-Field="@context.Description" />
 
                     <EditorItem @bind-Field="@context.Enable" />
-                    <EditorItem @bind-Field="@context.LogEnable" />
                     <EditorItem @bind-Field="@context.LogLevel" />
 
                     <EditorItem TValue="string" TModel="Device" @bind-Field="@context.Name">
@@ -131,11 +130,11 @@
         @if (!BatchEditEnable)
     {
         <TabItem Text=@GatewayLocalizer["PluginInformation"]>
-            @if (PluginPropertyModel != null && PluginPropertyEditorItems != null)
+            @if (Model.ModelValueValidateForm != null && PluginPropertyEditorItems != null)
         {
         if (PluginPropertyRenderFragment == null)
         {
-            <PropertyComponent Model="PluginPropertyModel" PluginPropertyEditorItems="PluginPropertyEditorItems" Id=@(Model.Id.ToString()) CanWrite="true" />
+            <PropertyComponent Model="Model.ModelValueValidateForm" PluginPropertyEditorItems="PluginPropertyEditorItems" Id=@(Model.Id.ToString()) CanWrite="true" />
         }
         else
         {

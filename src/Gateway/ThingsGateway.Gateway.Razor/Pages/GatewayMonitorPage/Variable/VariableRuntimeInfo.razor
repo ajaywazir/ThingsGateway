@@ -1,6 +1,7 @@
 ﻿@namespace ThingsGateway.Gateway.Razor
 @using System.Text.Json.Nodes
 @using Mapster
+@using Microsoft.Extensions.Hosting
 @using ThingsGateway.Admin.Application
 @using ThingsGateway.Admin.Razor
 @using ThingsGateway.Gateway.Application
@@ -111,7 +112,7 @@
                                       Color=Color.Warning Text="@RazorLocalizer["Clear"]" IsDisabled=@(!AuthorizeButton(AdminOperConst.Delete))
                                       IsAsync OnConfirm=@(ClearAsync) />
 
-        @if (WebsiteOption.Value.Demo)
+        @if (WebsiteOption.Value.Demo || App.HostEnvironment.IsDevelopment())
         {
             <PopConfirmButton Color=Color.Warning Text="@Localizer["Test"]" IsDisabled=@(!AuthorizeButton(AdminOperConst.Add))
                               IsAsync OnConfirm=@(InsertTestDataAsync)>

@@ -86,7 +86,7 @@ internal sealed class ChannelService : BaseService<Channel>, IChannelService
     }
 
 
-    public async Task UpdateLogAsync(long channelId, bool logEnable, LogLevel logLevel)
+    public async Task UpdateLogAsync(long channelId, LogLevel logLevel)
     {
         using var db = GetDB();
 
@@ -95,7 +95,7 @@ internal sealed class ChannelService : BaseService<Channel>, IChannelService
         {
             //更新数据库
 
-            await db.Updateable<Channel>().SetColumns(it => new Channel() { LogEnable = logEnable, LogLevel = logLevel }).Where(a => a.Id == channelId).ExecuteCommandAsync().ConfigureAwait(false);
+            await db.Updateable<Channel>().SetColumns(it => new Channel() { LogLevel = logLevel }).Where(a => a.Id == channelId).ExecuteCommandAsync().ConfigureAwait(false);
 
         }).ConfigureAwait(false);
         if (result.IsSuccess)//如果成功了

@@ -33,10 +33,6 @@ public partial class LogConsole : IDisposable
     [Parameter]
     public EventCallback<LogLevel> LogLevelChanged { get; set; }
 
-    [Parameter, EditorRequired]
-    public bool Enable { get; set; }
-    [Parameter]
-    public EventCallback<bool> EnableChanged { get; set; }
     [Parameter]
     public string CardStyle { get; set; } = "height: 100%;";
     [Parameter]
@@ -208,14 +204,6 @@ public partial class LogConsole : IDisposable
         catch (Exception ex)
         {
             await ToastService.Warn(ex);
-        }
-    }
-    private async Task OnEnable()
-    {
-        if (EnableChanged.HasDelegate)
-        {
-            Enable = !Enable;
-            await EnableChanged.InvokeAsync(Enable);
         }
     }
     private Task OnPause()

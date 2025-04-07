@@ -85,7 +85,7 @@ internal sealed class DeviceService : BaseService<Device>, IDeviceService
     }
 
 
-    public async Task UpdateLogAsync(long channelId, bool logEnable, LogLevel logLevel)
+    public async Task UpdateLogAsync(long channelId, LogLevel logLevel)
     {
         using var db = GetDB();
 
@@ -94,7 +94,7 @@ internal sealed class DeviceService : BaseService<Device>, IDeviceService
         {
             //更新数据库
 
-            await db.Updateable<Device>().SetColumns(it => new Device() { LogEnable = logEnable, LogLevel = logLevel }).Where(a => a.Id == channelId).ExecuteCommandAsync().ConfigureAwait(false);
+            await db.Updateable<Device>().SetColumns(it => new Device() { LogLevel = logLevel }).Where(a => a.Id == channelId).ExecuteCommandAsync().ConfigureAwait(false);
 
         }).ConfigureAwait(false);
         if (result.IsSuccess)//如果成功了

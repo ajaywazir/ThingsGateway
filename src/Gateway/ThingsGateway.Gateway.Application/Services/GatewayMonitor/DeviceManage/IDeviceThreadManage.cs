@@ -22,7 +22,7 @@ public interface IDeviceThreadManage : IAsyncDisposable
     IChannelThreadManage ChannelThreadManage { get; }
     IChannel? Channel { get; }
 
-    Task SetLogAsync(bool enable, LogLevel? logLevel = null, bool upDataBase = true);
+    Task SetLogAsync(LogLevel? logLevel = null, bool upDataBase = true);
     Task RestartDeviceAsync(DeviceRuntime deviceRuntime, bool deleteCache);
     Task RestartDeviceAsync(IEnumerable<DeviceRuntime> deviceRuntimes, bool deleteCache);
 
