@@ -64,11 +64,14 @@
 
         </TabItem>
 
-        <TabItem Text=@ManagementLocalizer["Authentication"]>
+        @if (WebsiteOption.Value.ShowAuthorize)
+        {
+            <TabItem Text=@ManagementLocalizer["Authentication"]>
 
-            <Authentication />
+                <Authentication />
 
-        </TabItem>
+            </TabItem>
+        }
 
     </Tab>
 

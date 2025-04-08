@@ -9,6 +9,8 @@
 //------------------------------------------------------------------------------
 
 #pragma warning disable CA2007 // 考虑对等待的任务调用 ConfigureAwait
+using Microsoft.Extensions.Options;
+
 namespace ThingsGateway.Management;
 
 public partial class SystemConfigPage
@@ -18,6 +20,9 @@ public partial class SystemConfigPage
     [NotNull]
     private IStringLocalizer<RedundancyOptions>? RedundancyLocalizer { get; set; }
 
+    [Inject]
+    [NotNull]
+    private IOptions<WebsiteOptions>? WebsiteOption { get; set; }
 
     [Inject]
     [NotNull]
