@@ -11,7 +11,7 @@
 
 @if (_rules != null)
 {
-    <LogConsole Enable="true" LogLevel=@(_rules.Log.LogLevel) LogLevelChanged="(a)=>{
+    <LogConsole LogLevel=@(_rules.Log.LogLevel) LogLevelChanged="(a)=>{
 _rules.Log.LogLevel=a;
 }" LogPath=@_rules.Log.LogPath HeaderText="@_rules.Rules.Name" HeightString="calc(100vh - var(--bs-header-height) - var(--bb-layout-header-height) - 130px)"></LogConsole>
 }
