@@ -57,12 +57,12 @@ public partial class ChannelCopyComponent
                 channel.Id = YitIdHelper.NextId();
                 channel.Name = $"{CopyChannelNamePrefix}{CopyChannelNameSuffixNumber + i}";
 
-                var index = i;
+                int index = 0;
                 foreach (var item in Devices)
                 {
                     Device device = item.Key.Adapt<Device>();
                     device.Id = YitIdHelper.NextId();
-                    device.Name = $"{CopyDeviceNamePrefix}{CopyDeviceNameSuffixNumber + (index++)}";
+                    device.Name = $"{channel.Name}_{CopyDeviceNamePrefix}{CopyDeviceNameSuffixNumber + (index++)}";
                     device.ChannelId = channel.Id;
                     List<Variable> variables = new();
 

@@ -278,21 +278,12 @@ public class ThingsGatewayNodeManager : CustomNodeManager2
         object newValue;
         try
         {
-            if (!tag.IsDataTypeInit)
+            if (!tag.IsDataTypeInit && value != null)
             {
-                if (tag.DataType == DataTypeIds.String)
-                {
-                    if (value != null)
-                    {
-                        SetDataType(tag, value);
-                    }
-                }
-                else
-                {
-                    SetRank(tag, value);
-                }
+                SetDataType(tag, value);
+                SetRank(tag, value);
             }
-            var jToken = JToken.FromObject((tag.DataType == DataTypeIds.String ? value?.ToString() : value));
+            var jToken = JToken.FromObject(value is JToken jToken1 ? jToken1.ToString() : value);
             var dataValue = JsonUtils.DecoderObject(
                Server.MessageContext,
            tag.DataType,
@@ -753,7 +744,7 @@ public class ThingsGatewayNodeManager : CustomNodeManager2
         }
         else
         {
-            tp = variableRuntime.DataType.GetSystemType(); ;
+            tp = variableRuntime.Value?.GetType() ?? variableRuntime.DataType.GetSystemType(); ;
         }
 
         return DataNodeType(tp);

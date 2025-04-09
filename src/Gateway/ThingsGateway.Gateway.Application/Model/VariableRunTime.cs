@@ -140,6 +140,11 @@ public class VariableRuntime : Variable, IVariable, IDisposable
     /// </summary>
     [AutoGenerateColumn(Visible = true, Order = 6)]
     public object? Value { get => _value; set => _value = value; }
+    /// <summary>
+    /// 实时值
+    /// </summary>
+    [AutoGenerateColumn(Visible = true, Order = 6)]
+    public string? RuntimeType => Value?.GetType()?.Name;
 
     /// <summary>
     /// 设置变量值与时间/质量戳

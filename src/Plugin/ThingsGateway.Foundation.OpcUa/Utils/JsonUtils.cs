@@ -54,7 +54,7 @@ public static class JsonUtils
         JToken json
     )
     {
-        object newData;
+        string newData;
         switch (builtInType)
         {
             case BuiltInType.ExtensionObject:
@@ -88,7 +88,7 @@ public static class JsonUtils
                 break;
         }
 
-        using var decoder = new JsonDecoder(newData.ToString(), Context);
+        using var decoder = new JsonDecoder(newData, Context);
         var data = DecodeRawData(decoder, builtInType, valueRank, "Value");
         return data;
     }
@@ -117,7 +117,13 @@ public static class JsonUtils
                     case BuiltInType.UInt64: { return decoder.ReadUInt64(fieldName); }
                     case BuiltInType.Float: { return decoder.ReadFloat(fieldName); }
                     case BuiltInType.Double: { return decoder.ReadDouble(fieldName); }
-                    case BuiltInType.String: { return decoder.ReadField(fieldName, out var cancellationToken) ? cancellationToken?.ToString() : null; }
+                    case BuiltInType.String:
+                        {
+                            if (decoder.ReadField(fieldName, out var value))
+                                return value is string ? value : value.ToJsonString();
+                            else
+                                return null;
+                        }
                     case BuiltInType.DateTime: { return decoder.ReadDateTime(fieldName); }
                     case BuiltInType.Guid: { return decoder.ReadGuid(fieldName); }
                     case BuiltInType.ByteString: { return decoder.ReadByteString(fieldName); }

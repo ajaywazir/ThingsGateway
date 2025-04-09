@@ -47,7 +47,9 @@
         <TableColumn Field="@context.Value" FieldExpression=@(()=>context.Value) Visible=true ShowTips=true Formatter=@(JsonFormatter) />
 
         <TableColumn @bind-Field="@context.SaveValue" Filterable=true Sortable=true Visible=false />
-        <TableColumn @bind-Field="@context.DataType" Filterable=true Sortable=true Visible=true />
+        <TableColumn @bind-Field="@context.DataType" Filterable=true Sortable=true Visible=false />
+        <TableColumn Field="@context.RuntimeType" ShowTips=true FieldExpression=@(()=>context.RuntimeType) Filterable=true Sortable=true Visible=true />
+
         <TableColumn @bind-Field="@context.RegisterAddress" Filterable=true Sortable=true Visible=true />
         <TableColumn @bind-Field="@context.ArrayLength" Filterable=true Sortable=true Visible=false />
 

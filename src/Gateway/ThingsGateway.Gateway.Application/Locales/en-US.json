@@ -90,6 +90,7 @@
     "LastErrorMessage": "LastErrorMessage",
     "LastSetValue": "LastSetValue",
     "RawValue": "RawValue",
+    "RuntimeType": "RuntimeType",
     "Value": "Value",
     "AlarmEnable": "AlarmEnable",
 

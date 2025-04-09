@@ -83,6 +83,7 @@
     "LastSetValue": "上次值",
     "RawValue": "原始值",
     "Value": "实时值",
+    "RuntimeType": "动态类型",
     "AlarmEnable": "报警使能",
 
     "Name": "名称",
