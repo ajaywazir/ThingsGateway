@@ -99,7 +99,7 @@
 
   "ThingsGateway.Gateway.Razor._Imports": {
     "ExcelVariable": "在线excel编辑变量",
-    "ImportExcel": "导入变量",
+    "ImportVariable": "导入变量",
 
     "CopyVariableNamePrefix": "变量名称前缀",
     "CopyVariableNameSuffixNumber": "变量名称后缀开始序号",

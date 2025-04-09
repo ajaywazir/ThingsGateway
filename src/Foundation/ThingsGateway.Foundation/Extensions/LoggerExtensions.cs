@@ -18,17 +18,26 @@ namespace ThingsGateway.Foundation;
 public static class LoggerExtensions
 {
     /// <summary>
-    /// 替换名称中不符合文件路径规则的字符为_
+    /// 将文件名或文件夹名中非法字符替换为下划线，保留中文字符。
+    /// 支持 Windows、Linux 和 macOS 合法文件名。
     /// </summary>
-    /// <param name="fileName"></param>
-    /// <returns></returns>
-    public static string FileNameReplace(this string fileName)
+    public static string SanitizeFileName(this string name)
     {
-        // 定义文件名称规则的正则表达式模式
-        string pattern = @"[^a-zA-Z0-9_./\\-]";
-        // 使用正则表达式将不符合规则的部分替换为下划线
-        string sanitizedFileName = Regex.Replace(fileName, pattern, "_");
-        return sanitizedFileName;
+        if (string.IsNullOrWhiteSpace(name))
+            return "_";
+
+        // 定义允许的字符：中文、英文字母、数字、下划线、点、短横线和空格
+        // 去除非法字符：Windows: \ / : * ? " < > | 和控制字符（0x00-0x1F）
+        string pattern = @"[\\/:*?""<>|\x00-\x1F]";
+
+        // 保留中文 (\u4e00-\u9fa5)、英文字母、数字、_、-、.、空格
+        name = Regex.Replace(name, pattern, "_");
+
+        // 去除结尾的点或空格（Windows 不允许）
+        name = name.TrimEnd('.', ' ');
+
+        // 如果结果为空，则返回默认名
+        return string.IsNullOrWhiteSpace(name) ? "_" : name;
     }
 
     /// <summary>
@@ -46,7 +55,7 @@ public static class LoggerExtensions
     /// <returns></returns>
     public static string GetDebugLogPath(this long channelId)
     {
-        return GetDebugLogBasePath().CombinePath(channelId.ToString()).FileNameReplace();
+        return GetDebugLogBasePath().CombinePath(channelId.ToString());
     }
 
     /// <summary>
@@ -56,7 +65,7 @@ public static class LoggerExtensions
     /// <returns></returns>
     public static string GetDebugLogPath(this string channelId)
     {
-        return GetDebugLogBasePath().CombinePath(channelId.ToString()).FileNameReplace();
+        return GetDebugLogBasePath().CombinePath(channelId.SanitizeFileName());
     }
 
     /// <summary>
@@ -74,7 +83,7 @@ public static class LoggerExtensions
     /// <returns></returns>
     public static string GetChannelLogPath(this long channelId)
     {
-        return GetChannelLogBasePath().CombinePath(channelId.ToString()).FileNameReplace();
+        return GetChannelLogBasePath().CombinePath(channelId.ToString());
     }
     /// <summary>
     /// 获取日志路径
@@ -83,7 +92,7 @@ public static class LoggerExtensions
     /// <returns></returns>
     public static string GetChannelLogPath(this string channelId)
     {
-        return GetChannelLogBasePath().CombinePath(channelId.ToString()).FileNameReplace();
+        return GetChannelLogBasePath().CombinePath(channelId.SanitizeFileName());
     }
 
 
@@ -103,7 +112,7 @@ public static class LoggerExtensions
     /// <returns></returns>
     public static string GetDeviceLogPath(this long DeviceId)
     {
-        return GetDeviceLogBasePath().CombinePath(DeviceId.ToString()).FileNameReplace();
+        return GetDeviceLogBasePath().CombinePath(DeviceId.ToString());
     }
     /// <summary>
     /// 获取日志路径
@@ -112,7 +121,7 @@ public static class LoggerExtensions
     /// <returns></returns>
     public static string GetDeviceLogPath(this string DeviceId)
     {
-        return GetDeviceLogBasePath().CombinePath(DeviceId.ToString()).FileNameReplace();
+        return GetDeviceLogBasePath().CombinePath(DeviceId.SanitizeFileName());
     }
 
     #region 日志

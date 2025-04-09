@@ -108,7 +108,7 @@
   "ThingsGateway.Gateway.Razor._Imports": {
 
     "ExcelVariable": "ExcelVariable",
-    "ImportExcel": "ImportExcel",
+    "ImportVariable": "ImportVariable",
 
     "CopyVariableNamePrefix": "CopyVariableNamePrefix",
     "CopyVariableNameSuffixNumber": "CopyVariableNameSuffixNumber",
