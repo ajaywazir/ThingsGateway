@@ -101,6 +101,7 @@ public partial class MqttCollect : CollectBase
     protected override async Task<List<VariableSourceRead>> ProtectedLoadSourceReadAsync(List<VariableRuntime> deviceVariables)
     {
         await Task.CompletedTask.ConfigureAwait(false);
+        TopicItemDict.Clear();
         if (deviceVariables.Count > 0)
         {
             var dataResult = new List<VariableSourceRead>();
@@ -123,7 +124,7 @@ public partial class MqttCollect : CollectBase
             //获取主题，负载路径list的字典
             foreach (var group in groups)
             {
-                TopicItemDict.Add(group.Key, new());
+                TopicItemDict.TryAdd(group.Key, new());
                 TopicItemDict[group.Key] = new();
                 var sourVars = new VariableSourceRead()
                 {
