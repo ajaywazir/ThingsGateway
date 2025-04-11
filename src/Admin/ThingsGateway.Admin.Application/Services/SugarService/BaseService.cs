@@ -136,6 +136,19 @@ public class BaseService<T> : IDataService<T>, IDisposable where T : class, new(
         }
     }
 
+    /// <inheritdoc/>
+    public virtual async Task<bool> SaveAsync(List<T> model, ItemChangedType changedType)
+    {
+        using var db = GetDB();
+        if (changedType == ItemChangedType.Add)
+        {
+            return (await db.Insertable(model).ExecuteCommandAsync().ConfigureAwait(false)) > 0;
+        }
+        else
+        {
+            return (await db.Updateable(model).ExecuteCommandAsync().ConfigureAwait(false)) > 0;
+        }
+    }
     /// <summary>
     /// 释放资源
     /// </summary>

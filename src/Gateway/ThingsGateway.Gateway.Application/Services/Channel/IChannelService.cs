@@ -86,6 +86,15 @@ internal interface IChannelService
     /// <param name="input">通道对象</param>
     /// <param name="type">保存类型</param>
     Task<bool> SaveChannelAsync(Channel input, ItemChangedType type);
+
+    /// <summary>
+    /// 保存通道
+    /// </summary>
+    /// <param name="input">通道对象</param>
+    /// <param name="type">保存类型</param>
+    Task<bool> BatchSaveAsync(List<Channel> input, ItemChangedType type);
+
+
     void SetChannelData(HashSet<long>? dataScope, Dictionary<string, Channel> channelDicts, Dictionary<string, ImportPreviewOutputBase> ImportPreviews, ImportPreviewOutput<Channel> channelImportPreview, string sheetName, IEnumerable<IDictionary<string, object>> rows);
 
     /// <summary>

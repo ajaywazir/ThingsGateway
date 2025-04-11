@@ -150,7 +150,7 @@ public partial class VariableRuntimeInfo : IDisposable
              {nameof(VariableCopyComponent.OnSave), async (List<Variable> variables1) =>
             {
 
-                await Task.Run(() =>GlobalData.VariableRuntimeService.AddBatchAsync(variables1,AutoRestartThread,default));
+                await Task.Run(() =>GlobalData.VariableRuntimeService.BatchSaveVariableAsync(variables1,ItemChangedType.Add,AutoRestartThread,default));
                 await InvokeAsync(table.QueryAsync);
 
             }},
@@ -178,7 +178,8 @@ public partial class VariableRuntimeInfo : IDisposable
             await ToastService.Warning(null, RazorLocalizer["PleaseSelect"]);
             return;
         }
-
+        variables = variables.Adapt<List<Variable>>();
+        oldModel = oldModel.Adapt<Variable>();
         var model = oldModel.Adapt<Variable>();//默认值显示第一个
         op.Component = BootstrapDynamicComponent.CreateComponent<VariableEditComponent>(new Dictionary<string, object?>
         {

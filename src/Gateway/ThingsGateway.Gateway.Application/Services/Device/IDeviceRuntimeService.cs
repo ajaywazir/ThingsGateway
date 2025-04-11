@@ -24,5 +24,6 @@ namespace ThingsGateway.Gateway.Application
         Task ImportDeviceAsync(Dictionary<string, ImportPreviewOutputBase> input, bool restart);
         Task<Dictionary<string, ImportPreviewOutputBase>> PreviewAsync(IBrowserFile browserFile);
         Task<bool> SaveDeviceAsync(Device input, ItemChangedType type, bool restart);
+        Task<bool> BatchSaveDeviceAsync(List<Device> input, ItemChangedType type, bool restart);
     }
 }

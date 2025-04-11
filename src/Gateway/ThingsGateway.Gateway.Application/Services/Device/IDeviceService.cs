@@ -112,6 +112,15 @@ internal interface IDeviceService
     /// <param name="type">保存类型</param>
     /// <returns>保存是否成功的异步任务</returns>
     Task<bool> SaveDeviceAsync(Device input, ItemChangedType type);
+
+    /// <summary>
+    /// 异步保存设备信息。
+    /// </summary>
+    /// <param name="input">设备信息</param>
+    /// <param name="type">保存类型</param>
+    /// <returns>保存是否成功的异步任务</returns>
+    Task<bool> BatchSaveDeviceAsync(List<Device> input, ItemChangedType type);
+
     void SetDeviceData(HashSet<long>? dataScope, Dictionary<string, Device> deviceDicts, Dictionary<string, Channel> channelDicts, Dictionary<string, ImportPreviewOutputBase> ImportPreviews, ref ImportPreviewOutput<Device> deviceImportPreview, Dictionary<string, PluginInfo> driverPluginNameDict, ConcurrentDictionary<string, (Type, Dictionary<string, PropertyInfo>, Dictionary<string, PropertyInfo>)> propertysDict, string sheetName, IEnumerable<IDictionary<string, object>> rows);
 
 

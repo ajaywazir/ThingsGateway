@@ -25,6 +25,15 @@ public interface IChannelRuntimeService
     Task<bool> SaveChannelAsync(Channel input, ItemChangedType type, bool restart);
 
     /// <summary>
+    /// 保存通道
+    /// </summary>
+    /// <param name="input">通道对象</param>
+    /// <param name="type">保存类型</param>
+    /// <param name="restart">重启</param>
+    Task<bool> BatchSaveChannelAsync(List<Channel> input, ItemChangedType type, bool restart);
+
+
+    /// <summary>
     /// 批量修改
     /// </summary>
     /// <param name="models">列表</param>

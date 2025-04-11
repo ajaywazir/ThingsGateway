@@ -283,19 +283,49 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
 
     /// <inheritdoc/>
     [OperDesc("SaveVariable", isRecordPar: false, localizerType: typeof(Variable))]
-    public async Task AddBatchAsync(List<Variable> input)
+    public async Task<bool> BatchSaveVariableAsync(List<Variable> input, ItemChangedType type)
     {
-
-        ManageHelper.CheckVariableCount(input.Count);
-
-        using var db = GetDB();
+        try
+        {
 
 
-        var result = await db.Insertable(input).ExecuteCommandAsync().ConfigureAwait(false);
+            if (type == ItemChangedType.Add)
+            {
 
-        if (result > 0)
-            DeleteVariableCache();
-        _dispatchService.Dispatch(new());
+                ManageHelper.CheckVariableCount(input.Count);
+
+                using var db = GetDB();
+
+
+                var result = await db.Insertable(input).ExecuteCommandAsync().ConfigureAwait(false);
+
+                if (result > 0)
+                {
+                    DeleteVariableCache();
+                    return true;
+
+                }
+            }
+            else
+            {
+
+                using var db = GetDB();
+
+                var result = await db.Updateable(input).ExecuteCommandAsync().ConfigureAwait(false);
+
+                if (result > 0)
+                {
+                    DeleteVariableCache();
+                    return true;
+                }
+            }
+            return false;
+        }
+        finally
+        {
+            _dispatchService.Dispatch(new());
+
+        }
     }
 
     /// <inheritdoc/>
@@ -419,7 +449,8 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
     {
         if (type == ItemChangedType.Update)
             await GlobalData.SysUserService.CheckApiDataScopeAsync(input.CreateOrgId, input.CreateUserId).ConfigureAwait(false);
-        ManageHelper.CheckVariableCount(1);
+        else
+            ManageHelper.CheckVariableCount(1);
 
         if (await base.SaveAsync(input, type).ConfigureAwait(false))
         {

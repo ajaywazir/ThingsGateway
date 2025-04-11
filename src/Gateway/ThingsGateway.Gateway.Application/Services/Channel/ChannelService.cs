@@ -244,8 +244,8 @@ internal sealed class ChannelService : BaseService<Channel>, IChannelService
 
         if (type == ItemChangedType.Update)
             await GlobalData.SysUserService.CheckApiDataScopeAsync(input.CreateOrgId, input.CreateUserId).ConfigureAwait(false);
-
-        ManageHelper.CheckChannelCount(1);
+        else
+            ManageHelper.CheckChannelCount(1);
 
         if (await base.SaveAsync(input, type).ConfigureAwait(false))
         {
@@ -254,6 +254,30 @@ internal sealed class ChannelService : BaseService<Channel>, IChannelService
         }
         return false;
     }
+
+    /// <summary>
+    /// 保存通道
+    /// </summary>
+    /// <param name="input">通道</param>
+    /// <param name="type">保存类型</param>
+    [OperDesc("SaveChannel", localizerType: typeof(Channel), isRecordPar: false)]
+    public async Task<bool> BatchSaveAsync(List<Channel> input, ItemChangedType type)
+    {
+        if (type == ItemChangedType.Update)
+            await GlobalData.SysUserService.CheckApiDataScopeAsync(input.Select(a => a.CreateOrgId), input.Select(a => a.CreateUserId)).ConfigureAwait(false);
+        else
+            ManageHelper.CheckDeviceCount(input.Count);
+
+        if (await base.SaveAsync(input, type).ConfigureAwait(false))
+        {
+            DeleteChannelFromCache();
+            return true;
+        }
+        return false;
+    }
+
+
+
 
     #endregion
 

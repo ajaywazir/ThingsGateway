@@ -69,9 +69,6 @@ public class ChannelRuntimeService : IChannelRuntimeService
         {
             await WaitLock.WaitAsync().ConfigureAwait(false);
 
-            models = models.Adapt<List<Channel>>();
-            oldModel = oldModel.Adapt<Channel>();
-            model = model.Adapt<Channel>();
             var result = await GlobalData.ChannelService.BatchEditAsync(models, oldModel, model).ConfigureAwait(false);
             var ids = models.Select(a => a.Id).ToHashSet();
             var newChannelRuntimes = await RuntimeServiceHelper.GetNewChannelRuntimesAsync(ids).ConfigureAwait(false);
@@ -154,12 +151,36 @@ public class ChannelRuntimeService : IChannelRuntimeService
     {
         try
         {
-            input = input.Adapt<Channel>();
             await WaitLock.WaitAsync().ConfigureAwait(false);
 
             var result = await GlobalData.ChannelService.SaveChannelAsync(input, type).ConfigureAwait(false);
 
             var newChannelRuntimes = await RuntimeServiceHelper.GetNewChannelRuntimesAsync(new HashSet<long>() { input.Id }).ConfigureAwait(false);
+
+            RuntimeServiceHelper.Init(newChannelRuntimes);
+
+            //根据条件重启通道线程
+            if (restart)
+                await GlobalData.ChannelThreadManage.RestartChannelAsync(newChannelRuntimes).ConfigureAwait(false);
+
+            return true;
+        }
+        finally
+        {
+            WaitLock.Release();
+        }
+    }
+
+
+    public async Task<bool> BatchSaveChannelAsync(List<Channel> input, ItemChangedType type, bool restart)
+    {
+        try
+        {
+            await WaitLock.WaitAsync().ConfigureAwait(false);
+
+            var result = await GlobalData.ChannelService.BatchSaveAsync(input, type).ConfigureAwait(false);
+
+            var newChannelRuntimes = await RuntimeServiceHelper.GetNewChannelRuntimesAsync(input.Select(a => a.Id).ToHashSet()).ConfigureAwait(false);
 
             RuntimeServiceHelper.Init(newChannelRuntimes);
 

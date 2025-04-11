@@ -132,7 +132,8 @@ public partial class DeviceTable : IDisposable
             await ToastService.Warning(null, RazorLocalizer["PleaseSelect"]);
             return;
         }
-
+        changedModels = changedModels.Adapt<List<Device>>();
+        oldModel = oldModel.Adapt<Device>();
         var oneModel = oldModel.Adapt<Device>();//默认值显示第一个
 
         var op = new DialogOption()

@@ -232,6 +232,9 @@ public partial class ChannelDeviceTree
         {
             return;
         }
+
+        changedModels = changedModels.Adapt<List<Channel>>();
+        oldModel = oldModel.Adapt<Channel>();
         var op = new DialogOption()
         {
             IsScrolling = false,
@@ -764,7 +767,8 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
             return;
         }
 
-
+        changedModels = changedModels.Adapt<List<Device>>();
+        oldModel = oldModel.Adapt<Device>();
         op.Component = BootstrapDynamicComponent.CreateComponent<DeviceEditComponent>(new Dictionary<string, object?>
         {
              {nameof(DeviceEditComponent.OnValidSubmit), async () =>

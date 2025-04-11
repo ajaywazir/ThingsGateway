@@ -265,9 +265,8 @@ internal sealed class DeviceService : BaseService<Device>, IDeviceService
         }
         if (type == ItemChangedType.Update)
             await GlobalData.SysUserService.CheckApiDataScopeAsync(input.CreateOrgId, input.CreateUserId).ConfigureAwait(false);
-
-
-        ManageHelper.CheckDeviceCount(1);
+        else
+            ManageHelper.CheckDeviceCount(1);
 
         if (await base.SaveAsync(input, type).ConfigureAwait(false))
         {
@@ -276,6 +275,26 @@ internal sealed class DeviceService : BaseService<Device>, IDeviceService
         }
         return false;
     }
+
+    [OperDesc("SaveDevice", localizerType: typeof(Device), isRecordPar: false)]
+    public async Task<bool> BatchSaveDeviceAsync(List<Device> input, ItemChangedType type)
+    {
+
+        if (type == ItemChangedType.Update)
+            await GlobalData.SysUserService.CheckApiDataScopeAsync(input.Select(a => a.CreateOrgId), input.Select(a => a.CreateUserId)).ConfigureAwait(false);
+        else
+            ManageHelper.CheckDeviceCount(input.Count);
+
+        if (await base.SaveAsync(input, type).ConfigureAwait(false))
+        {
+            DeleteDeviceFromCache();
+            return true;
+        }
+        return false;
+
+    }
+
+
 
     #region 导出
 

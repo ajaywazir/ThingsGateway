@@ -30,19 +30,17 @@ public class VariableRuntimeService : IVariableRuntimeService
 
 
 
-    public async Task AddBatchAsync(List<Variable> input, bool restart, CancellationToken cancellationToken)
+    public async Task<bool> BatchSaveVariableAsync(List<Variable> input, ItemChangedType type, bool restart, CancellationToken cancellationToken)
     {
         try
         {
             // await WaitLock.WaitAsync().ConfigureAwait(false);
 
-            await GlobalData.VariableService.AddBatchAsync(input).ConfigureAwait(false);
+            var result = await GlobalData.VariableService.BatchSaveVariableAsync(input, type).ConfigureAwait(false);
 
             var newVariableRuntimes = input.Adapt<List<VariableRuntime>>();
             var variableIds = newVariableRuntimes.Select(a => a.Id).ToHashSet();
             //获取变量，先找到原插件线程，然后修改插件线程内的字典，再改动全局字典，最后刷新插件
-
-
 
             ConcurrentHashSet<IDriver> changedDriver = new();
 
@@ -55,7 +53,7 @@ public class VariableRuntimeService : IVariableRuntimeService
                 //根据条件重启通道线程
                 await RuntimeServiceHelper.ChangedDriverAsync(changedDriver, _logger, cancellationToken).ConfigureAwait(false);
             }
-
+            return true;
         }
         finally
         {
@@ -69,9 +67,7 @@ public class VariableRuntimeService : IVariableRuntimeService
         {
             // await WaitLock.WaitAsync().ConfigureAwait(false);
 
-            models = models.Adapt<List<Variable>>();
-            oldModel = oldModel.Adapt<Variable>();
-            model = model.Adapt<Variable>();
+
 
             var result = await GlobalData.VariableService.BatchEditAsync(models, oldModel, model).ConfigureAwait(false);
 
@@ -232,7 +228,6 @@ public class VariableRuntimeService : IVariableRuntimeService
     {
         try
         {
-            input = input.Adapt<Variable>();
             // await WaitLock.WaitAsync().ConfigureAwait(false);
 
 

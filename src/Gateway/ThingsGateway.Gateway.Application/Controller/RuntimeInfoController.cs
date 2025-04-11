@@ -122,8 +122,39 @@ public class RuntimeInfoController : ControllerBase
             .ToPagedList(input);
         return data;
     }
-}
 
+
+    /// <summary>
+    /// 获取默认插件属性
+    /// </summary>
+    [HttpGet("getPluginPropertys")]
+    [DisplayName("获取默认插件属性")]
+    public Dictionary<string, string> GetPluginPropertys(string pluginName)
+    {
+        var data = GlobalData.PluginService.GetDriverPropertyTypes(pluginName);
+
+        var devicePropertys = PluginServiceUtil.SetDict(data.Model);
+
+        return devicePropertys;
+    }
+
+    /// <summary>
+    /// 获取插件
+    /// </summary>
+    [HttpGet("getPluginInfos")]
+    [DisplayName("获取插件")]
+    public SqlSugarPagedList<PluginInfo> GetPluginInfos(PluginInfoPageInput input)
+    {
+        //指定关键词搜索为插件FullName
+        return GlobalData.PluginService.GetList().WhereIF(!input.Name.IsNullOrWhiteSpace(), a => a.Name == input.Name)
+                .ToPagedList(input);
+    }
+}
+public class PluginInfoPageInput : BasePageInput
+{
+    /// <inheritdoc/>
+    public string? Name { get; set; }
+}
 public class ChannelPageInput : BasePageInput
 {
     /// <inheritdoc/>

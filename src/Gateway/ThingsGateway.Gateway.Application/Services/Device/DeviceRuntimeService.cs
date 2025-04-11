@@ -10,8 +10,6 @@
 
 using BootstrapBlazor.Components;
 
-using Mapster;
-
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Logging;
 
@@ -65,9 +63,6 @@ public class DeviceRuntimeService : IDeviceRuntimeService
     {
         try
         {
-            models = models.Adapt<List<Device>>();
-            oldModel = oldModel.Adapt<Device>();
-            model = model.Adapt<Device>();
             await WaitLock.WaitAsync().ConfigureAwait(false);
 
             var result = await GlobalData.DeviceService.BatchEditAsync(models, oldModel, model).ConfigureAwait(false);
@@ -182,7 +177,6 @@ public class DeviceRuntimeService : IDeviceRuntimeService
     {
         try
         {
-            input = input.Adapt<Device>();
 
             await WaitLock.WaitAsync().ConfigureAwait(false);
 
@@ -208,4 +202,34 @@ public class DeviceRuntimeService : IDeviceRuntimeService
             WaitLock.Release();
         }
     }
+
+
+    public async Task<bool> BatchSaveDeviceAsync(List<Device> input, ItemChangedType type, bool restart)
+    {
+
+        try
+        {
+
+            await WaitLock.WaitAsync().ConfigureAwait(false);
+
+            var result = await GlobalData.DeviceService.BatchSaveDeviceAsync(input, type).ConfigureAwait(false);
+
+            var newDeviceRuntimes = await RuntimeServiceHelper.GetNewDeviceRuntimesAsync(input.Select(a => a.Id).ToHashSet()).ConfigureAwait(false);
+
+            RuntimeServiceHelper.Init(newDeviceRuntimes);
+
+            if (restart)
+            {
+                //根据条件重启通道线程
+                await RuntimeServiceHelper.RestartDeviceAsync(newDeviceRuntimes).ConfigureAwait(false);
+            }
+
+            return true;
+        }
+        finally
+        {
+            WaitLock.Release();
+        }
+    }
+
 }

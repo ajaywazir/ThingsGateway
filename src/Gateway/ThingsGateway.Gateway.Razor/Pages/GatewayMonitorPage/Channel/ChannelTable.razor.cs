@@ -126,13 +126,15 @@ public partial class ChannelTable : IDisposable
 
     private async Task BatchEdit(IEnumerable<Channel> changedModels)
     {
+
         var oldModel = changedModels.FirstOrDefault();//默认值显示第一个
         if (oldModel == null)
         {
             await ToastService.Warning(null, RazorLocalizer["PleaseSelect"]);
             return;
         }
-
+        changedModels = changedModels.Adapt<List<Channel>>();
+        oldModel = oldModel.Adapt<Channel>();
         var oneModel = oldModel.Adapt<Channel>();//默认值显示第一个
 
         var op = new DialogOption()

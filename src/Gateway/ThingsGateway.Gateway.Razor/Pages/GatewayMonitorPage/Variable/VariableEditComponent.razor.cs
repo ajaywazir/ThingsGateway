@@ -52,7 +52,13 @@ public partial class VariableEditComponent
         var devices = await GlobalData.GetCurrentUserDevices().ConfigureAwait(false);
         CollectDeviceItems = devices.Where(a => a.IsCollect == true).BuildDeviceSelectList();
         BusinessDeviceItems = devices.Where(a => a.IsCollect == false).BuildDeviceSelectList();
-        base.OnParametersSet();
+
+        if (Model.DeviceId > 0 && AddressUIType == null)
+        {
+            await SetAddressUI(Model.DeviceId);
+        }
+
+        await base.OnParametersSetAsync();
     }
 
     [Parameter]
@@ -104,9 +110,14 @@ public partial class VariableEditComponent
     public IEnumerable<SelectedItem> OtherMethodSelectedItems { get; set; }
     private async Task OnDeviceChanged(SelectedItem selectedItem)
     {
+        await SetAddressUI(selectedItem.Value.ToLong());
+    }
+
+    private async Task SetAddressUI(long deviceId)
+    {
         try
         {
-            if (GlobalData.ReadOnlyIdDevices.TryGetValue(selectedItem.Value.ToLong(), out var device))
+            if (GlobalData.ReadOnlyIdDevices.TryGetValue(deviceId, out var device))
             {
                 OtherMethods = GlobalData.PluginService.GetDriverMethodInfos(device.PluginName).ToDictionary(a => a.Name, a => a.Description);
                 OtherMethodSelectedItems = new List<SelectedItem>() { new SelectedItem(string.Empty, "none") }.Concat(OtherMethods.Select(a => new SelectedItem(a.Key, a.Value)));
@@ -119,6 +130,7 @@ public partial class VariableEditComponent
             await ToastService.Warn(ex);
         }
     }
+
     private BootstrapDynamicComponent AddressDynamicComponent;
     private Type AddressUIType;
 
