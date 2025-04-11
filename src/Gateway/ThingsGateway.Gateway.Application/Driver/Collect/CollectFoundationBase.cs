@@ -79,11 +79,18 @@ public abstract class CollectFoundationBase : CollectBase
                 Exception exception = null;
                 try
                 {
-                    await FoundationDevice.Channel.ConnectAsync(FoundationDevice.Channel.ChannelOptions.ConnectTimeout, cancellationToken).ConfigureAwait(false);
+                    if (!cancellationToken.IsCancellationRequested)
+                    {
+                        await FoundationDevice.Channel.ConnectAsync(FoundationDevice.Channel.ChannelOptions.ConnectTimeout, cancellationToken).ConfigureAwait(false);
+                    }
                 }
                 catch (Exception ex)
                 {
                     exception = ex;
+                }
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return true;
                 }
                 if (FoundationDevice.OnLine == false && exception != null)
                 {
