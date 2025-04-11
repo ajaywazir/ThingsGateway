@@ -23,7 +23,8 @@ public abstract class DDPMessage : MessageBase, IResultMessage
     {
         Id = byteBlock.ToString(byteBlock.Position, 11).Replace("\0", "");
         OperCode = 0;
-        Content = byteBlock.Span.Slice(byteBlock.Position + 11, BodyLength - 12).ToArray();
+
+        Content = GetContent(ref byteBlock);
         return FilterResult.Success;
     }
 
@@ -38,13 +39,14 @@ public abstract class DDPMessage : MessageBase, IResultMessage
         }
         else
         {
-            BodyLength = byteBlock.ReadUInt16(EndianType.Big) - 4;
+            BodyLength = GetBodyLength(ref byteBlock);
             return true;
         }
 
     }
 
     public abstract int GetBodyLength<TByteBlock>(ref TByteBlock byteBlock) where TByteBlock : IByteBlock;
+    public abstract byte[] GetContent<TByteBlock>(ref TByteBlock byteBlock) where TByteBlock : IByteBlock;
 
 }
 
@@ -55,6 +57,11 @@ public class DDPTcpMessage : DDPMessage
     {
         return byteBlock.ReadUInt16(EndianType.Big) - 4;
     }
+
+    public override byte[] GetContent<TByteBlock>(ref TByteBlock byteBlock)
+    {
+        return byteBlock.Span.Slice(byteBlock.Position + 11, BodyLength - 12).ToArray();
+    }
 }
 
 public class DDPUdpMessage : DDPMessage
@@ -62,5 +69,9 @@ public class DDPUdpMessage : DDPMessage
     public override int GetBodyLength<TByteBlock>(ref TByteBlock byteBlock)
     {
         return byteBlock.Length - 4;
+    }
+    public override byte[] GetContent<TByteBlock>(ref TByteBlock byteBlock)
+    {
+        return byteBlock.Span.Slice(byteBlock.Position + 12, BodyLength - 12).ToArray();
     }
 }
