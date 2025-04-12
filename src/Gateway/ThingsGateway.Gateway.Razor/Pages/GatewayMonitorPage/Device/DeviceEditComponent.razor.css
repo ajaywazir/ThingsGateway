@@ -2,16 +2,17 @@
     font-size: 1rem;
     font-weight: bold;
 }
-.device{
-    min-height: 500px;
-}
+
 .device ::deep .tabs-body-content {
     overflow-x: hidden;
+    min-height: 500px;
 }
+
 .device ::deep .bb-editor .row {
     --bs-gutter-y: 0.5rem;
     --bs-gutter-x: 0.5rem;
 }
+
 .text-h6 {
     /* Headline 6 */
     font-family: Roboto !important;
