@@ -84,7 +84,10 @@ public class SerialPortChannel : SerialPortClient, IClientChannel
                 if (Online)
                 {
                     await base.CloseAsync(msg).ConfigureAwait(false);
-
+                    if (!Online)
+                    {
+                        await this.OnChannelEvent(Stoped).ConfigureAwait(false);
+                    }
                 }
             }
             finally
@@ -104,9 +107,13 @@ public class SerialPortChannel : SerialPortClient, IClientChannel
                 //await _connectLock.WaitAsync(token).ConfigureAwait(false);
                 if (!Online)
                 {
-                    //await SetupAsync(Config.Clone()).ConfigureAwait(false);
+                    if (token.IsCancellationRequested) return;
                     await base.ConnectAsync(millisecondsTimeout, token).ConfigureAwait(false);
-
+                    if (Online)
+                    {
+                        if (token.IsCancellationRequested) return;
+                        await this.OnChannelEvent(Started).ConfigureAwait(false);
+                    }
                 }
             }
             finally
@@ -144,7 +151,6 @@ public class SerialPortChannel : SerialPortClient, IClientChannel
 
     protected override async Task OnSerialClosed(ClosedEventArgs e)
     {
-        await this.OnChannelEvent(Stoped).ConfigureAwait(false);
         Logger?.Info($"{ToString()} Closed{(e.Message.IsNullOrEmpty() ? string.Empty : $" -{e.Message}")}");
 
         await base.OnSerialClosed(e).ConfigureAwait(false);
@@ -153,7 +159,7 @@ public class SerialPortChannel : SerialPortClient, IClientChannel
     protected override async Task OnSerialClosing(ClosingEventArgs e)
     {
         await this.OnChannelEvent(Stoping).ConfigureAwait(false);
-        Logger?.Info($"{ToString()} Closing{(e.Message.IsNullOrEmpty() ? string.Empty : $" -{e.Message}")}");
+        Logger?.Trace($"{ToString()} Closing{(e.Message.IsNullOrEmpty() ? string.Empty : $" -{e.Message}")}");
         await base.OnSerialClosing(e).ConfigureAwait(false);
     }
 
@@ -167,7 +173,6 @@ public class SerialPortChannel : SerialPortClient, IClientChannel
     protected override async Task OnSerialConnected(ConnectedEventArgs e)
     {
         Logger?.Debug($"{ToString()} Connected");
-        await this.OnChannelEvent(Started).ConfigureAwait(false);
         await base.OnSerialConnected(e).ConfigureAwait(false);
     }
     /// <inheritdoc/>

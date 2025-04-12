@@ -82,6 +82,10 @@ public class TcpClientChannel : TcpClient, IClientChannel
                 if (Online)
                 {
                     await base.CloseAsync(msg).ConfigureAwait(false);
+                    if (!Online)
+                    {
+                        await this.OnChannelEvent(Stoped).ConfigureAwait(false);
+                    }
                 }
             }
             finally
@@ -101,7 +105,14 @@ public class TcpClientChannel : TcpClient, IClientChannel
                 //await _connectLock.WaitAsync(token).ConfigureAwait(false);
                 if (!Online)
                 {
+                    if (token.IsCancellationRequested) return;
                     await base.ConnectAsync(millisecondsTimeout, token).ConfigureAwait(false);
+                    if (Online)
+                    {
+                        if (token.IsCancellationRequested) return;
+                        await this.OnChannelEvent(Started).ConfigureAwait(false);
+
+                    }
                 }
             }
             finally
@@ -130,8 +141,6 @@ public class TcpClientChannel : TcpClient, IClientChannel
 
         Logger?.Info($"{ToString()}  Closed{(e.Message.IsNullOrEmpty() ? string.Empty : $" -{e.Message}")}");
 
-        await this.OnChannelEvent(Stoped).ConfigureAwait(false);
-
         await base.OnTcpClosed(e).ConfigureAwait(false);
 
     }
@@ -139,7 +148,7 @@ public class TcpClientChannel : TcpClient, IClientChannel
     protected override async Task OnTcpClosing(ClosingEventArgs e)
     {
         await this.OnChannelEvent(Stoping).ConfigureAwait(false);
-        Logger?.Info($"{ToString()}  Closing{(e.Message.IsNullOrEmpty() ? string.Empty : $" -{e.Message}")}");
+        Logger?.Trace($"{ToString()}  Closing{(e.Message.IsNullOrEmpty() ? string.Empty : $" -{e.Message}")}");
 
         await base.OnTcpClosing(e).ConfigureAwait(false);
     }
@@ -155,7 +164,6 @@ public class TcpClientChannel : TcpClient, IClientChannel
     protected override async Task OnTcpConnected(ConnectedEventArgs e)
     {
         Logger?.Info($"{ToString()}  Connected");
-        await this.OnChannelEvent(Started).ConfigureAwait(false);
 
         await base.OnTcpConnected(e).ConfigureAwait(false);
     }

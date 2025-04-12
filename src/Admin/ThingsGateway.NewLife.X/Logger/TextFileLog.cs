@@ -22,11 +22,11 @@ public class TextFileLog : Logger, IDisposable
     /// <summary>日志文件格式。默认{0:yyyy_MM_dd}.log</summary>
     public String FileFormat { get; set; }
 
-    /// <summary>日志文件上限。超过上限后拆分新日志文件，默认10MB，0表示不限制大小</summary>
-    public Int32 MaxBytes { get; set; } = 10;
+    /// <summary>日志文件上限。超过上限后拆分新日志文件，默认5MB，0表示不限制大小</summary>
+    public Int32 MaxBytes { get; set; } = 5;
 
     /// <summary>日志文件备份。超过备份数后，最旧的文件将被删除，默认100，0表示不限制个数</summary>
-    public Int32 Backups { get; set; } = 100;
+    public Int32 Backups { get; set; } = 50;
 
     private readonly Boolean _isFile = false;
 

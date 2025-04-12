@@ -136,7 +136,7 @@ public abstract class TcpServiceChannelBase<TClient> : TcpService<TClient>, ITcp
     /// <inheritdoc/>
     protected override Task OnTcpClosing(TClient socketClient, ClosingEventArgs e)
     {
-        Logger?.Info($"{socketClient} Closing{(e.Message.IsNullOrEmpty() ? string.Empty : $"-{e.Message}")}");
+        Logger?.Trace($"{socketClient} Closing{(e.Message.IsNullOrEmpty() ? string.Empty : $"-{e.Message}")}");
         return base.OnTcpClosing(socketClient, e);
     }
 

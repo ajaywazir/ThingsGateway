@@ -39,13 +39,13 @@ public class Setting
     [Description("文件日志目录。默认Log子目录")]
     public String LogPath { get; set; } = "Logs/XLog";
 
-    /// <summary>日志文件上限。超过上限后拆分新日志文件，默认10MB，0表示不限制大小</summary>
-    [Description("日志文件上限。超过上限后拆分新日志文件，默认10MB，0表示不限制大小")]
-    public Int32 LogFileMaxBytes { get; set; } = 10;
+    /// <summary>日志文件上限。超过上限后拆分新日志文件，默认5MB，0表示不限制大小</summary>
+    [Description("日志文件上限。超过上限后拆分新日志文件，默认5MB，0表示不限制大小")]
+    public Int32 LogFileMaxBytes { get; set; } = 5;
 
     /// <summary>日志文件备份。超过备份数后，最旧的文件将被删除，网络安全法要求至少保存6个月日志，默认200，0表示不限制个数</summary>
-    [Description("日志文件备份。超过备份数后，最旧的文件将被删除，网络安全法要求至少保存6个月日志，默认200，0表示不限制个数")]
-    public Int32 LogFileBackups { get; set; } = 200;
+    [Description("日志文件备份。超过备份数后，最旧的文件将被删除，网络安全法要求至少保存6个月日志，默认50，0表示不限制个数")]
+    public Int32 LogFileBackups { get; set; } = 50;
 
     /// <summary>日志文件格式。默认{0:yyyy_MM_dd}.log，支持日志等级如 {1}_{0:yyyy_MM_dd}.log</summary>
     [Description("日志文件格式。默认{0:yyyy_MM_dd}.log，支持日志等级如 {1}_{0:yyyy_MM_dd}.log")]

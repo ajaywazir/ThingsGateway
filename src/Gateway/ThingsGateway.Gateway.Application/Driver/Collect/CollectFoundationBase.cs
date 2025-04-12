@@ -79,6 +79,7 @@ public abstract class CollectFoundationBase : CollectBase
                 Exception exception = null;
                 try
                 {
+                    await Task.Delay(1000, cancellationToken).ConfigureAwait(false);
                     if (!cancellationToken.IsCancellationRequested)
                     {
                         await FoundationDevice.Channel.ConnectAsync(FoundationDevice.Channel.ChannelOptions.ConnectTimeout, cancellationToken).ConfigureAwait(false);

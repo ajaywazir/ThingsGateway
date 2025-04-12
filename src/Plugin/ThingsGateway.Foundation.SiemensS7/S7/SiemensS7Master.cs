@@ -406,6 +406,7 @@ public partial class SiemensS7Master : DeviceBase
                     return true;
                 }
             }
+            catch (OperationCanceledException) { }
             catch (Exception ex)
             {
                 Logger?.LogWarning(SiemensS7Resource.Localizer["HandshakeError1", channel.ToString(), ex.Message]);
@@ -414,7 +415,7 @@ public partial class SiemensS7Master : DeviceBase
             }
             try
             {
-                var result2 = await SendThenReturnAsync(new S7Send(S7_PN)).ConfigureAwait(false);
+                var result2 = await GetResponsedDataAsync(new S7Send(S7_PN),channel,Timeout).ConfigureAwait(false);
                 if (!result2.IsSuccess)
                 {
                     Logger?.LogWarning(SiemensS7Resource.Localizer["HandshakeError2", channel.ToString(), result2.ErrorMessage]);
@@ -425,6 +426,7 @@ public partial class SiemensS7Master : DeviceBase
                 Logger?.LogInformation($"PduLength：{PduLength}");
                 PduLength = PduLength < 200 ? 200 : PduLength;
             }
+            catch (OperationCanceledException) { }
             catch (Exception ex)
             {
                 Logger?.LogWarning(SiemensS7Resource.Localizer["HandshakeError2", channel.ToString(), ex.Message]);

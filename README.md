@@ -76,7 +76,7 @@ docker pull registry.cn-shenzhen.aliyuncs.com/thingsgateway/thingsgateway_arm64
 ## License
 
 ﻿
-[Apache-2.0](https://gitee.com/diego2098/ThingsGateway/blob/master/LICENSE)
+[License](https://thingsgateway.cn/docs/1)
 ﻿
 ﻿
 

@@ -2,6 +2,9 @@
     font-size: 1rem;
     font-weight: bold;
 }
+.device{
+    min-height: 500px;
+}
 .device ::deep .tabs-body-content {
     overflow-x: hidden;
 }
