@@ -233,6 +233,7 @@ public partial class VariableRuntimeInfo : IDisposable
             }
 
             variable.VariablePropertys = PluginServiceUtil.SetDict(variable.VariablePropertyModels);
+            variable = variable.Adapt<Variable>();
             return await Task.Run(() => GlobalData.VariableRuntimeService.SaveVariableAsync(variable, itemChangedType, AutoRestartThread, default));
         }
         catch (Exception ex)

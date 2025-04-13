@@ -191,6 +191,7 @@ public partial class ChannelTable : IDisposable
     {
         try
         {
+            channel = channel.Adapt<Channel>();
             return await Task.Run(() => GlobalData.ChannelRuntimeService.SaveChannelAsync(channel, itemChangedType, AutoRestartThread));
         }
         catch (Exception ex)

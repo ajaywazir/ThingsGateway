@@ -8,6 +8,8 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
+using Mapster;
+
 using Microsoft.AspNetCore.Components.Forms;
 
 using ThingsGateway.Gateway.Application;
@@ -64,5 +66,9 @@ public partial class ChannelEditComponent
         PluginDcit = GlobalData.PluginService.GetList(PluginType).ToDictionary(a => a.FullName);
         base.OnInitialized();
     }
-
+    protected override Task OnParametersSetAsync()
+    {
+        Model = Model.Adapt<Channel>();
+        return base.OnParametersSetAsync();
+    }
 }

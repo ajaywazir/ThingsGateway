@@ -8,6 +8,8 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
+using Mapster;
+
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -44,6 +46,8 @@ public partial class DeviceEditComponent
 
     protected override async Task OnParametersSetAsync()
     {
+        Model = Model.Adapt<Device>();
+
         var channels = await GlobalData.GetCurrentUserChannels().ConfigureAwait(false);
         _channelItems = channels.BuildChannelSelectList();
         base.OnParametersSet();
