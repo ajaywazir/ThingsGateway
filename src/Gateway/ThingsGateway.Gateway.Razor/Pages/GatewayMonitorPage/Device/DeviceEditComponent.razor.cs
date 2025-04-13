@@ -46,8 +46,6 @@ public partial class DeviceEditComponent
 
     protected override async Task OnParametersSetAsync()
     {
-        Model = Model.Adapt<Device>();
-
         var channels = await GlobalData.GetCurrentUserChannels().ConfigureAwait(false);
         _channelItems = channels.BuildChannelSelectList();
         base.OnParametersSet();

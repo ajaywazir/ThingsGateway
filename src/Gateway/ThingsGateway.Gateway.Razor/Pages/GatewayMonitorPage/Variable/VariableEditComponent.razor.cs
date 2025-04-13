@@ -51,7 +51,6 @@ public partial class VariableEditComponent
 
     protected override async Task OnParametersSetAsync()
     {
-        Model = Model.Adapt<Variable>();
         var devices = await GlobalData.GetCurrentUserDevices().ConfigureAwait(false);
         CollectDeviceItems = devices.Where(a => a.IsCollect == true).BuildDeviceSelectList();
         BusinessDeviceItems = devices.Where(a => a.IsCollect == false).BuildDeviceSelectList();

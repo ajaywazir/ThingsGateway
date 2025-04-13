@@ -1300,6 +1300,8 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
             {
                 if (Disposed) return;
                 await OnClickSearch(SearchText);
+
+                Value = GetValue(Value);
                 if (ChannelDeviceChanged != null)
                 {
                     await ChannelDeviceChanged.Invoke(Value);
@@ -1317,6 +1319,33 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
             WaitLock.Release();
         }
     }
+
+    private static ChannelDeviceTreeItem GetValue(ChannelDeviceTreeItem channelDeviceTreeItem)
+    {
+        switch (channelDeviceTreeItem.ChannelDevicePluginType)
+        {
+            case ChannelDevicePluginTypeEnum.PluginType:
+            case ChannelDevicePluginTypeEnum.PluginName:
+            default:
+                return channelDeviceTreeItem;
+            case ChannelDevicePluginTypeEnum.Channel:
+                return new ChannelDeviceTreeItem()
+                {
+                    ChannelRuntime = GlobalData.ReadOnlyChannels.TryGetValue(channelDeviceTreeItem.ChannelRuntime?.Id ?? 0, out var channel) ? channel : channelDeviceTreeItem.ChannelRuntime,
+                    ChannelDevicePluginType = ChannelDevicePluginTypeEnum.Channel
+                };
+
+            case ChannelDevicePluginTypeEnum.Device:
+                return new ChannelDeviceTreeItem()
+                {
+                    DeviceRuntime = GlobalData.ReadOnlyIdDevices.TryGetValue(channelDeviceTreeItem.DeviceRuntime?.Id ?? 0, out var device) ? device : channelDeviceTreeItem.DeviceRuntime,
+                    ChannelDevicePluginType = ChannelDevicePluginTypeEnum.Device
+                };
+        }
+    }
+
+
+
     private async Task Refresh(DispatchEntry<DeviceRuntime> entry)
     {
         await Notify();

@@ -5,7 +5,7 @@
 @using ThingsGateway.Gateway.Application
 @inherits ComponentDefault
 
-<AdminTable @ref=table
+<AdminTable @ref=table BeforeShowEditDialogCallback="BeforeShowEditDialogCallback"
             TItem="ChannelRuntime"
             EditDialogSize="Size.ExtraLarge"
             AutoGenerateColumns="true"

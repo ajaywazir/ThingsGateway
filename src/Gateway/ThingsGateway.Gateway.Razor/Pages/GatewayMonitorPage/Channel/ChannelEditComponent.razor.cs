@@ -68,7 +68,6 @@ public partial class ChannelEditComponent
     }
     protected override Task OnParametersSetAsync()
     {
-        Model = Model.Adapt<Channel>();
         return base.OnParametersSetAsync();
     }
 }

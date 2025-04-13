@@ -337,6 +337,11 @@ public partial class AdminTable<TItem> where TItem : class, new()
     [Parameter]
     public bool ShowSearch { get; set; } = true;
 
+
+    /// <inheritdoc cref="Table{TItem}.BeforeShowEditDialogCallback"/>
+    [Parameter]
+    public Action<ITableEditDialogOption<TItem>>? BeforeShowEditDialogCallback { get; set; }
+
     /// <inheritdoc cref="Table{TItem}.ShowSearchButton"/>
     [Parameter]
     public bool ShowSearchButton { get; set; } = true;

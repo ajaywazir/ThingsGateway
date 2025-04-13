@@ -23,6 +23,12 @@ namespace ThingsGateway.Gateway.Razor;
 
 public partial class VariableRuntimeInfo : IDisposable
 {
+
+    private static void BeforeShowEditDialogCallback(ITableEditDialogOption<VariableRuntime> tableEditDialogOption)
+    {
+        tableEditDialogOption.Model = tableEditDialogOption.Model.Adapt<VariableRuntime>();
+    }
+
     [Inject]
     private IOptions<WebsiteOptions>? WebsiteOption { get; set; }
     public bool Disposed { get; set; }

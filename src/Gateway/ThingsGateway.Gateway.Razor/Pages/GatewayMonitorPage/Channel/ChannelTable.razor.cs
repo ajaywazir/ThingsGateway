@@ -21,6 +21,10 @@ namespace ThingsGateway.Gateway.Razor;
 
 public partial class ChannelTable : IDisposable
 {
+    private static void BeforeShowEditDialogCallback( ITableEditDialogOption<ChannelRuntime> tableEditDialogOption)
+    {
+        tableEditDialogOption.Model = tableEditDialogOption.Model.Adapt<ChannelRuntime>();
+    }
 
     public bool Disposed { get; set; }
 
