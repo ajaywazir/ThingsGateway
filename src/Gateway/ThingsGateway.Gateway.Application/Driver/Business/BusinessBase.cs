@@ -67,6 +67,11 @@ public abstract class BusinessBase : DriverBase
         base.ProtectedInitDevice(device); // 调用基类的初始化方法
     }
 
+    /// <summary>
+    /// 当前关联的变量
+    /// </summary>
+    protected Dictionary<string, List<VariableRuntime>> VariableRuntimeGroups { get; set; } = new();
+
     public override Task AfterVariablesChangedAsync(CancellationToken cancellationToken)
     {
         LogMessage?.LogInformation("Refresh variable");
@@ -100,6 +105,7 @@ public abstract class BusinessBase : DriverBase
         var ids = IdVariableRuntimes.Select(b => b.Value.DeviceId).ToHashSet();
         // 获取当前设备需要采集的设备
         CollectDevices = GlobalData.GetEnableDevices().Where(a => ids.Contains(a.Id)).ToDictionary(a => a.Id);
+        VariableRuntimeGroups = IdVariableRuntimes.Where(a => !a.Value.Group.IsNullOrEmpty()).GroupBy(a => a.Value.Group ?? string.Empty).ToDictionary(a => a.Key, a => a.Select(a => a.Value).ToList());
 
         return Task.CompletedTask;
     }

@@ -31,6 +31,8 @@ namespace ThingsGateway.Gateway.Application;
 [SugarIndex("unique_variable_name", nameof(Variable.Name), OrderByType.Asc, nameof(Variable.DeviceId), OrderByType.Asc, true)]
 public class Variable : BaseDataEntity, IValidatableObject
 {
+
+
     /// <summary>
     /// 设备
     /// </summary>
@@ -48,6 +50,13 @@ public class Variable : BaseDataEntity, IValidatableObject
     [AutoGenerateColumn(Visible = true, Filterable = true, Sortable = true, Order = 1)]
     [Required]
     public virtual string Name { get; set; }
+
+    /// <summary>
+    /// 分组名称
+    /// </summary>
+    [SugarColumn(ColumnDescription = "分组名称", IsNullable = true)]
+    [AutoGenerateColumn(Visible = true, Filterable = true, Sortable = true, Order = 1)]
+    public virtual string Group { get; set; }
 
     /// <summary>
     /// 描述
@@ -403,22 +412,16 @@ public class Variable : BaseDataEntity, IValidatableObject
     /// <summary>
     /// 导入验证专用
     /// </summary>
-    [IgnoreExcel]
-    [SugarColumn(IsIgnore = true)]
     [System.Text.Json.Serialization.JsonIgnore]
     [Newtonsoft.Json.JsonIgnore]
-    [AutoGenerateColumn(Visible = false)]
-    internal bool IsUp { get; set; }
+    internal bool IsUp;
 
     /// <summary>
     /// 导入验证专用
     /// </summary>
-    [IgnoreExcel]
-    [SugarColumn(IsIgnore = true)]
     [System.Text.Json.Serialization.JsonIgnore]
     [Newtonsoft.Json.JsonIgnore]
-    [AutoGenerateColumn(Visible = false)]
-    internal long Row { get; set; }
+    internal long Row;
 
     /// <summary>
     /// 变量额外属性Json
@@ -427,6 +430,11 @@ public class Variable : BaseDataEntity, IValidatableObject
     [Newtonsoft.Json.JsonIgnore]
     [AdaptIgnore]
     public ConcurrentDictionary<long, ModelValueValidateForm>? VariablePropertyModels;
+
+    /// <summary>
+    /// 动态变量
+    /// </summary>
+    public bool DynamicVariable;
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {

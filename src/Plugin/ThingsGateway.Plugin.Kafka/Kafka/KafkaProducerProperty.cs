@@ -51,4 +51,9 @@ public class KafkaProducerProperty : BusinessPropertyWithCacheIntervalScript
 
     [DynamicProperty]
     public SaslMechanism SaslMechanism { get; set; } = SaslMechanism.Plain;
+
+
+
+    [DynamicProperty]
+    public bool GroupUpdate { get; set; } = false;
 }

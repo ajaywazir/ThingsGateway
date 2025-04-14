@@ -130,9 +130,11 @@ public abstract class BusinessBaseWithCacheAlarmModel<VarModel, DevModel, AlarmM
     protected override async Task Update(CancellationToken cancellationToken)
     {
         await UpdateVarModelMemory(cancellationToken).ConfigureAwait(false);
+        await UpdateVarModelsMemory(cancellationToken).ConfigureAwait(false);
+        await UpdateVarModelCache(cancellationToken).ConfigureAwait(false);
+        await UpdateVarModelsCache(cancellationToken).ConfigureAwait(false);
         await UpdateDevModelMemory(cancellationToken).ConfigureAwait(false);
         await UpdateAlarmModelMemory(cancellationToken).ConfigureAwait(false);
-        await UpdateVarModelCache(cancellationToken).ConfigureAwait(false);
         await UpdateDevModelCache(cancellationToken).ConfigureAwait(false);
         await UpdateAlarmModelCache(cancellationToken).ConfigureAwait(false);
     }

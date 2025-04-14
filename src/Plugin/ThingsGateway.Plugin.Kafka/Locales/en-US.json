@@ -24,6 +24,7 @@
     "QueueMaxCount": "QueueMaxCount",
     "CacheFileMaxLength": "CacheFileMaxLength(mb)",
     "SplitSize": "SplitSize",
-    "CacheEnable": "CacheEnable"
+    "CacheEnable": "CacheEnable",
+    "GroupUpdate": "GroupUpdate"
   }
 }

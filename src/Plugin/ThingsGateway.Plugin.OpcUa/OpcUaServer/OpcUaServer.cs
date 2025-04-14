@@ -54,32 +54,6 @@ public partial class OpcUaServer : BusinessBase
 
     public override async Task AfterVariablesChangedAsync(CancellationToken cancellationToken)
     {
-        //if (m_server != null && m_application != null)
-        //{
-        //    m_server?.Stop();
-        //    m_server?.SafeDispose();
-
-        //    ApplicationInstance.MessageDlg = new ApplicationMessageDlg(LogMessage);//默认返回true
-
-        //    //Utils.SetLogger(new OpcUaLogger(LogMessage)); //调试用途
-        //    m_application = new ApplicationInstance();
-        //    m_configuration = GetDefaultConfiguration();
-        //    await m_configuration.Validate(ApplicationType.Server).ConfigureAwait(false);
-        //    m_application.ApplicationConfiguration = m_configuration;
-        //    if (m_configuration.SecurityConfiguration.AutoAcceptUntrustedCertificates)
-        //    {
-        //        m_configuration.CertificateValidator.CertificateValidation += (s, e) =>
-        //        {
-        //            e.Accept = (e.Error.StatusCode == StatusCodes.BadCertificateUntrusted);
-        //        };
-        //    }
-
-        //    m_server = new(this);
-
-        //}
-
-
-
         // 如果业务属性指定了全部变量，则设置当前设备的变量运行时列表和采集设备列表
         if (_driverPropertys.IsAllVariable)
         {

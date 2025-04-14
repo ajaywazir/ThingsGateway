@@ -82,7 +82,8 @@ public class VariableBasicData : IPrimaryIdEntity
 
     /// <inheritdoc cref="Variable.Name"/>
     public string Name { get; set; }
-
+    /// <inheritdoc cref="Variable.Group"/>
+    public string Group { get; set; }
     /// <inheritdoc cref="VariableRuntime.DeviceName"/>
     public string DeviceName { get; set; }
 

@@ -27,4 +27,6 @@ public partial class Webhook : BusinessBaseWithCacheIntervalScript<VariableBasic
     {
         await Update(cancellationToken).ConfigureAwait(false);
     }
+
+
 }

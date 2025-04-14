@@ -178,13 +178,13 @@ public partial class VariableRuntimeInfo : IDisposable
             ShowFooter = false,
             ShowCloseButton = false,
         };
-        var oldModel = variables.FirstOrDefault();//默认值显示第一个
+        var oldModel = variables.Where(a => !a.DynamicVariable).FirstOrDefault();//默认值显示第一个
         if (oldModel == null)
         {
             await ToastService.Warning(null, RazorLocalizer["PleaseSelect"]);
             return;
         }
-        variables = variables.Adapt<List<Variable>>();
+        variables = variables.Where(a => !a.DynamicVariable).Adapt<List<Variable>>();
         oldModel = oldModel.Adapt<Variable>();
         var model = oldModel.Adapt<Variable>();//默认值显示第一个
         op.Component = BootstrapDynamicComponent.CreateComponent<VariableEditComponent>(new Dictionary<string, object?>

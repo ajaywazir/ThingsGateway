@@ -176,7 +176,9 @@ public partial class TDengineDBProducer : BusinessBaseWithCacheIntervalVariableM
     protected override async ValueTask ProtectedExecuteAsync(CancellationToken cancellationToken)
     {
         await UpdateVarModelMemory(cancellationToken).ConfigureAwait(false);
+        await UpdateVarModelsMemory(cancellationToken).ConfigureAwait(false);
         await UpdateVarModelCache(cancellationToken).ConfigureAwait(false);
+        await UpdateVarModelsCache(cancellationToken).ConfigureAwait(false);
 
     }
 }

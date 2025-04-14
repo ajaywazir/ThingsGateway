@@ -32,7 +32,5 @@ namespace ThingsGateway.Gateway.Application
         void PreheatCache();
 
         Task<MemoryStream> ExportMemoryStream(List<Variable> data, string devName);
-        Task AddDynamicVariable(IEnumerable<VariableRuntime> newVariableRuntimes, bool restart, CancellationToken cancellationToken);
-        Task DeleteDynamicVariable(IEnumerable<long> variableIds, bool restart, CancellationToken cancellationToken);
     }
 }

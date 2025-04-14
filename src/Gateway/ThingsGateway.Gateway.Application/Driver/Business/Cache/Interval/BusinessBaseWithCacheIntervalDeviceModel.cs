@@ -73,6 +73,9 @@ public abstract class BusinessBaseWithCacheIntervalDeviceModel<VarModel, DevMode
             IdVariableRuntimes.Clear();
             IdVariableRuntimes.AddRange(GlobalData.GetEnableVariables().ToDictionary(a => a.Id));
             CollectDevices = GlobalData.GetEnableDevices().Where(a => a.IsCollect == true).ToDictionary(a => a.Id);
+
+            VariableRuntimeGroups = IdVariableRuntimes.GroupBy(a => a.Value.Group ?? string.Empty).ToDictionary(a => a.Key, a => a.Select(a => a.Value).ToList());
+
         }
         else
         {
@@ -123,6 +126,7 @@ public abstract class BusinessBaseWithCacheIntervalDeviceModel<VarModel, DevMode
         // 清空内存队列
         _memoryDevModelQueue.Clear();
         _memoryVarModelQueue.Clear();
+        _memoryVarModelsQueue.Clear();
         base.Dispose(disposing);
     }
 
@@ -149,10 +153,8 @@ public abstract class BusinessBaseWithCacheIntervalDeviceModel<VarModel, DevMode
                     if (_exTTimerTick.IsTickHappen())
                     {
                         // 上传所有变量信息
-                        foreach (var variableRuntime in IdVariableRuntimes.Select(a => a.Value))
-                        {
-                            VariableTimeInterval(variableRuntime, variableRuntime.Adapt<VariableBasicData>());
-                        }
+                        var variableRuntimes = IdVariableRuntimes.Select(a => a.Value);
+                        VariableTimeInterval(variableRuntimes, variableRuntimes.Adapt<List<VariableBasicData>>());
                     }
                 }
                 catch (Exception ex)
@@ -206,9 +208,9 @@ public abstract class BusinessBaseWithCacheIntervalDeviceModel<VarModel, DevMode
     /// <summary>
     /// 当变量定时变化时触发此方法。如果不需要进行变量上传，则可以忽略此方法。通常情况下，需要在此方法中执行 <see cref="BusinessBaseWithCacheVariableModel{T}.AddQueueVarModel(CacheDBItem{T})"/> 方法。
     /// </summary>
-    /// <param name="variableRuntime">变量运行时信息</param>
-    /// <param name="variable">变量数据</param>
-    protected virtual void VariableTimeInterval(VariableRuntime variableRuntime, VariableBasicData variable)
+    /// <param name="variableRuntimes">变量运行时信息</param>
+    /// <param name="variables">变量数据</param>
+    protected virtual void VariableTimeInterval(IEnumerable<VariableRuntime> variableRuntimes, List<VariableBasicData> variables)
     {
         // 在变量状态变化时执行的自定义逻辑
     }

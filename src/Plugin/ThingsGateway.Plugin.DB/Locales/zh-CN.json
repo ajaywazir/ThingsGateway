@@ -11,7 +11,8 @@
     "QueueMaxCount": "内存队列最大数量",
     "CacheFileMaxLength": "缓存文件最大长度(mb)",
     "SplitSize": "上传每页条数",
-    "CacheEnable": "启用缓存"
+    "CacheEnable": "启用缓存",
+    "GroupUpdate": "分组上传"
   },
   "ThingsGateway.Plugin.QuestDB.QuestDBHistoryValue": {
     "Id": "变量Id",
@@ -41,7 +42,8 @@
     "QueueMaxCount": "内存队列最大数量",
     "CacheFileMaxLength": "缓存文件最大长度(mb)",
     "SplitSize": "上传每页条数",
-    "CacheEnable": "启用缓存"
+    "CacheEnable": "启用缓存",
+    "GroupUpdate": "分组上传"
   },
   "ThingsGateway.Plugin.SqlDB.SQLHistoryValue": {
     "Id": "变量Id",

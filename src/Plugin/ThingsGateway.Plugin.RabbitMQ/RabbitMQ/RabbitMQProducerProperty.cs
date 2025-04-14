@@ -68,4 +68,10 @@ public class RabbitMQProducerProperty : BusinessPropertyWithCacheIntervalScript
     /// </summary>
     [DynamicProperty]
     public string? ExchangeName { get; set; } = "";
+
+
+
+
+    [DynamicProperty]
+    public bool GroupUpdate { get; set; } = false;
 }

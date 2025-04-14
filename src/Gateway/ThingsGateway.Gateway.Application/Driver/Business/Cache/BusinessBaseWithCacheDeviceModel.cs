@@ -130,8 +130,10 @@ public abstract class BusinessBaseWithCacheDeviceModel<VarModel, DevModel> : Bus
     protected override async Task Update(CancellationToken cancellationToken)
     {
         await UpdateVarModelMemory(cancellationToken).ConfigureAwait(false);
-        await UpdateDevModelMemory(cancellationToken).ConfigureAwait(false);
+        await UpdateVarModelsMemory(cancellationToken).ConfigureAwait(false);
         await UpdateVarModelCache(cancellationToken).ConfigureAwait(false);
+        await UpdateVarModelsCache(cancellationToken).ConfigureAwait(false);
+        await UpdateDevModelMemory(cancellationToken).ConfigureAwait(false);
         await UpdateDevModelCache(cancellationToken).ConfigureAwait(false);
     }
 

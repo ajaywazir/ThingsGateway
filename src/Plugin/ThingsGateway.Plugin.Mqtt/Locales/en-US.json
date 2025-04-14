@@ -1,6 +1,7 @@
 ﻿{
   "ThingsGateway.Plugin.Mqtt.MqttClientVariableProperty": {
-    "VariableRpcEnable": "VariableRpcEnable"
+    "VariableRpcEnable": "VariableRpcEnable",
+    "Group": "Group"
   },
   "ThingsGateway.Plugin.Mqtt.MqttClientProperty": {
     "IP": "IP",
@@ -37,7 +38,8 @@
     "QueueMaxCount": "QueueMaxCount",
     "CacheFileMaxLength": "CacheFileMaxLength(mb)",
     "SplitSize": "SplitSize",
-    "CacheEnable": "CacheEnable"
+    "CacheEnable": "CacheEnable",
+    "GroupUpdate": "GroupUpdate"
 
   },
   "ThingsGateway.Plugin.Mqtt.MqttServerProperty": {
@@ -65,7 +67,8 @@
     "QueueMaxCount": "QueueMaxCount",
     "CacheFileMaxLength": "CacheFileMaxLength(mb)",
     "SplitSize": "SplitSize",
-    "CacheEnable": "CacheEnable"
+    "CacheEnable": "CacheEnable",
+    "GroupUpdate": "GroupUpdate"
   },
 
   "ThingsGateway.Plugin.Mqtt.MqttCollectProperty": {

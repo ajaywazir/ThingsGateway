@@ -29,11 +29,16 @@ public partial class SqlHistoryAlarm : BusinessBaseWithCacheVariableModel<Histor
         return UpdateT(item.Select(a => a.Value).OrderBy(a => a.Id), cancellationToken);
     }
 
+    protected override ValueTask<OperResult> UpdateVarModels(IEnumerable<HistoryAlarm> item, CancellationToken cancellationToken)
+    {
+        return UpdateT(item, cancellationToken);
+    }
+
     private void AlarmWorker_OnAlarmChanged(AlarmVariable alarmVariable)
     {
         if (CurrentDevice.Pause)
             return;
-        AddQueueVarModel(new(alarmVariable.Adapt<HistoryAlarm>(_config)));
+        AddQueueVarModel(new CacheDBItem<HistoryAlarm>(alarmVariable.Adapt<HistoryAlarm>(_config)));
     }
 
     private async ValueTask<OperResult> InserableAsync(List<HistoryAlarm> dbInserts, CancellationToken cancellationToken)

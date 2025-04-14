@@ -12,6 +12,8 @@ using SqlSugar;
 
 using ThingsGateway.NewLife;
 
+using TouchSocket.Core;
+
 namespace ThingsGateway.Gateway.Application;
 
 /// <summary>
@@ -55,7 +57,7 @@ public class CacheDB : DisposeBase
     protected override void Dispose(bool disposing)
     {
         {
-            try { DBProvider.Dispose(); } catch { }
+            try { DBProvider?.Ado?.Connection?.Close(); DBProvider?.Ado?.Connection?.SafeDispose(); DBProvider.SafeDispose(); } catch { }
         }
     }
 

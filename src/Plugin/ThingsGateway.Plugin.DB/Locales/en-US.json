@@ -11,7 +11,8 @@
     "QueueMaxCount": "QueueMaxCount",
     "CacheFileMaxLength": "CacheFileMaxLength(mb)",
     "SplitSize": "SplitSize",
-    "CacheEnable": "CacheEnable"
+    "CacheEnable": "CacheEnable",
+    "GroupUpdate": "GroupUpdate"
   },
   "ThingsGateway.Plugin.QuestDB.QuestDBHistoryValue": {
     "Id": "Id",
@@ -41,7 +42,8 @@
     "QueueMaxCount": "QueueMaxCount",
     "CacheFileMaxLength": "CacheFileMaxLength(mb)",
     "SplitSize": "SplitSize",
-    "CacheEnable": "CacheEnable"
+    "CacheEnable": "CacheEnable",
+    "GroupUpdate": "GroupUpdate"
   },
   "ThingsGateway.Plugin.SqlDB.SQLHistoryValue": {
     "Id": "Id",

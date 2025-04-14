@@ -30,17 +30,61 @@ public partial class QuestDBProducer : BusinessBaseWithCacheIntervalVariableMode
     {
         return UpdateVarModel(item.Select(a => a.Value).OrderBy(a => a.Id), cancellationToken);
     }
-    protected override void VariableTimeInterval(VariableRuntime variableRuntime, VariableBasicData variable)
+    protected override void VariableTimeInterval(IEnumerable<VariableRuntime> variableRuntimes, List<VariableBasicData> variables)
     {
-        AddQueueVarModel(new(variableRuntime.Adapt<QuestDBHistoryValue>()));
-        base.VariableChange(variableRuntime, variable);
+        TimeIntervalUpdateVariable(variables);
+        base.VariableTimeInterval(variableRuntimes, variables);
     }
     protected override void VariableChange(VariableRuntime variableRuntime, VariableBasicData variable)
     {
-        AddQueueVarModel(new(variableRuntime.Adapt<QuestDBHistoryValue>()));
+        UpdateVariable(variableRuntime, variable);
         base.VariableChange(variableRuntime, variable);
     }
+    protected override ValueTask<OperResult> UpdateVarModels(IEnumerable<QuestDBHistoryValue> item, CancellationToken cancellationToken)
+    {
+        return UpdateVarModel(item, cancellationToken);
+    }
 
+
+    private void TimeIntervalUpdateVariable(List<VariableBasicData> variables)
+    {
+        if (_driverPropertys.GroupUpdate)
+        {
+            var varList = variables.Where(a => a.Group.IsNullOrEmpty());
+            var varGroup = variables.Where(a => !a.Group.IsNullOrEmpty()).GroupBy(a => a.Group);
+
+            foreach (var group in varGroup)
+            {
+                AddQueueVarModel(new CacheDBItem<List<QuestDBHistoryValue>>(group.Adapt<List<QuestDBHistoryValue>>(_config)));
+            }
+            foreach (var variable in varList)
+            {
+                AddQueueVarModel(new CacheDBItem<QuestDBHistoryValue>(variable.Adapt<QuestDBHistoryValue>(_config)));
+            }
+        }
+        else
+        {
+            foreach (var variable in variables)
+            {
+                AddQueueVarModel(new CacheDBItem<QuestDBHistoryValue>(variable.Adapt<QuestDBHistoryValue>(_config)));
+            }
+        }
+    }
+
+
+    private void UpdateVariable(VariableRuntime variableRuntime, VariableBasicData variable)
+    {
+        if (_driverPropertys.GroupUpdate && !variable.Group.IsNullOrEmpty() && VariableRuntimeGroups.TryGetValue(variable.Group, out var variableRuntimeGroup))
+        {
+
+            AddQueueVarModel(new CacheDBItem<List<QuestDBHistoryValue>>(variableRuntimeGroup.Adapt<List<QuestDBHistoryValue>>(_config)));
+
+        }
+        else
+        {
+            AddQueueVarModel(new CacheDBItem<QuestDBHistoryValue>(variableRuntime.Adapt<QuestDBHistoryValue>(_config)));
+        }
+    }
     private async ValueTask<OperResult> UpdateVarModel(IEnumerable<QuestDBHistoryValue> item, CancellationToken cancellationToken)
     {
         var result = await InserableAsync(item.ToList(), cancellationToken).ConfigureAwait(false);

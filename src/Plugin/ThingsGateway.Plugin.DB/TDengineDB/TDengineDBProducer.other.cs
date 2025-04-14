@@ -35,18 +35,59 @@ public partial class TDengineDBProducer : BusinessBaseWithCacheIntervalVariableM
         return UpdateVarModel(item.Select(a => a.Value).OrderBy(a => a.Id), cancellationToken);
     }
 
-    protected override void VariableTimeInterval(VariableRuntime variableRuntime, VariableBasicData variable)
+    protected override void VariableTimeInterval(IEnumerable<VariableRuntime> variableRuntimes, List<VariableBasicData> variables)
     {
-        AddQueueVarModel(new(variableRuntime.Adapt<TDengineDBHistoryValue>()));
-        base.VariableChange(variableRuntime, variable);
+        TimeIntervalUpdateVariable(variables);
+        base.VariableTimeInterval(variableRuntimes, variables);
     }
 
     protected override void VariableChange(VariableRuntime variableRuntime, VariableBasicData variable)
     {
-        AddQueueVarModel(new(variableRuntime.Adapt<TDengineDBHistoryValue>()));
+        UpdateVariable(variableRuntime, variable);
         base.VariableChange(variableRuntime, variable);
     }
+    protected override ValueTask<OperResult> UpdateVarModels(IEnumerable<TDengineDBHistoryValue> item, CancellationToken cancellationToken)
+    {
+        return UpdateVarModel(item, cancellationToken);
+    }
+    private void TimeIntervalUpdateVariable(List<VariableBasicData> variables)
+    {
+        if (_driverPropertys.GroupUpdate)
+        {
+            var varList = variables.Where(a => a.Group.IsNullOrEmpty());
+            var varGroup = variables.Where(a => !a.Group.IsNullOrEmpty()).GroupBy(a => a.Group);
 
+            foreach (var group in varGroup)
+            {
+                AddQueueVarModel(new CacheDBItem<List<TDengineDBHistoryValue>>(group.Adapt<List<TDengineDBHistoryValue>>(_config)));
+            }
+            foreach (var variable in varList)
+            {
+                AddQueueVarModel(new CacheDBItem<TDengineDBHistoryValue>(variable.Adapt<TDengineDBHistoryValue>(_config)));
+            }
+        }
+        else
+        {
+            foreach (var variable in variables)
+            {
+                AddQueueVarModel(new CacheDBItem<TDengineDBHistoryValue>(variable.Adapt<TDengineDBHistoryValue>(_config)));
+            }
+        }
+    }
+
+    private void UpdateVariable(VariableRuntime variableRuntime, VariableBasicData variable)
+    {
+        if (_driverPropertys.GroupUpdate && !variable.Group.IsNullOrEmpty() && VariableRuntimeGroups.TryGetValue(variable.Group, out var variableRuntimeGroup))
+        {
+
+            AddQueueVarModel(new CacheDBItem<List<TDengineDBHistoryValue>>(variableRuntimeGroup.Adapt<List<TDengineDBHistoryValue>>(_config)));
+
+        }
+        else
+        {
+            AddQueueVarModel(new CacheDBItem<TDengineDBHistoryValue>(variableRuntime.Adapt<TDengineDBHistoryValue>(_config)));
+        }
+    }
     private async ValueTask<OperResult> UpdateVarModel(IEnumerable<TDengineDBHistoryValue> item, CancellationToken cancellationToken)
     {
         var result = await InserableAsync(item.ToList(), cancellationToken).ConfigureAwait(false);

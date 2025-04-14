@@ -21,4 +21,7 @@ public class WebhookProperty : BusinessPropertyWithCacheIntervalScript
     [DynamicProperty]
     public bool DetailLog { get; set; } = true;
 
+
+    [DynamicProperty]
+    public bool GroupUpdate { get; set; } = false;
 }

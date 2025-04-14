@@ -238,37 +238,6 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
     #endregion 测试
 
 
-
-    /// <inheritdoc/>
-    [OperDesc("CopyVariable", localizerType: typeof(Variable), isRecordPar: false)]
-    public async Task<bool> CopyAsync(List<Variable> variables)
-    {
-        using var db = GetDB();
-
-        //事务
-        var result = await db.UseTranAsync(async () =>
-        {
-
-            ManageHelper.CheckVariableCount(variables.Count);
-
-            await db.Insertable(variables).ExecuteCommandAsync().ConfigureAwait(false);
-
-
-        }).ConfigureAwait(false);
-        if (result.IsSuccess)//如果成功了
-        {
-            DeleteVariableCache();
-            return true;
-        }
-        else
-        {
-            //写日志
-            throw new(result.ErrorMessage, result.ErrorException);
-        }
-
-    }
-
-
     /// <summary>
     /// 保存初始值
     /// </summary>

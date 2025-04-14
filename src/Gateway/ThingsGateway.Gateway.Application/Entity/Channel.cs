@@ -263,10 +263,7 @@ public class Channel : ChannelOptionsBase, IPrimaryIdEntity, IBaseDataEntity, IB
     /// <summary>
     /// 导入验证专用
     /// </summary>
-    [IgnoreExcel]
-    [SugarColumn(IsIgnore = true)]
     [System.Text.Json.Serialization.JsonIgnore]
     [Newtonsoft.Json.JsonIgnore]
-    [AutoGenerateColumn(Ignore = true)]
-    internal bool IsUp { get; set; }
+    internal bool IsUp;
 }

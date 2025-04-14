@@ -33,22 +33,64 @@ public partial class SqlDBProducer : BusinessBaseWithCacheIntervalVariableModel<
     {
         return UpdateVarModel(item.Select(a => a.Value).OrderBy(a => a.Id), cancellationToken);
     }
-    protected override void VariableTimeInterval(VariableRuntime variableRuntime, VariableBasicData variable)
+    protected override void VariableTimeInterval(IEnumerable<VariableRuntime> variableRuntimes, List<VariableBasicData> variables)
     {
-        if (_driverPropertys.IsHistoryDB)
-        {
-            AddQueueVarModel(new(variableRuntime.Adapt<SQLHistoryValue>(_config)));
-            base.VariableChange(variableRuntime, variable);
-        }
+        TimeIntervalUpdateVariable(variables);
+
+        base.VariableTimeInterval(variableRuntimes, variables);
     }
     protected override void VariableChange(VariableRuntime variableRuntime, VariableBasicData variable)
     {
-        if (_driverPropertys.IsHistoryDB)
+        UpdateVariable(variableRuntime, variable);
+        base.VariableChange(variableRuntime, variable);
+    }
+    protected override ValueTask<OperResult> UpdateVarModels(IEnumerable<SQLHistoryValue> item, CancellationToken cancellationToken)
+    {
+        return UpdateVarModel(item, cancellationToken);
+    }
+
+    private void TimeIntervalUpdateVariable(List<VariableBasicData> variables)
+    {
+        if (_driverPropertys.GroupUpdate)
         {
-            AddQueueVarModel(new(variableRuntime.Adapt<SQLHistoryValue>(_config)));
-            base.VariableChange(variableRuntime, variable);
+            var varList = variables.Where(a => a.Group.IsNullOrEmpty());
+            var varGroup = variables.Where(a => !a.Group.IsNullOrEmpty()).GroupBy(a => a.Group);
+
+            foreach (var group in varGroup)
+            {
+                AddQueueVarModel(new CacheDBItem<List<SQLHistoryValue>>(group.Adapt<List<SQLHistoryValue>>(_config)));
+            }
+            foreach (var variable in varList)
+            {
+                AddQueueVarModel(new CacheDBItem<SQLHistoryValue>(variable.Adapt<SQLHistoryValue>(_config)));
+            }
+        }
+        else
+        {
+            foreach (var variable in variables)
+            {
+                AddQueueVarModel(new CacheDBItem<SQLHistoryValue>(variable.Adapt<SQLHistoryValue>(_config)));
+            }
         }
     }
+
+    private void UpdateVariable(VariableRuntime variableRuntime, VariableBasicData variable)
+    {
+        if (_driverPropertys.IsHistoryDB)
+        {
+            if (_driverPropertys.GroupUpdate && !variable.Group.IsNullOrEmpty() && VariableRuntimeGroups.TryGetValue(variable.Group, out var variableRuntimeGroup))
+            {
+
+                AddQueueVarModel(new CacheDBItem<List<SQLHistoryValue>>(variableRuntimeGroup.Adapt<List<SQLHistoryValue>>(_config)));
+
+            }
+            else
+            {
+                AddQueueVarModel(new CacheDBItem<SQLHistoryValue>(variableRuntime.Adapt<SQLHistoryValue>(_config)));
+            }
+        }
+    }
+
 
     private async ValueTask<OperResult> UpdateVarModel(IEnumerable<SQLHistoryValue> item, CancellationToken cancellationToken)
     {
@@ -149,6 +191,8 @@ public partial class SqlDBProducer : BusinessBaseWithCacheIntervalVariableModel<
             return new OperResult(ex);
         }
     }
+
+
 
     #endregion 方法
 }

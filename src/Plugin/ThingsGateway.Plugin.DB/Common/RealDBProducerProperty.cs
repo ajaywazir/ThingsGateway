@@ -36,4 +36,8 @@ public class RealDBProducerProperty : BusinessPropertyWithCacheInterval
     [DynamicProperty(Remark = "必须为间隔上传，才生效")]
     [AutoGenerateColumn(Visible = true, IsVisibleWhenEdit = false, IsVisibleWhenAdd = false)]
     public string? BigTextScriptHistoryTable { get; set; }
+
+
+    [DynamicProperty]
+    public bool GroupUpdate { get; set; } = false;
 }

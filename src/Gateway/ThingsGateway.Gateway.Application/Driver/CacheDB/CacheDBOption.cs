@@ -12,7 +12,7 @@ namespace ThingsGateway.Gateway.Application;
 
 public class CacheDBOption
 {
-    public string DataSource => $"DataSource={FileFullName}";
+    public string DataSource => $"DataSource={FileFullName};Pooling=false;";
 
     public string FileFullName { get; set; }
 }

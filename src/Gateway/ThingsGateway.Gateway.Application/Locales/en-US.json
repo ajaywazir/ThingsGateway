@@ -96,6 +96,7 @@
 
     "Name": "Name",
     "Description": "Description",
+    "Group": "Group",
     "DeviceId": "CollectionDevice",
     "DeviceId.MinValue": "{0} cannot be empty",
     "DeviceId.Required": "{0} cannot be empty",
@@ -450,6 +451,7 @@
     "Name": "Name",
     "Name.Required": "{0} cannot be empty",
     "Description": "Description",
+    "Group": "Group",
     "DeviceId": "CollectionDevice",
     "DeviceId.MinValue": "{0} cannot be empty",
     "DeviceId.Required": "{0} cannot be empty",

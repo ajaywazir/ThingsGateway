@@ -10,6 +10,8 @@
 
 using BootstrapBlazor.Components;
 
+using Mapster;
+
 using System.Text;
 
 using ThingsGateway.Foundation;
@@ -67,18 +69,69 @@ public partial class Webhook : BusinessBaseWithCacheIntervalScript<VariableBasic
         return UpdateVarModel(item.Select(a => a.Value).OrderBy(a => a.Id), cancellationToken);
     }
 
-    protected override void VariableTimeInterval(VariableRuntime variableRuntime, VariableBasicData variable)
+    protected override ValueTask<OperResult> UpdateVarModels(IEnumerable<VariableBasicData> item, CancellationToken cancellationToken)
     {
-        if (!_businessPropertyWithCacheIntervalScript.VariableTopic.IsNullOrWhiteSpace())
-            AddQueueVarModel(new(variable));
-        base.VariableChange(variableRuntime, variable);
+        return UpdateVarModel(item, cancellationToken);
+    }
+
+    protected override void VariableTimeInterval(IEnumerable<VariableRuntime> variableRuntimes, List<VariableBasicData> variables)
+    {
+        TimeIntervalUpdateVariable(variables);
+        base.VariableTimeInterval(variableRuntimes, variables);
     }
     protected override void VariableChange(VariableRuntime variableRuntime, VariableBasicData variable)
     {
-        if (!_businessPropertyWithCacheIntervalScript.VariableTopic.IsNullOrWhiteSpace())
-            AddQueueVarModel(new(variable));
+        UpdateVariable(variable);
         base.VariableChange(variableRuntime, variable);
     }
+
+    private void TimeIntervalUpdateVariable(List<VariableBasicData> variables)
+    {
+        if (!_businessPropertyWithCacheIntervalScript.VariableTopic.IsNullOrWhiteSpace())
+        {
+            if (_driverPropertys.GroupUpdate)
+            {
+                var varList = variables.Where(a => a.Group.IsNullOrEmpty());
+                var varGroup = variables.Where(a => !a.Group.IsNullOrEmpty()).GroupBy(a => a.Group);
+
+                foreach (var group in varGroup)
+                {
+                    AddQueueVarModel(new CacheDBItem<List<VariableBasicData>>(group.ToList()));
+                }
+                foreach (var variable in varList)
+                {
+                    AddQueueVarModel(new CacheDBItem<VariableBasicData>(variable));
+                }
+            }
+            else
+            {
+                foreach (var variable in variables)
+                {
+                    AddQueueVarModel(new CacheDBItem<VariableBasicData>(variable));
+                }
+            }
+        }
+    }
+
+
+    private void UpdateVariable(VariableBasicData variable)
+    {
+        if (!_businessPropertyWithCacheIntervalScript.VariableTopic.IsNullOrWhiteSpace())
+        {
+            if (_driverPropertys.GroupUpdate && !variable.Group.IsNullOrEmpty() && VariableRuntimeGroups.TryGetValue(variable.Group, out var variableRuntimeGroup))
+            {
+
+                AddQueueVarModel(new CacheDBItem<List<VariableBasicData>>(variableRuntimeGroup.Adapt<List<VariableBasicData>>()));
+
+            }
+            else
+            {
+                AddQueueVarModel(new CacheDBItem<VariableBasicData>(variable));
+            }
+        }
+    }
+
+
 
     private readonly HttpClient client = new HttpClient();
 
@@ -165,6 +218,7 @@ public partial class Webhook : BusinessBaseWithCacheIntervalScript<VariableBasic
         List<TopicJson> topicJsonList = GetVariableBasicData(item);
         return Update(topicJsonList, item.Count(), cancellationToken);
     }
+
 
     #endregion private
 

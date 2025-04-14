@@ -23,20 +23,17 @@ public class CacheDBUtil
     /// </summary>
     public static bool DeleteCache(double maxFileLength, string fullName)
     {
-        lock (fullName)
+        try
         {
-            try
-            {
-                var fileLength = GetFileLength(fullName);
-                if (fileLength > maxFileLength)
-                    FileUtil.DeleteFile(fullName);
+            var fileLength = GetFileLength(fullName);
+            if (fileLength > maxFileLength)
+                FileUtil.DeleteFile(fullName);
 
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            return true;
+        }
+        catch
+        {
+            return false;
         }
     }
 

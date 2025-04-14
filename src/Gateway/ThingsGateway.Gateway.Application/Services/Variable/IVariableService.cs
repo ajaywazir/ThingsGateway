@@ -113,6 +113,5 @@ internal interface IVariableService
 
     Task<List<Variable>> GetByDeviceIdAsync(List<long> deviceIds);
     void DeleteVariableCache();
-    Task<bool> CopyAsync(List<Variable> variables);
     Task<ImportPreviewOutput<Dictionary<string, Variable>>> SetVariableData(HashSet<long>? dataScope, Dictionary<string, Device> deviceDicts, Dictionary<string, ImportPreviewOutputBase> ImportPreviews, ImportPreviewOutput<Dictionary<string, Variable>> deviceImportPreview, Dictionary<string, PluginInfo> driverPluginNameDict, ConcurrentDictionary<string, (Type, Dictionary<string, PropertyInfo>, Dictionary<string, PropertyInfo>)> propertysDict, string sheetName, IEnumerable<IDictionary<string, object>> rows);
 }

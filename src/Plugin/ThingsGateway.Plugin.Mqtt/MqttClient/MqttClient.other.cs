@@ -122,6 +122,61 @@ public partial class MqttClient : BusinessBaseWithCacheIntervalScript<VariableBa
         base.DeviceChange(deviceRunTime, deviceData);
     }
 
+
+    protected override void VariableTimeInterval(IEnumerable<VariableRuntime> variableRuntimes, List<VariableBasicData> variables)
+    {
+        TimeIntervalUpdateVariable(variables);
+        base.VariableTimeInterval(variableRuntimes, variables);
+    }
+    protected override void VariableChange(VariableRuntime variableRuntime, VariableBasicData variable)
+    {
+        UpdateVariable(variableRuntime, variable);
+        base.VariableChange(variableRuntime, variable);
+    }
+    private void TimeIntervalUpdateVariable(List<VariableBasicData> variables)
+    {
+        if (!_businessPropertyWithCacheIntervalScript.VariableTopic.IsNullOrWhiteSpace())
+        {
+            if (_driverPropertys.GroupUpdate)
+            {
+                var varList = variables.Where(a => a.Group.IsNullOrEmpty());
+                var varGroup = variables.Where(a => !a.Group.IsNullOrEmpty()).GroupBy(a => a.Group);
+
+                foreach (var group in varGroup)
+                {
+                    AddQueueVarModel(new CacheDBItem<List<VariableBasicData>>(group.Adapt<List<VariableBasicData>>()));
+                }
+                foreach (var variable in varList)
+                {
+                    AddQueueVarModel(new CacheDBItem<VariableBasicData>(variable));
+                }
+            }
+            else
+            {
+                foreach (var variable in variables)
+                {
+                    AddQueueVarModel(new CacheDBItem<VariableBasicData>(variable));
+                }
+            }
+        }
+    }
+
+    private void UpdateVariable(VariableRuntime variableRuntime, VariableBasicData variable)
+    {
+        if (!_businessPropertyWithCacheIntervalScript.VariableTopic.IsNullOrWhiteSpace())
+        {
+            if (_driverPropertys.GroupUpdate && !variable.Group.IsNullOrEmpty() && VariableRuntimeGroups.TryGetValue(variable.Group, out var variableRuntimeGroup))
+            {
+                //获取组内全部变量
+                AddQueueVarModel(new CacheDBItem<List<VariableBasicData>>(variableRuntimeGroup.Adapt<List<VariableBasicData>>()));
+            }
+            else
+            {
+                AddQueueVarModel(new CacheDBItem<VariableBasicData>(variable));
+            }
+        }
+    }
+
     protected override ValueTask<OperResult> UpdateAlarmModel(IEnumerable<CacheDBItem<AlarmVariable>> item, CancellationToken cancellationToken)
     {
         return UpdateAlarmModel(item.Select(a => a.Value).OrderBy(a => a.Id), cancellationToken);
@@ -138,17 +193,9 @@ public partial class MqttClient : BusinessBaseWithCacheIntervalScript<VariableBa
     {
         return UpdateVarModel(item.Select(a => a.Value).OrderBy(a => a.Id), cancellationToken);
     }
-    protected override void VariableTimeInterval(VariableRuntime variableRuntime, VariableBasicData variable)
+    protected override ValueTask<OperResult> UpdateVarModels(IEnumerable<VariableBasicData> item, CancellationToken cancellationToken)
     {
-        if (!_businessPropertyWithCacheIntervalScript.VariableTopic.IsNullOrWhiteSpace())
-            AddQueueVarModel(new(variable));
-        base.VariableChange(variableRuntime, variable);
-    }
-    protected override void VariableChange(VariableRuntime variableRuntime, VariableBasicData variable)
-    {
-        if (!_businessPropertyWithCacheIntervalScript.VariableTopic.IsNullOrWhiteSpace())
-            AddQueueVarModel(new(variable));
-        base.VariableChange(variableRuntime, variable);
+        return UpdateVarModel(item, cancellationToken);
     }
 
     #region mqtt方法

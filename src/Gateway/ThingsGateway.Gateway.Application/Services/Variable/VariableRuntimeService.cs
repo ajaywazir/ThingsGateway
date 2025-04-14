@@ -36,7 +36,7 @@ public class VariableRuntimeService : IVariableRuntimeService
         {
             // await WaitLock.WaitAsync().ConfigureAwait(false);
 
-            var result = await GlobalData.VariableService.BatchSaveVariableAsync(input, type).ConfigureAwait(false);
+            var result = await GlobalData.VariableService.BatchSaveVariableAsync(input.Where(a => !a.DynamicVariable).ToList(), type).ConfigureAwait(false);
 
             var newVariableRuntimes = input.Adapt<List<VariableRuntime>>();
             var variableIds = newVariableRuntimes.Select(a => a.Id).ToHashSet();
@@ -66,7 +66,6 @@ public class VariableRuntimeService : IVariableRuntimeService
         try
         {
             // await WaitLock.WaitAsync().ConfigureAwait(false);
-
 
 
             var result = await GlobalData.VariableService.BatchEditAsync(models, oldModel, model).ConfigureAwait(false);
@@ -105,13 +104,9 @@ public class VariableRuntimeService : IVariableRuntimeService
         {
             // await WaitLock.WaitAsync().ConfigureAwait(false);
 
-
             var variableIds = ids.ToHashSet();
 
             var result = await GlobalData.VariableService.DeleteVariableAsync(variableIds).ConfigureAwait(false);
-
-            var variableRuntimes = GlobalData.IdVariables.Where(a => ids.Contains(a.Key)).Select(a => a.Value);
-
 
             ConcurrentHashSet<IDriver> changedDriver = new();
 
@@ -268,63 +263,5 @@ public class VariableRuntimeService : IVariableRuntimeService
     public Task<MemoryStream> ExportMemoryStream(List<Variable> data, string deviceName) => GlobalData.VariableService.ExportMemoryStream(data, deviceName);
 
 
-
-    public async Task AddDynamicVariable(IEnumerable<VariableRuntime> newVariableRuntimes, bool restart, CancellationToken cancellationToken)
-    {
-        //动态变量不入配置数据库
-        try
-        {
-            // await WaitLock.WaitAsync().ConfigureAwait(false);
-            //批量修改之后，需要重新加载
-            foreach (var newVariableRuntime in newVariableRuntimes)
-            {
-                newVariableRuntime.DynamicVariable = true;
-            }
-            var variableIds = newVariableRuntimes.Select(a => a.Id).ToHashSet();
-
-            ConcurrentHashSet<IDriver> changedDriver = new();
-            RuntimeServiceHelper.AddBusinessChangedDriver(variableIds, changedDriver);
-
-            RuntimeServiceHelper.AddCollectChangedDriver(newVariableRuntimes, changedDriver);
-
-            if (restart)
-            {
-                //根据条件重启通道线程
-                await RuntimeServiceHelper.ChangedDriverAsync(changedDriver, _logger, cancellationToken).ConfigureAwait(false);
-            }
-
-        }
-        finally
-        {
-            //WaitLock.Release();
-        }
-
-    }
-
-
-    public async Task DeleteDynamicVariable(IEnumerable<long> ids, bool restart, CancellationToken cancellationToken)
-    {
-        try
-        {
-            // await WaitLock.WaitAsync().ConfigureAwait(false);
-            var variableIds = ids.ToHashSet();
-
-            ConcurrentHashSet<IDriver> changedDriver = new();
-            RuntimeServiceHelper.AddBusinessChangedDriver(variableIds, changedDriver);
-
-            if (restart)
-            {
-                await RuntimeServiceHelper.ChangedDriverAsync(changedDriver, _logger, cancellationToken).ConfigureAwait(false);
-            }
-
-
-        }
-        finally
-        {
-            //WaitLock.Release();
-        }
-
-
-    }
 
 }

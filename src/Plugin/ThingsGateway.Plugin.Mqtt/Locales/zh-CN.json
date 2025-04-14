@@ -1,6 +1,7 @@
 ﻿{
   "ThingsGateway.Plugin.Mqtt.MqttClientVariableProperty": {
-    "VariableRpcEnable": "启用RPC"
+    "VariableRpcEnable": "启用RPC",
+    "Group": "分组名称"
   },
 
   "ThingsGateway.Plugin.Mqtt.MqttClientProperty": {
@@ -41,7 +42,8 @@
     "QueueMaxCount": "内存队列最大数量",
     "CacheFileMaxLength": "缓存文件最大长度(mb)",
     "SplitSize": "上传每页条数",
-    "CacheEnable": "启用缓存"
+    "CacheEnable": "启用缓存",
+    "GroupUpdate": "分组上传"
   },
   "ThingsGateway.Plugin.Mqtt.MqttServerProperty": {
     "IP": "IP",
@@ -71,7 +73,8 @@
     "QueueMaxCount": "内存队列最大数量",
     "CacheFileMaxLength": "缓存文件最大长度(mb)",
     "SplitSize": "上传每页条数",
-    "CacheEnable": "启用缓存"
+    "CacheEnable": "启用缓存",
+    "GroupUpdate": "分组上传"
   },
 
   "ThingsGateway.Plugin.Mqtt.MqttCollectProperty": {

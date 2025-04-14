@@ -165,6 +165,7 @@ public partial class SqlDBProducer : BusinessBaseWithCacheIntervalVariableModel<
 
     }
 
+
     protected override async Task ProtectedStartAsync(CancellationToken cancellationToken)
     {
         var db = SqlDBBusinessDatabaseUtil.GetDb(_driverPropertys);
@@ -213,14 +214,30 @@ public partial class SqlDBProducer : BusinessBaseWithCacheIntervalVariableModel<
             {
                 try
                 {
-                    var varList = IdVariableRuntimes.Select(a => a.Value).Adapt<List<SQLRealValue>>();
-
-                    var result = await UpdateAsync(varList, cancellationToken).ConfigureAwait(false);
-                    if (success != result.IsSuccess)
+                    var varList = IdVariableRuntimes.Select(a => a.Value);
+                    if (_driverPropertys.GroupUpdate)
                     {
-                        if (!result.IsSuccess)
-                            LogMessage.LogWarning(result.ToString());
-                        success = result.IsSuccess;
+                        var groups = varList.GroupBy(a => a.Group);
+                        foreach (var item in groups)
+                        {
+                            var result = await UpdateAsync(item.Adapt<List<SQLRealValue>>(), cancellationToken).ConfigureAwait(false);
+                            if (success != result.IsSuccess)
+                            {
+                                if (!result.IsSuccess)
+                                    LogMessage.LogWarning(result.ToString());
+                                success = result.IsSuccess;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var result = await UpdateAsync(varList.Adapt<List<SQLRealValue>>(), cancellationToken).ConfigureAwait(false);
+                        if (success != result.IsSuccess)
+                        {
+                            if (!result.IsSuccess)
+                                LogMessage.LogWarning(result.ToString());
+                            success = result.IsSuccess;
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -235,7 +252,9 @@ public partial class SqlDBProducer : BusinessBaseWithCacheIntervalVariableModel<
         if (_driverPropertys.IsHistoryDB)
         {
             await UpdateVarModelMemory(cancellationToken).ConfigureAwait(false);
+            await UpdateVarModelsMemory(cancellationToken).ConfigureAwait(false);
             await UpdateVarModelCache(cancellationToken).ConfigureAwait(false);
+            await UpdateVarModelsCache(cancellationToken).ConfigureAwait(false);
         }
     }
 

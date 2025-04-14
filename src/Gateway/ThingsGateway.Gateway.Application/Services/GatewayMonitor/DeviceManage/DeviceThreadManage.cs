@@ -290,9 +290,6 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
 
             if (deleteCache)
             {
-                await Task.Delay(1000).ConfigureAwait(false);
-                Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
-                await Task.Delay(1000).ConfigureAwait(false);
                 var basePath = CacheDBUtil.GetCacheFileBasePath();
 
                 var strings = deviceRuntimes.Select(a => a.Name.ToString()).ToHashSet();

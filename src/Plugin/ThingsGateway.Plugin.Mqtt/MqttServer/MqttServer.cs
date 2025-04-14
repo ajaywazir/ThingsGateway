@@ -56,6 +56,8 @@ public partial class MqttServer : BusinessBaseWithCacheIntervalScript<VariableBa
         await base.InitChannelAsync(channel, cancellationToken).ConfigureAwait(false);
     }
 
+
+
     /// <inheritdoc/>
     public override bool IsConnected() => _mqttServer?.IsStarted == true;
 
