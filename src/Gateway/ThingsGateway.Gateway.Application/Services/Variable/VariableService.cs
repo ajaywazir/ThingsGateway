@@ -555,8 +555,6 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
             // 设备页导入预览输出
             ImportPreviewOutput<Dictionary<string, Variable>> deviceImportPreview = new();
 
-            // 获取驱动插件的全名和名称的字典
-            var driverPluginFullNameDict = _pluginService.GetList().ToDictionary(a => a.FullName);
             var driverPluginNameDict = _pluginService.GetList().ToDictionary(a => a.Name);
             ConcurrentDictionary<string, (Type, Dictionary<string, PropertyInfo>, Dictionary<string, PropertyInfo>)> propertysDict = new();
 
