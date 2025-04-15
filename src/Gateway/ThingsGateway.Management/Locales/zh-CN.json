@@ -1,4 +1,7 @@
 ﻿{
+  "ThingsGateway.Management.RedundancyService": {
+    "EditRedundancyOption": "修改网关冗余配置"
+  },
   "ThingsGateway.Management.Authentication": {
     "UUID": "唯一编码",
     "RegisterStatus": "注册状态",

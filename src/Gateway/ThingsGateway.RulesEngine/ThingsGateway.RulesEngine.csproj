@@ -25,6 +25,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\ThingsGateway.Gateway.Razor\ThingsGateway.Gateway.Razor.csproj" />
 		<ProjectReference Include="..\ThingsGateway.Blazor.Diagrams\ThingsGateway.Blazor.Diagrams.csproj" />
+		<PackageReference Include="Rougamo.Fody" Version="5.0.0" />
 	</ItemGroup>
 
 </Project>

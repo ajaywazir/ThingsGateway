@@ -1,5 +1,7 @@
 ﻿{
-
+  "ThingsGateway.Management.RedundancyService": {
+    "EditRedundancyOption": "EditRedundancyOption"
+  },
   "ThingsGateway.Management.Authentication": {
     "UUID": "UUID",
     "RegisterStatus": "RegisterStatus",

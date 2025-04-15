@@ -45,7 +45,10 @@
 
     "Name": "名称",
     "Status": "状态",
-    "SortCode": "排序"
+    "SortCode": "排序",
+    "ClearRules": "清空规则",
+    "DeleteRules": "删除规则",
+    "SaveRules": "保存规则"
   },
 
   "ThingsGateway.RulesEngine.RulesEngineHostedService": {

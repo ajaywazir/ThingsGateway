@@ -32,11 +32,12 @@
 		<Compile Include="..\..\Upgrade\ThingsGateway.Upgrade\Services\FilePlugin.cs" Link="Update\Files\FilePlugin.cs" />
 		<Compile Include="..\..\Upgrade\ThingsGateway.Upgrade\Services\UpgradeServerOptions.cs" Link="Update\Files\UpgradeServerOptions.cs" />
 	</ItemGroup>
-	
-	
+
+
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Foundation\ThingsGateway.Foundation.Razor\ThingsGateway.Foundation.Razor.csproj" />
-	  <ProjectReference Include="..\ThingsGateway.Gateway.Razor\ThingsGateway.Gateway.Razor.csproj" />
+		<ProjectReference Include="..\..\Foundation\ThingsGateway.Foundation.Razor\ThingsGateway.Foundation.Razor.csproj" />
+		<ProjectReference Include="..\ThingsGateway.Gateway.Razor\ThingsGateway.Gateway.Razor.csproj" />
+		<PackageReference Include="Rougamo.Fody" Version="5.0.0" />
 	</ItemGroup>
 
 

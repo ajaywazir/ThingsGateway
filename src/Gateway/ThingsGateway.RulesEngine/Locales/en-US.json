@@ -41,7 +41,10 @@
   "ThingsGateway.RulesEngine.Rules": {
     "Name": "Name",
     "Status": "Status",
-    "SortCode": "SortCode"
+    "SortCode": "SortCode",
+    "ClearRules": "ClearRules",
+    "DeleteRules": "DeleteRules",
+    "SaveRules": "SaveRules"
   },
 
   "ThingsGateway.RulesEngine.RulesEngineHostedService": {
