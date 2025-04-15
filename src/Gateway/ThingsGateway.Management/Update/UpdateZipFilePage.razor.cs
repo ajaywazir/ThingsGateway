@@ -36,9 +36,8 @@ public partial class UpdateZipFilePage
             var data = await UpdateZipFileHostedService.GetList();
             return new QueryData<UpdateZipFile>() { Items = data };
         }
-        catch (Exception ex)
+        catch
         {
-            await ToastService.Warn(ex);
             return new QueryData<UpdateZipFile>() { };
         }
 

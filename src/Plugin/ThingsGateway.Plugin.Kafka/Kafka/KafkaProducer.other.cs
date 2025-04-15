@@ -213,7 +213,7 @@ public partial class KafkaProducer : BusinessBaseWithCacheIntervalScript<Variabl
             var timeOutResult = await Task.WhenAny(resultTask, Task.Delay(_driverPropertys.Timeout, stoppingToken.Token)).ConfigureAwait(false);
             if (timeOutResult == resultTask)
             {
-                var result = (timeOutResult as Task<DeliveryResult<Null, string>>).Result;
+                var result = await resultTask.ConfigureAwait(false);
                 if (result.Status != PersistenceStatus.Persisted)
                 {
                     return new OperResult("Upload fail");

@@ -32,7 +32,8 @@ public class RulesLog
 
 internal sealed class RulesEngineHostedService : BackgroundService, IRulesEngineHostedService
 {
-    internal string LogPathFormat = "Logs/RulesEngineLog/{0}";
+    internal const string LogPathFormat = "Logs/RulesEngineLog/{0}";
+    internal const string LogDir = "Logs/RulesEngineLog";
     private readonly ILogger _logger;
     /// <inheritdoc cref="RulesEngineHostedService"/>
     public RulesEngineHostedService(ILogger<RulesEngineHostedService> logger, IStringLocalizer<RulesEngineHostedService> localizer)
@@ -99,7 +100,9 @@ internal sealed class RulesEngineHostedService : BackgroundService, IRulesEngine
 
     private (RulesLog rulesLog, BlazorDiagram blazorDiagram) Init(Rules rules)
     {
-        var log = TextFileLogger.GetMultipleFileLogger(string.Format(LogPathFormat, rules.Id));
+#pragma warning disable CA1863
+        var log = TextFileLogger.GetMultipleFileLogger(string.Format(LogPathFormat, rules.Name));
+#pragma warning restore CA1863
         log.LogLevel = TouchSocket.Core.LogLevel.Trace;
         BlazorDiagram blazorDiagram = new();
         RuleHelpers.Load(blazorDiagram, rules.RulesJson);
