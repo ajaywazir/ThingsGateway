@@ -81,5 +81,23 @@ public class Startup : AppStartup
         });
         var fullName = Assembly.GetExecutingAssembly().FullName;//获取程序集全名
         CodeFirstUtils.CodeFirst(fullName!);//CodeFirst
+
+
+
+        //10.4.9 删除logenable
+        try
+        {
+            using var db = DbContext.GetDB<Channel>();
+            if (!db.DbMaintenance.IsAnyColumn(nameof(Channel), "LogEnable", false)) return;
+            var tables = db.DbMaintenance.DropColumn(nameof(Channel), "LogEnable");
+        }
+        catch { }
+        try
+        {
+            using var db = DbContext.GetDB<Device>();
+            if (!db.DbMaintenance.IsAnyColumn(nameof(Device), "LogEnable", false)) return;
+            var tables = db.DbMaintenance.DropColumn(nameof(Device), "LogEnable");
+        }
+        catch { }
     }
 }
