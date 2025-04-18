@@ -43,10 +43,10 @@ public class VariableRuntimeService : IVariableRuntimeService
             //获取变量，先找到原插件线程，然后修改插件线程内的字典，再改动全局字典，最后刷新插件
 
             ConcurrentHashSet<IDriver> changedDriver = new();
-
+            RuntimeServiceHelper.VariableRuntimesDispose(variableIds);
+            RuntimeServiceHelper.AddCollectChangedDriver(newVariableRuntimes, changedDriver);
             RuntimeServiceHelper.AddBusinessChangedDriver(variableIds, changedDriver);
 
-            RuntimeServiceHelper.AddCollectChangedDriver(newVariableRuntimes, changedDriver);
 
             if (restart)
             {
@@ -79,9 +79,9 @@ public class VariableRuntimeService : IVariableRuntimeService
 
             ConcurrentHashSet<IDriver> changedDriver = new();
 
-            RuntimeServiceHelper.AddBusinessChangedDriver(variableIds, changedDriver);
-
+            RuntimeServiceHelper.VariableRuntimesDispose(variableIds);
             RuntimeServiceHelper.AddCollectChangedDriver(newVariableRuntimes, changedDriver);
+            RuntimeServiceHelper.AddBusinessChangedDriver(variableIds, changedDriver);
 
             if (restart)
             {
@@ -111,6 +111,7 @@ public class VariableRuntimeService : IVariableRuntimeService
             ConcurrentHashSet<IDriver> changedDriver = new();
 
             RuntimeServiceHelper.AddBusinessChangedDriver(variableIds, changedDriver);
+            RuntimeServiceHelper.VariableRuntimesDispose(variableIds);
 
             if (restart)
             {
@@ -144,10 +145,9 @@ public class VariableRuntimeService : IVariableRuntimeService
             var variableIds = newVariableRuntimes.Select(a => a.Id).ToHashSet();
 
             ConcurrentHashSet<IDriver> changedDriver = new();
-
-            RuntimeServiceHelper.AddBusinessChangedDriver(variableIds, changedDriver);
-
+            RuntimeServiceHelper.VariableRuntimesDispose(variableIds);
             RuntimeServiceHelper.AddCollectChangedDriver(newVariableRuntimes, changedDriver);
+            RuntimeServiceHelper.AddBusinessChangedDriver(variableIds, changedDriver);
 
             if (restart)
             {
@@ -237,10 +237,9 @@ public class VariableRuntimeService : IVariableRuntimeService
 
             ConcurrentHashSet<IDriver> changedDriver = new();
 
-
-            RuntimeServiceHelper.AddBusinessChangedDriver(variableIds, changedDriver);
-
+            RuntimeServiceHelper.VariableRuntimesDispose(variableIds);
             RuntimeServiceHelper.AddCollectChangedDriver(newVariableRuntimes, changedDriver);
+            RuntimeServiceHelper.AddBusinessChangedDriver(variableIds, changedDriver);
 
             if (restart)
             {

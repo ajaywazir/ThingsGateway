@@ -9,7 +9,7 @@
 		</ProjectReference>
 		<ProjectReference Include="..\..\Gateway\ThingsGateway.Gateway.Razor\ThingsGateway.Gateway.Razor.csproj">
 		</ProjectReference>
-		<PackageReference Include="Confluent.Kafka" Version="2.9.0" GeneratePathProperty="true">
+		<PackageReference Include="Confluent.Kafka" Version="2.10.0" GeneratePathProperty="true">
 			<PrivateAssets>contentFiles;compile;build;buildMultitargeting;buildTransitive;analyzers;</PrivateAssets>
 		</PackageReference>
 	</ItemGroup>

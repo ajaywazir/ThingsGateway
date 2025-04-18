@@ -310,7 +310,6 @@ internal static class RuntimeServiceHelper
                     }
                 }
 
-                item.Value.Dispose();
             }
             if (group.Key != null)
             {
@@ -320,6 +319,19 @@ internal static class RuntimeServiceHelper
                 }
             }
         }
+    }
+    public static void VariableRuntimesDispose(IEnumerable<long> variableIds)
+    {
+
+        foreach (var variableId in variableIds)
+        {
+
+            if (GlobalData.IdVariables.TryGetValue(variableId, out var variableRuntime))
+            {
+                variableRuntime.Dispose();
+            }
+        }
+
     }
 
 
