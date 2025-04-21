@@ -22,7 +22,7 @@ public class SysRelation : PrimaryKeyEntity
     /// <summary>
     /// 分类
     ///</summary>
-    [SugarColumn(ColumnDescription = "分类", Length = 200)]
+    [SugarColumn(ColumnDescription = "分类")]
     public RelationCategoryEnum Category { get; set; }
 
     /// <summary>

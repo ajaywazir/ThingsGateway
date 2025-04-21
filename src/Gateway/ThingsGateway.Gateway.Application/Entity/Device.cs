@@ -56,7 +56,7 @@ public class Device : BaseDataEntity, IValidatableObject
     /// <summary>
     /// 通道
     /// </summary>
-    [SugarColumn(ColumnDescription = "通道", Length = 200)]
+    [SugarColumn(ColumnDescription = "通道")]
     [AutoGenerateColumn(Ignore = true)]
     [IgnoreExcel]
     [MinValue(1)]

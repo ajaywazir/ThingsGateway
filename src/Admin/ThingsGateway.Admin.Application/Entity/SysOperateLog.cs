@@ -24,7 +24,7 @@ public class SysOperateLog
     /// <summary>
     /// 日志分类
     ///</summary>
-    [SugarColumn(ColumnDescription = "日志分类", Length = 200)]
+    [SugarColumn(ColumnDescription = "日志分类")]
     [AutoGenerateColumn(Order = 1, Filterable = true, Sortable = true)]
     public LogCateGoryEnum Category { get; set; }
 

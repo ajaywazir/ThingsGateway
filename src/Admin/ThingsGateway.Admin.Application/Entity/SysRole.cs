@@ -41,7 +41,7 @@ public class SysRole : BaseEntity
     /// <summary>
     /// 分类
     ///</summary>
-    [SugarColumn(ColumnDescription = "分类", Length = 200, IsNullable = false)]
+    [SugarColumn(ColumnDescription = "分类", IsNullable = false)]
     [AutoGenerateColumn(Visible = true, Sortable = true, Filterable = true)]
     public virtual RoleCategoryEnum Category { get; set; }
 

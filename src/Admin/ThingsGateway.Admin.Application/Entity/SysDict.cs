@@ -23,7 +23,7 @@ public class SysDict : BaseEntity
     /// <summary>
     /// 类型
     ///</summary>
-    [SugarColumn(ColumnDescription = "类型", Length = 200)]
+    [SugarColumn(ColumnDescription = "类型")]
     [AutoGenerateColumn(Ignore = true, Filterable = true, Sortable = true)]
     public virtual DictTypeEnum DictType { get; set; }
 

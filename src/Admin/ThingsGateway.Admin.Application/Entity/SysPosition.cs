@@ -54,7 +54,7 @@ public class SysPosition : BaseEntity
     /// <summary>
     /// 分类
     ///</summary>
-    [SugarColumn(ColumnName = "Category", ColumnDescription = "分类", Length = 200)]
+    [SugarColumn(ColumnName = "Category", ColumnDescription = "分类")]
     [AutoGenerateColumn(Visible = true, Sortable = true, Filterable = true)]
     public virtual PositionCategoryEnum Category { get; set; }
 
