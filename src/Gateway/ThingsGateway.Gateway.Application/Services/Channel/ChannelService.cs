@@ -329,8 +329,8 @@ internal sealed class ChannelService : BaseService<Channel>, IChannelService
         ManageHelper.CheckChannelCount(insertData.Count);
 
         using var db = GetDB();
-        await db.Fastest<Channel>().PageSize(100000).BulkCopyAsync(insertData).ConfigureAwait(false);
-        await db.Fastest<Channel>().PageSize(100000).BulkUpdateAsync(upData).ConfigureAwait(false);
+        await db.BulkCopyAsync(insertData, 100000).ConfigureAwait(false);
+        await db.BulkUpdateAsync(upData, 100000).ConfigureAwait(false);
         DeleteChannelFromCache();
         return channels.Select(a => a.Id).ToHashSet();
     }

@@ -217,9 +217,9 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
 
         var result = await db.UseTranAsync(async () =>
         {
-            await db.Fastest<Channel>().PageSize(100000).BulkCopyAsync(newChannels).ConfigureAwait(false);
-            await db.Fastest<Device>().PageSize(100000).BulkCopyAsync(newDevices).ConfigureAwait(false);
-            await db.Fastest<Variable>().PageSize(100000).BulkCopyAsync(newVariables).ConfigureAwait(false);
+            await db.BulkCopyAsync(newChannels, 100000).ConfigureAwait(false);
+            await db.BulkCopyAsync(newDevices, 100000).ConfigureAwait(false);
+            await db.BulkCopyAsync(newVariables, 100000).ConfigureAwait(false);
         }).ConfigureAwait(false);
         if (result.IsSuccess)//如果成功了
         {
@@ -486,8 +486,8 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
         var insertData = variables.Where(a => !a.IsUp).ToList();
         ManageHelper.CheckVariableCount(insertData.Count);
         using var db = GetDB();
-        await db.Fastest<Variable>().PageSize(100000).BulkCopyAsync(insertData).ConfigureAwait(false);
-        await db.Fastest<Variable>().PageSize(100000).BulkUpdateAsync(upData).ConfigureAwait(false);
+        await db.BulkCopyAsync(insertData, 100000).ConfigureAwait(false);
+        await db.BulkUpdateAsync(upData, 100000).ConfigureAwait(false);
         _dispatchService.Dispatch(new());
         DeleteVariableCache();
         return variables.Select(a => a.Id).ToHashSet();

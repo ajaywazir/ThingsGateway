@@ -351,8 +351,8 @@ internal sealed class DeviceService : BaseService<Device>, IDeviceService
         ManageHelper.CheckDeviceCount(insertData.Count);
 
         using var db = GetDB();
-        await db.Fastest<Device>().PageSize(100000).BulkCopyAsync(insertData).ConfigureAwait(false);
-        await db.Fastest<Device>().PageSize(100000).BulkUpdateAsync(upData).ConfigureAwait(false);
+        await db.BulkCopyAsync(insertData, 100000).ConfigureAwait(false);
+        await db.BulkUpdateAsync(upData, 100000).ConfigureAwait(false);
         DeleteDeviceFromCache();
         return devices.Select(a => a.Id).ToHashSet();
     }

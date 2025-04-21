@@ -47,12 +47,10 @@ public class BaseService<T> : IDataService<T>, IDisposable where T : class, new(
     }
 
     /// <inheritdoc/>
-    public Task<bool> DeleteAsync(IEnumerable<T> models)
+    public async Task<bool> DeleteAsync(IEnumerable<T> models)
     {
-        if (models.FirstOrDefault() is IPrimaryIdEntity)
-            return DeleteAsync(models.Select(a => ((IPrimaryIdEntity)a).Id));
-        else
-            return Task.FromResult(false);
+        using var db = GetDB();
+        return await db.Deleteable<T>().In(models.ToList()).ExecuteCommandHasChangeAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc/>
@@ -165,4 +163,6 @@ public class BaseService<T> : IDataService<T>, IDisposable where T : class, new(
     {
         return DbContext.Db.GetConnectionScopeWithAttr<T>().CopyNew();
     }
+
+
 }

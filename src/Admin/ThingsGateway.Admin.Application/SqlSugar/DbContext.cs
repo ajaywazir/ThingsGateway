@@ -103,4 +103,46 @@ public static class DbContext
         Console.WriteLine("【Sql执行时间】：" + DateTime.Now.ToDefaultDateTimeFormat());
         Console.WriteLine("【Sql语句】：" + msg + Environment.NewLine);
     }
+
+
+
+    public static async Task BulkCopyAsync<TITEM>(this SqlSugarClient db, List<TITEM> datas, int size) where TITEM : class, new()
+    {
+        switch (db.CurrentConnectionConfig.DbType)
+        {
+            case DbType.MySql:
+            case DbType.SqlServer:
+            case DbType.Sqlite:
+            case DbType.Oracle:
+            case DbType.PostgreSQL:
+            case DbType.Dm:
+            case DbType.MySqlConnector:
+            case DbType.Kdbndp:
+                await db.Fastest<TITEM>().PageSize(size).BulkCopyAsync(datas).ConfigureAwait(false);
+                break;
+            default:
+                await db.Insertable(datas).PageSize(size).ExecuteCommandAsync().ConfigureAwait(false);
+                break;
+        }
+
+    }
+    public static async Task BulkUpdateAsync<TITEM>(this SqlSugarClient db, List<TITEM> datas, int size) where TITEM : class, new()
+    {
+        switch (db.CurrentConnectionConfig.DbType)
+        {
+            case DbType.MySql:
+            case DbType.SqlServer:
+            case DbType.Sqlite:
+            case DbType.Oracle:
+            case DbType.PostgreSQL:
+            case DbType.Dm:
+            case DbType.MySqlConnector:
+            case DbType.Kdbndp:
+                await db.Fastest<TITEM>().PageSize(size).BulkUpdateAsync(datas).ConfigureAwait(false);
+                break;
+            default:
+                await db.Updateable(datas).PageSize(size).ExecuteCommandAsync().ConfigureAwait(false);
+                break;
+        }
+    }
 }
