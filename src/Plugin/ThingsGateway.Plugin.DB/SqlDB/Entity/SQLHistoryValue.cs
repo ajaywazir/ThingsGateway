@@ -14,7 +14,7 @@ using SqlSugar;
 
 namespace ThingsGateway.Plugin.SqlDB;
 
-[SplitTable(SplitType.Week)]//按周分表 （自带分表支持 年、季、月、周、日）
+[SplitTable(SplitType._Custom01)]//按周分表 （自带分表支持 年、季、月、周、日）
 [SugarTable("{name}_{year}{month}{day}", TableDescription = "设备采集历史表")]//3个变量必须要有
 [SugarIndex("index_Id", nameof(SQLHistoryValue.Id), OrderByType.Desc)]
 [SugarIndex("index_Name", nameof(SQLHistoryValue.Name), OrderByType.Desc)]

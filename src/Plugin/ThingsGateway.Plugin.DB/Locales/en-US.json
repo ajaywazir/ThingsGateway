@@ -35,6 +35,7 @@
     "BigTextScriptHistoryTable": "DynamicScriptHistoryTable",
     "BigTextScriptRealTable": "DynamicScriptRealTable",
     "RealTableBusinessInterval": "RealTableBusinessInterval",
+    "SqlDBSplitType": "SplitType",
 
     "BusinessUpdateEnum": "BusinessUpdateEnum",
     "BusinessInterval": "BusinessInterval",

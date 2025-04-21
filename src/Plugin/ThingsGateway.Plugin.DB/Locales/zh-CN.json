@@ -35,7 +35,7 @@
     "BigTextScriptHistoryTable": "历史表动态脚本",
     "BigTextScriptRealTable": "实时表动态脚本",
     "RealTableBusinessInterval": "实时表定时上传间隔",
-
+    "SqlDBSplitType": "分表模式",
     "BusinessUpdateEnum": "上传模式",
     "BusinessInterval": "定时上传间隔",
     "IsAllVariable": "选择全部变量",

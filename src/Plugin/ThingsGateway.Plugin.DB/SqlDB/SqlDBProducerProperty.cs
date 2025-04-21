@@ -13,7 +13,23 @@ using BootstrapBlazor.Components;
 using System.ComponentModel.DataAnnotations;
 
 namespace ThingsGateway.Plugin.SqlDB;
-
+public enum DbType
+{
+    MySql = 0,
+    SqlServer = 1,
+    Sqlite = 2,
+    Oracle = 3,
+    PostgreSQL = 4,
+}
+public enum SqlDBSplitType
+{
+    Day = 0,
+    Week = 1,
+    Month = 2,
+    Month_6 = 1000,
+    Season = 3,
+    Year = 4,
+}
 /// <summary>
 /// SqlDBProducerProperty
 /// </summary>
@@ -33,6 +49,9 @@ public class SqlDBProducerProperty : BusinessPropertyWithCacheInterval
 
     [DynamicProperty]
     public DbType DbType { get; set; } = DbType.SqlServer;
+
+    [DynamicProperty]
+    public SqlDBSplitType SqlDBSplitType { get; set; } = SqlDBSplitType.Week;
 
     [DynamicProperty]
     [Required]
