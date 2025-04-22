@@ -31,7 +31,7 @@ public interface IAppService
     /// <summary>
     /// RemoteIpAddress
     /// </summary>
-    public IPAddress? RemoteIpAddress { get; }
+    public string? RemoteIpAddress { get; }
 
     /// <summary>
     /// GetReturnUrl

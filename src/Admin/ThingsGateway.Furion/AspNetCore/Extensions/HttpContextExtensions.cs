@@ -106,7 +106,7 @@ public static class HttpContextExtensions
     /// <param name="context"></param>
     /// <param name="xff">是否优先取 X-Forwarded-For</param>
     /// <returns></returns>
-    public static string GetRemoteIpAddressToIPv4(this HttpContext context, bool xff = false)
+    public static string GetRemoteIpAddressToIPv4(this HttpContext context, bool xff = true)
     {
         var ipv4 = context.Connection.RemoteIpAddress?.MapToIPv4()?.ToString();
 

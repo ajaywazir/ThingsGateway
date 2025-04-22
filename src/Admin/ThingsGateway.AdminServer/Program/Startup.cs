@@ -298,9 +298,9 @@ public class Startup : AppStartup
     public void Use(IApplicationBuilder applicationBuilder, IWebHostEnvironment env)
     {
         var app = (WebApplication)applicationBuilder;
+        app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.All, KnownNetworks = { }, KnownProxies = { } });
         app.UseBootstrapBlazor();
 
-        app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.All });
 
         // 启用本地化
         var option = app.Services.GetService<IOptions<RequestLocalizationOptions>>();

@@ -20,11 +20,14 @@ A cross-platform, high-performance edge data collection gateway based on net9.
 ## Demo
 
 ﻿
-[Demo](http://47.119.161.158:5000/)
+[Demo](https://demo.thingsgateway.cn/)
+
 ﻿
 Account: **SuperAdmin**
+
 ﻿
 Password: **111111**
+
 ﻿
 **In the upper-right corner, switch to the IoT Gateway module in the personal popup box**
 

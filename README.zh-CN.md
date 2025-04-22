@@ -13,7 +13,7 @@
 
 ## 演示
 
-[ThingsGateway演示地址](http://47.119.161.158:5000/)
+[ThingsGateway演示地址](https://demo.thingsgateway.cn/)
 
 账户	:  **SuperAdmin**
 

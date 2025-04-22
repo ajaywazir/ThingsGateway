@@ -72,7 +72,7 @@ public class AppService : IAppService
     }
     public ClaimsPrincipal? User => App.User;
 
-    public IPAddress? RemoteIpAddress => App.HttpContext?.Connection?.RemoteIpAddress;
+    public string? RemoteIpAddress => App.HttpContext?.GetRemoteIpAddressToIPv4();
 
     public int LocalPort => App.HttpContext.Connection.LocalPort;
 }

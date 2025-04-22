@@ -137,7 +137,7 @@ public sealed class OperDescAttribute : MoAttribute
             Name = (localizerType == null ? App.CreateLocalizerByType(typeof(OperDescAttribute)) : App.CreateLocalizerByType(localizerType))![Description],
             Category = LogCateGoryEnum.Operate,
             ExeStatus = true,
-            OpIp = AppService?.RemoteIpAddress?.MapToIPv4()?.ToString() ?? string.Empty,
+            OpIp = AppService?.RemoteIpAddress ?? string.Empty,
             OpBrowser = clientInfo?.UA?.Family + clientInfo?.UA?.Major,
             OpOs = clientInfo?.OS?.Family + clientInfo?.OS?.Major,
             OpTime = DateTime.Now,

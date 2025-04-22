@@ -24,7 +24,7 @@ public class HybridAppService : IAppService
     {
         var str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0";
         ClientInfo = Parser.GetDefault().Parse(str);
-        RemoteIpAddress = IPAddress.Parse("127.0.0.1");
+        RemoteIpAddress = "127.0.0.1";
     }
     public ClientInfo? ClientInfo { get; }
 
@@ -56,7 +56,7 @@ public class HybridAppService : IAppService
         }
     }
 
-    public IPAddress? RemoteIpAddress { get; }
+    public string? RemoteIpAddress { get; }
 
     public string GetReturnUrl(string returnUrl)
     {

@@ -13,6 +13,7 @@ using BootstrapBlazor.Components;
 using Mapster;
 
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using SqlSugar;
@@ -139,7 +140,7 @@ public class ControlController : ControllerBase
             }
         }
 
-        return await GlobalData.RpcService.InvokeDeviceMethodAsync($"WebApi-{UserManager.UserAccount}-{App.HttpContext.Connection.RemoteIpAddress.MapToIPv4()}", deviceDatas).ConfigureAwait(false);
+        return await GlobalData.RpcService.InvokeDeviceMethodAsync($"WebApi-{UserManager.UserAccount}-{App.HttpContext?.GetRemoteIpAddressToIPv4()}", deviceDatas).ConfigureAwait(false);
 
     }
 

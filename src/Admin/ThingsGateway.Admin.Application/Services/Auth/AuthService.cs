@@ -105,7 +105,7 @@ public class AuthService : IAuthService
         {
             var loginEvent = new LoginEvent
             {
-                Ip = _appService.RemoteIpAddress?.MapToIPv4()?.ToString(),
+                Ip = _appService.RemoteIpAddress,
                 SysUser = userinfo,
                 VerificatId = verificatId
             };
@@ -236,7 +236,7 @@ public class AuthService : IAuthService
         //登录事件参数
         var logingEvent = new LoginEvent
         {
-            Ip = _appService.RemoteIpAddress?.MapToIPv4()?.ToString(),
+            Ip = _appService.RemoteIpAddress,
             Device = App.GetService<IAppService>().ClientInfo?.OS?.ToString(),
             Expire = expire,
             SysUser = sysUser,
