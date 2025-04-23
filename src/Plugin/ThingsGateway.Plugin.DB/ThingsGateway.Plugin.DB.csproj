@@ -9,6 +9,27 @@
 		</ProjectReference>
 		<ProjectReference Include="..\..\Gateway\ThingsGateway.Gateway.Razor\ThingsGateway.Gateway.Razor.csproj">
 		</ProjectReference>
+		
+		<!--<PackageReference Include="SqlSugar.QuestDb.RestAPI" Version="4.1.17" GeneratePathProperty="true">
+			<PrivateAssets>contentFiles;compile;build;buildMultitargeting;buildTransitive;analyzers;</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="CsvHelper" Version="31.0.2" GeneratePathProperty="true">
+			<PrivateAssets>contentFiles;compile;build;buildMultitargeting;buildTransitive;analyzers;</PrivateAssets>
+		</PackageReference>-->
+		
+		
+		
+		<PackageReference Include="SqlSugar.TDengineCore" Version="4.18.8" GeneratePathProperty="true">
+			<PrivateAssets>contentFiles;compile;build;buildMultitargeting;buildTransitive;analyzers;</PrivateAssets>
+		</PackageReference>
+
+		<PackageReference Include="TDengine.Ado.Data" Version="3.1.7" GeneratePathProperty="true">
+			<PrivateAssets>contentFiles;compile;build;buildMultitargeting;buildTransitive;analyzers;</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="TDengine.Connector" Version="3.1.6" GeneratePathProperty="true">
+			<PrivateAssets>contentFiles;compile;build;buildMultitargeting;buildTransitive;analyzers;</PrivateAssets>
+		</PackageReference>
+		
 	</ItemGroup>
 
 	<ItemGroup>
@@ -17,5 +38,5 @@
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</EmbeddedResource>
 	</ItemGroup>
-	
+
 </Project>

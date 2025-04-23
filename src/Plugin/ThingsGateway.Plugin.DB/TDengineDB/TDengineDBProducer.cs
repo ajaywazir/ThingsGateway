@@ -12,7 +12,11 @@ using BootstrapBlazor.Components;
 
 using Mapster;
 
+using Newtonsoft.Json.Linq;
+
 using SqlSugar;
+
+using System.Reflection;
 
 using ThingsGateway.Admin.Application;
 using ThingsGateway.Foundation;
@@ -63,9 +67,21 @@ public partial class TDengineDBProducer : BusinessBaseWithCacheIntervalVariableM
     }
     protected override async Task InitChannelAsync(IChannel? channel, CancellationToken cancellationToken)
     {
+        InstanceFactory.RemoveCache();
+        List<Assembly> assemblies = new();
+        foreach (var item in InstanceFactory.CustomAssemblies)
+        {
+            if (item.FullName != typeof(SqlSugar.TDengine.TDengineProvider).Assembly.FullName)
+            {
+                assemblies.Add(item);
+            }
+        }
+        assemblies.Add(typeof(SqlSugar.TDengine.TDengineProvider).Assembly);
+        InstanceFactory.CustomAssemblies = assemblies.ToArray();
+
         _config = new TypeAdapterConfig();
         _config.ForType<VariableRuntime, TDengineDBHistoryValue>()
-            .Map(dest => dest.Value, src => src.Value == null ? string.Empty : src.Value.ToString() ?? string.Empty)
+            .Map(dest => dest.Value, src => src.Value != null ? src.Value.GetType() == typeof(string) ? src.Value.ToString() : JToken.FromObject(src.Value).ToString() : string.Empty)
             //.Map(dest => dest.Id, src => CommonUtils.GetSingleId())
             .Map(dest => dest.Id, src => src.Id)//Id更改为变量Id
             ;//注意sqlsugar插入时无时区，直接utc时间

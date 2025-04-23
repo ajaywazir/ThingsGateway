@@ -8,9 +8,13 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
+using CSScripting;
+
 using SqlSugar;
 
 using System.Reflection;
+
+using ThingsGateway.Extension.Generic;
 
 namespace ThingsGateway.Server;
 
@@ -36,8 +40,6 @@ public class SingleFilePublish : ISingleFilePublish
     /// <returns></returns>
     public string[] IncludeAssemblyNames()
     {
-        InstanceFactory.CustomAssemblies =
-    [typeof(SqlSugar.TDengine.TDengineProvider).Assembly];
         return
         [
             "ThingsGateway.Furion",

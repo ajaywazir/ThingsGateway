@@ -1,11 +1,45 @@
 <Project>
 
 
+
+
+		<Target Name="CopyNugetPackages" AfterTargets="Build">
+			<ItemGroup>
+				<!-- setting up the variable for convenience -->
+				<!--<SqlSugar_QuestDb_RestAPIApplicationPackageFiles Include="$(PkgSqlSugar_QuestDb_RestAPI)\lib\netstandard2.1\*.*" />
+				<CsvHelperApplicationPackageFiles Include="$(PkgCsvHelper)\lib\net8.0\*.*" />-->
+				<SqlSugar_TDengineCoreApplicationPackageFiles Include="$(PkgSqlSugar_TDengineCore)\lib\netstandard2.1\*.*" />
+				<TDengine_Ado_DataApplicationPackageFiles Include="$(PkgTDengine_Ado_Data)\lib\netstandard2.1\*.*" />
+				<TDengine_ConnectorPackageFiles Include="$(PkgTDengine_Connector)\lib\net6.0\*.*" />
+			</ItemGroup>
+			<PropertyGroup>
+				<ApplicationFolder>$(TargetDir)</ApplicationFolder>
+			</PropertyGroup>
+			<Copy SourceFiles="@(SqlSugar_QuestDb_RestAPIApplicationPackageFiles)" DestinationFolder="$(ApplicationFolder)%(RecursiveDir)" />
+			<Copy SourceFiles="@(CsvHelperApplicationPackageFiles)" DestinationFolder="$(ApplicationFolder)%(RecursiveDir)" />
+			<Copy SourceFiles="@(SqlSugar_TDengineCoreApplicationPackageFiles)" DestinationFolder="$(ApplicationFolder)%(RecursiveDir)" />
+			<Copy SourceFiles="@(TDengine_Ado_DataApplicationPackageFiles)" DestinationFolder="$(ApplicationFolder)%(RecursiveDir)" />
+			<Copy SourceFiles="@(TDengine_ConnectorPackageFiles)" DestinationFolder="$(ApplicationFolder)%(RecursiveDir)" />
+		</Target>
+
+
 	<!--在构建后触发的。它通过在 Nuget 包的 Content 文件夹中包含目标目录中的所有文件和子文件夹来创建 nuget 包-->
 	<Target Name="IncludeAllFilesInTargetDir" AfterTargets="Build">
 
 		<ItemGroup>
 			<Content Include="$(ProjectDir)bin\$(Configuration)\$(TargetFramework)\**\*DB*.dll">
+				<Pack>true</Pack>
+				<PackagePath>Content</PackagePath>
+			</Content>
+			<Content Include="$(ProjectDir)bin\$(Configuration)\$(TargetFramework)\**\*TDengine*.dll">
+				<Pack>true</Pack>
+				<PackagePath>Content</PackagePath>
+			</Content>
+			<Content Include="$(ProjectDir)bin\$(Configuration)\$(TargetFramework)\**\*QuestDb*.dll">
+				<Pack>true</Pack>
+				<PackagePath>Content</PackagePath>
+			</Content>
+			<Content Include="$(ProjectDir)bin\$(Configuration)\$(TargetFramework)\**\*CsvHelper*.dll">
 				<Pack>true</Pack>
 				<PackagePath>Content</PackagePath>
 			</Content>
