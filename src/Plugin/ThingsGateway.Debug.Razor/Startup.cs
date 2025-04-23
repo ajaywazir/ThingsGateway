@@ -8,6 +8,7 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ThingsGateway.Debug;
@@ -22,7 +23,7 @@ public class Startup : AppStartup
    .AddScoped<IMenuService, DefaultMenuService>();
     }
 
-    public void UseService(IServiceProvider serviceProvider)
+    public void Use(IApplicationBuilder applicationBuilder)
     {
     }
 }

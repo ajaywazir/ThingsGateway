@@ -10,6 +10,7 @@
 
 using BootstrapBlazor.Components;
 
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
 using SqlSugar;
@@ -23,7 +24,7 @@ namespace ThingsGateway.Admin.Application;
 [AppStartup(1000000000)]
 public class Startup : AppStartup
 {
-    public void ConfigureAdminApp(IServiceCollection services)
+    public void Configure(IServiceCollection services)
     {
         Directory.CreateDirectory("DB");
 
@@ -75,7 +76,7 @@ public class Startup : AppStartup
 
     }
 
-    public void UseAdminCore(IServiceProvider serviceProvider)
+    public void Use(IApplicationBuilder applicationBuilder)
     {
         //检查ConfigId
         var configIdGroup = DbContext.DbConfigs.GroupBy(it => it.ConfigId);

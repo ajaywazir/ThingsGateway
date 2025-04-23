@@ -147,7 +147,7 @@ internal sealed class ScheduleHostedService : BackgroundService
             await BackgroundProcessing(stoppingToken).ConfigureAwait(false);
         }
 
-        _logger.LogCritical($"Schedule hosted service is stopped.");
+        _logger.LogInformation($"Schedule hosted service is stopped.");
     }
 
     /// <summary>

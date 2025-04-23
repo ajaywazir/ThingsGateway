@@ -15,7 +15,7 @@ namespace ThingsGateway.Admin.Razor;
 [AppStartup(-1)]
 public class Startup : AppStartup
 {
-    public void ConfigureAdminApp(IServiceCollection services)
+    public void Configure(IServiceCollection services)
     {
         services.AddScoped<IMenuService, MenuService>();
         services.AddBootstrapBlazorTableExportService();

@@ -15,7 +15,7 @@ namespace ThingsGateway.Gateway.Razor;
 [AppStartup(-1000)]
 public class Startup : AppStartup
 {
-    public void ConfigureAdminApp(IServiceCollection services)
+    public void Configure(IServiceCollection services)
     {
         services.AddBootstrapBlazorWinBoxService();
     }

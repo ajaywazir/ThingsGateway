@@ -10,6 +10,10 @@
 
 using Mapster;
 
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+
 using System.Reflection;
 
 namespace ThingsGateway.Gateway.Application;
@@ -17,7 +21,7 @@ namespace ThingsGateway.Gateway.Application;
 [AppStartup(-100)]
 public class Startup : AppStartup
 {
-    public void ConfigureAdminApp(IServiceCollection services)
+    public void Configure(IServiceCollection services)
     {
         services.AddConfigurableOptions<ChannelThreadOptions>();
         services.AddConfigurableOptions<GatewayLogOptions>();
@@ -62,8 +66,9 @@ public class Startup : AppStartup
         services.AddGatewayHostedService<IGatewayMonitorHostedService, GatewayMonitorHostedService>();
     }
 
-    public void UseAdminCore(IServiceProvider serviceProvider)
+    public void Use(IApplicationBuilder applicationBuilder)
     {
+        var serviceProvider = applicationBuilder.ApplicationServices;
         //检查ConfigId
         var configIdGroup = DbContext.DbConfigs.GroupBy(it => it.ConfigId);
         foreach (var configId in configIdGroup)
@@ -88,16 +93,29 @@ public class Startup : AppStartup
         try
         {
             using var db = DbContext.GetDB<Channel>();
-            if (!db.DbMaintenance.IsAnyColumn(nameof(Channel), "LogEnable", false)) return;
-            var tables = db.DbMaintenance.DropColumn(nameof(Channel), "LogEnable");
+            if (db.DbMaintenance.IsAnyColumn(nameof(Channel), "LogEnable", false))
+            {
+                var tables = db.DbMaintenance.DropColumn(nameof(Channel), "LogEnable");
+            }
         }
         catch { }
         try
         {
             using var db = DbContext.GetDB<Device>();
-            if (!db.DbMaintenance.IsAnyColumn(nameof(Device), "LogEnable", false)) return;
-            var tables = db.DbMaintenance.DropColumn(nameof(Device), "LogEnable");
+            if (db.DbMaintenance.IsAnyColumn(nameof(Device), "LogEnable", false))
+            {
+                var tables = db.DbMaintenance.DropColumn(nameof(Device), "LogEnable");
+            }
         }
         catch { }
+
+        serviceProvider.GetService<IHostApplicationLifetime>().ApplicationStarted.Register(() =>
+        {
+            serviceProvider.GetService<ILoggerFactory>().CreateLogger(nameof(ThingsGateway)).LogInformation("ThingsGateway is started...");
+        });
+        serviceProvider.GetService<IHostApplicationLifetime>().ApplicationStopping.Register(() =>
+        {
+            serviceProvider.GetService<ILoggerFactory>().CreateLogger(nameof(ThingsGateway)).LogInformation("ThingsGateway is stopping...");
+        });
     }
 }

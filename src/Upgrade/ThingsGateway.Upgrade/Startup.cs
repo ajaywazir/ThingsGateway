@@ -8,6 +8,7 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -21,15 +22,16 @@ namespace ThingsGateway.Upgrade;
 [AppStartup(-1)]
 public class Startup : AppStartup
 {
-    public void ConfigureAdminApp(IServiceCollection services)
+    public void Configure(IServiceCollection services)
     {
         services.AddSingleton<IUpdateZipFileHostedService, UpdateZipFileHostedService>();
         services.AddSingleton(typeof(IFileHostService), typeof(FileHostService));
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, IFileHostService>(seriveProvider => seriveProvider.GetService<IFileHostService>()));
         services.AddConfigurableOptions<UpgradeServerOptions>();
     }
-    public void UseAdminCore(IServiceProvider serviceProvider)
+    public void Use(IApplicationBuilder applicationBuilder)
     {
+        var serviceProvider = applicationBuilder.ApplicationServices;
         //检查ConfigId
         var configIdGroup = DbContext.DbConfigs.GroupBy(it => it.ConfigId);
         foreach (var configId in configIdGroup)

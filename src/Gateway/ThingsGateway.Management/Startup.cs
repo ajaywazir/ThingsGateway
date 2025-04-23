@@ -8,6 +8,8 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
+using Microsoft.AspNetCore.Builder;
+
 using System.Reflection;
 
 using ThingsGateway.Gateway.Application;
@@ -18,7 +20,7 @@ namespace ThingsGateway.Management;
 [AppStartup(10000000)]
 public class Startup : AppStartup
 {
-    public void ConfigureAdminApp(IServiceCollection services)
+    public void Configure(IServiceCollection services)
     {
         services.AddSingleton<IRedundancyService, RedundancyService>();
         services.AddGatewayHostedService<IRedundancyHostedService, RedundancyHostedService>();
@@ -29,8 +31,9 @@ public class Startup : AppStartup
     }
 
 
-    public void UseAdminCore(IServiceProvider serviceProvider)
+    public void Use(IApplicationBuilder applicationBuilder)
     {
+        var serviceProvider = applicationBuilder.ApplicationServices;
         //检查ConfigId
         var configIdGroup = DbContext.DbConfigs.GroupBy(it => it.ConfigId);
         foreach (var configId in configIdGroup)

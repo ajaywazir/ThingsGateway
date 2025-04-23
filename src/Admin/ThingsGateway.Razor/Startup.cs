@@ -8,6 +8,7 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
 using ThingsGateway.NewLife;
@@ -48,7 +49,7 @@ public class Startup : AppStartup
     }
 
     /// <inheritdoc/>
-    public void UseService(IServiceProvider serviceProvider)
+    public void Use(IApplicationBuilder applicationBuilder)
     {
     }
 }
