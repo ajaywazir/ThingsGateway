@@ -1299,6 +1299,7 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
             try
             {
                 if (Disposed) return;
+                await Task.Delay(2000);
                 await OnClickSearch(SearchText);
 
                 Value = GetValue(Value);
@@ -1310,7 +1311,6 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
             }
             finally
             {
-                await Task.Delay(2000);
                 _isExecuting = false;
             }
         }

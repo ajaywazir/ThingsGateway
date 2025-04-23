@@ -4,12 +4,19 @@
 @if (WebsiteOption.Value.ShowAuthorize)
 {
 
-    <Card class="mb-2">
+    <Card class="h-100">
         <BodyTemplate>
             <div class="ma-1">
-                <span>@Localizer["UUID"]</span>
-                <div class="my-2 ms-4 text-truncate">
-                    <Textarea Value="@ProAuthentication.UUID" rows="5" />
+                <div class="row g-3 form-inline">
+                    <div class="col-12 col-sm-12">
+
+                        <label class="form-label">
+
+                            @Localizer["UUID"]
+                        </label>
+
+                        <Textarea Value="@ProAuthentication.UUID" rows="5" />
+                    </div>
                 </div>
 
                 <PopConfirmButton Size="Size.Small" Color="Color.Success" Icon="fa-solid fa-bars" Text="@Localizer["Register"]" IsAsync OnConfirm="Register">
@@ -22,7 +29,7 @@
 
             </div>
 
-            <div class="ma-1">
+            <div class="ma-1 mt-4">
 
                 <div class="row g-3 form-inline">
                     <div class="col-12 col-sm-12">

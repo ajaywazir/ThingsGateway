@@ -8,13 +8,8 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
-using Mapster;
-
-using Microsoft.Data.Sqlite;
-
 using SqlSugar;
 
-using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace ThingsGateway.Plugin.SqlDB;
@@ -25,7 +20,7 @@ public class SqlDBDateSplitTableService : DateSplitTableService
 
     public SqlDBDateSplitTableService(SqlDBProducerProperty sqlDBProducerProperty)
     {
-        this._sqlDBProducerProperty = sqlDBProducerProperty;
+        _sqlDBProducerProperty = sqlDBProducerProperty;
     }
 
     #region Core

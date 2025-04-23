@@ -71,16 +71,7 @@ internal sealed class GatewayMonitorHostedService : BackgroundService, IGatewayM
                 }
             }
 
-            var startCollectChannelEnable = GlobalData.StartCollectChannelEnable;
-            var startBusinessChannelEnable = GlobalData.StartBusinessChannelEnable;
-
-            var collectChannelRuntimes = channelRuntimes.Where(x => (x.Enable && x.IsCollect == true && startCollectChannelEnable));
-
-            var businessChannelRuntimes = channelRuntimes.Where(x => (x.Enable && x.IsCollect == false && startBusinessChannelEnable));
-
-            //根据初始冗余属性，筛选启动
-            await ChannelThreadManage.RestartChannelAsync(businessChannelRuntimes).ConfigureAwait(false);
-            await ChannelThreadManage.RestartChannelAsync(collectChannelRuntimes).ConfigureAwait(false);
+            await ChannelThreadManage.RestartChannelAsync(channelRuntimes).ConfigureAwait(false);
 
 
         }

@@ -184,7 +184,7 @@ public static class JsonUtils
     /// CreateEncoder
     /// </summary>
     /// <returns></returns>
-    private static OPCUAJsonEncoder CreateEncoder(
+    private static JsonEncoder CreateEncoder(
         IServiceMessageContext context,
         Stream stream,
         bool useReversibleEncoding = false,
@@ -193,14 +193,14 @@ public static class JsonUtils
         bool includeDefaultNumbers = true
         )
     {
-        return new OPCUAJsonEncoder(context, useReversibleEncoding, topLevelIsArray, stream)
+        return new JsonEncoder(context, useReversibleEncoding, topLevelIsArray, stream)
         {
             IncludeDefaultValues = includeDefaultValues,
             IncludeDefaultNumberValues = includeDefaultNumbers
         };
     }
 
-    private static void Encode(OPCUAJsonEncoder encoder, BuiltInType builtInType, string fieldName, object value)
+    private static void Encode(JsonEncoder encoder, BuiltInType builtInType, string fieldName, object value)
     {
         bool isArray = (value?.GetType().IsArray ?? false) && (builtInType != BuiltInType.ByteString);
         bool isCollection = (value is IList) && (builtInType != BuiltInType.ByteString);

@@ -22,27 +22,27 @@
 		</ProjectReference>
 		<ProjectReference Include="..\ThingsGateway.Foundation.OpcUa\ThingsGateway.Foundation.OpcUa.csproj" />
 
-		<PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Server" Version="1.5.375.457" GeneratePathProperty="true">
+		<PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Server" Version="1.5.376.213" GeneratePathProperty="true">
 			<PrivateAssets>contentFiles;compile;build;buildMultitargeting;buildTransitive;analyzers;</PrivateAssets>
 		</PackageReference>
 
-		<PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Client.ComplexTypes" Version="1.5.375.457" GeneratePathProperty="true">
+		<PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Client.ComplexTypes" Version="1.5.376.213" GeneratePathProperty="true">
 			<PrivateAssets>contentFiles;compile;build;buildMultitargeting;buildTransitive;analyzers;</PrivateAssets>
 		</PackageReference>
 
-		<PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Client" Version="1.5.375.457" GeneratePathProperty="true">
+		<PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Client" Version="1.5.376.213" GeneratePathProperty="true">
 			<PrivateAssets>contentFiles;compile;build;buildMultitargeting;buildTransitive;analyzers;</PrivateAssets>
 		</PackageReference>
 
-		<PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Core" Version="1.5.375.457" GeneratePathProperty="true">
+		<PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Core" Version="1.5.376.213" GeneratePathProperty="true">
 			<PrivateAssets>contentFiles;compile;build;buildMultitargeting;buildTransitive;analyzers;</PrivateAssets>
 		</PackageReference>
 
-		<PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Configuration" Version="1.5.375.457" GeneratePathProperty="true">
+		<PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Configuration" Version="1.5.376.213" GeneratePathProperty="true">
 			<PrivateAssets>contentFiles;compile;build;buildMultitargeting;buildTransitive;analyzers;</PrivateAssets>
 		</PackageReference>
 
-		<PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Security.Certificates" Version="1.5.375.457" GeneratePathProperty="true">
+		<PackageReference Include="OPCFoundation.NetStandard.Opc.Ua.Security.Certificates" Version="1.5.376.213" GeneratePathProperty="true">
 			<PrivateAssets>contentFiles;compile;build;buildMultitargeting;buildTransitive;analyzers;</PrivateAssets>
 		</PackageReference>
 

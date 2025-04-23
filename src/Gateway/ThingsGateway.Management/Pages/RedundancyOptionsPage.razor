@@ -9,21 +9,21 @@
 @namespace ThingsGateway.Management
 
 
-<div class=@($"{ClassString} row my-2 mx-2") style="min-height:500px;height: 50%;">
+<div class=@($"{ClassString} row g-0 h-100 mx-2") style="min-height:500px;">
 
-    <div class="col-12 h-100">
+    <div class="col-12 col-md-6 h-100">
 
-        <EditComponent Model="Model" OnSave="OnSaveRedundancy"/>
+        <EditComponent ItemsPerRow=1 Model="Model" OnSave="OnSaveRedundancy" />
 
     </div>
-    <div class="col-12 ">
+    <div class="col-12 col-md-6 h-100">
 
-    @if (Logger != null)
-    {
-            <LogConsole HeightString="500px" LogLevel=@(Logger.LogLevel) LogLevelChanged="(a)=>{
+        @if (Logger != null)
+        {
+            <LogConsole LogLevel=@(Logger.LogLevel) LogLevelChanged="(a)=>{
 Logger.LogLevel=a;
 }" LogPath=@LogPath HeaderText=@HeaderText></LogConsole>
-    }
+        }
     </div>
 </div>
 

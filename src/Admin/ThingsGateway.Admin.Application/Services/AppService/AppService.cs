@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
 
-using System.Net;
 using System.Security.Claims;
 
 using UAParser;

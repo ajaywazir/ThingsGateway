@@ -216,16 +216,7 @@ public class ChannelRuntimeService : IChannelRuntimeService
             await RuntimeServiceHelper.InitAsync(newChannelRuntimes, newDeviceRuntimes, _logger).ConfigureAwait(false);
 
 
-            var startCollectChannelEnable = GlobalData.StartCollectChannelEnable;
-            var startBusinessChannelEnable = GlobalData.StartBusinessChannelEnable;
-
-            var collectChannelRuntimes = newChannelRuntimes.Where(x => (x.Enable && x.IsCollect == true && startCollectChannelEnable));
-
-            var businessChannelRuntimes = newChannelRuntimes.Where(x => (x.Enable && x.IsCollect == false && startBusinessChannelEnable));
-
-            //根据初始冗余属性，筛选启动
-            await GlobalData.ChannelThreadManage.RestartChannelAsync(businessChannelRuntimes).ConfigureAwait(false);
-            await GlobalData.ChannelThreadManage.RestartChannelAsync(collectChannelRuntimes).ConfigureAwait(false);
+            await GlobalData.ChannelThreadManage.RestartChannelAsync(newChannelRuntimes).ConfigureAwait(false);
 
         }
         catch (Exception ex)

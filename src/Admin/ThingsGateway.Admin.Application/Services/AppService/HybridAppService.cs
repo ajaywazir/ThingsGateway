@@ -11,7 +11,6 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
-using System.Net;
 using System.Security.Claims;
 
 using UAParser;

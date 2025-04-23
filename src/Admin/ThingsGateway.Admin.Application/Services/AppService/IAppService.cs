@@ -9,7 +9,6 @@
 //------------------------------------------------------------------------------
 
 
-using System.Net;
 using System.Security.Claims;
 
 using UAParser;
