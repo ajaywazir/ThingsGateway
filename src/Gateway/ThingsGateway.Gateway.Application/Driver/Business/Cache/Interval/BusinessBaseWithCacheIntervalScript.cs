@@ -9,6 +9,9 @@
 //------------------------------------------------------------------------------
 
 using System.Globalization;
+using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
 using ThingsGateway.NewLife.Json.Extension;
@@ -63,7 +66,7 @@ public abstract partial class BusinessBaseWithCacheIntervalScript<VarModel, DevM
     protected List<TopicJson> GetAlarms(IEnumerable<AlarmModel> item)
     {
         IEnumerable<dynamic>? data = Application.DynamicModelExtension.GetDynamicModel<AlarmModel>(item, _businessPropertyWithCacheIntervalScript.BigTextScriptAlarmModel);
-        List<TopicJson> topicJsonList = new List<TopicJson>();
+        var topicJsonList = new List<TopicJson>();
         var topics = Match(_businessPropertyWithCacheIntervalScript.AlarmTopic);
         if (topics.Count > 0)
         {
@@ -128,7 +131,7 @@ public abstract partial class BusinessBaseWithCacheIntervalScript<VarModel, DevM
     protected List<TopicJson> GetDeviceData(IEnumerable<DevModel> item)
     {
         IEnumerable<dynamic>? data = Application.DynamicModelExtension.GetDynamicModel<DevModel>(item, _businessPropertyWithCacheIntervalScript.BigTextScriptDeviceModel);
-        List<TopicJson> topicJsonList = new List<TopicJson>();
+        var topicJsonList = new List<TopicJson>();
         var topics = Match(_businessPropertyWithCacheIntervalScript.DeviceTopic);
         if (topics.Count > 0)
         {
@@ -193,7 +196,7 @@ public abstract partial class BusinessBaseWithCacheIntervalScript<VarModel, DevM
     protected List<TopicJson> GetVariable(IEnumerable<VarModel> item)
     {
         IEnumerable<dynamic>? data = Application.DynamicModelExtension.GetDynamicModel<VarModel>(item, _businessPropertyWithCacheIntervalScript.BigTextScriptVariableModel);
-        List<TopicJson> topicJsonList = new List<TopicJson>();
+        var topicJsonList = new List<TopicJson>();
         var topics = Match(_businessPropertyWithCacheIntervalScript.VariableTopic);
         if (topics.Count > 0)
         {
@@ -267,7 +270,7 @@ public abstract partial class BusinessBaseWithCacheIntervalScript<VarModel, DevM
         {
             data = item;
         }
-        List<TopicJson> topicJsonList = new List<TopicJson>();
+        var topicJsonList = new List<TopicJson>();
         var topics = Match(_businessPropertyWithCacheIntervalScript.VariableTopic);
         if (topics.Count > 0)
         {
@@ -329,6 +332,40 @@ public abstract partial class BusinessBaseWithCacheIntervalScript<VarModel, DevM
         return topicJsonList;
     }
 
+    //protected static byte[] Serialize(object value)
+    //{
+    //    var block = new ValueByteBlock(1024 * 64);
+    //    try
+    //    {
+    //        //将数据序列化到内存块
+    //        FastBinaryFormatter.Serialize(ref block, value);
+    //        block.SeekToStart();
+    //        return block.Memory.GetArray().Array;
+    //    }
+    //    finally
+    //    {
+    //        block.Dispose();
+    //    }
+    //}
+    protected static JsonSerializerOptions NoWriteIndentedJsonSerializerOptions = new JsonSerializerOptions
+    {
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        WriteIndented = false
+    };
+    protected static JsonSerializerOptions WriteIndentedJsonSerializerOptions = new JsonSerializerOptions
+    {
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        WriteIndented = true
+    };
+
+    protected static byte[] Serialize(object data, bool writeIndented)
+    {
+        if (data == null) return Array.Empty<byte>();
+        byte[] payload = JsonSerializer.SerializeToUtf8Bytes(data, data.GetType(), writeIndented ? WriteIndentedJsonSerializerOptions : NoWriteIndentedJsonSerializerOptions);
+        return payload;
+    }
+
+
     protected List<TopicArray> GetAlarmTopicArrays(IEnumerable<AlarmModel> item)
     {
         IEnumerable<dynamic>? data = Application.DynamicModelExtension.GetDynamicModel<AlarmModel>(item, _businessPropertyWithCacheIntervalScript.BigTextScriptAlarmModel);
@@ -355,7 +392,7 @@ public abstract partial class BusinessBaseWithCacheIntervalScript<VarModel, DevM
                     // 上传内容
                     if (_businessPropertyWithCacheIntervalScript.IsAlarmList)
                     {
-                        var json = Serialize(group.Select(a => a).ToList().ToList());
+                        var json = Serialize(group.Select(a => a).ToList().ToList(), _businessPropertyWithCacheIntervalScript.JsonFormattingIndented);
                         // 将主题和 JSON 内容添加到列表中
                         topicJsonList.Add(new(topic, json));
                     }
@@ -364,7 +401,7 @@ public abstract partial class BusinessBaseWithCacheIntervalScript<VarModel, DevM
                         // 如果不是报警列表，则将每个分组元素分别转换为 JSON 字符串
                         foreach (var gro in group)
                         {
-                            var json = Serialize(gro);
+                            var json = Serialize(gro, _businessPropertyWithCacheIntervalScript.JsonFormattingIndented);
                             // 将主题和 JSON 内容添加到列表中
                             topicJsonList.Add(new(topic, json));
                         }
@@ -376,36 +413,20 @@ public abstract partial class BusinessBaseWithCacheIntervalScript<VarModel, DevM
         {
             if (_businessPropertyWithCacheIntervalScript.IsAlarmList)
             {
-                var json = Serialize(data.Select(a => a).ToList());
+                var json = Serialize(data.Select(a => a).ToList(), _businessPropertyWithCacheIntervalScript.JsonFormattingIndented);
                 topicJsonList.Add(new(_businessPropertyWithCacheIntervalScript.AlarmTopic, json));
             }
             else
             {
                 foreach (var group in data)
                 {
-                    var json = Serialize(group);
+                    var json = Serialize(group, _businessPropertyWithCacheIntervalScript.JsonFormattingIndented);
                     topicJsonList.Add(new(_businessPropertyWithCacheIntervalScript.AlarmTopic, json));
                 }
             }
         }
 
         return topicJsonList;
-    }
-
-    protected static ArraySegment<byte> Serialize(object value)
-    {
-        var block = new ValueByteBlock(1024 * 64);
-        try
-        {
-            //将数据序列化到内存块
-            FastBinaryFormatter.Serialize(ref block, value);
-            block.SeekToStart();
-            return block.Memory.GetArray();
-        }
-        finally
-        {
-            block.Dispose();
-        }
     }
 
     protected List<TopicArray> GetDeviceTopicArray(IEnumerable<DevModel> item)
@@ -436,7 +457,7 @@ public abstract partial class BusinessBaseWithCacheIntervalScript<VarModel, DevM
                         if (_businessPropertyWithCacheIntervalScript.IsDeviceList)
                         {
                             // 如果是设备列表，则将整个分组转换为 JSON 字符串
-                            var json = Serialize(group.Select(a => a).ToList());
+                            var json = Serialize(group.Select(a => a).ToList(), _businessPropertyWithCacheIntervalScript.JsonFormattingIndented);
                             // 将主题和 JSON 内容添加到列表中
                             topicJsonList.Add(new(topic, json));
                         }
@@ -445,7 +466,7 @@ public abstract partial class BusinessBaseWithCacheIntervalScript<VarModel, DevM
                             // 如果不是设备列表，则将每个分组元素分别转换为 JSON 字符串
                             foreach (var gro in group)
                             {
-                                var json = Serialize(gro);
+                                var json = Serialize(gro, _businessPropertyWithCacheIntervalScript.JsonFormattingIndented);
                                 // 将主题和 JSON 内容添加到列表中
                                 topicJsonList.Add(new(topic, json));
                             }
@@ -458,14 +479,14 @@ public abstract partial class BusinessBaseWithCacheIntervalScript<VarModel, DevM
         {
             if (_businessPropertyWithCacheIntervalScript.IsDeviceList)
             {
-                var json = Serialize(data.Select(a => a).ToList());
+                var json = Serialize(data.Select(a => a).ToList(), _businessPropertyWithCacheIntervalScript.JsonFormattingIndented);
                 topicJsonList.Add(new(_businessPropertyWithCacheIntervalScript.DeviceTopic, json));
             }
             else
             {
                 foreach (var group in data)
                 {
-                    var json = Serialize(group);
+                    var json = Serialize(group, _businessPropertyWithCacheIntervalScript.JsonFormattingIndented);
                     topicJsonList.Add(new(_businessPropertyWithCacheIntervalScript.DeviceTopic, json));
                 }
             }
@@ -501,7 +522,7 @@ public abstract partial class BusinessBaseWithCacheIntervalScript<VarModel, DevM
                         if (_businessPropertyWithCacheIntervalScript.IsVariableList)
                         {
                             // 如果是变量列表，则将整个分组转换为 JSON 字符串
-                            var json = Serialize(group.Select(a => a).ToList());
+                            var json = Serialize(group.Select(a => a).ToList(), _businessPropertyWithCacheIntervalScript.JsonFormattingIndented);
                             // 将主题和 JSON 内容添加到列表中
                             topicJsonList.Add(new(topic, json));
                         }
@@ -510,7 +531,7 @@ public abstract partial class BusinessBaseWithCacheIntervalScript<VarModel, DevM
                             // 如果不是变量列表，则将每个分组元素分别转换为 JSON 字符串
                             foreach (var gro in group)
                             {
-                                var json = Serialize(gro);
+                                var json = Serialize(gro, _businessPropertyWithCacheIntervalScript.JsonFormattingIndented);
                                 // 将主题和 JSON 内容添加到列表中
                                 topicJsonList.Add(new(topic, json));
                             }
@@ -523,21 +544,20 @@ public abstract partial class BusinessBaseWithCacheIntervalScript<VarModel, DevM
         {
             if (_businessPropertyWithCacheIntervalScript.IsVariableList)
             {
-                var json = Serialize(data.Select(a => a).ToList());
+                var json = Serialize(data.Select(a => a).ToList(), _businessPropertyWithCacheIntervalScript.JsonFormattingIndented);
                 topicJsonList.Add(new(_businessPropertyWithCacheIntervalScript.VariableTopic, json));
             }
             else
             {
                 foreach (var group in data)
                 {
-                    var json = Serialize(group);
+                    var json = Serialize(group, _businessPropertyWithCacheIntervalScript.JsonFormattingIndented);
                     topicJsonList.Add(new(_businessPropertyWithCacheIntervalScript.VariableTopic, json));
                 }
             }
         }
         return topicJsonList;
     }
-
 
     protected List<TopicArray> GetVariableBasicDataTopicArray(IEnumerable<VariableBasicData> item)
     {
@@ -576,7 +596,7 @@ public abstract partial class BusinessBaseWithCacheIntervalScript<VarModel, DevM
                         if (_businessPropertyWithCacheIntervalScript.IsVariableList)
                         {
                             // 如果是变量列表，则将整个分组转换为 JSON 字符串
-                            var json = Serialize(group.Select(a => a).ToList());
+                            var json = Serialize(group.Select(a => a).ToList(), _businessPropertyWithCacheIntervalScript.JsonFormattingIndented);
                             // 将主题和 JSON 内容添加到列表中
                             topicJsonList.Add(new(topic, json));
                         }
@@ -585,7 +605,7 @@ public abstract partial class BusinessBaseWithCacheIntervalScript<VarModel, DevM
                             // 如果不是变量列表，则将每个分组元素分别转换为 JSON 字符串
                             foreach (var gro in group)
                             {
-                                var json = Serialize(gro);
+                                var json = Serialize(gro, _businessPropertyWithCacheIntervalScript.JsonFormattingIndented);
                                 // 将主题和 JSON 内容添加到列表中
                                 topicJsonList.Add(new(topic, json));
                             }
@@ -598,14 +618,14 @@ public abstract partial class BusinessBaseWithCacheIntervalScript<VarModel, DevM
         {
             if (_businessPropertyWithCacheIntervalScript.IsVariableList)
             {
-                var json = Serialize(data.Select(a => a).ToList());
+                var json = Serialize(data.Select(a => a).ToList(), _businessPropertyWithCacheIntervalScript.JsonFormattingIndented);
                 topicJsonList.Add(new(_businessPropertyWithCacheIntervalScript.VariableTopic, json));
             }
             else
             {
                 foreach (var group in data)
                 {
-                    var json = Serialize(group);
+                    var json = Serialize(group, _businessPropertyWithCacheIntervalScript.JsonFormattingIndented);
                     topicJsonList.Add(new(_businessPropertyWithCacheIntervalScript.VariableTopic, json));
                 }
             }
@@ -614,5 +634,9 @@ public abstract partial class BusinessBaseWithCacheIntervalScript<VarModel, DevM
     }
 
 
+    protected string GetString(string topic, byte[] json, int count)
+    {
+        return $"Topic：{topic}{Environment.NewLine}PayLoad：{Encoding.UTF8.GetString(json)} {Environment.NewLine} VarModelQueue:{count}";
+    }
     #endregion 封装方法
 }

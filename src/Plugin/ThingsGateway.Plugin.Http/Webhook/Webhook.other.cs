@@ -135,11 +135,13 @@ public partial class Webhook : BusinessBaseWithCacheIntervalScript<VariableBasic
 
     private readonly HttpClient client = new HttpClient();
 
-    private async Task<OperResult> WebhookUpAsync(string topic, string json, int count, CancellationToken cancellationToken)
+    private async Task<OperResult> WebhookUpAsync(string topic, byte[] payLoad, int count, CancellationToken cancellationToken)
     {
 
         // 设置请求内容
-        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        //var content = new StringContent(json, Encoding.UTF8, "application/json");
+        using var content = new ByteArrayContent(payLoad);
+        content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
 
         try
         {
@@ -152,7 +154,7 @@ public partial class Webhook : BusinessBaseWithCacheIntervalScript<VariableBasic
                 if (_driverPropertys.DetailLog)
                 {
                     if (LogMessage.LogLevel <= TouchSocket.Core.LogLevel.Trace)
-                        LogMessage.LogTrace($"Topic：{topic}{Environment.NewLine}PayLoad：{json} {Environment.NewLine} VarModelQueue:{_memoryVarModelQueue.Count}");
+                        LogMessage.LogTrace(GetString(topic, payLoad, _memoryVarModelQueue.Count));
                 }
                 else
                 {
@@ -175,11 +177,12 @@ public partial class Webhook : BusinessBaseWithCacheIntervalScript<VariableBasic
 
     #region private
 
-    private async ValueTask<OperResult> Update(List<TopicJson> topicJsonList, int count, CancellationToken cancellationToken)
+    private async ValueTask<OperResult> Update(List<TopicArray> topicJsonList, int count, CancellationToken cancellationToken)
     {
         foreach (var topicJson in topicJsonList)
         {
             var result = await WebhookUpAsync(topicJson.Topic, topicJson.Json, count, cancellationToken).ConfigureAwait(false);
+
             if (cancellationToken.IsCancellationRequested)
                 return result;
             if (success != result.IsSuccess)
@@ -202,20 +205,20 @@ public partial class Webhook : BusinessBaseWithCacheIntervalScript<VariableBasic
 
     private ValueTask<OperResult> UpdateAlarmModel(IEnumerable<AlarmVariable> item, CancellationToken cancellationToken)
     {
-        List<TopicJson> topicJsonList = GetAlarms(item);
+        var topicJsonList = GetAlarmTopicArrays(item);
         return Update(topicJsonList, item.Count(), cancellationToken);
     }
 
     private ValueTask<OperResult> UpdateDevModel(IEnumerable<DeviceBasicData> item, CancellationToken cancellationToken)
     {
 
-        List<TopicJson> topicJsonList = GetDeviceData(item);
+        var topicJsonList = GetDeviceTopicArray(item);
         return Update(topicJsonList, item.Count(), cancellationToken);
     }
 
     private ValueTask<OperResult> UpdateVarModel(IEnumerable<VariableBasicData> item, CancellationToken cancellationToken)
     {
-        List<TopicJson> topicJsonList = GetVariableBasicData(item);
+        var topicJsonList = GetVariableBasicDataTopicArray(item);
         return Update(topicJsonList, item.Count(), cancellationToken);
     }
 

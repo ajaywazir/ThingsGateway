@@ -60,31 +60,35 @@ public partial class MqttClient : BusinessBaseWithCacheIntervalScript<VariableBa
 
     private async ValueTask<OperResult> UpdateThingsBoardDeviceConnect(DeviceBasicData deviceData)
     {
-        List<TopicJson> topicJsonTBList = new();
+        var topicJsonTBList = new List<TopicArray>();
 
         {
             if (deviceData.DeviceStatus == DeviceStatusEnum.OnLine)
             {
-                var topicJson = new TopicJson()
+                var json = new
+                {
+                    device = deviceData.Name,
+                };
+                var topicJson = new TopicArray()
                 {
                     Topic = "v1/gateway/connect",
-                    Json = new
-                    {
-                        device = deviceData.Name,
-                    }.ToJsonNetString(_driverPropertys.JsonFormattingIndented)
+                    Json = Serialize(json, _driverPropertys.JsonFormattingIndented)
                 };
+
                 topicJsonTBList.Add(topicJson);
             }
             else
             {
-                var topicJson = new TopicJson()
+                var json = new
+                {
+                    device = deviceData.Name,
+                };
+                var topicJson = new TopicArray()
                 {
                     Topic = "v1/gateway/disconnect",
-                    Json = new
-                    {
-                        device = deviceData.Name,
-                    }.ToJsonNetString(_driverPropertys.JsonFormattingIndented)
+                    Json = Serialize(json, _driverPropertys.JsonFormattingIndented)
                 };
+
                 topicJsonTBList.Add(topicJson);
             }
 
@@ -202,7 +206,7 @@ public partial class MqttClient : BusinessBaseWithCacheIntervalScript<VariableBa
 
     #region private
 
-    private async ValueTask<OperResult> Update(List<TopicJson> topicJsonList, int count, CancellationToken cancellationToken)
+    private async ValueTask<OperResult> Update(List<TopicArray> topicJsonList, int count, CancellationToken cancellationToken)
     {
         foreach (var topicJson in topicJsonList)
         {
@@ -227,20 +231,20 @@ public partial class MqttClient : BusinessBaseWithCacheIntervalScript<VariableBa
 
     private ValueTask<OperResult> UpdateAlarmModel(IEnumerable<AlarmVariable> item, CancellationToken cancellationToken)
     {
-        List<TopicJson> topicJsonList = GetAlarms(item);
+        var topicJsonList = GetAlarmTopicArrays(item);
         return Update(topicJsonList, item.Count(), cancellationToken);
     }
 
     private ValueTask<OperResult> UpdateDevModel(IEnumerable<DeviceBasicData> item, CancellationToken cancellationToken)
     {
 
-        List<TopicJson> topicJsonList = GetDeviceData(item);
+        var topicJsonList = GetDeviceTopicArray(item);
         return Update(topicJsonList, item.Count(), cancellationToken);
     }
 
     private ValueTask<OperResult> UpdateVarModel(IEnumerable<VariableBasicData> item, CancellationToken cancellationToken)
     {
-        List<TopicJson> topicJsonList = GetVariableBasicData(item);
+        var topicJsonList = GetVariableBasicDataTopicArray(item);
         return Update(topicJsonList, item.Count(), cancellationToken);
     }
 
@@ -459,7 +463,7 @@ public partial class MqttClient : BusinessBaseWithCacheIntervalScript<VariableBa
     /// <summary>
     /// 上传mqtt，返回上传结果
     /// </summary>
-    public async ValueTask<OperResult> MqttUpAsync(string topic, string payLoad, int count, CancellationToken cancellationToken = default)
+    public async ValueTask<OperResult> MqttUpAsync(string topic, byte[] payLoad, int count, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -475,7 +479,7 @@ public partial class MqttClient : BusinessBaseWithCacheIntervalScript<VariableBa
                     if (_driverPropertys.DetailLog)
                     {
                         if (LogMessage.LogLevel <= TouchSocket.Core.LogLevel.Trace)
-                            LogMessage.LogTrace($"Topic：{topic}{Environment.NewLine}PayLoad：{payLoad} {Environment.NewLine} VarModelQueue:{_memoryVarModelQueue.Count}");
+                            LogMessage.LogTrace(GetString(topic, payLoad, _memoryVarModelQueue.Count));
                     }
                     else
                     {

@@ -8,15 +8,18 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
+using System.Text;
+
 namespace ThingsGateway.Gateway.Application;
 
 public struct TopicArray
 {
-    public TopicArray(string topic, ArraySegment<byte> json)
+    public TopicArray(string topic, byte[] json)
     {
         Topic = topic; Json = json;
     }
 
-    public ArraySegment<byte> Json { get; set; }
+    public byte[] Json { get; set; }
     public string Topic { get; set; }
+
 }

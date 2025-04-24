@@ -141,7 +141,7 @@ public partial class MqttServer : BusinessBaseWithCacheIntervalScript<VariableBa
     }
     #region private
 
-    private async ValueTask<OperResult> Update(List<TopicJson> topicJsonList, int count, CancellationToken cancellationToken)
+    private async ValueTask<OperResult> Update(List<TopicArray> topicJsonList, int count, CancellationToken cancellationToken)
     {
         foreach (var topicJson in topicJsonList)
         {
@@ -164,20 +164,20 @@ public partial class MqttServer : BusinessBaseWithCacheIntervalScript<VariableBa
 
     private ValueTask<OperResult> UpdateAlarmModel(IEnumerable<AlarmVariable> item, CancellationToken cancellationToken)
     {
-        List<TopicJson> topicJsonList = GetAlarms(item);
+        var topicJsonList = GetAlarmTopicArrays(item);
 
         return Update(topicJsonList, item.Count(), cancellationToken);
     }
 
     private ValueTask<OperResult> UpdateDevModel(IEnumerable<DeviceBasicData> item, CancellationToken cancellationToken)
     {
-        List<TopicJson> topicJsonList = GetDeviceData(item);
+        var topicJsonList = GetDeviceTopicArray(item);
         return Update(topicJsonList, item.Count(), cancellationToken);
     }
 
     private ValueTask<OperResult> UpdateVarModel(IEnumerable<VariableBasicData> item, CancellationToken cancellationToken)
     {
-        List<TopicJson> topicJsonList = GetVariableBasicData(item);
+        var topicJsonList = GetVariableBasicDataTopicArray(item);
         return Update(topicJsonList, item.Count(), cancellationToken);
     }
 
@@ -261,7 +261,7 @@ public partial class MqttServer : BusinessBaseWithCacheIntervalScript<VariableBa
         {
             foreach (var item in varData)
             {
-                List<TopicJson> topicJsonList = GetVariableBasicData(item);
+                var topicJsonList = GetVariableBasicData(item);
                 foreach (var topicJson in topicJsonList)
                 {
                     Messages.Add(new MqttApplicationMessageBuilder()
@@ -276,7 +276,7 @@ public partial class MqttServer : BusinessBaseWithCacheIntervalScript<VariableBa
             {
                 foreach (var item in devData)
                 {
-                    List<TopicJson> topicJsonList = GetDeviceData(item);
+                    var topicJsonList = GetDeviceData(item);
                     foreach (var topicJson in topicJsonList)
                     {
                         Messages.Add(new MqttApplicationMessageBuilder()
@@ -290,7 +290,7 @@ public partial class MqttServer : BusinessBaseWithCacheIntervalScript<VariableBa
         {
             foreach (var item in alramData)
             {
-                List<TopicJson> topicJsonList = GetAlarms(item);
+                var topicJsonList = GetAlarms(item);
                 foreach (var topicJson in topicJsonList)
                 {
                     Messages.Add(new MqttApplicationMessageBuilder()
@@ -394,7 +394,7 @@ public partial class MqttServer : BusinessBaseWithCacheIntervalScript<VariableBa
     /// <summary>
     /// 上传mqtt，返回上传结果
     /// </summary>
-    public async ValueTask<OperResult> MqttUpAsync(string topic, string payLoad, int count, CancellationToken cancellationToken = default)
+    public async ValueTask<OperResult> MqttUpAsync(string topic, byte[] payLoad, int count, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -407,7 +407,7 @@ public partial class MqttServer : BusinessBaseWithCacheIntervalScript<VariableBa
             if (_driverPropertys.DetailLog)
             {
                 if (LogMessage.LogLevel <= TouchSocket.Core.LogLevel.Trace)
-                    LogMessage.LogTrace($"Topic：{topic}{Environment.NewLine}PayLoad：{payLoad} {Environment.NewLine} VarModelQueue:{_memoryVarModelQueue.Count} ");
+                    LogMessage.LogTrace(GetString(topic, payLoad, _memoryVarModelQueue.Count));
             }
             else
             {

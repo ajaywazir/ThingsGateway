@@ -166,7 +166,7 @@ public partial class SqlDBProducer : BusinessBaseWithCacheIntervalVariableModel<
                 {
                     if (datas?.Count > 0)
                     {
-                        var result = await db.Storageable(datas).As(_driverPropertys.ReadDBTableName).PageSize(5000).ExecuteSqlBulkCopyAsync().ConfigureAwait(false);
+                        var result = await db.Storageable(datas).As(_driverPropertys.ReadDBTableName).PageSize(5000).ExecuteSqlBulkCopyAsync(cancellationToken).ConfigureAwait(false);
                         if (result > 0)
                             LogMessage.Trace($"RealTable Data Count：{result}");
                         _initRealData = true;

@@ -46,7 +46,7 @@ public partial class KafkaProducer : BusinessBaseWithCacheIntervalScript<Variabl
             _producerconfig.SaslPassword = _driverPropertys.SaslPassword;
 
         //2、创建生产者
-        _producerBuilder = new ProducerBuilder<Null, string>(_producerconfig);
+        _producerBuilder = new ProducerBuilder<Null, byte[]>(_producerconfig);
         //3、错误日志监视
         _producerBuilder.SetErrorHandler((p, msg) =>
         {
@@ -75,6 +75,14 @@ public partial class KafkaProducer : BusinessBaseWithCacheIntervalScript<Variabl
     /// <inheritdoc/>
     protected override void Dispose(bool disposing)
     {
+        try
+        {
+            _producer?.Flush(TimeSpan.FromSeconds(10));
+        }
+        catch
+        {
+
+        }
         _producer?.SafeDispose();
         base.Dispose(disposing);
     }

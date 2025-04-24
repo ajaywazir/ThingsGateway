@@ -133,41 +133,6 @@ public partial class MqttCollect : CollectBase
         }
     }
 
-    /// <summary>
-    /// 上传mqtt，返回上传结果
-    /// </summary>
-    private async ValueTask<OperResult> MqttUpAsync(string topic, string payLoad, CancellationToken cancellationToken)
-    {
-        try
-        {
-            var isConnect = await TryMqttClientAsync(cancellationToken).ConfigureAwait(false);
-            if (isConnect.IsSuccess)
-            {
-                var variableMessage = new MqttApplicationMessageBuilder()
-    .WithTopic(topic).WithRetainFlag(true)
-    .WithPayload(payLoad).Build();
-                var result = await _mqttClient.PublishAsync(variableMessage, cancellationToken).ConfigureAwait(false);
-                if (result.IsSuccess)
-                {
-                    if (LogMessage.LogLevel <= TouchSocket.Core.LogLevel.Trace)
-                        LogMessage.LogTrace($"Topic：{topic}{Environment.NewLine}PayLoad：{payLoad}");
-                    return OperResult.Success;
-                }
-                else
-                {
-                    return new OperResult($"Upload fail{result.ReasonString}");
-                }
-            }
-            else
-            {
-                return isConnect;
-            }
-        }
-        catch (Exception ex)
-        {
-            return new OperResult($"Upload fail", ex);
-        }
-    }
 
     private async ValueTask<OperResult> TryMqttClientAsync(CancellationToken cancellationToken)
     {
