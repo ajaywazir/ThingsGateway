@@ -80,7 +80,7 @@ public class DtuPlugin : PluginBase, ITcpReceivingPlugin
             {
                 if (HeartbeatByte.SequenceEqual(e.ByteBlock.AsSegment(0, len)))
                 {
-                    if (DateTime.UtcNow - socket.LastSentTime.ToUniversalTime() < TimeSpan.FromMilliseconds(200))
+                    if (DateTimeOffset.Now - socket.LastSentTime < TimeSpan.FromMilliseconds(200))
                     {
                         await Task.Delay(200).ConfigureAwait(false);
                     }

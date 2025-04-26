@@ -94,22 +94,22 @@ public abstract class TcpServiceChannelBase<TClient> : TcpService<TClient>, ITcp
     }
 
     /// <inheritdoc/>
-    public override async Task StopAsync()
+    public override async Task<Result> StopAsync(CancellationToken token)
     {
         if (Monitors.Any())
         {
             try
             {
-                await _connectLock.WaitAsync().ConfigureAwait(false);
+                await _connectLock.WaitAsync(token).ConfigureAwait(false);
                 if (Monitors.Any())
                 {
 
                     await ClearAsync().ConfigureAwait(false);
                     var iPHost = Monitors.FirstOrDefault()?.Option.IpHost;
-                    await base.StopAsync().ConfigureAwait(false);
+                    var result = await base.StopAsync(token).ConfigureAwait(false);
                     if (!Monitors.Any())
                         Logger?.Info($"{iPHost}{DefaultResource.Localizer["ServiceStoped"]}");
-
+                    return result;
                 }
             }
             finally
@@ -120,8 +120,10 @@ public abstract class TcpServiceChannelBase<TClient> : TcpService<TClient>, ITcp
         }
         else
         {
-            await base.StopAsync().ConfigureAwait(false);
+            var result = await base.StopAsync(token).ConfigureAwait(false);
+            return result;
         }
+        return Result.Success; ;
     }
 
 
@@ -192,9 +194,9 @@ public class TcpServiceChannel<TClient> : TcpServiceChannelBase<TClient>, IChann
     public ChannelEventHandler Stoping { get; set; } = new();
 
     /// <inheritdoc/>
-    public Task CloseAsync(string msg)
+    public Task<Result> CloseAsync(string msg, CancellationToken token)
     {
-        return StopAsync();
+        return StopAsync(token);
     }
 
     /// <inheritdoc/>

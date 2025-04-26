@@ -94,11 +94,11 @@ public class DDPUdpSessionChannel : UdpSessionChannel, IClientChannel, IDtuUdpSe
         return WaitLocks.GetOrAdd(key, (a) => new WaitLock(WaitLock.MaxCount));
     }
 
-    public override Task StopAsync()
+    public override Task<Result> StopAsync(CancellationToken token)
     {
         WaitLocks.ForEach(a => a.Value.SafeDispose());
         WaitLocks.Clear();
-        return base.StopAsync();
+        return base.StopAsync(token);
     }
 
     private ConcurrentDictionary<EndPoint, WaitLock> _waitLocks = new();

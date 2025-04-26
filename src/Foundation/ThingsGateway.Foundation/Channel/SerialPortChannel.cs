@@ -74,8 +74,9 @@ public class SerialPortChannel : SerialPortClient, IClientChannel
 
     //private readonly WaitLock _connectLock = new WaitLock();
     /// <inheritdoc/>
-    public override async Task CloseAsync(string msg)
+    public override async Task<Result> CloseAsync(string msg, CancellationToken token)
     {
+
         if (Online)
         {
             try
@@ -83,11 +84,12 @@ public class SerialPortChannel : SerialPortClient, IClientChannel
                 //await _connectLock.WaitAsync().ConfigureAwait(false);
                 if (Online)
                 {
-                    await base.CloseAsync(msg).ConfigureAwait(false);
+                    var result = await base.CloseAsync(msg, token).ConfigureAwait(false);
                     if (!Online)
                     {
                         await this.OnChannelEvent(Stoped).ConfigureAwait(false);
                     }
+                    return result;
                 }
             }
             finally
@@ -95,6 +97,7 @@ public class SerialPortChannel : SerialPortClient, IClientChannel
                 //_connectLock.Release();
             }
         }
+        return Result.Success;
     }
 
     /// <inheritdoc/>

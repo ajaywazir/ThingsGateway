@@ -72,7 +72,7 @@ public class TcpClientChannel : TcpClient, IClientChannel
 
     //private readonly WaitLock _connectLock = new WaitLock();
     /// <inheritdoc/>
-    public override async Task CloseAsync(string msg)
+    public override async Task<Result> CloseAsync(string msg, CancellationToken token)
     {
         if (Online)
         {
@@ -81,11 +81,12 @@ public class TcpClientChannel : TcpClient, IClientChannel
                 //await _connectLock.WaitAsync().ConfigureAwait(false);
                 if (Online)
                 {
-                    await base.CloseAsync(msg).ConfigureAwait(false);
+                    var result = await base.CloseAsync(msg, token).ConfigureAwait(false);
                     if (!Online)
                     {
                         await this.OnChannelEvent(Stoped).ConfigureAwait(false);
                     }
+                    return result;
                 }
             }
             finally
@@ -93,6 +94,7 @@ public class TcpClientChannel : TcpClient, IClientChannel
                 //_connectLock.Release();
             }
         }
+        return Result.Success;
     }
 
     /// <inheritdoc/>

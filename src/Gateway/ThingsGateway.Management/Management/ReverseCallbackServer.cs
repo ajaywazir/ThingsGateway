@@ -15,7 +15,7 @@ using TouchSocket.Rpc;
 
 namespace ThingsGateway.Management;
 
-public partial class ReverseCallbackServer : RpcServer
+public partial class ReverseCallbackServer : SingletonRpcServer
 {
     [DmtpRpc(MethodInvoke = true)]
     public void UpdateGatewayData(List<DeviceDataWithValue> deviceDatas)

@@ -128,17 +128,17 @@ public class OtherChannel : SetupConfigObject, IClientChannel
 
     public Protocol Protocol => new Protocol("Other");
 
-    public DateTime LastReceivedTime { get; private set; }
+    public DateTimeOffset LastReceivedTime { get; private set; }
 
-    public DateTime LastSentTime { get; private set; }
+    public DateTimeOffset LastSentTime { get; private set; }
 
     public bool IsClient => true;
 
     public bool Online => true;
 
-    public Task CloseAsync(string msg)
+    public Task<Result> CloseAsync(string msg, CancellationToken token)
     {
-        return Task.CompletedTask;
+        return Task.FromResult(Result.Success);
     }
 
     public Task ConnectAsync(int millisecondsTimeout, CancellationToken token)

@@ -16,8 +16,6 @@ using System.Collections.Concurrent;
 
 using ThingsGateway.NewLife;
 
-using TouchSocket.Core;
-
 namespace ThingsGateway.Gateway.Application;
 
 internal sealed class ChannelThreadManage : IChannelThreadManage
@@ -114,8 +112,6 @@ internal sealed class ChannelThreadManage : IChannelThreadManage
     private async Task PrivateRestartChannelAsync(IEnumerable<ChannelRuntime> channelRuntimes)
     {
         await PrivateRemoveChannelsAsync(channelRuntimes.Select(a => a.Id)).ConfigureAwait(false);
-
-        BytePool.Default.Clear();
 
         await channelRuntimes.ParallelForEachAsync(async (channelRuntime, token) =>
         {

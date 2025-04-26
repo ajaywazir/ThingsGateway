@@ -13,7 +13,7 @@ using TouchSocket.Rpc;
 
 namespace ThingsGateway.Management;
 
-public partial class UpgradeRpcServer : RpcServer
+public partial class UpgradeRpcServer : SingletonRpcServer
 {
     [DmtpRpc(MethodInvoke = true)]
     public void Restart()

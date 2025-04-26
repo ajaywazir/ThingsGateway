@@ -8,8 +8,6 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
-using System.Text;
-
 namespace ThingsGateway.Gateway.Application;
 
 public struct TopicArray

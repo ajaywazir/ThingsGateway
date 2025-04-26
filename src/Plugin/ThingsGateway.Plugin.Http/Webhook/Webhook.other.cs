@@ -12,8 +12,6 @@ using BootstrapBlazor.Components;
 
 using Mapster;
 
-using System.Text;
-
 using ThingsGateway.Foundation;
 using ThingsGateway.NewLife.Extension;
 

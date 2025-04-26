@@ -81,7 +81,7 @@ internal sealed class HeartbeatAndReceivePlugin : PluginBase, ITcpConnectedPlugi
 
                          try
                          {
-                             if (DateTime.UtcNow - tcpClient.LastSentTime.ToUniversalTime() < TimeSpan.FromMilliseconds(200))
+                             if (DateTimeOffset.Now - tcpClient.LastSentTime < TimeSpan.FromMilliseconds(200))
                              {
                                  await Task.Delay(200).ConfigureAwait(false);
                              }

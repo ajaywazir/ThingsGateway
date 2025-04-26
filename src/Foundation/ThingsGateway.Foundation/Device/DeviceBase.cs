@@ -944,7 +944,7 @@ public abstract class DeviceBase : DisposableObject, IDevice
                         if (tcpServiceChannel.TryGetClient($"ID={dtu.DtuId}", out var client))
                         {
                             client.WaitHandlePool?.SafeDispose();
-                            client.SafeClose();
+                            client.Close();
                         }
 
                     }

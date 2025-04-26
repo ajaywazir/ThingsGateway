@@ -76,7 +76,7 @@ public static class PluginUtil
         .SetOnClose(async (c, t) =>
         {
             await c.ShutdownAsync(System.Net.Sockets.SocketShutdown.Both).ConfigureAwait(false);
-            c.SafeClose($"{channelOptions.CheckClearTime}ms Timeout");
+            await c.CloseAsync($"{channelOptions.CheckClearTime}ms Timeout").ConfigureAwait(false);
         });
             };
 

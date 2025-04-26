@@ -73,9 +73,9 @@ public class UdpSessionChannel : UdpSession, IClientChannel
     public ConcurrentDictionary<long, Func<IClientChannel, ReceivedDataEventArgs, bool, Task>> ChannelReceivedWaitDict { get; } = new();
 
     /// <inheritdoc/>
-    public Task CloseAsync(string msg)
+    public Task<Result> CloseAsync(string msg, CancellationToken token)
     {
-        return StopAsync();
+        return StopAsync(token);
     }
 
     /// <inheritdoc/>
@@ -127,26 +127,28 @@ public class UdpSessionChannel : UdpSession, IClientChannel
     }
 
     /// <inheritdoc/>
-    public override async Task StopAsync()
+    public override async Task<Result> StopAsync(CancellationToken token)
     {
         if (Monitor != null)
         {
             try
             {
-                await _connectLock.WaitAsync().ConfigureAwait(false);
+                await _connectLock.WaitAsync(token).ConfigureAwait(false);
                 if (Monitor != null)
                 {
                     await this.OnChannelEvent(Stoping).ConfigureAwait(false);
-                    await base.StopAsync().ConfigureAwait(false);
+                    var result = await base.StopAsync(token).ConfigureAwait(false);
                     if (Monitor == null)
                     {
                         await this.OnChannelEvent(Stoped).ConfigureAwait(false);
                         Logger?.Info($"{DefaultResource.Localizer["ServiceStoped"]}");
                     }
+                    return result;
                 }
                 else
                 {
-                    await base.StopAsync().ConfigureAwait(false);
+                    var result = await base.StopAsync(token).ConfigureAwait(false);
+                    return result;
                 }
             }
             finally
@@ -156,7 +158,8 @@ public class UdpSessionChannel : UdpSession, IClientChannel
         }
         else
         {
-            await base.StopAsync().ConfigureAwait(false);
+            var result = await base.StopAsync(token).ConfigureAwait(false);
+            return result;
         }
     }
 

@@ -64,10 +64,10 @@ public class TcpSessionClientChannel : TcpSessionClient, IClientChannel
     public virtual WaitLock GetLock(string key) => WaitLock;
 
     /// <inheritdoc/>
-    public override Task CloseAsync(string msg)
+    public override Task<Result> CloseAsync(string msg, CancellationToken token)
     {
         WaitHandlePool.SafeDispose();
-        return base.CloseAsync(msg);
+        return base.CloseAsync(msg, token);
     }
 
     /// <inheritdoc/>

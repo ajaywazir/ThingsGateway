@@ -134,7 +134,7 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
         CancellationToken = CancellationTokenSource.Token;
 
         CancellationToken.Register(() => GlobalData.DeviceStatusChangeEvent -= GlobalData_DeviceStatusChangeEvent);
-     
+
         _ = Task.Run(() => CheckThreadAsync(CancellationToken));
         _ = Task.Run(() => CheckRedundantAsync(CancellationToken));
     }
