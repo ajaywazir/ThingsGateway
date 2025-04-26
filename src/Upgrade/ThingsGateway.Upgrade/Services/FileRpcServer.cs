@@ -4,7 +4,7 @@ using TouchSocket.Rpc;
 
 namespace ThingsGateway.Upgrade;
 
-public partial class FileRpcServer : RpcServer
+public partial class FileRpcServer : SingletonRpcServer
 {
     private readonly ILog _logger;
 

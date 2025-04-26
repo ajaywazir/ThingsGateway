@@ -76,6 +76,7 @@ public class Startup : AppStartup
             if (configId.Count() > 1) throw new($"Sqlsugar connect configId: {configId.Key} Duplicate!");
         }
 
+
         //遍历配置
         DbContext.DbConfigs?.ForEach(it =>
         {
@@ -84,6 +85,20 @@ public class Startup : AppStartup
             if (it.InitTable == true)
                 connection.DbMaintenance.CreateDatabase();//创建数据库,如果存在则不创建
         });
+
+
+        //兼容变量名称唯一键处理
+        try
+        {
+            using var db = DbContext.GetDB<Variable>();
+            if (db.DbMaintenance.IsAnyIndex("unique_variable_name"))
+            {
+                var tables = db.DbMaintenance.DropIndex("unique_variable_name");
+            }
+        }
+        catch { }
+
+
         var fullName = Assembly.GetExecutingAssembly().FullName;//获取程序集全名
         CodeFirstUtils.CodeFirst(fullName!);//CodeFirst
 
@@ -108,6 +123,9 @@ public class Startup : AppStartup
             }
         }
         catch { }
+
+
+
 
         serviceProvider.GetService<IHostApplicationLifetime>().ApplicationStarted.Register(() =>
         {
