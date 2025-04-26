@@ -117,10 +117,9 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
         // 添加默认日志记录器
         LogMessage.AddLogger(new EasyLogger(logger.Log_Out) { LogLevel = TouchSocket.Core.LogLevel.Trace });
 
-        var ichannel = config.GetChannel(channelRuntime);
-
         // 根据配置获取通道实例
-        Channel = ichannel;
+        Channel = channelRuntime.GetChannel(config);
+
 
         //初始设置输出文本日志
         SetLog(CurrentChannel.LogLevel);
@@ -901,7 +900,8 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
             await NewDeviceLock.WaitAsync().ConfigureAwait(false);
 
             await PrivateRemoveDevicesAsync(Drivers.Keys).ConfigureAwait(false);
-            Channel?.SafeDispose();
+            if (Channel?.Collects.Count == 0)
+                Channel?.SafeDispose();
 
             LogMessage?.LogInformation(Localizer["ChannelDispose", CurrentChannel?.Name ?? string.Empty]);
 

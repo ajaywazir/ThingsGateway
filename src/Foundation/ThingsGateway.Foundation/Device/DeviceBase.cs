@@ -46,9 +46,9 @@ public abstract class DeviceBase : DisposableObject, IDevice
                 return;
             if (channel.Collects.Count > 0)
             {
-                var device = channel.Collects.First();
-                if (device.GetType() != GetType())
-                    throw new InvalidOperationException("The channel already exists in the device of another type");
+                //var device = channel.Collects.First();
+                //if (device.GetType() != GetType())
+                //    throw new InvalidOperationException("The channel already exists in the device of another type");
 
                 if (!SupportMultipleDevice())
                     throw new InvalidOperationException("The proactive response device does not support multiple devices");
@@ -221,6 +221,14 @@ public abstract class DeviceBase : DisposableObject, IDevice
         }
         else
         {
+            if (Channel?.Collects?.Count > 1)
+            {
+                var dataHandlingAdapter = GetDataAdapter();
+                if (adapter.GetType() != dataHandlingAdapter.GetType())
+                {
+                    clientChannel.SetDataHandlingAdapter(dataHandlingAdapter);
+                }
+            }
         }
     }
 

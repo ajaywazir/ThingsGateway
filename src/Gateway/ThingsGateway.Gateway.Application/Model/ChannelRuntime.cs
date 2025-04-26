@@ -131,7 +131,7 @@ public class ChannelRuntime : Channel, IChannelOptions, IDisposable
 
     public void Dispose()
     {
-        Config?.SafeDispose();
+        //Config?.SafeDispose();
 
         GlobalData.Channels.TryRemove(Id, out _);
         DeviceThreadManage = null;
@@ -144,6 +144,59 @@ public class ChannelRuntime : Channel, IChannelOptions, IDisposable
             return Name;
         }
         return $"{Name}[{base.ToString()}]";
+    }
+
+
+    public IChannel GetChannel(TouchSocketConfig config)
+    {
+        lock (GlobalData.Channels)
+        {
+
+            if (DeviceThreadManage?.Channel?.DisposedValue == false)
+                return DeviceThreadManage?.Channel;
+
+
+            if (ChannelType == ChannelTypeEnum.TcpService
+                || ChannelType == ChannelTypeEnum.SerialPort
+                || ChannelType == ChannelTypeEnum.UdpSession
+                )
+            {
+                //获取相同配置的Tcp服务或Udp服务或COM
+                var same = GlobalData.Channels.FirstOrDefault(a =>
+                 {
+                     if (a.Value == this)
+                         return false;
+                     if (a.Value.DeviceThreadManage?.Channel?.DisposedValue == true || a.Value.DeviceThreadManage?.Channel?.DisposedValue == null)
+                         return false;
+
+                     if (a.Value.ChannelType == ChannelType)
+                     {
+                         if (a.Value.ChannelType == ChannelTypeEnum.TcpService)
+                             if (a.Value.BindUrl == BindUrl)
+                                 return true;
+                         if (a.Value.ChannelType == ChannelTypeEnum.UdpSession)
+                             if (a.Value.BindUrl == BindUrl)
+                                 return true;
+                         if (a.Value.ChannelType == ChannelTypeEnum.SerialPort)
+                             if (a.Value.PortName == PortName)
+                                 return true;
+                     }
+                     return false;
+                 }).Value;
+
+                if (same != null)
+                {
+                    return same.GetChannel(config);
+                }
+            }
+
+            if (DeviceThreadManage?.Channel?.DisposedValue == false)
+                return DeviceThreadManage?.Channel;
+
+            var ichannel = config.GetChannel(this);
+            return ichannel;
+        }
+
     }
 
 }
