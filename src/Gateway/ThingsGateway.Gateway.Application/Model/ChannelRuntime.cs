@@ -175,7 +175,7 @@ public class ChannelRuntime : Channel, IChannelOptions, IDisposable
                              if (a.Value.BindUrl == BindUrl)
                                  return true;
                          if (a.Value.ChannelType == ChannelTypeEnum.UdpSession)
-                             if (a.Value.BindUrl == BindUrl)
+                             if ((!BindUrl.IsNullOrWhiteSpace()) && a.Value.BindUrl == BindUrl)
                                  return true;
                          if (a.Value.ChannelType == ChannelTypeEnum.SerialPort)
                              if (a.Value.PortName == PortName)
