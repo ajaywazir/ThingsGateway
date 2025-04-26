@@ -105,8 +105,8 @@ public class TcpSessionClientDto
     public string PluginInfos { get; set; }
 
     [AutoGenerateColumn(Searchable = true, Filterable = true, Sortable = true)]
-    public DateTime LastReceivedTime { get; set; }
+    public DateTimeOffset LastReceivedTime { get; set; }
 
     [AutoGenerateColumn(Searchable = true, Filterable = true, Sortable = true)]
-    public DateTime LastSentTime { get; set; }
+    public DateTimeOffset LastSentTime { get; set; }
 }
