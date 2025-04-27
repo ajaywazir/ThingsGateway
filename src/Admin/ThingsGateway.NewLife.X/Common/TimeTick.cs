@@ -32,7 +32,7 @@ public class TimeTick
     /// <summary>
     /// 上次触发时间
     /// </summary>
-    public DateTime LastTime { get; private set; } = DateTime.Now;
+    public DateTime LastTime { get; private set; } = DateTime.UtcNow;
 
     /// <summary>
     /// 是否触发时间刻度
@@ -62,7 +62,7 @@ public class TimeTick
         return result;
     }
 
-    public DateTime GetNextTime(DateTime currentTime, bool setLastTime = true)
+    public DateTime GetNextTime(DateTime currentTime, bool setLastTime = false)
     {
         // 在没有 Cron 表达式的情况下，使用固定间隔
         if (cron == null)
@@ -86,7 +86,7 @@ public class TimeTick
 
     }
 
-    public DateTime GetNextTime(bool setLastTime = true) => GetNextTime(DateTime.UtcNow, setLastTime);
+    public DateTime GetNextTime(bool setLastTime = false) => GetNextTime(DateTime.UtcNow, setLastTime);
 
     /// <summary>
     /// 是否到达设置的时间间隔

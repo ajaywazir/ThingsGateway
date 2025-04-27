@@ -85,12 +85,12 @@ public abstract class BusinessBaseWithCacheIntervalDeviceModel<VarModel, DevMode
 
         CollectDevices?.ForEach(a =>
         {
-            if (a.Value.DeviceStatus == DeviceStatusEnum.OnLine)
+            if (a.Value.DeviceStatus == DeviceStatusEnum.OnLine && _businessPropertyWithCacheInterval.BusinessUpdateEnum != BusinessUpdateEnum.Interval)
                 DeviceStatusChange(a.Value, a.Value.Adapt<DeviceBasicData>());
         });
         IdVariableRuntimes.ForEach(a =>
         {
-            if (a.Value.IsOnline)
+            if (a.Value.IsOnline && _businessPropertyWithCacheInterval.BusinessUpdateEnum != BusinessUpdateEnum.Interval)
                 VariableValueChange(a.Value, a.Value.Adapt<VariableBasicData>());
         });
     }

@@ -162,7 +162,7 @@ public class FileHostService : BackgroundService, IFileHostService
                 _log.Exception(ex);
                 try
                 {
-                    await TcpDmtpService.StopAsync().ConfigureAwait(false);
+                    await TcpDmtpService.StopAsync(default).ConfigureAwait(false);
                 }
                 catch
                 {

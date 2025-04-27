@@ -73,7 +73,7 @@ public abstract class BusinessBaseWithCacheIntervalVariableModel<T> : BusinessBa
         // 触发一次变量值变化事件
         IdVariableRuntimes.ForEach(a =>
         {
-            if (a.Value.IsOnline)
+            if (a.Value.IsOnline && _businessPropertyWithCacheInterval.BusinessUpdateEnum != BusinessUpdateEnum.Interval)
                 VariableValueChange(a.Value, a.Value.Adapt<VariableBasicData>());
         });
     }
