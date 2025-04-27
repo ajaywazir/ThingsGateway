@@ -97,7 +97,15 @@ public abstract class DeviceBase : DisposableObject, IDevice
             Channel.Stoping.Add(ChannelStoping);
             Channel.Started.Add(ChannelStarted);
             Channel.ChannelReceived.Add(ChannelReceived);
+
+
+            SetChannel();
         }
+    }
+
+    protected virtual void SetChannel()
+    {
+        Channel.ChannelOptions.MaxConcurrentCount = 1;
     }
 
     /// <inheritdoc/>

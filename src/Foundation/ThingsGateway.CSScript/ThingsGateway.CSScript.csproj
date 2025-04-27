@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CS-Script" Version="4.9.5" />
+		<PackageReference Include="CS-Script" Version="4.9.6" />
 	</ItemGroup>
 
 	<ItemGroup>
