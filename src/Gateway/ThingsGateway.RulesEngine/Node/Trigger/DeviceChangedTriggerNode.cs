@@ -19,7 +19,7 @@ public class DeviceChangedTriggerNode : TextNode, ITriggerNode, IDisposable
     {
         Func = func;
         FuncDict.Add(this, func);
-        if (!DeviceChangedTriggerNodeDict.TryGetValue(Text, out var list))
+        if (!DeviceChangedTriggerNodeDict.TryGetValue(Text ?? string.Empty, out var list))
         {
             var deviceChangedTriggerNodes = new ConcurrentList<DeviceChangedTriggerNode>();
             deviceChangedTriggerNodes.Add(this);
@@ -44,7 +44,7 @@ public class DeviceChangedTriggerNode : TextNode, ITriggerNode, IDisposable
 
     private static void GlobalData_DeviceStatusChangeEvent(DeviceRuntime deviceRunTime, DeviceBasicData deviceData)
     {
-        if (DeviceChangedTriggerNodeDict.TryGetValue(deviceData.Name, out var deviceChangedTriggerNodes) && deviceChangedTriggerNodes?.Count > 0)
+        if (DeviceChangedTriggerNodeDict.TryGetValue(deviceData.Name ?? string.Empty, out var deviceChangedTriggerNodes) && deviceChangedTriggerNodes?.Count > 0)
         {
             if (!DeviceDatas.IsAddingCompleted)
             {
@@ -63,7 +63,7 @@ public class DeviceChangedTriggerNode : TextNode, ITriggerNode, IDisposable
         return DeviceDatas.GetConsumingEnumerable().ParallelForEachAsync((async (deviceDatas, token) =>
             {
 
-                if (DeviceChangedTriggerNodeDict.TryGetValue(deviceDatas.Name, out var valueChangedTriggerNodes))
+                if (DeviceChangedTriggerNodeDict.TryGetValue(deviceDatas.Name ?? string.Empty, out var valueChangedTriggerNodes))
                 {
                     await valueChangedTriggerNodes.ParallelForEachAsync(async (item, token) =>
                      {
@@ -89,7 +89,7 @@ public class DeviceChangedTriggerNode : TextNode, ITriggerNode, IDisposable
     public void Dispose()
     {
         FuncDict.Remove(this);
-        if (DeviceChangedTriggerNodeDict.TryGetValue(Text, out var list))
+        if (DeviceChangedTriggerNodeDict.TryGetValue(Text ?? string.Empty, out var list))
         {
             list.Remove(this);
         }

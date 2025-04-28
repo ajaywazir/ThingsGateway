@@ -12,6 +12,8 @@ using BootstrapBlazor.Components;
 
 using Mapster;
 
+using Newtonsoft.Json.Linq;
+
 using SqlSugar;
 
 using ThingsGateway.Admin.Application;
@@ -156,7 +158,7 @@ public partial class SqlDBProducer : BusinessBaseWithCacheIntervalVariableModel<
         _config.ForType<VariableRuntime, SQLHistoryValue>()
             //.Map(dest => dest.Id, (src) =>CommonUtils.GetSingleId())
             .Map(dest => dest.Id, src => src.Id)//Id更改为变量Id
-            .Map(dest => dest.Value, src => src.Value == null ? string.Empty : src.Value.ToString() ?? string.Empty)
+            .Map(dest => dest.Value, src => src.Value != null ? src.Value.GetType() == typeof(string) ? src.Value.ToString() : JToken.FromObject(src.Value).ToString() : string.Empty)
             .Map(dest => dest.CreateTime, (src) => DateTime.Now);
 
         _exRealTimerTick = new(_driverPropertys.RealTableBusinessInterval);

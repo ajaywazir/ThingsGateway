@@ -26,7 +26,7 @@ namespace ThingsGateway.Gateway.Application;
 public class DeviceRuntime : Device, IDisposable
 {
     protected volatile DeviceStatusEnum _deviceStatus = DeviceStatusEnum.Default;
-
+    
     private string? _lastErrorMessage;
 
     /// <summary>

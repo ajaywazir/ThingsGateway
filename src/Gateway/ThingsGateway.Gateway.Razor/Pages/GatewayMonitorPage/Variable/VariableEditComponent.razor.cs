@@ -212,8 +212,8 @@ public partial class VariableEditComponent
                 {
                     var component = new BootstrapDynamicComponent(data.VariablePropertyUIType, new Dictionary<string, object?>
                     {
-                        [nameof(VariableEditComponent.Model)] = Model,
-                        [nameof(DeviceEditComponent.PluginPropertyEditorItems)] = data.EditorItems,
+                        [nameof(IPropertyUIBase.Model)] = Model,
+                        [nameof(IPropertyUIBase.PluginPropertyEditorItems)] = data.EditorItems,
                     });
                     VariablePropertyRenderFragments.AddOrUpdate(id, component.Render());
                 }

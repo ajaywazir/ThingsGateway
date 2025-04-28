@@ -19,5 +19,8 @@ public class VariableMapper : IRegister
     {
         config.ForType<Variable, VariableRuntime>()
         .Map(dest => dest.Value, src => src.InitValue);
+
+        config.ForType<VariableRuntime, VariableRuntime>()
+.Ignore(dest => dest.DeviceRuntime);
     }
 }

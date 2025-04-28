@@ -22,12 +22,34 @@ public static class JSRuntimeExtensions
     /// 获取文化信息
     /// </summary>
     /// <param name="jsRuntime"></param>
-    public static ValueTask<string> GetCulture(this IJSRuntime jsRuntime) => jsRuntime.InvokeAsync<string>("getCultureLocalStorage");
+    public static async ValueTask<string> GetCulture(this IJSRuntime jsRuntime)
+    {
+        try
+        {
+            return await jsRuntime.InvokeAsync<string>("getCultureLocalStorage");
+        }
+        catch
+        {
+            return null;
+        }
+
+    }
 
     /// <summary>
     /// 设置文化信息
     /// </summary>
     /// <param name="jsRuntime"></param>
     /// <param name="cultureName"></param>
-    public static ValueTask SetCulture(this IJSRuntime jsRuntime, string cultureName) => jsRuntime.InvokeVoidAsync("setCultureLocalStorage", cultureName);
+    public static async ValueTask SetCulture(this IJSRuntime jsRuntime, string cultureName)
+    {
+        try
+        {
+            await jsRuntime.InvokeVoidAsync("setCultureLocalStorage", cultureName);
+        }
+        catch
+        {
+
+        }
+
+    }
 }
