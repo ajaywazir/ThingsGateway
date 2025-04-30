@@ -12,8 +12,6 @@ using BootstrapBlazor.Components;
 
 using Mapster;
 
-using Newtonsoft.Json.Linq;
-
 using SqlSugar;
 
 using ThingsGateway.Admin.Application;
@@ -156,17 +154,11 @@ public partial class SqlDBProducer : BusinessBaseWithCacheIntervalVariableModel<
     {
         _config = new TypeAdapterConfig();
         _config.ForType<VariableRuntime, SQLHistoryValue>()
-            .Map(dest => dest.Id, (src) => CommonUtils.GetSingleId())
-            //.Map(dest => dest.Id, src => src.Id)//Id更改为变量Id
-            .Map(dest => dest.Value, src => src.Value != null ? src.Value.GetType() == typeof(string) ? src.Value.ToString() : JToken.FromObject(src.Value).ToString() : string.Empty)
+            //.Map(dest => dest.Id, (src) =>CommonUtils.GetSingleId())
+            .Map(dest => dest.Id, src => src.Id)//Id更改为变量Id
+            .Map(dest => dest.Value, src => src.Value == null ? string.Empty : src.Value.ToString() ?? string.Empty)
             .Map(dest => dest.CreateTime, (src) => DateTime.Now);
 
-        _config.ForType<VariableRuntime, SQLRealValue>()
-    //.Map(dest => dest.Id, (src) =>CommonUtils.GetSingleId())
-    .Map(dest => dest.Id, src => src.Id)//Id更改为变量Id
-    .Map(dest => dest.Value, src => src.Value != null ? src.Value.GetType() == typeof(string) ? src.Value.ToString() : JToken.FromObject(src.Value).ToString() : string.Empty);
-
-        
         _exRealTimerTick = new(_driverPropertys.RealTableBusinessInterval);
 
         await base.InitChannelAsync(channel, cancellationToken).ConfigureAwait(false);
@@ -228,7 +220,7 @@ public partial class SqlDBProducer : BusinessBaseWithCacheIntervalVariableModel<
                         var groups = varList.GroupBy(a => a.Group);
                         foreach (var item in groups)
                         {
-                            var result = await UpdateAsync(item.Adapt<List<SQLRealValue>>(_config), cancellationToken).ConfigureAwait(false);
+                            var result = await UpdateAsync(item.Adapt<List<SQLRealValue>>(), cancellationToken).ConfigureAwait(false);
                             if (success != result.IsSuccess)
                             {
                                 if (!result.IsSuccess)
@@ -239,7 +231,7 @@ public partial class SqlDBProducer : BusinessBaseWithCacheIntervalVariableModel<
                     }
                     else
                     {
-                        var result = await UpdateAsync(varList.Adapt<List<SQLRealValue>>(_config), cancellationToken).ConfigureAwait(false);
+                        var result = await UpdateAsync(varList.Adapt<List<SQLRealValue>>(), cancellationToken).ConfigureAwait(false);
                         if (success != result.IsSuccess)
                         {
                             if (!result.IsSuccess)

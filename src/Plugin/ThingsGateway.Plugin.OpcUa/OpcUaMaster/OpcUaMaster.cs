@@ -187,24 +187,27 @@ public class OpcUaMaster : CollectBase
         await Task.CompletedTask.ConfigureAwait(false);
         if (deviceVariables.Count > 0)
         {
-            var dataLists = deviceVariables.ChunkBetter(_driverProperties.GroupSize);
-
-            var dataResult = new List<VariableSourceRead>();
-            foreach (var variable in dataLists)
+            List<VariableSourceRead> variableSourceReads = new List<VariableSourceRead>();
+            foreach (var deviceVariableGroups in deviceVariables.GroupBy(a => a.CollectGroup))
             {
-                var sourVars = new VariableSourceRead()
-                {
-                    TimeTick = new(_driverProperties.UpdateRate.ToString()),
-                    RegisterAddress = Guid.NewGuid().ToString(),
-                };
-                foreach (var item in variable)
-                {
-                    sourVars.AddVariable(item);
-                }
-                dataResult.Add(sourVars);
-            }
+                var dataLists = deviceVariableGroups.ChunkBetter(_driverProperties.GroupSize);
 
-            return dataResult;
+                foreach (var variable in dataLists)
+                {
+                    var sourVars = new VariableSourceRead()
+                    {
+                        TimeTick = new(_driverProperties.UpdateRate.ToString()),
+                        RegisterAddress = Guid.NewGuid().ToString(),
+                    };
+                    foreach (var item in variable)
+                    {
+                        sourVars.AddVariable(item);
+                    }
+                    variableSourceReads.Add(sourVars);
+                }
+
+            }
+            return variableSourceReads;
         }
         else
         {

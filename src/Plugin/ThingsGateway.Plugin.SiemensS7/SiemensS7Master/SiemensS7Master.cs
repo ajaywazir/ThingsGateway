@@ -221,7 +221,12 @@ public class SiemensS7Master : CollectFoundationBase
             {
 
             }
-            return _plc.LoadSourceRead<VariableSourceRead>(deviceVariables, _plc.OnLine ? _plc.PduLength : _driverPropertys.MaxPack, CurrentDevice.IntervalTime);
+            List<VariableSourceRead> variableSourceReads = new();
+            foreach (var deviceVariable in deviceVariables.GroupBy(a => a.CollectGroup))
+            {
+                variableSourceReads.AddRange(_plc.LoadSourceRead<VariableSourceRead>(deviceVariable, _driverPropertys.MaxPack, CurrentDevice.IntervalTime));
+            }
+            return variableSourceReads;
         }
         finally { }
     }

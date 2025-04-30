@@ -122,25 +122,31 @@ public class OpcDaMaster : CollectBase
         {
             if (deviceVariables.Count > 0)
             {
-                var result = _plc.AddItemsWithSave(deviceVariables.Where(a => !string.IsNullOrEmpty(a.RegisterAddress)).Select(a => a.RegisterAddress!).ToList());
-                var sourVars = result?.Select(
-          it =>
-          {
-              var read = new VariableSourceRead()
-              {
-                  TimeTick = new(_driverProperties.UpdateRate.ToString()),
-                  RegisterAddress = it.Key,
-              };
-              HashSet<string> ids = new(it.Value.Select(b => b.ItemID));
+                List<VariableSourceRead> variableSourceReads = new List<VariableSourceRead>();
+                foreach (var deviceVariableGroups in deviceVariables.GroupBy(a => a.CollectGroup))
+                {
 
-              var variables = deviceVariables.Where(a => ids.Contains(a.RegisterAddress));
-              foreach (var v in variables)
+                    var result = _plc.AddItemsWithSave(deviceVariableGroups.Where(a => !string.IsNullOrEmpty(a.RegisterAddress)).Select(a => a.RegisterAddress!).ToList());
+                    var sourVars = result?.Select(
+              it =>
               {
-                  read.AddVariable(v);
-              }
-              return read;
-          }).ToList();
-                return sourVars;
+                  var read = new VariableSourceRead()
+                  {
+                      TimeTick = new(_driverProperties.UpdateRate.ToString()),
+                      RegisterAddress = it.Key,
+                  };
+                  HashSet<string> ids = new(it.Value.Select(b => b.ItemID));
+
+                  var variables = deviceVariableGroups.Where(a => ids.Contains(a.RegisterAddress));
+                  foreach (var v in variables)
+                  {
+                      read.AddVariable(v);
+                  }
+                  return read;
+              }).ToList();
+                    variableSourceReads.AddRange(sourVars);
+                }
+                return variableSourceReads;
             }
             else
             {

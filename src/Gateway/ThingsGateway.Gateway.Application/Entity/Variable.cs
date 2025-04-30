@@ -52,6 +52,13 @@ public class Variable : BaseDataEntity, IValidatableObject
     public virtual string Name { get; set; }
 
     /// <summary>
+    /// 采集组
+    /// </summary>
+    [SugarColumn(ColumnDescription = "采集组", IsNullable = true)]
+    [AutoGenerateColumn(Visible = true, Filterable = true, Sortable = true, Order = 1)]
+    public virtual string CollectGroup { get; set; } = string.Empty;
+
+    /// <summary>
     /// 分组名称
     /// </summary>
     [SugarColumn(ColumnDescription = "分组名称", IsNullable = true)]
