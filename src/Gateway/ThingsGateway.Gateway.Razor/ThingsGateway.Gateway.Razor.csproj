@@ -7,7 +7,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\ThingsGateway.Gateway.Application\ThingsGateway.Gateway.Application.csproj" />
-		<PackageReference Include="BootstrapBlazor.UniverSheet" Version="9.0.3" />
+		<PackageReference Include="BootstrapBlazor.UniverSheet" Version="9.0.4" />
 		<PackageReference Include="BootstrapBlazor.WinBox" Version="9.0.7" />
 		<PackageReference Include="BootstrapBlazor.CodeEditor" Version="9.0.1" />
 		<ProjectReference Include="..\..\Admin\ThingsGateway.Admin.Razor\ThingsGateway.Admin.Razor.csproj" />
