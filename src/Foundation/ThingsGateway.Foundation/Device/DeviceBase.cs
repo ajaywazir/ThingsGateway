@@ -562,6 +562,8 @@ public abstract class DeviceBase : DisposableObject, IDevice
         finally
         {
             waitLock.Release();
+            if (waitData.WaitResult != null)
+                waitData.WaitResult.Sign = sign;
             clientChannel.WaitHandlePool.Destroy(waitData);
             Channel.ChannelReceivedWaitDict.TryRemove(sign, out _);
         }

@@ -8,6 +8,8 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
+using System.Threading.Tasks;
+
 using ThingsGateway.Gateway.Application;
 using ThingsGateway.NewLife.Json.Extension;
 
@@ -56,4 +58,13 @@ public partial class ScriptCheck
     }
     [Inject]
     private IStringLocalizer<DeviceEditComponent> Localizer { get; set; }
+
+    private async Task GetDemo(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
+    {
+        Script = OnGetDemo?.Invoke();
+        await Change(Script);
+    }
+
+    [Parameter, EditorRequired]
+    public Func<string> OnGetDemo { get; set; }
 }

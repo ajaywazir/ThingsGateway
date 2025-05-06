@@ -25,11 +25,20 @@
                         <div class="col-12  col-md-12">
                             <BootstrapLabel Value=@SqlDBProducerPropertyLocalizer["BigTextScriptHistoryTable"] ShowLabelTooltip="true" />
                             <CodeEditor @bind-Value=@businessProperty.BigTextScriptHistoryTable Language="csharp" Theme="vs-dark" />
-
+                            <div class="ms-2 d-flex justify-content-center align-items-center">
+                                <Button IsDisabled=@(!CanWrite) OnClick="()=>CheckScript(businessProperty,nameof(businessProperty.BigTextScriptHistoryTable))">
+                                    @RazorLocalizer["Check"]
+                                </Button>
+                            </div>
                         </div>
                         <div class="col-12  col-md-12">
                             <BootstrapLabel Value=@SqlDBProducerPropertyLocalizer["BigTextScriptRealTable"] ShowLabelTooltip="true" />
                             <CodeEditor @bind-Value=@businessProperty.BigTextScriptRealTable Language="csharp" Theme="vs-dark" />
+                            <div class="ms-2 d-flex justify-content-center align-items-center">
+                                <Button IsDisabled=@(!CanWrite) OnClick="()=>CheckScript(businessProperty,nameof(businessProperty.BigTextScriptRealTable))">
+                                    @RazorLocalizer["Check"]
+                                </Button>
+                            </div>
                         </div>
                     </EditTemplate>
                 </EditorItem>

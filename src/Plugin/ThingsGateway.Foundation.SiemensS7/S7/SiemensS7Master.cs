@@ -401,7 +401,7 @@ public partial class SiemensS7Master : DeviceBase
                 var result2 = await GetResponsedDataAsync(new S7Send(ISO_CR), channel, Timeout).ConfigureAwait(false);
                 if (!result2.IsSuccess)
                 {
-                    Logger?.LogWarning(SiemensS7Resource.Localizer["HandshakeError1", channel.ToString(), result2.ErrorMessage]);
+                    Logger?.LogWarning(SiemensS7Resource.Localizer["HandshakeError1", channel.ToString(), result2]);
                     await channel.CloseAsync().ConfigureAwait(false);
                     return true;
                 }
@@ -409,7 +409,7 @@ public partial class SiemensS7Master : DeviceBase
             catch (OperationCanceledException) { }
             catch (Exception ex)
             {
-                Logger?.LogWarning(SiemensS7Resource.Localizer["HandshakeError1", channel.ToString(), ex.Message]);
+                Logger?.LogWarning(SiemensS7Resource.Localizer["HandshakeError1", channel.ToString(), ex]);
                 await channel.CloseAsync().ConfigureAwait(false);
                 return true;
             }
@@ -418,7 +418,12 @@ public partial class SiemensS7Master : DeviceBase
                 var result2 = await GetResponsedDataAsync(new S7Send(S7_PN), channel, Timeout).ConfigureAwait(false);
                 if (!result2.IsSuccess)
                 {
-                    Logger?.LogWarning(SiemensS7Resource.Localizer["HandshakeError2", channel.ToString(), result2.ErrorMessage]);
+                    Logger?.LogWarning(SiemensS7Resource.Localizer["HandshakeError2", channel.ToString(), result2]);
+                    await channel.CloseAsync().ConfigureAwait(false);
+                    return true;
+                }
+                if (result2.Content == null)
+                {
                     await channel.CloseAsync().ConfigureAwait(false);
                     return true;
                 }
@@ -429,7 +434,7 @@ public partial class SiemensS7Master : DeviceBase
             catch (OperationCanceledException) { }
             catch (Exception ex)
             {
-                Logger?.LogWarning(SiemensS7Resource.Localizer["HandshakeError2", channel.ToString(), ex.Message]);
+                Logger?.LogWarning(SiemensS7Resource.Localizer["HandshakeError2", channel.ToString(), ex]);
                 await channel.CloseAsync().ConfigureAwait(false);
                 return true;
             }

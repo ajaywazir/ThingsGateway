@@ -18,6 +18,8 @@
         <Alert Icon="fa-solid fa-circle-check" Color="Color.Success">@(new MarkupString("获取变量类实体，可用方法  <code>GlobalData.GetVariable(\"设备名称1\",\"变量名称1\")</code> "))</Alert>
         <Alert Icon="fa-solid fa-circle-check" Color="Color.Success">@(new MarkupString("详细说明查看文档对应内容页面"))</Alert>
 
+        <Button IsAsync OnClick="GetDemo" class="mt-3" Text="Demo" />
+
     </div>
     <div class="col-6  col-md-6">
         <BootstrapLabel Value=@Localizer["Input"] ShowLabelTooltip="true" />

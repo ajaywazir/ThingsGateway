@@ -129,7 +129,6 @@ public partial class PropertyComponent : IPropertyUIBase
             return;
         }
 
-
         var op = new DialogOption()
         {
             IsScrolling = true,
@@ -144,6 +143,147 @@ public partial class PropertyComponent : IPropertyUIBase
     {
         {nameof(ScriptCheck.Data),data },
         {nameof(ScriptCheck.Script),script },
+        {nameof(ScriptCheck.OnGetDemo),()=>
+                {
+                    return
+                    pname == nameof(BusinessPropertyWithCacheIntervalScript.BigTextScriptDeviceModel)?
+                    """
+                    using ThingsGateway.Foundation;
+                    
+                    using System.Dynamic;
+                    using TouchSocket.Core;
+                    public class S1 : IDynamicModel
+                    {
+                        public IEnumerable<dynamic> GetList(IEnumerable<object> datas)
+                        {
+                            List<ExpandoObject> deviceObjs = new List<ExpandoObject>();
+                            foreach (var v in datas)
+                            {
+                                var device = (DeviceBasicData)v;
+                                var expando = new ExpandoObject();
+                                var deviceObj = new ExpandoObject();
+
+                                deviceObj.TryAdd(nameof(Device.Description), device.Description);
+                                deviceObj.TryAdd(nameof(DeviceBasicData.ActiveTime), device.ActiveTime);
+                                deviceObj.TryAdd(nameof(DeviceBasicData.DeviceStatus), device.DeviceStatus.ToString());
+                                deviceObj.TryAdd(nameof(DeviceBasicData.LastErrorMessage), device.LastErrorMessage);
+                                deviceObj.TryAdd(nameof(DeviceBasicData.PluginName), device.PluginName);
+                                deviceObj.TryAdd(nameof(DeviceBasicData.Remark1), device.Remark1);
+                                deviceObj.TryAdd(nameof(DeviceBasicData.Remark2), device.Remark2);
+                                deviceObj.TryAdd(nameof(DeviceBasicData.Remark3), device.Remark3);
+                                deviceObj.TryAdd(nameof(DeviceBasicData.Remark4), device.Remark4);
+                                deviceObj.TryAdd(nameof(DeviceBasicData.Remark5), device.Remark5);
+
+
+                                expando.TryAdd(nameof(Device.Name), deviceObj);
+
+                            }
+                            return deviceObjs;
+                        }
+                    }
+                    
+                    """
+                    :
+
+                    pname == nameof(BusinessPropertyWithCacheIntervalScript.BigTextScriptVariableModel)?
+
+                    """
+                    using System.Dynamic;
+                    using ThingsGateway.Foundation;
+                    using TouchSocket.Core;
+                    public class S2 : IDynamicModel
+                    {
+                        public IEnumerable<dynamic> GetList(IEnumerable<object> datas)
+                        {
+
+                            List<ExpandoObject> deviceObjs = new List<ExpandoObject>();
+                            //按设备名称分组
+                            var groups = datas.Where(a => !string.IsNullOrEmpty(((VariableBasicData)a).DeviceName)).GroupBy(a => ((VariableBasicData)a).DeviceName, a => ((VariableBasicData)a));
+                            foreach (var group in groups)
+                            {
+                                //按采集时间分组
+                                var data = group.GroupBy(a => a.CollectTime.DateTimeToUnixTimestamp());
+                                var deviceObj = new ExpandoObject();
+                                List<ExpandoObject> expandos = new List<ExpandoObject>();
+                                foreach (var item in data)
+                                {
+                                    var expando = new ExpandoObject();
+                                    expando.TryAdd("ts", item.Key);
+                                    var variableObj = new ExpandoObject();
+                                    foreach (var tag in item)
+                                    {
+                                        variableObj.TryAdd(tag.Name, tag.Value);
+                                    }
+                                    expando.TryAdd("values", variableObj);
+
+                                    expandos.Add(expando);
+                                }
+                                deviceObj.TryAdd(group.Key, expandos);
+                                deviceObjs.Add(deviceObj);
+                            }
+
+                            return deviceObjs;
+                        }
+                    }
+
+                    """
+                    :
+
+                    pname == nameof(BusinessPropertyWithCacheIntervalScript.BigTextScriptAlarmModel)?
+
+                    """
+                    using System.Dynamic;
+                    using ThingsGateway.Foundation;
+                                        
+                    using TouchSocket.Core;
+                    public class DeviceScript : IDynamicModel
+                    {
+                        public IEnumerable<dynamic> GetList(IEnumerable<object> datas)
+                        {
+
+                            List<ExpandoObject> deviceObjs = new List<ExpandoObject>();
+                            //按设备名称分组
+                            var groups = datas.Where(a => !string.IsNullOrEmpty(((AlarmVariable)a).DeviceName)).GroupBy(a => ((AlarmVariable)a).DeviceName, a => ((AlarmVariable)a));
+                            foreach (var group in groups)
+                            {
+                                //按采集时间分组
+                                var data = group.GroupBy(a => a.AlarmTime.DateTimeToUnixTimestamp());
+                                var deviceObj = new ExpandoObject();
+                                List<ExpandoObject> expandos = new List<ExpandoObject>();
+                                foreach (var item in data)
+                                {
+                                    var expando = new ExpandoObject();
+                                    expando.TryAdd("ts", item.Key);
+                                    var variableObj = new ExpandoObject();
+                                    foreach (var tag in item)
+                                    {
+                                        var alarmObj = new ExpandoObject();
+                                        alarmObj.TryAdd(nameof(tag.AlarmCode), tag.AlarmCode);
+                                        alarmObj.TryAdd(nameof(tag.AlarmText), tag.AlarmText);
+                                        alarmObj.TryAdd(nameof(tag.AlarmType), tag.AlarmType);
+                                        alarmObj.TryAdd(nameof(tag.AlarmLimit), tag.AlarmLimit);
+                                        alarmObj.TryAdd(nameof(tag.EventTime), tag.EventTime);
+                                        alarmObj.TryAdd(nameof(tag.EventType), tag.EventType);
+
+                                        variableObj.TryAdd(tag.Name, alarmObj);
+                                    }
+                                    expando.TryAdd("alarms", variableObj);
+
+                                    expandos.Add(expando);
+                                }
+                                deviceObj.TryAdd(group.Key, expandos);
+                                deviceObjs.Add(deviceObj);
+                            }
+
+                            return deviceObjs;
+                        }
+                    }
+                    """
+                    :
+                    ""
+                    ;
+                }
+            },
         {nameof(ScriptCheck.ScriptChanged),EventCallback.Factory.Create<string>(this, v =>
         {
                  if (pname == nameof(BusinessPropertyWithCacheIntervalScript.BigTextScriptAlarmModel))
@@ -171,3 +311,7 @@ public partial class PropertyComponent : IPropertyUIBase
     [Inject]
     private DialogService DialogService { get; set; }
 }
+
+
+
+

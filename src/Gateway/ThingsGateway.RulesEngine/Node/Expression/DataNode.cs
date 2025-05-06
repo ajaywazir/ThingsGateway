@@ -8,7 +8,12 @@ namespace ThingsGateway.RulesEngine;
 [CategoryNode(Category = "Expression", ImgUrl = "_content/ThingsGateway.RulesEngine/img/CSharpScript.svg", Desc = nameof(DataNode), LocalizerType = typeof(ThingsGateway.RulesEngine._Imports), WidgetType = typeof(CSharpScriptWidget))]
 public class DataNode : TextNode, IExpressionNode
 {
-    public DataNode(string id, Point? position = null) : base(id, position) { Title = "DataNode"; Placeholder = "DataNode.Placeholder"; }
+    public DataNode(string id, Point? position = null) : base(id, position)
+    {
+        Title = "DataNode"; Placeholder = "DataNode.Placeholder";
+        Text = "return 1;";
+
+    }
 
     Task<NodeOutput> IExpressionNode.ExecuteAsync(NodeInput input, CancellationToken cancellationToken)
     {
