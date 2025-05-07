@@ -202,6 +202,7 @@ public partial class OpcUaServer : BusinessBase
                 success = true;
             }
         }
+        catch (OperationCanceledException) { }
         catch (Exception ex)
         {
             if (success)

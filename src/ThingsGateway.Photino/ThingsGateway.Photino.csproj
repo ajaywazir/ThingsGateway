@@ -3,7 +3,7 @@
 	<Import Project="$(SolutionDir)Version.props" />
 
 
-	<ItemGroup  Condition=" '$(SolutionName)' != 'ThingsGatewayRelease' " >
+	<ItemGroup Condition=" '$(SolutionName)' != 'ThingsGatewayRelease' ">
 		<ProjectReference Include="..\Gateway\ThingsGateway.Gateway.Application\ThingsGateway.Gateway.Application.csproj" />
 		<ProjectReference Include="..\Gateway\ThingsGateway.Gateway.Razor\ThingsGateway.Gateway.Razor.csproj" />
 		<ProjectReference Include="..\Gateway\ThingsGateway.Management\ThingsGateway.Management.csproj" />
@@ -19,8 +19,8 @@
 	<!--nuget包解压复制文件，上下文动态加载，网关管理和网关冗余-->
 	<Import Project="..\ThingsGateway.Server\targets\GatewayOther.targets" Condition=" '$(SolutionName)' == 'ThingsGatewayRelease' " />
 	
-	<ItemGroup  Condition=" '$(SolutionName)' == 'ThingsGatewayRelease' " >
-		<PackageReference Include="ThingsGateway.Photino.Blazor" Version="$(Version)"  />
+	<ItemGroup Condition=" '$(SolutionName)' == 'ThingsGatewayRelease' ">
+		<PackageReference Include="ThingsGateway.Photino.Blazor" Version="$(Version)" />
 	</ItemGroup>
 
 
@@ -87,6 +87,9 @@
 		<Compile Include="..\ThingsGateway.Server\Program\SingleFilePublish.cs" Link="Program\SingleFilePublish.cs" />
 
 
+		<Content Include="..\ThingsGateway.Server\ThingsGateway.pfx" Link="ThingsGateway.pfx">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 
 
 		<Content Include="..\ThingsGateway.Server\wwwroot\favicon.ico" Link="wwwroot\favicon.ico" />
@@ -119,10 +122,22 @@
 		</EmbeddedResource>
 	</ItemGroup>
 
+
+	<ItemGroup>
+	  <Content Remove="launchSettings.json" />
+	</ItemGroup>
+
 	<ItemGroup>
 		<Content Include="favicon.ico">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="Properties\launchSettings.json">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+	  </None>
 	</ItemGroup>
 
 

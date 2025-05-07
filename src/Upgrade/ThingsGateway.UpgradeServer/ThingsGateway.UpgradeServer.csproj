@@ -76,6 +76,9 @@
 		<None Update="pm2-linux.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<None Update="ThingsGateway.pfx">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 		<None Update="WindowsServiceDelete.bat">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>

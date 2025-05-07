@@ -95,6 +95,9 @@
 		<Content Include="favicon.ico">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+		<None Update="ThingsGateway.pfx">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 		<None Update="WindowsService">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>

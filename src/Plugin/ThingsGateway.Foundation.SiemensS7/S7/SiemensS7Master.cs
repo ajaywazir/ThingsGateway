@@ -398,7 +398,7 @@ public partial class SiemensS7Master : DeviceBase
 
             try
             {
-                var result2 = await GetResponsedDataAsync(new S7Send(ISO_CR), channel, Timeout).ConfigureAwait(false);
+                var result2 = await SendThenReturnMessageBaseAsync(new S7Send(ISO_CR), channel).ConfigureAwait(false);
                 if (!result2.IsSuccess)
                 {
                     Logger?.LogWarning(SiemensS7Resource.Localizer["HandshakeError1", channel.ToString(), result2]);
@@ -415,7 +415,7 @@ public partial class SiemensS7Master : DeviceBase
             }
             try
             {
-                var result2 = await GetResponsedDataAsync(new S7Send(S7_PN), channel, Timeout).ConfigureAwait(false);
+                var result2 = await SendThenReturnMessageBaseAsync(new S7Send(S7_PN), channel).ConfigureAwait(false);
                 if (!result2.IsSuccess)
                 {
                     Logger?.LogWarning(SiemensS7Resource.Localizer["HandshakeError2", channel.ToString(), result2]);

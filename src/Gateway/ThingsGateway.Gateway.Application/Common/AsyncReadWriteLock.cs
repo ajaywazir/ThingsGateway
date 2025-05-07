@@ -40,9 +40,7 @@ public class AsyncReadWriteLock
 
     private void ReleaseWriter()
     {
-        Interlocked.Decrement(ref _writerCount);
-
-        if (Interlocked.Read(ref _writerCount) == 0)
+        if (Interlocked.Decrement(ref _writerCount) == 0)
         {
             var resetEvent = _readerLock;
             _readerLock = new(false);

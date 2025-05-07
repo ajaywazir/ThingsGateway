@@ -11,6 +11,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -24,6 +27,7 @@ using Microsoft.Extensions.Options;
 
 using Newtonsoft.Json;
 
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
@@ -273,6 +277,21 @@ public class Startup : AppStartup
 
         services.AddSignalR();
         #endregion
+
+
+#if NET9_0_OR_GREATER
+        var certificate = X509CertificateLoader.LoadPkcs12FromFile("ThingsGateway.pfx", "ThingsGateway", X509KeyStorageFlags.EphemeralKeySet);
+#else
+        var certificate = new X509Certificate2("ThingsGateway.pfx", "ThingsGateway", X509KeyStorageFlags.EphemeralKeySet);
+#endif
+        services.AddDataProtection()
+            .PersistKeysToFileSystem(new DirectoryInfo("../keys"))
+            .ProtectKeysWithCertificate(certificate)
+            .UseCryptographicAlgorithms(new AuthenticatedEncryptorConfiguration
+            {
+                EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
+                ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
+            });
     }
 
 
