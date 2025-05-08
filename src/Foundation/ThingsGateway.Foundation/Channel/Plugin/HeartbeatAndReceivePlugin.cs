@@ -42,7 +42,10 @@ internal sealed class HeartbeatAndReceivePlugin : PluginBase, ITcpConnectedPlugi
         set
         {
             _heartbeat = value;
-            HeartbeatByte = new ArraySegment<byte>(Encoding.UTF8.GetBytes(value));
+            if(!_heartbeat.IsNullOrEmpty())
+            {
+                HeartbeatByte = new ArraySegment<byte>(Encoding.UTF8.GetBytes(value));
+            }
         }
     }
     private string _heartbeat;
@@ -58,6 +61,8 @@ internal sealed class HeartbeatAndReceivePlugin : PluginBase, ITcpConnectedPlugi
         {
             return;//此处可判断，如果为服务器，则不用使用心跳。
         }
+
+        HeartbeatTime = Math.Max(HeartbeatTime, 1000);
 
         if (DtuId.IsNullOrWhiteSpace()) return;
 

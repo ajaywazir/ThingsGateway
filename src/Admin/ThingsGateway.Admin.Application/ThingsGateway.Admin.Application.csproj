@@ -21,7 +21,7 @@
 		<PackageReference Include="BootstrapBlazor.TableExport" Version="9.2.4" />
 		<PackageReference Include="UAParser" Version="3.1.47" />
 		<PackageReference Include="Rougamo.Fody" Version="5.0.0" />
-		<PackageReference Include="SqlSugarCore" Version="5.1.4.191" />
+		<PackageReference Include="SqlSugarCore" Version="5.1.4.192" />
 	</ItemGroup>
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.1" />

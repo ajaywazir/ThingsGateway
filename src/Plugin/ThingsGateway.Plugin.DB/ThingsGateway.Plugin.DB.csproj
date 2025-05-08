@@ -19,7 +19,7 @@
 		
 		
 		
-		<PackageReference Include="SqlSugar.TDengineCore" Version="4.18.11" GeneratePathProperty="true">
+		<PackageReference Include="SqlSugar.TDengineCore" Version="4.18.31" GeneratePathProperty="true">
 			<PrivateAssets>contentFiles;compile;build;buildMultitargeting;buildTransitive;analyzers;</PrivateAssets>
 		</PackageReference>
 

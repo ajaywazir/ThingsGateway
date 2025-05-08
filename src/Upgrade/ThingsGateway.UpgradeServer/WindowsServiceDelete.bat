@@ -1,3 +1,3 @@
-net stop ThingsGateway
-sc delete ThingsGateway
+net stop ThingsGateway.UpgradeServer
+sc delete ThingsGateway.UpgradeServer
 pause
