@@ -13,7 +13,8 @@ using BootstrapBlazor.Components;
 using Mapster;
 
 using ThingsGateway.Foundation;
-using ThingsGateway.NewLife.Extension;
+
+using TouchSocket.Core;
 
 namespace ThingsGateway.Plugin.Webhook;
 
@@ -133,18 +134,18 @@ public partial class Webhook : BusinessBaseWithCacheIntervalScript<VariableBasic
 
     private readonly HttpClient client = new HttpClient();
 
-    private async Task<OperResult> WebhookUpAsync(string topic, byte[] payLoad, int count, CancellationToken cancellationToken)
+    private async Task<OperResult> WebhookUpAsync(TopicArray topicArray, CancellationToken cancellationToken)
     {
 
         // 设置请求内容
         //var content = new StringContent(json, Encoding.UTF8, "application/json");
-        using var content = new ByteArrayContent(payLoad);
+        using var content = new ByteArrayContent(topicArray.Json);
         content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
 
         try
         {
             // 发送POST请求
-            HttpResponseMessage response = await client.PostAsync(topic, content, cancellationToken).ConfigureAwait(false);
+            HttpResponseMessage response = await client.PostAsync(topicArray.Topic, content, cancellationToken).ConfigureAwait(false);
 
             // 检查响应状态
             if (response.IsSuccessStatusCode)
@@ -152,12 +153,14 @@ public partial class Webhook : BusinessBaseWithCacheIntervalScript<VariableBasic
                 if (_driverPropertys.DetailLog)
                 {
                     if (LogMessage.LogLevel <= TouchSocket.Core.LogLevel.Trace)
-                        LogMessage.LogTrace(GetString(topic, payLoad, _memoryVarModelQueue.Count));
+                        LogMessage.LogTrace(GetDetailLogString(topicArray, _memoryVarModelQueue.Count));
+                    else if (LogMessage.LogLevel <= TouchSocket.Core.LogLevel.Debug)
+                        LogMessage.LogDebug(GetCountLogString(topicArray, _memoryVarModelQueue.Count));
                 }
                 else
                 {
-                    LogMessage.LogTrace($"Topic：{topic}{Environment.NewLine}Count：{count} {Environment.NewLine} VarModelQueue:{_memoryVarModelQueue.Count}");
-
+                    if (LogMessage.LogLevel <= TouchSocket.Core.LogLevel.Debug)
+                        LogMessage.LogDebug(GetCountLogString(topicArray, _memoryVarModelQueue.Count));
                 }
                 return new();
             }
@@ -175,11 +178,11 @@ public partial class Webhook : BusinessBaseWithCacheIntervalScript<VariableBasic
 
     #region private
 
-    private async ValueTask<OperResult> Update(List<TopicArray> topicJsonList, int count, CancellationToken cancellationToken)
+    private async ValueTask<OperResult> Update(List<TopicArray> topicArrayList, CancellationToken cancellationToken)
     {
-        foreach (var topicJson in topicJsonList)
+        foreach (var topicArray in topicArrayList)
         {
-            var result = await WebhookUpAsync(topicJson.Topic, topicJson.Json, count, cancellationToken).ConfigureAwait(false);
+            var result = await WebhookUpAsync(topicArray, cancellationToken).ConfigureAwait(false);
 
             if (cancellationToken.IsCancellationRequested)
                 return result;
@@ -203,21 +206,21 @@ public partial class Webhook : BusinessBaseWithCacheIntervalScript<VariableBasic
 
     private ValueTask<OperResult> UpdateAlarmModel(IEnumerable<AlarmVariable> item, CancellationToken cancellationToken)
     {
-        var topicJsonList = GetAlarmTopicArrays(item);
-        return Update(topicJsonList, item.Count(), cancellationToken);
+        var topicArrayList = GetAlarmTopicArrays(item);
+        return Update(topicArrayList, cancellationToken);
     }
 
     private ValueTask<OperResult> UpdateDevModel(IEnumerable<DeviceBasicData> item, CancellationToken cancellationToken)
     {
 
-        var topicJsonList = GetDeviceTopicArray(item);
-        return Update(topicJsonList, item.Count(), cancellationToken);
+        var topicArrayList = GetDeviceTopicArray(item);
+        return Update(topicArrayList, cancellationToken);
     }
 
     private ValueTask<OperResult> UpdateVarModel(IEnumerable<VariableBasicData> item, CancellationToken cancellationToken)
     {
-        var topicJsonList = GetVariableBasicDataTopicArray(item);
-        return Update(topicJsonList, item.Count(), cancellationToken);
+        var topicArrayList = GetVariableBasicDataTopicArray(item);
+        return Update(topicArrayList, cancellationToken);
     }
 
 

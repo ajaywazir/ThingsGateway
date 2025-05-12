@@ -127,11 +127,11 @@ public partial class KafkaProducer : BusinessBaseWithCacheIntervalScript<Variabl
 
     #region private
 
-    private async ValueTask<OperResult> Update(List<TopicArray> topicJsonList, int count, CancellationToken cancellationToken)
+    private async ValueTask<OperResult> Update(List<TopicArray> topicArrayList, CancellationToken cancellationToken)
     {
-        foreach (var topicJson in topicJsonList)
+        foreach (var topicArray in topicArrayList)
         {
-            var result = await KafKaUpAsync(topicJson.Topic, topicJson.Json, count, cancellationToken).ConfigureAwait(false);
+            var result = await KafKaUpAsync(topicArray, cancellationToken).ConfigureAwait(false);
             if (success != result.IsSuccess)
             {
                 if (!result.IsSuccess)
@@ -150,20 +150,20 @@ public partial class KafkaProducer : BusinessBaseWithCacheIntervalScript<Variabl
 
     private async ValueTask<OperResult> UpdateAlarmModel(IEnumerable<AlarmVariable> item, CancellationToken cancellationToken)
     {
-        var topicJsonList = GetAlarmTopicArrays(item);
-        return await Update(topicJsonList, item.Count(), cancellationToken).ConfigureAwait(false);
+        var topicArrayList = GetAlarmTopicArrays(item);
+        return await Update(topicArrayList, cancellationToken).ConfigureAwait(false);
     }
 
     private async ValueTask<OperResult> UpdateDevModel(IEnumerable<DeviceBasicData> item, CancellationToken cancellationToken)
     {
-        var topicJsonList = GetDeviceTopicArray(item);
-        return await Update(topicJsonList, item.Count(), cancellationToken).ConfigureAwait(false);
+        var topicArrayList = GetDeviceTopicArray(item);
+        return await Update(topicArrayList, cancellationToken).ConfigureAwait(false);
     }
 
     private async ValueTask<OperResult> UpdateVarModel(IEnumerable<VariableBasicData> item, CancellationToken cancellationToken)
     {
-        var topicJsonList = GetVariableBasicDataTopicArray(item);
-        return await Update(topicJsonList, item.Count(), cancellationToken).ConfigureAwait(false);
+        var topicArrayList = GetVariableBasicDataTopicArray(item);
+        return await Update(topicArrayList, cancellationToken).ConfigureAwait(false);
     }
 
     #endregion private
@@ -203,13 +203,13 @@ public partial class KafkaProducer : BusinessBaseWithCacheIntervalScript<Variabl
     /// <summary>
     /// kafka上传，返回上传结果
     /// </summary>
-    public async ValueTask<OperResult> KafKaUpAsync(string topic, byte[] payLoad, int count, CancellationToken cancellationToken)
+    public async ValueTask<OperResult> KafKaUpAsync(TopicArray topicArray, CancellationToken cancellationToken)
     {
         try
         {
             using CancellationTokenSource cancellationTokenSource = new(_driverPropertys.Timeout);
             using CancellationTokenSource stoppingToken = CancellationTokenSource.CreateLinkedTokenSource(cancellationTokenSource.Token, cancellationToken);
-            var result = await _producer.ProduceAsync(topic, new Message<Null, byte[]> { Value = payLoad }, stoppingToken.Token).ConfigureAwait(false);
+            var result = await _producer.ProduceAsync(topicArray.Topic, new Message<Null, byte[]> { Value = topicArray.Json }, stoppingToken.Token).ConfigureAwait(false);
             if (result.Status != PersistenceStatus.Persisted)
             {
                 return new OperResult("Upload fail");
@@ -219,12 +219,14 @@ public partial class KafkaProducer : BusinessBaseWithCacheIntervalScript<Variabl
                 if (_driverPropertys.DetailLog)
                 {
                     if (LogMessage.LogLevel <= TouchSocket.Core.LogLevel.Trace)
-                        LogMessage.LogTrace(GetString(topic, payLoad, _memoryVarModelQueue.Count));
+                        LogMessage.LogTrace(GetDetailLogString(topicArray, _memoryVarModelQueue.Count));
+                    else if (LogMessage.LogLevel <= TouchSocket.Core.LogLevel.Debug)
+                        LogMessage.LogDebug(GetCountLogString(topicArray, _memoryVarModelQueue.Count));
                 }
                 else
                 {
-                    LogMessage.LogTrace($"Topic：{topic}{Environment.NewLine}Count：{count} {Environment.NewLine} VarModelQueue:{_memoryVarModelQueue.Count}");
-
+                    if (LogMessage.LogLevel <= TouchSocket.Core.LogLevel.Debug)
+                        LogMessage.LogDebug(GetCountLogString(topicArray, _memoryVarModelQueue.Count));
                 }
                 return OperResult.Success;
             }

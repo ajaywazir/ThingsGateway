@@ -18,10 +18,10 @@ using TouchSocket.Core;
 namespace ThingsGateway.Gateway.Application;
 
 /// <summary>
-/// 抽象类 <see cref="BusinessBaseWithCacheIntervalVariableModel{T}"/>，表示具有缓存间隔功能的业务基类，其中 T 代表变量模型。
+/// 抽象类 <see cref="BusinessBaseWithCacheIntervalVariableModel{VarModel}"/>，表示具有缓存间隔功能的业务基类，其中 T 代表变量模型。
 /// </summary>
-/// <typeparam name="T">变量模型类型</typeparam>
-public abstract class BusinessBaseWithCacheIntervalVariableModel<T> : BusinessBaseWithCacheVariableModel<T>
+/// <typeparam name="VarModel">变量模型类型</typeparam>
+public abstract class BusinessBaseWithCacheIntervalVariableModel<VarModel> : BusinessBaseWithCacheVariableModel<VarModel>
 {
     /// <summary>
     /// 用于定时触发的时间间隔。
@@ -110,6 +110,8 @@ public abstract class BusinessBaseWithCacheIntervalVariableModel<T> : BusinessBa
                 {
                     if (_exTTimerTick.IsTickHappen())
                     {
+                        if (LogMessage.LogLevel <= LogLevel.Debug)
+                            LogMessage?.LogDebug($"Interval  {typeof(VarModel).Name}  data, count {IdVariableRuntimes.Count}");
                         //间隔推送全部变量
                         var variableRuntimes = IdVariableRuntimes.Select(a => a.Value);
                         VariableTimeInterval(variableRuntimes, variableRuntimes.Adapt<List<VariableBasicData>>());

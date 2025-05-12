@@ -128,11 +128,11 @@ public partial class RabbitMQProducer : BusinessBaseWithCacheIntervalScript<Vari
 
     #region private
 
-    private async ValueTask<OperResult> Update(List<TopicArray> topicJsonList, int count, CancellationToken cancellationToken)
+    private async ValueTask<OperResult> Update(List<TopicArray> topicArrayList, CancellationToken cancellationToken)
     {
-        foreach (var topicJson in topicJsonList)
+        foreach (var topicArray in topicArrayList)
         {
-            var result = await Publish(topicJson.Topic, topicJson.Json, count, cancellationToken).ConfigureAwait(false);
+            var result = await RabbitMQUpAsync(topicArray, cancellationToken).ConfigureAwait(false);
             if (success != result.IsSuccess)
             {
                 if (!result.IsSuccess)
@@ -152,20 +152,20 @@ public partial class RabbitMQProducer : BusinessBaseWithCacheIntervalScript<Vari
 
     private ValueTask<OperResult> UpdateAlarmModel(IEnumerable<AlarmVariable> item, CancellationToken cancellationToken)
     {
-        var topicJsonList = GetAlarmTopicArrays(item);
-        return Update(topicJsonList, item.Count(), cancellationToken);
+        var topicArrayList = GetAlarmTopicArrays(item);
+        return Update(topicArrayList, cancellationToken);
     }
 
     private ValueTask<OperResult> UpdateDevModel(IEnumerable<DeviceBasicData> item, CancellationToken cancellationToken)
     {
-        var topicJsonList = GetDeviceTopicArray(item);
-        return Update(topicJsonList, item.Count(), cancellationToken);
+        var topicArrayList = GetDeviceTopicArray(item);
+        return Update(topicArrayList, cancellationToken);
     }
 
     private ValueTask<OperResult> UpdateVarModel(IEnumerable<VariableBasicData> item, CancellationToken cancellationToken)
     {
-        var topicJsonList = GetVariableBasicDataTopicArray(item);
-        return Update(topicJsonList, item.Count(), cancellationToken);
+        var topicArrayList = GetVariableBasicDataTopicArray(item);
+        return Update(topicArrayList, cancellationToken);
     }
 
     #endregion private
@@ -206,23 +206,25 @@ public partial class RabbitMQProducer : BusinessBaseWithCacheIntervalScript<Vari
     /// <summary>
     /// 上传，返回上传结果
     /// </summary>
-    public async Task<OperResult> Publish(string topic, byte[] payLoad, int count, CancellationToken cancellationToken)
+    public async Task<OperResult> RabbitMQUpAsync(TopicArray topicArray, CancellationToken cancellationToken)
     {
         try
         {
             if (_channel != null)
             {
-                await _channel.BasicPublishAsync(_driverPropertys.ExchangeName, topic, payLoad, cancellationToken).ConfigureAwait(false);
+                await _channel.BasicPublishAsync(_driverPropertys.ExchangeName, topicArray.Topic, topicArray.Json, cancellationToken).ConfigureAwait(false);
 
                 if (_driverPropertys.DetailLog)
                 {
                     if (LogMessage.LogLevel <= TouchSocket.Core.LogLevel.Trace)
-                        LogMessage.LogTrace(GetString(topic, payLoad, _memoryVarModelQueue.Count));
+                        LogMessage.LogTrace(GetDetailLogString(topicArray, _memoryVarModelQueue.Count));
+                    else if (LogMessage.LogLevel <= TouchSocket.Core.LogLevel.Debug)
+                        LogMessage.LogDebug(GetCountLogString(topicArray, _memoryVarModelQueue.Count));
                 }
                 else
                 {
-                    LogMessage.LogTrace($"Topic：{topic}{Environment.NewLine}Count：{count} {Environment.NewLine} VarModelQueue:{_memoryVarModelQueue.Count}");
-
+                    if (LogMessage.LogLevel <= TouchSocket.Core.LogLevel.Debug)
+                        LogMessage.LogDebug(GetCountLogString(topicArray, _memoryVarModelQueue.Count));
                 }
                 return OperResult.Success;
             }

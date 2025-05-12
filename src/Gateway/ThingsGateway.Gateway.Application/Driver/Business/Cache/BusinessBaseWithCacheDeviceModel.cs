@@ -36,6 +36,7 @@ public abstract class BusinessBaseWithCacheDeviceModel<VarModel, DevModel> : Bus
 
             try
             {
+                LogMessage?.LogInformation($"Add {typeof(DevModel).Name} data to file cache, count {data.Count}");
                 foreach (var item in data)
                 {
                     item.Id = CommonUtils.GetSingleId();
@@ -101,6 +102,7 @@ public abstract class BusinessBaseWithCacheDeviceModel<VarModel, DevModel> : Bus
             {
                 if (_memoryDevModelQueue.Count > _businessPropertyWithCache.QueueMaxCount)
                 {
+                    LogMessage?.LogWarning($"{typeof(DevModel).Name} Queue exceeds limit, clear old data. If it doesn't work as expected, increase [QueueMaxCount] or Enable cache");
                     _memoryDevModelQueue.Clear();
                     _memoryDevModelQueue.Enqueue(data);
                     return;

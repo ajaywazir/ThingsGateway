@@ -12,10 +12,11 @@ namespace ThingsGateway.Gateway.Application;
 
 public struct TopicJson
 {
-    public TopicJson(string topic, string json)
+    public TopicJson(string topic, string json, int count)
     {
-        Topic = topic; Json = json;
+        Topic = topic; Json = json; Count = count;
     }
+    public int Count { get; set; } = 1;
 
     public string Json { get; set; }
     public string Topic { get; set; }

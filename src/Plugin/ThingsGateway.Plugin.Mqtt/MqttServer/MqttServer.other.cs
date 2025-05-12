@@ -141,11 +141,11 @@ public partial class MqttServer : BusinessBaseWithCacheIntervalScript<VariableBa
     }
     #region private
 
-    private async ValueTask<OperResult> Update(List<TopicArray> topicJsonList, int count, CancellationToken cancellationToken)
+    private async ValueTask<OperResult> Update(List<TopicArray> topicArrayList, CancellationToken cancellationToken)
     {
-        foreach (var topicJson in topicJsonList)
+        foreach (var topicArray in topicArrayList)
         {
-            var result = await MqttUpAsync(topicJson.Topic, topicJson.Json, count, cancellationToken).ConfigureAwait(false);
+            var result = await MqttUpAsync(topicArray, cancellationToken).ConfigureAwait(false);
             if (success != result.IsSuccess)
             {
                 if (!result.IsSuccess)
@@ -164,21 +164,21 @@ public partial class MqttServer : BusinessBaseWithCacheIntervalScript<VariableBa
 
     private ValueTask<OperResult> UpdateAlarmModel(IEnumerable<AlarmVariable> item, CancellationToken cancellationToken)
     {
-        var topicJsonList = GetAlarmTopicArrays(item);
+        var topicArrayList = GetAlarmTopicArrays(item);
 
-        return Update(topicJsonList, item.Count(), cancellationToken);
+        return Update(topicArrayList, cancellationToken);
     }
 
     private ValueTask<OperResult> UpdateDevModel(IEnumerable<DeviceBasicData> item, CancellationToken cancellationToken)
     {
-        var topicJsonList = GetDeviceTopicArray(item);
-        return Update(topicJsonList, item.Count(), cancellationToken);
+        var topicArrayList = GetDeviceTopicArray(item);
+        return Update(topicArrayList, cancellationToken);
     }
 
     private ValueTask<OperResult> UpdateVarModel(IEnumerable<VariableBasicData> item, CancellationToken cancellationToken)
     {
-        var topicJsonList = GetVariableBasicDataTopicArray(item);
-        return Update(topicJsonList, item.Count(), cancellationToken);
+        var topicArrayList = GetVariableBasicDataTopicArray(item);
+        return Update(topicArrayList, cancellationToken);
     }
 
     #endregion private
@@ -261,12 +261,12 @@ public partial class MqttServer : BusinessBaseWithCacheIntervalScript<VariableBa
         {
             foreach (var item in varData)
             {
-                var topicJsonList = GetVariableBasicData(item);
-                foreach (var topicJson in topicJsonList)
+                var topicArrayList = GetVariableBasicDataTopicArray(item);
+                foreach (var topicArray in topicArrayList)
                 {
                     Messages.Add(new MqttApplicationMessageBuilder()
-    .WithTopic(topicJson.Topic)
-    .WithPayload(topicJson.Json).Build());
+    .WithTopic(topicArray.Topic)
+    .WithPayload(topicArray.Json).Build());
                 }
             }
         }
@@ -276,12 +276,12 @@ public partial class MqttServer : BusinessBaseWithCacheIntervalScript<VariableBa
             {
                 foreach (var item in devData)
                 {
-                    var topicJsonList = GetDeviceData(item);
-                    foreach (var topicJson in topicJsonList)
+                    var topicArrayList = GetDeviceTopicArray(item);
+                    foreach (var topicArray in topicArrayList)
                     {
                         Messages.Add(new MqttApplicationMessageBuilder()
-        .WithTopic(topicJson.Topic)
-        .WithPayload(topicJson.Json).Build());
+        .WithTopic(topicArray.Topic)
+        .WithPayload(topicArray.Json).Build());
                     }
                 }
             }
@@ -290,12 +290,12 @@ public partial class MqttServer : BusinessBaseWithCacheIntervalScript<VariableBa
         {
             foreach (var item in alramData)
             {
-                var topicJsonList = GetAlarms(item);
-                foreach (var topicJson in topicJsonList)
+                var topicArrayList = GetAlarmTopicArrays(item);
+                foreach (var topicArray in topicArrayList)
                 {
                     Messages.Add(new MqttApplicationMessageBuilder()
-    .WithTopic(topicJson.Topic)
-    .WithPayload(topicJson.Json).Build());
+    .WithTopic(topicArray.Topic)
+    .WithPayload(topicArray.Json).Build());
                 }
             }
         }
@@ -394,25 +394,27 @@ public partial class MqttServer : BusinessBaseWithCacheIntervalScript<VariableBa
     /// <summary>
     /// 上传mqtt，返回上传结果
     /// </summary>
-    public async ValueTask<OperResult> MqttUpAsync(string topic, byte[] payLoad, int count, CancellationToken cancellationToken = default)
+    public async ValueTask<OperResult> MqttUpAsync(TopicArray topicArray, CancellationToken cancellationToken = default)
     {
         try
         {
             var message = new MqttApplicationMessageBuilder()
-.WithTopic(topic)
-.WithPayload(payLoad).Build();
+.WithTopic(topicArray.Topic)
+.WithPayload(topicArray.Json).Build();
             await _mqttServer.InjectApplicationMessage(
                     new InjectedMqttApplicationMessage(message), cancellationToken).ConfigureAwait(false);
 
             if (_driverPropertys.DetailLog)
             {
                 if (LogMessage.LogLevel <= TouchSocket.Core.LogLevel.Trace)
-                    LogMessage.LogTrace(GetString(topic, payLoad, _memoryVarModelQueue.Count));
+                    LogMessage.LogTrace(GetDetailLogString(topicArray, _memoryVarModelQueue.Count));
+                else if (LogMessage.LogLevel <= TouchSocket.Core.LogLevel.Debug)
+                    LogMessage.LogDebug(GetCountLogString(topicArray, _memoryVarModelQueue.Count));
             }
             else
             {
-                LogMessage.LogTrace($"Topic：{topic}{Environment.NewLine}Count：{count} {Environment.NewLine} VarModelQueue:{_memoryVarModelQueue.Count}");
-
+                if (LogMessage.LogLevel <= TouchSocket.Core.LogLevel.Debug)
+                    LogMessage.LogDebug(GetCountLogString(topicArray, _memoryVarModelQueue.Count));
             }
             return OperResult.Success;
         }

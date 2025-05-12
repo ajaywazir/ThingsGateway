@@ -151,6 +151,13 @@ public static class LoggerExtensions
     }
 
     /// <summary>
+    /// 输出提示日志
+    /// </summary>
+    public static void LogDebug(this ILog logger, string msg)
+    {
+        logger.Log(TouchSocket.Core.LogLevel.Debug, null, msg, null);
+    }
+    /// <summary>
     /// 输出Trace日志
     /// </summary>
     public static void LogTrace(this ILog logger, string msg)

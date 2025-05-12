@@ -35,6 +35,7 @@ public abstract class BusinessBaseWithCacheAlarmModel<VarModel, DevModel, AlarmM
         {
             try
             {
+                LogMessage?.LogInformation($"Add {typeof(DevModel).Name} data to file cache, count {data.Count}");
                 foreach (var item in data)
                 {
                     item.Id = CommonUtils.GetSingleId();
@@ -100,6 +101,7 @@ public abstract class BusinessBaseWithCacheAlarmModel<VarModel, DevModel, AlarmM
             {
                 if (_memoryAlarmModelQueue.Count > _businessPropertyWithCache.QueueMaxCount)
                 {
+                    LogMessage?.LogWarning($"{typeof(AlarmModel).Name} Queue exceeds limit, clear old data. If it doesn't work as expected, increase [QueueMaxCount] or Enable cache");
                     _memoryAlarmModelQueue.Clear();
                     _memoryAlarmModelQueue.Enqueue(data);
                     return;

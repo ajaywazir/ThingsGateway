@@ -39,6 +39,7 @@ public abstract class BusinessBaseWithCacheVariableModel<VarModel> : BusinessBas
         {
             try
             {
+                LogMessage?.LogInformation($"Add {typeof(VarModel).Name} data to file cache, count {data.Count}");
                 foreach (var item in data)
                 {
                     item.Id = CommonUtils.GetSingleId();
@@ -147,6 +148,7 @@ public abstract class BusinessBaseWithCacheVariableModel<VarModel> : BusinessBas
             {
                 if (_memoryVarModelQueue.Count > _businessPropertyWithCache.QueueMaxCount)
                 {
+                    LogMessage?.LogWarning($"{typeof(VarModel).Name} Queue exceeds limit, clear old data. If it doesn't work as expected, increase [QueueMaxCount] or Enable cache");
                     _memoryVarModelQueue.Clear();
                     _memoryVarModelQueue.Enqueue(data);
                     return;
