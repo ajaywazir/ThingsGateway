@@ -15,16 +15,13 @@ namespace ThingsGateway.Admin.Application;
 
 [Route("api/[controller]/[action]")]
 [AllowAnonymous]
+[ApiController]
 public class TestController : ControllerBase
 {
-    [HttpPost]
-    public Task Test(string data)
+    [HttpGet]
+    public void Test()
     {
-        for (int i = 0; i < 3; i++)
-        {
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-        }
-        return Task.CompletedTask;
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
     }
 }

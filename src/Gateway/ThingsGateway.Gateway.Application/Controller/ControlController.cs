@@ -36,6 +36,7 @@ namespace ThingsGateway.Gateway.Application;
 [Route("openApi/control")]
 [RolePermission]
 [LoggingMonitor]
+[ApiController]
 [Authorize(AuthenticationSchemes = "Bearer")]
 public class ControlController : ControllerBase
 {

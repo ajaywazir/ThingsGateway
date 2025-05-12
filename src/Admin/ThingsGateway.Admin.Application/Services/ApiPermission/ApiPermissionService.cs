@@ -22,25 +22,18 @@ using System.Globalization;
 using System.Reflection;
 
 using ThingsGateway.Extension;
-using ThingsGateway.SpecificationDocument;
 
 namespace ThingsGateway.Admin.Application;
 
 internal sealed class ApiPermissionService : IApiPermissionService
 {
     private readonly IApiDescriptionGroupCollectionProvider _apiDescriptionGroupCollectionProvider;
-    private readonly SwaggerGeneratorOptions _generatorOptions;
 
     public ApiPermissionService(
         IOptions<SwaggerGeneratorOptions> generatorOptions,
         IApiDescriptionGroupCollectionProvider apiDescriptionGroupCollectionProvider)
     {
-        _generatorOptions = generatorOptions.Value;
         _apiDescriptionGroupCollectionProvider = apiDescriptionGroupCollectionProvider;
-    }
-    private IEnumerable<string> GetDocumentNames()
-    {
-        return _generatorOptions.SwaggerDocs.Keys;
     }
 
     /// <inheritdoc />
@@ -53,37 +46,37 @@ internal sealed class ApiPermissionService : IApiPermissionService
             permissions = new();
 
             Dictionary<string, OpenApiPermissionTreeSelector> groupOpenApis = new();
-            foreach (var item in GetDocumentNames())
-            {
-                OpenApiPermissionTreeSelector openApiPermissionTreeSelector = new() { ApiName = item ?? "Default" };
-                groupOpenApis.TryAdd(openApiPermissionTreeSelector.ApiName, openApiPermissionTreeSelector);
-            }
+
             var apiDescriptions = _apiDescriptionGroupCollectionProvider.ApiDescriptionGroups.Items;
+
+            foreach (var item1 in apiDescriptions)
+            {
+                foreach (var item in item1.Items)
+                {
+                    if (item.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor)
+                    {
+                        OpenApiPermissionTreeSelector openApiPermissionTreeSelector = new() { ApiName = controllerActionDescriptor.ControllerName ?? "Default" };
+                        groupOpenApis.TryAdd(openApiPermissionTreeSelector.ApiName, openApiPermissionTreeSelector);
+                    }
+                }
+            }
 
             // 获取所有需要数据权限的控制器
             var controllerTypes =
                 App.EffectiveTypes.Where(u => !u.IsInterface && !u.IsAbstract && u.IsClass && u.IsDefined(typeof(RolePermissionAttribute), false));
 
-            foreach (var groupOpenApi in groupOpenApis)
+            //foreach (var groupOpenApi in groupOpenApis)
             {
 
                 foreach (var apiDescriptionGroup in apiDescriptions)
                 {
 
-
                     var routes = apiDescriptionGroup.Items.Where(api => api.ActionDescriptor is ControllerActionDescriptor);
-
-                    OpenApiPermissionTreeSelector openApiPermissionTreeSelector = groupOpenApi.Value;
 
                     Dictionary<string, OpenApiPermissionTreeSelector> openApiPermissionTreeSelectorDict = new();
 
                     foreach (var route in routes)
                     {
-                        if (!SpecificationDocumentBuilder.CheckApiDescriptionInCurrentGroup(groupOpenApi.Key, route))
-                        {
-                            continue;
-                        }
-
                         var actionDesc = (ControllerActionDescriptor)route.ActionDescriptor;
                         if (!actionDesc.ControllerTypeInfo.CustomAttributes.Any(a => a.AttributeType == typeof(RolePermissionAttribute)))
                             continue;
@@ -116,10 +109,8 @@ internal sealed class ApiPermissionService : IApiPermissionService
                     }
 
 
-                    openApiPermissionTreeSelector.Children.AddRange(openApiPermissionTreeSelectorDict.Values);
-
-                    if (openApiPermissionTreeSelector.Children.Any(a => a.Children.Count > 0))
-                        permissions.Add(openApiPermissionTreeSelector);
+                    if (openApiPermissionTreeSelectorDict.Values.Any(a => a.Children.Count > 0))
+                        permissions.AddRange(openApiPermissionTreeSelectorDict.Values);
 
                 }
 

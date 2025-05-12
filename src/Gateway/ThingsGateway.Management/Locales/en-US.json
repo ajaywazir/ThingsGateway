@@ -14,8 +14,8 @@
     "Password": "Password"
   },
 
-  "ThingsGateway.Management.AutoUpdateControler": {
-    "AutoUpdateControler": "AutoUpdate",
+  "ThingsGateway.Management.AutoUpdateController": {
+    "AutoUpdateController": "AutoUpdate",
     "Update": "Update"
   },
 

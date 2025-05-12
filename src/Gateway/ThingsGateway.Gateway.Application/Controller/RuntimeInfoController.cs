@@ -24,6 +24,7 @@ namespace ThingsGateway.Gateway.Application;
 [ApiDescriptionSettings("ThingsGateway.OpenApi", Order = 200)]
 [DisplayName("数据状态")]
 [Route("openApi/runtimeInfo")]
+[ApiController]
 [RolePermission]
 [Authorize(AuthenticationSchemes = "Bearer")]
 public class RuntimeInfoController : ControllerBase

@@ -19,11 +19,12 @@ namespace ThingsGateway.Management;
 [Route("openApi/autoUpdate")]
 [RolePermission]
 [LoggingMonitor]
+[ApiController]
 [Authorize(AuthenticationSchemes = "Bearer")]
-public class AutoUpdateControler : ControllerBase
+public class AutoUpdateController : ControllerBase
 {
     private IUpdateZipFileHostedService _updateZipFileService;
-    public AutoUpdateControler(IUpdateZipFileHostedService updateZipFileService)
+    public AutoUpdateController(IUpdateZipFileHostedService updateZipFileService)
     {
         _updateZipFileService = updateZipFileService;
     }

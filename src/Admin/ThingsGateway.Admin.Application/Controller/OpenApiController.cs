@@ -26,6 +26,7 @@ namespace ThingsGateway.Admin.Application;
 [Route("openapi/auth")]
 [Authorize(AuthenticationSchemes = "Bearer")]
 [LoggingMonitor]
+[ApiController]
 public class OpenApiController : ControllerBase
 {
     private readonly IAuthService _authService;

@@ -23,10 +23,10 @@ namespace ThingsGateway.Upgrade;
 [RolePermission]
 [LoggingMonitor]
 [Authorize(AuthenticationSchemes = "Bearer")]
-public class AutoUpdateControler : ControllerBase
+public class AutoUpdateController : ControllerBase
 {
     private IUpdateZipFileHostedService _updateZipFileService;
-    public AutoUpdateControler(IUpdateZipFileHostedService updateZipFileService)
+    public AutoUpdateController(IUpdateZipFileHostedService updateZipFileService)
     {
         _updateZipFileService = updateZipFileService;
     }

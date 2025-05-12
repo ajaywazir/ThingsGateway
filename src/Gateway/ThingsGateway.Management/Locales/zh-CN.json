@@ -13,8 +13,8 @@
     "Unregister": "取消注册",
     "Password": "注册码"
   },
-  "ThingsGateway.Management.AutoUpdateControler": {
-    "AutoUpdateControler": "程序更新",
+  "ThingsGateway.Management.AutoUpdateController": {
+    "AutoUpdateController": "程序更新",
     "Update": "更新"
   },
   "ThingsGateway.Upgrade.UpdateZipFile": {
