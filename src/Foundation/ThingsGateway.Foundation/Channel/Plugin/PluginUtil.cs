@@ -70,7 +70,7 @@ public static class PluginUtil
         {
             action += a =>
             {
-                a.UseCheckClear()
+                a.UseTcpSessionCheckClear()
         .SetCheckClearType(CheckClearType.All)
         .SetTick(TimeSpan.FromMilliseconds(channelOptions.CheckClearTime))
         .SetOnClose(async (c, t) =>

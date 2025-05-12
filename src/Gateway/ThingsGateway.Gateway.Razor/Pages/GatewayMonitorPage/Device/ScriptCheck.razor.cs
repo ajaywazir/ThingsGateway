@@ -8,8 +8,6 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
-using System.Threading.Tasks;
-
 using ThingsGateway.Gateway.Application;
 using ThingsGateway.NewLife.Json.Extension;
 

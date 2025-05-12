@@ -562,18 +562,7 @@ public abstract class DeviceBase : DisposableObject, IDevice
         finally
         {
             waitLock.Release();
-            if (waitData.WaitResult != null)
-            {
-                if (waitData.WaitResult.Sign != sign)
-                {
-                    waitData.WaitResult.Sign = sign;
-                }
-            }
-            else
-            {
-                waitData.SetResult(new MessageBase() { Sign = sign });
-            }
-            clientChannel.WaitHandlePool.Destroy(waitData);
+            clientChannel.WaitHandlePool.Destroy(sign);
             Channel.ChannelReceivedWaitDict.TryRemove(sign, out _);
         }
     }

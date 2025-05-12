@@ -55,7 +55,7 @@ internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHo
     public string LogPath { get; }
     private TcpDmtpClient TcpDmtpClient;
     private TcpDmtpService TcpDmtpService;
-    private TcpDmtpClient GetTcpDmtpClient(RedundancyOptions redundancy)
+    private async Task<TcpDmtpClient> GetTcpDmtpClient(RedundancyOptions redundancy)
     {
         _log = new LoggerGroup() { LogLevel = TouchSocket.Core.LogLevel.Trace };
         _log?.AddLogger(new EasyLogger(Log_Out) { LogLevel = TouchSocket.Core.LogLevel.Trace });
@@ -81,11 +81,11 @@ internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHo
                    .SetMaxFailCount(redundancy.MaxErrorCount);
                });
 
-        tcpDmtpClient.Setup(config);
+        await tcpDmtpClient.SetupAsync(config).ConfigureAwait(false);
         return tcpDmtpClient;
     }
 
-    private TcpDmtpService GetTcpDmtpService(RedundancyOptions redundancy)
+    private async Task<TcpDmtpService> GetTcpDmtpService(RedundancyOptions redundancy)
     {
         _log = new LoggerGroup() { LogLevel = TouchSocket.Core.LogLevel.Trace };
         _log?.AddLogger(new EasyLogger(Log_Out) { LogLevel = TouchSocket.Core.LogLevel.Trace });
@@ -111,7 +111,7 @@ internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHo
                    .SetMaxFailCount(redundancy.MaxErrorCount);
                });
 
-        tcpDmtpService.Setup(config);
+        await tcpDmtpService.SetupAsync(config).ConfigureAwait(false);
         return tcpDmtpService;
     }
 
@@ -325,13 +325,13 @@ internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHo
         {
             if (RedundancyOptions.IsMaster)
             {
-                TcpDmtpService = GetTcpDmtpService(RedundancyOptions);
+                TcpDmtpService = await GetTcpDmtpService(RedundancyOptions).ConfigureAwait(false);
                 await TcpDmtpService.StartAsync().ConfigureAwait(false);//启动
                 await ActiveAsync().ConfigureAwait(false);
             }
             else
             {
-                TcpDmtpClient = GetTcpDmtpClient(RedundancyOptions);
+                TcpDmtpClient = await GetTcpDmtpClient(RedundancyOptions).ConfigureAwait(false);
                 await StandbyAsync().ConfigureAwait(false);
             }
         }

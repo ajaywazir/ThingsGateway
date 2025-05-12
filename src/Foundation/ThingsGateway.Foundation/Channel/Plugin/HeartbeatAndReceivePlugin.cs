@@ -42,7 +42,7 @@ internal sealed class HeartbeatAndReceivePlugin : PluginBase, ITcpConnectedPlugi
         set
         {
             _heartbeat = value;
-            if(!_heartbeat.IsNullOrEmpty())
+            if (!_heartbeat.IsNullOrEmpty())
             {
                 HeartbeatByte = new ArraySegment<byte>(Encoding.UTF8.GetBytes(value));
             }
