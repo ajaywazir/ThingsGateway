@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
+using SqlSugar;
+
 using System.Reflection;
 
 namespace ThingsGateway.Gateway.Application;
@@ -93,11 +95,10 @@ public class Startup : AppStartup
             using var db = DbContext.GetDB<Variable>();
             if (db.DbMaintenance.IsAnyIndex("unique_variable_name"))
             {
-                var tables = db.DbMaintenance.DropIndex("unique_variable_name");
+                DropIndex(db, "unique_variable_name", "variable");
             }
         }
         catch { }
-
 
         var fullName = Assembly.GetExecutingAssembly().FullName;//获取程序集全名
         CodeFirstUtils.CodeFirst(fullName!);//CodeFirst
@@ -136,4 +137,34 @@ public class Startup : AppStartup
             serviceProvider.GetService<ILoggerFactory>().CreateLogger(nameof(ThingsGateway)).LogInformation("ThingsGateway is stopping...");
         });
     }
+    /// <summary>
+    /// 删除指定表上的索引（自动根据数据库类型生成正确的 DROP INDEX SQL）
+    /// </summary>
+    /// <param name="db">数据库连接</param>
+    /// <param name="indexName">索引名</param>
+    /// <param name="tableName">表名（部分数据库需要）</param>
+    private static void DropIndex(SqlSugarClient db, string indexName, string tableName)
+    {
+        if (string.IsNullOrWhiteSpace(indexName))
+            throw new ArgumentNullException(nameof(indexName));
+
+        string dropIndexSql;
+
+        switch (db.CurrentConnectionConfig.DbType)
+        {
+            case SqlSugar.DbType.MySql:
+            case SqlSugar.DbType.SqlServer:
+                dropIndexSql = $"DROP INDEX {indexName} ON {tableName};";
+                break;
+
+            default:
+                dropIndexSql = $"DROP INDEX {indexName};";
+                break;
+        }
+        db.Ado.ExecuteCommand(dropIndexSql);
+
+    }
 }
+
+
+

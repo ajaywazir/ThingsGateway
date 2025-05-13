@@ -28,7 +28,7 @@ namespace ThingsGateway.Gateway.Application;
 [SugarTable("variable", TableDescription = "设备变量表")]
 [Tenant(SqlSugarConst.DB_Custom)]
 [SugarIndex("index_device", nameof(Variable.DeviceId), OrderByType.Asc)]
-[SugarIndex("unique_variable_name", nameof(Variable.Name), OrderByType.Asc, nameof(Variable.DeviceId), OrderByType.Asc, true)]
+[SugarIndex("unique_deviceid_variable_name", nameof(Variable.Name), OrderByType.Asc, nameof(Variable.DeviceId), OrderByType.Asc, true)]
 public class Variable : BaseDataEntity, IValidatableObject
 {
 
