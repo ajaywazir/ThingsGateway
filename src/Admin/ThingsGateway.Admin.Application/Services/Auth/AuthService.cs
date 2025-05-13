@@ -96,9 +96,9 @@ public class AuthService : IAuthService
     /// </summary>
     public async Task LoginOutAsync()
     {
-        if (UserManager.UserId == 0)
+        if (UserManager.VerificatId == 0)
             return;
-        var verificatId = UserManager.UserId;
+        var verificatId = UserManager.VerificatId;
         //获取用户信息
         var userinfo = await _sysUserService.GetUserByAccountAsync(UserManager.UserAccount, UserManager.TenantId).ConfigureAwait(false);
         if (userinfo != null)

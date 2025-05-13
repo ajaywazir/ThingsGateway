@@ -8,6 +8,7 @@
     "IP": "IP",
     "Port": "端口",
     "DetailLog": "详细日志",
+    "MqttQualityOfServiceLevel": "QoS",
     "MqttProtocolVersion": "协议版本",
     "TLS": "TLS",
     "CAFile_BrowserFile": "CA文件",
@@ -48,6 +49,7 @@
   "ThingsGateway.Plugin.Mqtt.MqttServerProperty": {
     "IP": "IP",
     "Port": "端口",
+    "MqttQualityOfServiceLevel": "QoS",
     "DetailLog": "详细日志",
     "WebSocketPort": "Websocket端口",
     "StartWithId": "允许连接的ID前缀",

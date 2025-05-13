@@ -41,7 +41,7 @@ public partial class SessionPage
         {
             var op = new DialogOption()
             {
-                IsScrolling = false,
+                IsScrolling = true,
                 Title = Localizer[nameof(VerificatInfo)],
                 ShowMaximizeButton = true,
                 Class = "dialog-table",

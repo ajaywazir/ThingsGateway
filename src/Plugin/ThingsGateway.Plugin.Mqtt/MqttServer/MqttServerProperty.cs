@@ -8,6 +8,8 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
+using MQTTnet.Protocol;
+
 namespace ThingsGateway.Plugin.Mqtt;
 
 /// <summary>
@@ -26,6 +28,9 @@ public class MqttServerProperty : BusinessPropertyWithCacheIntervalScript
     /// </summary>
     [DynamicProperty]
     public int Port { get; set; } = 1883;
+
+    [DynamicProperty]
+    public MqttQualityOfServiceLevel MqttQualityOfServiceLevel { get; set; } = MqttQualityOfServiceLevel.AtMostOnce;
 
     /// <summary>
     /// 是否显示详细日志

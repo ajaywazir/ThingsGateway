@@ -6,6 +6,7 @@
   "ThingsGateway.Plugin.Mqtt.MqttClientProperty": {
     "IP": "IP",
     "Port": "Port",
+    "MqttQualityOfServiceLevel": "QoS",
     "MqttProtocolVersion": "MqttProtocolVersion",
     "DetailLog": "DetailLog",
     "TLS": "TLS",
@@ -45,6 +46,7 @@
   "ThingsGateway.Plugin.Mqtt.MqttServerProperty": {
     "IP": "IP",
     "Port": "Port",
+    "MqttQualityOfServiceLevel": "QoS",
     "DetailLog": "DetailLog",
     "WebSocketPort": "WebSocketPort",
     "StartWithId": "StartWithId",
