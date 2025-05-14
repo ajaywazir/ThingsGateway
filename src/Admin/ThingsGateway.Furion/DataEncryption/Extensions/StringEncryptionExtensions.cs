@@ -77,10 +77,11 @@ public static class StringEncryptionExtensions
     /// <param name="iv">偏移量</param>
     /// <param name="mode">模式</param>
     /// <param name="padding">填充</param>
+    /// <param name="isBase64"></param>
     /// <returns>string</returns>
-    public static string ToAESEncrypt(this string text, string skey, byte[] iv = null, CipherMode mode = CipherMode.CBC, PaddingMode padding = PaddingMode.PKCS7)
+    public static string ToAESEncrypt(this string text, string skey, byte[] iv = null, CipherMode mode = CipherMode.CBC, PaddingMode padding = PaddingMode.PKCS7, bool isBase64 = false)
     {
-        return AESEncryption.Encrypt(text, skey, iv, mode, padding);
+        return AESEncryption.Encrypt(text, skey, iv, mode, padding, isBase64);
     }
 
     /// <summary>
@@ -91,10 +92,11 @@ public static class StringEncryptionExtensions
     /// <param name="iv">偏移量</param>
     /// <param name="mode">模式</param>
     /// <param name="padding">填充</param>
+    /// <param name="isBase64"></param>
     /// <returns>string</returns>
-    public static string ToAESDecrypt(this string text, string skey, byte[] iv = null, CipherMode mode = CipherMode.CBC, PaddingMode padding = PaddingMode.PKCS7)
+    public static string ToAESDecrypt(this string text, string skey, byte[] iv = null, CipherMode mode = CipherMode.CBC, PaddingMode padding = PaddingMode.PKCS7, bool isBase64 = false)
     {
-        return AESEncryption.Decrypt(text, skey, iv, mode, padding);
+        return AESEncryption.Decrypt(text, skey, iv, mode, padding, isBase64);
     }
 
     /// <summary>
@@ -105,10 +107,11 @@ public static class StringEncryptionExtensions
     /// <param name="iv">偏移量</param>
     /// <param name="mode">模式</param>
     /// <param name="padding">填充</param>
+    /// <param name="isBase64"></param>
     /// <returns>string</returns>
-    public static byte[] ToAESEncrypt(this byte[] bytes, string skey, byte[] iv = null, CipherMode mode = CipherMode.CBC, PaddingMode padding = PaddingMode.PKCS7)
+    public static byte[] ToAESEncrypt(this byte[] bytes, string skey, byte[] iv = null, CipherMode mode = CipherMode.CBC, PaddingMode padding = PaddingMode.PKCS7, bool isBase64 = false)
     {
-        return AESEncryption.Encrypt(bytes, skey, iv, mode, padding);
+        return AESEncryption.Encrypt(bytes, skey, iv, mode, padding, isBase64);
     }
 
     /// <summary>
@@ -119,10 +122,11 @@ public static class StringEncryptionExtensions
     /// <param name="iv">偏移量</param>
     /// <param name="mode">模式</param>
     /// <param name="padding">填充</param>
+    /// <param name="isBase64"></param>
     /// <returns>string</returns>
-    public static byte[] ToAESDecrypt(this byte[] bytes, string skey, byte[] iv = null, CipherMode mode = CipherMode.CBC, PaddingMode padding = PaddingMode.PKCS7)
+    public static byte[] ToAESDecrypt(this byte[] bytes, string skey, byte[] iv = null, CipherMode mode = CipherMode.CBC, PaddingMode padding = PaddingMode.PKCS7, bool isBase64 = false)
     {
-        return AESEncryption.Decrypt(bytes, skey, iv, mode, padding);
+        return AESEncryption.Decrypt(bytes, skey, iv, mode, padding, isBase64);
     }
 
     /// <summary>
@@ -242,5 +246,45 @@ public static class StringEncryptionExtensions
     public static bool ToPBKDF2Compare(this string text, string hash, int saltSize = 16, int iterationCount = 10000, int derivedKeyLength = 32)
     {
         return PBKDF2Encryption.Compare(text, hash, saltSize, iterationCount, derivedKeyLength);
+    }
+
+    /// <summary>
+    /// Gzip 压缩字符串并返回字节数组
+    /// </summary>
+    /// <param name="text"></param>
+    /// <returns></returns>
+    public static byte[] ToGzipCompress(this string text)
+    {
+        return GzipEncryption.Compress(text);
+    }
+
+    /// <summary>
+    /// Gzip 从字节数组解压
+    /// </summary>
+    /// <param name="bytes"></param>
+    /// <returns></returns>
+    public static string ToGzipDecompress(this byte[] bytes)
+    {
+        return GzipEncryption.Decompress(bytes);
+    }
+
+    /// <summary>
+    /// Gzip 压缩字符串并返回 Base64 字符串
+    /// </summary>
+    /// <param name="text"></param>
+    /// <returns></returns>
+    public static string ToGzipCompressToBase64(this string text)
+    {
+        return GzipEncryption.CompressToBase64(text);
+    }
+
+    /// <summary>
+    /// Gzip 从 Base64 字符串解压
+    /// </summary>
+    /// <param name="base64String"></param>
+    /// <returns></returns>
+    public static string ToGzipDecompressFromBase64(this string base64String)
+    {
+        return GzipEncryption.DecompressFromBase64(base64String);
     }
 }

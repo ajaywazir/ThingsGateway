@@ -192,7 +192,7 @@ public sealed class LoggingMonitorAttribute : Attribute, IAsyncActionFilter, IAs
     /// <param name="claimsPrincipal"></param>
     /// <param name="authorization"></param>
     /// <returns></returns>
-    private static List<string> GenerateAuthorizationTemplate(Utf8JsonWriter writer, ClaimsPrincipal claimsPrincipal, StringValues authorization)
+    private List<string> GenerateAuthorizationTemplate(Utf8JsonWriter writer, ClaimsPrincipal claimsPrincipal, StringValues authorization)
     {
         var templates = new List<string>();
 
@@ -219,7 +219,7 @@ public sealed class LoggingMonitorAttribute : Attribute, IAsyncActionFilter, IAs
                 var succeed = long.TryParse(value, out var seconds);
                 if (succeed)
                 {
-                    value = $"{value} ({DateTimeOffset.FromUnixTimeSeconds(seconds).ToLocalTime():yyyy-MM-dd HH:mm:ss:ffff(zzz) dddd} L)";
+                    value = $"{value} ({DateTimeOffset.FromUnixTimeSeconds(seconds).ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss:ffff(zzz) dddd", Settings.FormatProvider)} L)";
                 }
             }
 

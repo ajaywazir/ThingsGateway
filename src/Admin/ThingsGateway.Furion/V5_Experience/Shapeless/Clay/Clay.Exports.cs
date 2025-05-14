@@ -10,6 +10,7 @@
 // ------------------------------------------------------------------------
 
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -87,6 +88,14 @@ public partial class Clay
     public Clay this[Range range] => (Clay)this[range as object]!;
 
     /// <summary>
+    ///     路径索引
+    /// </summary>
+    /// <remarks>根据路径获取值。</remarks>
+    /// <param name="identifier">带路径的标识符</param>
+    /// <param name="isPath">是否是带路径的标识符</param>
+    public object? this[string identifier, bool isPath] => isPath ? PathValue(identifier) : GetValue(identifier);
+
+    /// <summary>
     ///     判断是否为单一对象
     /// </summary>
     public bool IsObject { get; }
@@ -153,6 +162,35 @@ public partial class Clay
         }
 
         return ToJsonString(jsonSerializerOptions);
+    }
+
+    /// <summary>
+    ///     解构函数
+    /// </summary>
+    /// <param name="clay">dynamic 类型的 <see cref="Clay" /></param>
+    /// <param name="enumerableClay">
+    ///     <see cref="IEnumerable{T}" />
+    /// </param>
+    public void Deconstruct(out dynamic clay, out IEnumerable<dynamic?> enumerableClay)
+    {
+        clay = this;
+        enumerableClay = this;
+    }
+
+    /// <summary>
+    /// </summary>
+    /// <param name="clay">dynamic 类型的 <see cref="Clay" /></param>
+    /// <param name="enumerableClay">
+    ///     <see cref="IEnumerable{T}" />
+    /// </param>
+    /// <param name="rawClay">
+    ///     <see cref="Clay" />
+    /// </param>
+    public void Deconstruct(out dynamic clay, out IEnumerable<dynamic?> enumerableClay, out Clay rawClay)
+    {
+        clay = this;
+        enumerableClay = this;
+        rawClay = this;
     }
 
     /// <summary>
@@ -261,6 +299,38 @@ public partial class Clay
         Parse(ref utf8JsonReader, ClayOptions.Default.Configure(configure));
 
     /// <summary>
+    ///     从文件中读取数据并转换为 <see cref="Clay" /> 实例
+    /// </summary>
+    /// <param name="path">文件路径</param>
+    /// <param name="options">
+    ///     <see cref="ClayOptions" />
+    /// </param>
+    /// <returns>
+    ///     <see cref="Clay" />
+    /// </returns>
+    public static Clay ParseFromFile(string path, ClayOptions? options = null)
+    {
+        // 空检查
+        ArgumentException.ThrowIfNullOrWhiteSpace(path);
+
+        // 打开文件并读取流
+        using var fileStream = File.OpenRead(path);
+
+        return Parse(fileStream, options);
+    }
+
+    /// <summary>
+    ///     从文件中读取数据并转换为 <see cref="Clay" /> 实例
+    /// </summary>
+    /// <param name="path">文件路径</param>
+    /// <param name="configure">自定义配置委托</param>
+    /// <returns>
+    ///     <see cref="Clay" />
+    /// </returns>
+    public static Clay ParseFromFile(string path, Action<ClayOptions> configure) =>
+        ParseFromFile(path, ClayOptions.Default.Configure(configure));
+
+    /// <summary>
     ///     检查标识符是否定义
     /// </summary>
     /// <param name="identifier">标识符，可以是键（字符串）或索引（整数）或索引运算符（Index）或范围运算符（Range）</param>
@@ -319,6 +389,37 @@ public partial class Clay
     public bool IsDefined(object identifier) => Contains(identifier);
 
     /// <summary>
+    ///     检查属性（键）是否定义
+    /// </summary>
+    /// <param name="propertyName">属性名（键）</param>
+    /// <returns>
+    ///     <see cref="bool" />
+    /// </returns>
+    public bool HasProperty(string propertyName)
+    {
+        // 检查是否是集合或数组实例调用
+        ThrowIfMethodCalledOnArrayCollection(nameof(HasProperty));
+
+        return Contains(propertyName);
+    }
+
+    /// <summary>
+    ///     获取集合或数组中指定项（元素）的索引
+    /// </summary>
+    /// <param name="value">项（元素）</param>
+    /// <returns>
+    ///     <see cref="bool" />
+    /// </returns>
+    public int IndexOf(object? value)
+    {
+        // 检查是否是单一对象实例调用
+        ThrowIfMethodCalledOnSingleObject(nameof(IndexOf));
+
+        return Values.Select((item, index) => new { item, index }).FirstOrDefault(x => object.Equals(x.item, value))
+            ?.index ?? -1;
+    }
+
+    /// <summary>
     ///     根据标识符获取值
     /// </summary>
     /// <param name="identifier">标识符，可以是键（字符串）或索引（整数）或索引运算符（Index）或范围运算符（Range）</param>
@@ -375,6 +476,12 @@ public partial class Clay
         // 根据标识符查找 JsonNode 节点
         var jsonNode = FindNode(identifier);
 
+        // 处理 object 类型生成 JsonElement 问题
+        if (resultType == typeof(object))
+        {
+            return DeserializeNode(jsonNode, Options);
+        }
+
         return IsClay(resultType)
             ? new Clay(jsonNode, Options)
             : Helpers.DeserializeNode(jsonNode, resultType, jsonSerializerOptions ?? Options.JsonSerializerOptions);
@@ -393,6 +500,94 @@ public partial class Clay
     /// </returns>
     public TResult? Get<TResult>(object identifier, JsonSerializerOptions? jsonSerializerOptions = null) =>
         (TResult?)Get(identifier, typeof(TResult), jsonSerializerOptions);
+
+    /// <summary>
+    ///     根据路径获取值
+    /// </summary>
+    /// <remarks>不支持获取自定义委托。</remarks>
+    /// <param name="path">带路径的标识符</param>
+    /// <returns>
+    ///     <see cref="object" />
+    /// </returns>
+    public object? PathValue(string path) => PathValue<object>(path);
+
+    /// <summary>
+    ///     根据路径获取值
+    /// </summary>
+    /// <remarks>不支持获取自定义委托。</remarks>
+    /// <param name="path">带路径的标识符</param>
+    /// <param name="resultType">转换的目标类型</param>
+    /// <param name="jsonSerializerOptions">
+    ///     <see cref="JsonSerializerOptions" />
+    /// </param>
+    /// <returns>
+    ///     <see cref="object" />
+    /// </returns>
+    public object? PathValue(string path, Type resultType, JsonSerializerOptions? jsonSerializerOptions = null)
+    {
+        // 空检查
+        ArgumentNullException.ThrowIfNull(path);
+
+        // 根据路径分隔符进行分割，并确保至少有一个标识符
+        var identifiers = path.Split(Options.PathSeparator, StringSplitOptions.RemoveEmptyEntries);
+        if (identifiers is { Length: 0 })
+        {
+            return null;
+        }
+
+        // 根据标识符查找 JsonNode 节点
+        var currentNode = FindNode(identifiers[0]);
+        if (currentNode is null)
+        {
+            return null;
+        }
+
+        // 遍历剩余的标识符
+        for (var i = 1; i < identifiers.Length; i++)
+        {
+            // 将 currentNode 转换为对象实例
+            var currentValue = DeserializeNode(currentNode, Options);
+
+            // 检查是否是 Clay 类型
+            if (!IsClay(currentValue))
+            {
+                throw new InvalidOperationException(
+                    $"The identifier `{identifiers[i - 1]}` at path `{identifiers[i - 1]}:{identifiers[i]}` does not support further lookup.");
+            }
+
+            // 进行下一级查找
+            currentNode = ((Clay?)currentValue)?.FindNode(identifiers[i]);
+            if (currentNode is null)
+            {
+                return null;
+            }
+        }
+
+        // 处理 object 类型生成 JsonElement 问题
+        if (resultType == typeof(object))
+        {
+            return DeserializeNode(currentNode, Options);
+        }
+
+        return IsClay(resultType)
+            ? new Clay(currentNode, Options)
+            : Helpers.DeserializeNode(currentNode, resultType, jsonSerializerOptions ?? Options.JsonSerializerOptions);
+    }
+
+    /// <summary>
+    ///     根据路径获取值
+    /// </summary>
+    /// <remarks>不支持获取自定义委托。</remarks>
+    /// <param name="path">带路径的标识符</param>
+    /// <param name="jsonSerializerOptions">
+    ///     <see cref="JsonSerializerOptions" />
+    /// </param>
+    /// <typeparam name="TResult">转换的目标类型</typeparam>
+    /// <returns>
+    ///     <typeparamref name="TResult" />
+    /// </returns>
+    public TResult? PathValue<TResult>(string path, JsonSerializerOptions? jsonSerializerOptions = null) =>
+        (TResult?)PathValue(path, typeof(TResult), jsonSerializerOptions);
 
     /// <summary>
     ///     根据标识符查找 <see cref="JsonNode" /> 节点
@@ -641,7 +836,7 @@ public partial class Clay
             throw new ArgumentException("Clay array contains one or more null elements.", nameof(clays));
         }
 
-        // 检查是流变对象类型是否一致
+        // 检查流变对象类型是否一致
         if (clays.Any(u => u.Type != Type))
         {
             throw new InvalidOperationException("All Clay objects must be of the same type.");
@@ -666,6 +861,51 @@ public partial class Clay
         }
 
         return combineClay;
+    }
+
+    /// <summary>
+    ///     拓展属性或项
+    /// </summary>
+    /// <param name="values">值集合</param>
+    /// <returns>
+    ///     <see cref="Clay" />
+    /// </returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    public Clay Extend(params object?[] values)
+    {
+        // 空检查
+        ArgumentNullException.ThrowIfNull(values);
+
+        // 检查是否是集合或数组
+        if (IsArray)
+        {
+            AddRange(values);
+
+            return this;
+        }
+
+        // 遍历所有值
+        foreach (var item in values)
+        {
+            // 检查值是否为空值或基本类型的值
+            if (item is null || item.GetType().IsBasicType())
+            {
+                throw new InvalidOperationException("Cannot extend a single object with null or basic type values.");
+            }
+
+            // 将对象转换为字典集合
+            var dictionary = item is Clay clayItem
+                ? clayItem.AsEnumerateObject().ToDictionary(object (u) => u.Key, u => u.Value)
+                : item.ObjectToDictionary();
+
+            // 遍历字典键值并设置
+            foreach (var (key, value) in dictionary!)
+            {
+                this[key] = value;
+            }
+        }
+
+        return this;
     }
 
     /// <summary>
@@ -733,8 +973,8 @@ public partial class Clay
     /// </returns>
     public object? As(Type resultType, JsonSerializerOptions? jsonSerializerOptions = null)
     {
-        // 检查是否是 Clay 类型或 IEnumerable<dynamic?> 类型
-        if (IsClay(resultType) || resultType == typeof(IEnumerable<dynamic?>))
+        // 检查是否是 Clay 类型或 IEnumerable<dynamic?> 类型或 object 类型
+        if (IsClay(resultType) || resultType == typeof(IEnumerable<dynamic?>) || resultType == typeof(object))
         {
             return this;
         }
@@ -746,15 +986,23 @@ public partial class Clay
         }
 
         // 检查是否是 IEnumerable<KeyValuePair<string, dynamic?>> 类型且是单一对象
-        if (resultType == typeof(IEnumerable<KeyValuePair<string, dynamic?>>) && IsObject)
+        if (typeof(IEnumerable<KeyValuePair<string, dynamic?>>).IsAssignableFrom(resultType) && IsObject)
         {
-            return AsEnumerateObject();
+            return resultType.IsGenericType && resultType.GetGenericTypeDefinition() == typeof(Dictionary<,>)
+                ? AsEnumerateObject().ToDictionary(u => u.Key, u => u.Value)
+                : AsEnumerateObject();
         }
 
         // 检查是否是 IEnumerable<KeyValuePair<int, dynamic?>> 类型且是集合或数组
-        if (resultType == typeof(IEnumerable<KeyValuePair<int, dynamic?>>) && IsArray)
+        if (typeof(IEnumerable<KeyValuePair<int, dynamic?>>).IsAssignableFrom(resultType) && IsArray)
         {
-            return AsEnumerateArray().Select((item, index) => new KeyValuePair<int, dynamic?>(index, item));
+            // 将流变对象转换为键值对集合
+            var keyValuePairs =
+                AsEnumerateArray().Select((item, index) => new KeyValuePair<int, dynamic?>(index, item));
+
+            return resultType.IsGenericType && resultType.GetGenericTypeDefinition() == typeof(Dictionary<,>)
+                ? keyValuePairs.ToDictionary(u => u.Key, u => u.Value)
+                : keyValuePairs;
         }
 
         // 检查是否是 IActionResult 类型
@@ -926,7 +1174,8 @@ public partial class Clay
     /// <returns>
     ///     <see cref="bool" />
     /// </returns>
-    public static bool IsClay(object? obj) => obj is not null && IsClay(obj as Type ?? obj.GetType());
+    public static bool IsClay([NotNullWhen(true)] object? obj) =>
+        obj is not null && IsClay(obj as Type ?? obj.GetType());
 
     /// <summary>
     ///     按照键升序排序并返回新的 <see cref="Clay" />
@@ -945,7 +1194,7 @@ public partial class Clay
 
         // 初始化升序排序字典
         var sorted =
-            new SortedDictionary<string, JsonNode?>(JsonCanvas.AsObject().ToDictionary());
+            new SortedDictionary<string, JsonNode?>(JsonCanvas.AsObject().ToDictionary(), StringComparer.Ordinal);
 
         return Parse(sorted, options);
     }
@@ -969,7 +1218,7 @@ public partial class Clay
         // 初始化降序排序字典
         var sortedDesc =
             new SortedDictionary<string, JsonNode?>(Comparer<string>.Create((x, y) =>
-                string.Compare(y, x, StringComparison.InvariantCulture)));
+                string.Compare(y, x, StringComparison.Ordinal)));
 
         // 将 JsonCanvas 转换为 JsonObject 实例
         var jsonObject = JsonCanvas.AsObject();
@@ -1030,6 +1279,64 @@ public partial class Clay
 
         return Rebuilt(Options.Configure(configure));
     }
+
+    /// <summary>
+    ///     检查字符串是否是 JSON 对象（{}）或数组（[]）
+    /// </summary>
+    /// <param name="input">字符串</param>
+    /// <param name="allowTrailingCommas">是否允许末尾多余逗号。默认值为：<c>false</c>。</param>
+    /// <returns>
+    ///     <see cref="bool" />
+    /// </returns>
+    public static bool IsJsonObjectOrArray(string? input, bool allowTrailingCommas = false)
+    {
+        // 检查输入是否为字符串类型，且字符串不是由空白字符组成
+        if (input is null || string.IsNullOrWhiteSpace(input))
+        {
+            return false;
+        }
+
+        // 去除字符串两端空格
+        var text = input.Trim();
+
+        // 检查字符串是否以 '{' 开头和 '}' 结尾，或者以 '[' 开头和 ']' 结尾
+        if ((!text.StartsWith('{') || !text.EndsWith('}')) && (!text.StartsWith('[') || !text.EndsWith(']')))
+        {
+            return false;
+        }
+
+        try
+        {
+            // 使用 JsonDocument 解析字符串，若解析成功，说明是一个有效的 JSON 格式
+            using var jsonDocument = JsonDocument.Parse(text,
+                new JsonDocumentOptions { AllowTrailingCommas = allowTrailingCommas });
+
+            return jsonDocument.RootElement.ValueKind is JsonValueKind.Object or JsonValueKind.Array;
+        }
+        catch (JsonException)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    ///     将 <see cref="Clay" /> 实例通过转换管道传递并返回新的 <see cref="Clay" />（失败时抛出异常）
+    /// </summary>
+    /// <param name="transformer">转换函数</param>
+    /// <returns>
+    ///     <see cref="Clay" />
+    /// </returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    public Clay Pipe(Func<dynamic, dynamic?> transformer) => ExecuteTransformation(transformer, true);
+
+    /// <summary>
+    ///     尝试将 <see cref="Clay" /> 实例通过转换管道传递，失败时返回原始对象
+    /// </summary>
+    /// <param name="transformer">转换函数</param>
+    /// <returns>
+    ///     <see cref="Clay" />
+    /// </returns>
+    public Clay PipeTry(Func<dynamic, dynamic?> transformer) => ExecuteTransformation(transformer, false);
 
     /// <summary>
     ///     单一对象

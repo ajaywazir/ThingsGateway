@@ -11,6 +11,7 @@
 
 using Microsoft.Extensions.Configuration;
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
@@ -149,7 +150,7 @@ internal static partial class StringExtensions
 
         var pairs = (trimChar is null ? keyValueString : keyValueString.TrimStart(trimChar.Value)).Split(separators);
         return (from pair in pairs
-                select pair.Split('=')
+                select pair.Split('=', 2) // 限制只分割一次
             into keyValue
                 where keyValue.Length == 2
                 select new KeyValuePair<string, string?>(keyValue[0].Trim(), keyValue[1])).ToList();
@@ -327,6 +328,18 @@ internal static partial class StringExtensions
                         : match.Value;
                 });
     }
+
+    /// <summary>
+    ///     转换输入字符串中的任何转义字符
+    /// </summary>
+    /// <param name="input">
+    ///     <see cref="string" />
+    /// </param>
+    /// <returns>
+    ///     <see cref="string" />
+    /// </returns>
+    internal static string? Unescape([NotNullIfNotNull(nameof(input))] this string? input) =>
+        string.IsNullOrWhiteSpace(input) ? input : Regex.Unescape(input);
 
     /// <summary>
     ///     占位符匹配正则表达式

@@ -27,7 +27,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    HttpResponseMessage Get(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    HttpResponseMessage? Get(string? requestUri, Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -44,7 +44,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    HttpResponseMessage Get(string? requestUri, HttpCompletionOption completionOption,
+    HttpResponseMessage? Get(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -58,7 +58,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    Task<HttpResponseMessage> GetAsync(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    Task<HttpResponseMessage?> GetAsync(string? requestUri, Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -75,7 +75,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    Task<HttpResponseMessage> GetAsync(string? requestUri, HttpCompletionOption completionOption,
+    Task<HttpResponseMessage?> GetAsync(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -156,7 +156,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    HttpRemoteResult<TResult> Get<TResult>(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    HttpRemoteResult<TResult>? Get<TResult>(string? requestUri, Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -174,7 +174,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    HttpRemoteResult<TResult> Get<TResult>(string? requestUri, HttpCompletionOption completionOption,
+    HttpRemoteResult<TResult>? Get<TResult>(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -189,7 +189,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    Task<HttpRemoteResult<TResult>> GetAsync<TResult>(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    Task<HttpRemoteResult<TResult>?> GetAsync<TResult>(string? requestUri, Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -207,7 +207,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    Task<HttpRemoteResult<TResult>> GetAsync<TResult>(string? requestUri, HttpCompletionOption completionOption,
+    Task<HttpRemoteResult<TResult>?> GetAsync<TResult>(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -407,7 +407,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    HttpResponseMessage Put(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    HttpResponseMessage? Put(string? requestUri, Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -424,7 +424,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    HttpResponseMessage Put(string? requestUri, HttpCompletionOption completionOption,
+    HttpResponseMessage? Put(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -438,7 +438,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    Task<HttpResponseMessage> PutAsync(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    Task<HttpResponseMessage?> PutAsync(string? requestUri, Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -455,7 +455,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    Task<HttpResponseMessage> PutAsync(string? requestUri, HttpCompletionOption completionOption,
+    Task<HttpResponseMessage?> PutAsync(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -536,7 +536,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    HttpRemoteResult<TResult> Put<TResult>(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    HttpRemoteResult<TResult>? Put<TResult>(string? requestUri, Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -554,7 +554,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    HttpRemoteResult<TResult> Put<TResult>(string? requestUri, HttpCompletionOption completionOption,
+    HttpRemoteResult<TResult>? Put<TResult>(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -569,7 +569,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    Task<HttpRemoteResult<TResult>> PutAsync<TResult>(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    Task<HttpRemoteResult<TResult>?> PutAsync<TResult>(string? requestUri, Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -587,7 +587,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    Task<HttpRemoteResult<TResult>> PutAsync<TResult>(string? requestUri, HttpCompletionOption completionOption,
+    Task<HttpRemoteResult<TResult>?> PutAsync<TResult>(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -787,7 +787,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    HttpResponseMessage Post(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    HttpResponseMessage? Post(string? requestUri, Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -804,7 +804,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    HttpResponseMessage Post(string? requestUri, HttpCompletionOption completionOption,
+    HttpResponseMessage? Post(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -818,7 +818,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    Task<HttpResponseMessage> PostAsync(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    Task<HttpResponseMessage?> PostAsync(string? requestUri, Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -835,7 +835,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    Task<HttpResponseMessage> PostAsync(string? requestUri, HttpCompletionOption completionOption,
+    Task<HttpResponseMessage?> PostAsync(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -916,7 +916,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    HttpRemoteResult<TResult> Post<TResult>(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    HttpRemoteResult<TResult>? Post<TResult>(string? requestUri, Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -934,7 +934,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    HttpRemoteResult<TResult> Post<TResult>(string? requestUri, HttpCompletionOption completionOption,
+    HttpRemoteResult<TResult>? Post<TResult>(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -949,7 +949,8 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    Task<HttpRemoteResult<TResult>> PostAsync<TResult>(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    Task<HttpRemoteResult<TResult>?> PostAsync<TResult>(string? requestUri,
+        Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -967,7 +968,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    Task<HttpRemoteResult<TResult>> PostAsync<TResult>(string? requestUri, HttpCompletionOption completionOption,
+    Task<HttpRemoteResult<TResult>?> PostAsync<TResult>(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -1167,7 +1168,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    HttpResponseMessage Delete(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    HttpResponseMessage? Delete(string? requestUri, Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -1184,7 +1185,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    HttpResponseMessage Delete(string? requestUri, HttpCompletionOption completionOption,
+    HttpResponseMessage? Delete(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -1198,7 +1199,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    Task<HttpResponseMessage> DeleteAsync(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    Task<HttpResponseMessage?> DeleteAsync(string? requestUri, Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -1215,7 +1216,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    Task<HttpResponseMessage> DeleteAsync(string? requestUri, HttpCompletionOption completionOption,
+    Task<HttpResponseMessage?> DeleteAsync(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -1296,7 +1297,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    HttpRemoteResult<TResult> Delete<TResult>(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    HttpRemoteResult<TResult>? Delete<TResult>(string? requestUri, Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -1314,7 +1315,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    HttpRemoteResult<TResult> Delete<TResult>(string? requestUri, HttpCompletionOption completionOption,
+    HttpRemoteResult<TResult>? Delete<TResult>(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -1329,7 +1330,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    Task<HttpRemoteResult<TResult>> DeleteAsync<TResult>(string? requestUri,
+    Task<HttpRemoteResult<TResult>?> DeleteAsync<TResult>(string? requestUri,
         Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
@@ -1348,7 +1349,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    Task<HttpRemoteResult<TResult>> DeleteAsync<TResult>(string? requestUri, HttpCompletionOption completionOption,
+    Task<HttpRemoteResult<TResult>?> DeleteAsync<TResult>(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -1548,7 +1549,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    HttpResponseMessage Head(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    HttpResponseMessage? Head(string? requestUri, Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -1565,7 +1566,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    HttpResponseMessage Head(string? requestUri, HttpCompletionOption completionOption,
+    HttpResponseMessage? Head(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -1579,7 +1580,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    Task<HttpResponseMessage> HeadAsync(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    Task<HttpResponseMessage?> HeadAsync(string? requestUri, Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -1596,7 +1597,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    Task<HttpResponseMessage> HeadAsync(string? requestUri, HttpCompletionOption completionOption,
+    Task<HttpResponseMessage?> HeadAsync(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -1677,7 +1678,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    HttpRemoteResult<TResult> Head<TResult>(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    HttpRemoteResult<TResult>? Head<TResult>(string? requestUri, Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -1695,7 +1696,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    HttpRemoteResult<TResult> Head<TResult>(string? requestUri, HttpCompletionOption completionOption,
+    HttpRemoteResult<TResult>? Head<TResult>(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -1710,7 +1711,8 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    Task<HttpRemoteResult<TResult>> HeadAsync<TResult>(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    Task<HttpRemoteResult<TResult>?> HeadAsync<TResult>(string? requestUri,
+        Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -1728,7 +1730,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    Task<HttpRemoteResult<TResult>> HeadAsync<TResult>(string? requestUri, HttpCompletionOption completionOption,
+    Task<HttpRemoteResult<TResult>?> HeadAsync<TResult>(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -1928,7 +1930,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    HttpResponseMessage Options(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    HttpResponseMessage? Options(string? requestUri, Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -1945,7 +1947,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    HttpResponseMessage Options(string? requestUri, HttpCompletionOption completionOption,
+    HttpResponseMessage? Options(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -1959,7 +1961,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    Task<HttpResponseMessage> OptionsAsync(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    Task<HttpResponseMessage?> OptionsAsync(string? requestUri, Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -1976,7 +1978,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    Task<HttpResponseMessage> OptionsAsync(string? requestUri, HttpCompletionOption completionOption,
+    Task<HttpResponseMessage?> OptionsAsync(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -2057,7 +2059,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    HttpRemoteResult<TResult> Options<TResult>(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    HttpRemoteResult<TResult>? Options<TResult>(string? requestUri, Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -2075,7 +2077,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    HttpRemoteResult<TResult> Options<TResult>(string? requestUri, HttpCompletionOption completionOption,
+    HttpRemoteResult<TResult>? Options<TResult>(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -2090,7 +2092,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    Task<HttpRemoteResult<TResult>> OptionsAsync<TResult>(string? requestUri,
+    Task<HttpRemoteResult<TResult>?> OptionsAsync<TResult>(string? requestUri,
         Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
@@ -2109,7 +2111,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    Task<HttpRemoteResult<TResult>> OptionsAsync<TResult>(string? requestUri, HttpCompletionOption completionOption,
+    Task<HttpRemoteResult<TResult>?> OptionsAsync<TResult>(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -2309,7 +2311,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    HttpResponseMessage Trace(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    HttpResponseMessage? Trace(string? requestUri, Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -2326,7 +2328,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    HttpResponseMessage Trace(string? requestUri, HttpCompletionOption completionOption,
+    HttpResponseMessage? Trace(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -2340,7 +2342,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    Task<HttpResponseMessage> TraceAsync(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    Task<HttpResponseMessage?> TraceAsync(string? requestUri, Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -2357,7 +2359,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    Task<HttpResponseMessage> TraceAsync(string? requestUri, HttpCompletionOption completionOption,
+    Task<HttpResponseMessage?> TraceAsync(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -2438,7 +2440,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    HttpRemoteResult<TResult> Trace<TResult>(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    HttpRemoteResult<TResult>? Trace<TResult>(string? requestUri, Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -2456,7 +2458,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    HttpRemoteResult<TResult> Trace<TResult>(string? requestUri, HttpCompletionOption completionOption,
+    HttpRemoteResult<TResult>? Trace<TResult>(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -2471,7 +2473,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    Task<HttpRemoteResult<TResult>> TraceAsync<TResult>(string? requestUri,
+    Task<HttpRemoteResult<TResult>?> TraceAsync<TResult>(string? requestUri,
         Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
@@ -2490,7 +2492,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    Task<HttpRemoteResult<TResult>> TraceAsync<TResult>(string? requestUri, HttpCompletionOption completionOption,
+    Task<HttpRemoteResult<TResult>?> TraceAsync<TResult>(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -2690,7 +2692,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    HttpResponseMessage Patch(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    HttpResponseMessage? Patch(string? requestUri, Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -2707,7 +2709,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    HttpResponseMessage Patch(string? requestUri, HttpCompletionOption completionOption,
+    HttpResponseMessage? Patch(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -2721,7 +2723,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    Task<HttpResponseMessage> PatchAsync(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    Task<HttpResponseMessage?> PatchAsync(string? requestUri, Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -2738,7 +2740,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    Task<HttpResponseMessage> PatchAsync(string? requestUri, HttpCompletionOption completionOption,
+    Task<HttpResponseMessage?> PatchAsync(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -2819,7 +2821,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    HttpRemoteResult<TResult> Patch<TResult>(string? requestUri, Action<HttpRequestBuilder>? configure = null,
+    HttpRemoteResult<TResult>? Patch<TResult>(string? requestUri, Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -2837,7 +2839,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    HttpRemoteResult<TResult> Patch<TResult>(string? requestUri, HttpCompletionOption completionOption,
+    HttpRemoteResult<TResult>? Patch<TResult>(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -2852,7 +2854,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    Task<HttpRemoteResult<TResult>> PatchAsync<TResult>(string? requestUri,
+    Task<HttpRemoteResult<TResult>?> PatchAsync<TResult>(string? requestUri,
         Action<HttpRequestBuilder>? configure = null,
         CancellationToken cancellationToken = default);
 
@@ -2871,7 +2873,7 @@ public partial interface IHttpRemoteService
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    Task<HttpRemoteResult<TResult>> PatchAsync<TResult>(string? requestUri, HttpCompletionOption completionOption,
+    Task<HttpRemoteResult<TResult>?> PatchAsync<TResult>(string? requestUri, HttpCompletionOption completionOption,
         Action<HttpRequestBuilder>? configure = null, CancellationToken cancellationToken = default);
 
     /// <summary>

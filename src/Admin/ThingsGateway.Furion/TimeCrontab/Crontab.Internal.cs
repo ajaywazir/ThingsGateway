@@ -433,10 +433,15 @@ public partial class Crontab
         {
             newValue = newValue.AddSeconds(-newValue.Second);
         }
-
+        // 初始化是否存在随机 R 标识符
+        var randomSecond = false;
+        var randomMinute = false;
+        var randomHour = false;
         // 获取分钟、小时所有字符解析器
         var minuteParsers = Parsers[CrontabFieldKind.Minute].Where(x => x is ITimeParser).Cast<ITimeParser>().ToList();
+        randomMinute = minuteParsers.OfType<RandomParser>().Any();
         var hourParsers = Parsers[CrontabFieldKind.Hour].Where(x => x is ITimeParser).Cast<ITimeParser>().ToList();
+        randomHour = hourParsers.OfType<RandomParser>().Any();
 
         // 获取秒、分钟、小时解析器中最小起始值
         // 该值主要用来获取下一个发生值的输入参数
@@ -456,7 +461,7 @@ public partial class Crontab
         {
             // 获取秒所有字符解析器
             var secondParsers = Parsers[CrontabFieldKind.Second].Where(x => x is ITimeParser).Cast<ITimeParser>().ToList();
-
+            randomSecond = secondParsers.OfType<RandomParser>().Any();
             // 获取秒解析器最小起始值
             firstSecondValue = secondParsers.Select(x => x.First()).Min();
 
@@ -519,8 +524,8 @@ public partial class Crontab
 
         // 设置起始时间为下一个小时时间
         newValue = new DateTime(newValue.Year, newValue.Month, newValue.Day, newHours,
-            overflow ? firstMinuteValue : newMinutes,
-            overflow ? firstSecondValue : newSeconds);
+             overflow && !randomMinute ? firstMinuteValue : newMinutes,
+             overflow && !randomSecond ? firstSecondValue : newSeconds);
 
         // 如果当前小时并没有进入下一轮循环但存在不匹配的字符过滤器
         if (!overflow && !IsMatch(newValue))
@@ -534,7 +539,7 @@ public partial class Crontab
         }
 
         // 如果程序到达这里，说明并没有进入上面分支，则直接返回下一小时时间
-        if (!overflow)
+        if (!randomHour && !overflow)
         {
             return MinDate(newValue, endTime);
         }
@@ -788,8 +793,15 @@ public partial class Crontab
     /// <param name="defaultValue">默认值</param>
     /// <param name="overflow">控制秒、分钟、小时到达59秒/分和23小时开关</param>
     /// <returns><see cref="int"/></returns>
-    private static int Increment(IEnumerable<ITimeParser> parsers, int value, int defaultValue, out bool overflow)
+    private static int Increment(List<ITimeParser> parsers, int value, int defaultValue, out bool overflow)
     {
+        // 检查是否是随机 R 字符解析器
+        if (parsers.Count == 1 && parsers.First() is RandomParser randomParser)
+        {
+            overflow = true;
+            return randomParser.Next(value).Value;
+        }
+
         var nextValue = parsers.Select(x => x.Next(value))
             .Where(x => x > value)
             .Min()
@@ -808,7 +820,7 @@ public partial class Crontab
     /// <param name="defaultValue">默认值</param>
     /// <param name="overflow">控制秒、分钟、小时到达59秒/分和23小时开关</param>
     /// <returns><see cref="int"/></returns>
-    private static int Decrement(IEnumerable<ITimeParser> parsers, int value, int defaultValue, out bool overflow)
+    private static int Decrement(List<ITimeParser> parsers, int value, int defaultValue, out bool overflow)
     {
         var previousValue = parsers.Select(x => x.Previous(value))
             .Where(x => x < value)

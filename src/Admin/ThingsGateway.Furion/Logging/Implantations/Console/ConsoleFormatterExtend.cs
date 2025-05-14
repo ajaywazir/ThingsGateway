@@ -90,7 +90,8 @@ public sealed class ConsoleFormatterExtend : ConsoleFormatter, IDisposable
                , true
                , _disableColors
                , _formatterOptions.WithTraceId
-               , _formatterOptions.WithStackFrame);
+               , _formatterOptions.WithStackFrame
+               , _formatterOptions.FormatProvider);
         }
 
         // 判断是否自定义了日志筛选器，如果是则检查是否符合条件

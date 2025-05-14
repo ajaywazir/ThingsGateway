@@ -565,10 +565,10 @@ internal sealed class DynamicApiControllerApplicationModelConvention : IApplicat
             if (isLowerCamelCase) parameterModel.ParameterName = parameterModel.ParameterName.ToLowerCamelCase();
 
             // 判断是否贴有任何 [FromXXX] 特性了
-            var hasFormAttribute = parameterAttributes.Any(u => typeof(IBindingSourceMetadata).IsAssignableFrom(u.GetType()));
+            var hasFromAttribute = parameterAttributes.Any(u => typeof(IBindingSourceMetadata).IsAssignableFrom(u.GetType()));
 
             // 判断方法贴有 [QueryParameters] 特性且当前参数没有任何 [FromXXX] 特性，则添加 [FromQuery] 特性
-            if (isQueryParametersAction && !hasFormAttribute)
+            if (isQueryParametersAction && !hasFromAttribute)
             {
                 parameterModel.BindingInfo = BindingInfo.GetBindingInfo(new[] { new FromQueryAttribute() });
                 continue;
@@ -577,7 +577,7 @@ internal sealed class DynamicApiControllerApplicationModelConvention : IApplicat
             // 如果没有贴 [FromRoute] 特性且不是基元类型，则跳过
             // 如果没有贴 [FromRoute] 特性且有任何绑定特性，则跳过
             if (!parameterAttributes.Any(u => u is FromRouteAttribute)
-                && (!parameterType.IsRichPrimitive() || hasFormAttribute)) continue;
+                && (!parameterType.IsRichPrimitive() || hasFromAttribute)) continue;
 
             // 处理基元数组数组类型，还有全局配置参数问题
             if (_dynamicApiControllerSettings?.UrlParameterization == true || parameterType.IsArray)
@@ -588,7 +588,7 @@ internal sealed class DynamicApiControllerApplicationModelConvention : IApplicat
 
             // 处理 [ApiController] 特性情况
             // https://docs.microsoft.com/en-US/aspnet/core/web-api/?view=aspnetcore-5.0#binding-source-parameter-inference
-            if (!hasFormAttribute && hasApiControllerAttribute) continue;
+            if (!hasFromAttribute && hasApiControllerAttribute) continue;
 
             // 处理默认基元参数绑定方式，若是 query（[FromQuery]）则跳过
             if (_dynamicApiControllerSettings?.DefaultBindingInfo?.ToLower() == "query")

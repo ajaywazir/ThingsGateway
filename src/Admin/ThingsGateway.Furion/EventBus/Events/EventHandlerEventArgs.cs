@@ -42,4 +42,10 @@ public sealed class EventHandlerEventArgs : EventArgs
     /// 异常信息
     /// </summary>
     public Exception Exception { get; internal set; }
+
+
+    /// <summary>
+    /// 执行结果
+    /// </summary>
+    public object Result { get; internal set; }
 }

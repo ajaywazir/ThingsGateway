@@ -109,6 +109,80 @@ public sealed class HttpRemoteResult<TResult>
     public HttpContentHeaders ContentHeaders { get; private set; } = null!;
 
     /// <summary>
+    ///     HTTP 版本
+    /// </summary>
+    public Version Version { get; private set; } = null!;
+
+    /// <summary>
+    ///     <see cref="HttpClient" /> 实例的配置名称
+    /// </summary>
+    public string? HttpClientName { get; private set; }
+
+    // /// <summary>
+    // ///     解构函数（至少包含两个 out 参数！！！）
+    // /// </summary>
+    // /// <param name="result">
+    // ///     <typeparamref name="TResult" />
+    // /// </param>
+    // public void Deconstruct(out TResult? result)
+    // {
+    //     result = Result;
+    // }
+
+    /// <summary>
+    ///     解构函数
+    /// </summary>
+    /// <param name="result">
+    ///     <typeparamref name="TResult" />
+    /// </param>
+    /// <param name="httpResponseMessage">
+    ///     <inheritdoc cref="HttpResponseMessage" />
+    /// </param>
+    public void Deconstruct(out TResult? result, out HttpResponseMessage httpResponseMessage)
+    {
+        result = Result;
+        httpResponseMessage = ResponseMessage;
+    }
+
+    /// <summary>
+    ///     解构函数
+    /// </summary>
+    /// <param name="result">
+    ///     <typeparamref name="TResult" />
+    /// </param>
+    /// <param name="httpResponseMessage">
+    ///     <inheritdoc cref="HttpResponseMessage" />
+    /// </param>
+    /// <param name="isSuccessStatusCode">是否请求成功</param>
+    public void Deconstruct(out TResult? result, out HttpResponseMessage httpResponseMessage,
+        out bool isSuccessStatusCode)
+    {
+        result = Result;
+        httpResponseMessage = ResponseMessage;
+        isSuccessStatusCode = IsSuccessStatusCode;
+    }
+
+    /// <summary>
+    ///     解构函数
+    /// </summary>
+    /// <param name="result">
+    ///     <typeparamref name="TResult" />
+    /// </param>
+    /// <param name="httpResponseMessage">
+    ///     <inheritdoc cref="HttpResponseMessage" />
+    /// </param>
+    /// <param name="isSuccessStatusCode">是否请求成功</param>
+    /// <param name="statusCode">响应状态码</param>
+    public void Deconstruct(out TResult? result, out HttpResponseMessage httpResponseMessage,
+        out bool isSuccessStatusCode, out HttpStatusCode statusCode)
+    {
+        result = Result;
+        httpResponseMessage = ResponseMessage;
+        isSuccessStatusCode = IsSuccessStatusCode;
+        statusCode = StatusCode;
+    }
+
+    /// <summary>
     ///     初始化
     /// </summary>
     internal void Initialize()
@@ -124,6 +198,16 @@ public sealed class HttpRemoteResult<TResult>
 
         // 解析响应标头 Set-Cookie 集合
         ParseSetCookies(ResponseMessage.Headers);
+
+        // 获取 HTTP 版本
+        Version = ResponseMessage.Version;
+
+        // 获取 HttpClient 实例的配置名称
+        if (ResponseMessage.RequestMessage?.Options.TryGetValue(
+                new HttpRequestOptionsKey<string>(Constants.HTTP_CLIENT_NAME), out var httpClientName) == true)
+        {
+            HttpClientName = httpClientName;
+        }
     }
 
     /// <summary>

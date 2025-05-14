@@ -467,18 +467,20 @@ public static class ObjectExtensions
         return obj;
     }
 
+
     /// <summary>
     /// 查找方法指定特性，如果没找到则继续查找声明类
     /// </summary>
     /// <typeparam name="TAttribute"></typeparam>
     /// <param name="method"></param>
     /// <param name="inherit"></param>
+    /// <param name="searchFromReflectedType">searchFromRuntimeType</param>
     /// <returns></returns>
-    internal static TAttribute GetFoundAttribute<TAttribute>(this MethodInfo method, bool inherit)
+    internal static TAttribute GetFoundAttribute<TAttribute>(this MethodInfo method, bool inherit, bool searchFromReflectedType = false)
         where TAttribute : Attribute
     {
         // 获取方法所在类型
-        var declaringType = method.DeclaringType;
+        var declaringType = !searchFromReflectedType ? method.DeclaringType : method.ReflectedType;   // 解决嵌套继承问题
 
         var attributeType = typeof(TAttribute);
 
@@ -493,7 +495,6 @@ public static class ObjectExtensions
 
         return foundAttribute;
     }
-
     /// <summary>
     /// 格式化字符串
     /// </summary>

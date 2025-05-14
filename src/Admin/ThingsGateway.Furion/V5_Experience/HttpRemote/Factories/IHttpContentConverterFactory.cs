@@ -37,7 +37,7 @@ public interface IHttpContentConverterFactory
     /// <returns>
     ///     <typeparamref name="TResult" />
     /// </returns>
-    TResult? Read<TResult>(HttpResponseMessage httpResponseMessage,
+    TResult? Read<TResult>(HttpResponseMessage? httpResponseMessage,
         IHttpContentConverter[]? converters = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -54,7 +54,7 @@ public interface IHttpContentConverterFactory
     /// <returns>
     ///     <see cref="object" />
     /// </returns>
-    object? Read(Type resultType, HttpResponseMessage httpResponseMessage,
+    object? Read(Type resultType, HttpResponseMessage? httpResponseMessage,
         IHttpContentConverter[]? converters = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -73,7 +73,7 @@ public interface IHttpContentConverterFactory
     /// <returns>
     ///     <typeparamref name="TResult" />
     /// </returns>
-    Task<TResult?> ReadAsync<TResult>(HttpResponseMessage httpResponseMessage,
+    Task<TResult?> ReadAsync<TResult>(HttpResponseMessage? httpResponseMessage,
         IHttpContentConverter[]? converters = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -90,6 +90,6 @@ public interface IHttpContentConverterFactory
     /// <returns>
     ///     <see cref="object" />
     /// </returns>
-    Task<object?> ReadAsync(Type resultType, HttpResponseMessage httpResponseMessage,
+    Task<object?> ReadAsync(Type resultType, HttpResponseMessage? httpResponseMessage,
         IHttpContentConverter[]? converters = null, CancellationToken cancellationToken = default);
 }

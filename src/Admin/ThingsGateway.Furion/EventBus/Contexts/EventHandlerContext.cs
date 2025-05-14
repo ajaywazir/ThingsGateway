@@ -10,6 +10,7 @@
 // ------------------------------------------------------------------------
 
 using System.Reflection;
+using System.Text.Json;
 
 namespace ThingsGateway.EventBus;
 
@@ -57,4 +58,31 @@ public abstract class EventHandlerContext
     /// </summary>
     /// <remarks><remarks>如果是动态订阅，可能为 null</remarks></remarks>
     public EventSubscribeAttribute Attribute { get; }
+
+    private static JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions(JsonSerializerOptions.Default)
+    {
+        PropertyNameCaseInsensitive = true
+    };
+    /// <summary>
+    /// 获取负载数据
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public T GetPayload<T>()
+    {
+        var rawPayload = Source.Payload;
+
+        if (rawPayload is null)
+        {
+            return default;
+        }
+        else if (rawPayload is JsonElement jsonElement)
+        {
+            return JsonSerializer.Deserialize<T>(jsonElement.GetRawText(), JsonSerializerOptions);
+        }
+        else
+        {
+            return (T)rawPayload;
+        }
+    }
 }

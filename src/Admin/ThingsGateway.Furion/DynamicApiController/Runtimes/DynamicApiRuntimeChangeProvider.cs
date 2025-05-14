@@ -84,8 +84,6 @@ internal sealed class DynamicApiRuntimeChangeProvider : IDynamicApiRuntimeChange
                 if (applicationPart != null) _applicationPartManager.ApplicationParts.Remove(applicationPart);
             }
 
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
         }
     }
 

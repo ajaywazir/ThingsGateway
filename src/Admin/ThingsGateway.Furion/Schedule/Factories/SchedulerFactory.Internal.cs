@@ -183,9 +183,10 @@ internal sealed partial class SchedulerFactory : ISchedulerFactory
         // 标记当前方法初始化完成
         PreloadCompleted = true;
 
-        // 释放引用内存并立即回收GC
+        // 释放引用内存
         _schedulerBuilders.Clear();
-        GCCollect();
+
+        //GCCollect();
 
         // 输出作业调度器初始化日志
         if (!preloadSucceed) _logger.LogWarning("Schedule hosted service preload completed, and a total of <{Count}> schedulers are appended.", _schedulers.Count);
@@ -393,22 +394,22 @@ internal sealed partial class SchedulerFactory : ISchedulerFactory
         return jobHandler;
     }
 
-    /// <summary>
-    /// GC 垃圾回收器回收处理
-    /// </summary>
-    /// <remarks>避免频繁 GC 回收</remarks>
-    public void GCCollect()
-    {
-        var nowTime = DateTime.UtcNow;
-        if ((LastGCCollectTime == null || (nowTime - LastGCCollectTime.Value).TotalMilliseconds > GC_COLLECT_INTERVAL_MILLISECONDS))
-        {
-            LastGCCollectTime = nowTime;
+    ///// <summary>
+    ///// GC 垃圾回收器回收处理
+    ///// </summary>
+    ///// <remarks>避免频繁 GC 回收</remarks>
+    //public void GCCollect()
+    //{
+    //    var nowTime = DateTime.UtcNow;
+    //    if ((LastGCCollectTime == null || (nowTime - LastGCCollectTime.Value).TotalMilliseconds > GC_COLLECT_INTERVAL_MILLISECONDS))
+    //    {
+    //        LastGCCollectTime = nowTime;
 
-            // 通知 GC 垃圾回收器立即回收
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-        }
-    }
+    //        // 通知 GC 垃圾回收器立即回收
+    //        GC.Collect();
+    //        GC.WaitForPendingFinalizers();
+    //    }
+    //}
 
     /// <summary>
     /// 释放非托管资源
@@ -535,7 +536,7 @@ internal sealed partial class SchedulerFactory : ISchedulerFactory
             //_logger.LogWarning("Schedule hosted service cancels hibernation.");
 
             // 通知 GC 垃圾回收器立即回收
-            GCCollect();
+            //GCCollect();
         });
     }
 

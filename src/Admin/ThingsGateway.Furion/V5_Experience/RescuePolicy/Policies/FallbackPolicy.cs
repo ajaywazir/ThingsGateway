@@ -329,6 +329,7 @@ public class FallbackPolicy<TResult> : PolicyBase<TResult>
         {
             // 获取操作方法执行结果
             context.Result = await operation(cancellationToken).ConfigureAwait(false);
+            context.Exception = null;
         }
         catch (System.Exception exception)
         {

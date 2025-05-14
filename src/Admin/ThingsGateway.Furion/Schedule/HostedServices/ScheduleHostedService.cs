@@ -389,7 +389,7 @@ internal sealed class ScheduleHostedService : BackgroundService
                             _jobCancellationToken.Cancel(jobId, triggerId, false);
 
                             // 通知 GC 垃圾回收器回收
-                            _schedulerFactory.GCCollect();
+                            //_schedulerFactory.GCCollect();
                         }
                     }, stoppingToken);
                 });

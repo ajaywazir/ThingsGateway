@@ -118,7 +118,7 @@ public sealed class DatabaseLogger : ILogger
         // 设置日志消息模板
         logMsg.Message = _options.MessageFormat != null
             ? _options.MessageFormat(logMsg)
-            : Penetrates.OutputStandardMessage(logMsg, _options.DateFormat, withTraceId: _options.WithTraceId, withStackFrame: _options.WithStackFrame);
+            : Penetrates.OutputStandardMessage(logMsg, _options.DateFormat, withTraceId: _options.WithTraceId, withStackFrame: _options.WithStackFrame, provider: _options.FormatProvider);
 
         // 空检查
         if (logMsg.Message is null)

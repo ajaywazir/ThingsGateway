@@ -44,8 +44,11 @@ public sealed class HttpDeclarativeBuilder
         new(typeof(QueryDeclarativeExtractor), new QueryDeclarativeExtractor()),
         new(typeof(PathDeclarativeExtractor), new PathDeclarativeExtractor()),
         new(typeof(CookieDeclarativeExtractor), new CookieDeclarativeExtractor()),
+        new(typeof(RefererDeclarativeExtractor), new RefererDeclarativeExtractor()),
         new(typeof(HeaderDeclarativeExtractor), new HeaderDeclarativeExtractor()),
         new(typeof(PropertyDeclarativeExtractor), new PropertyDeclarativeExtractor()),
+        new(typeof(HttpVersionDeclarativeExtractor), new HttpVersionDeclarativeExtractor()),
+        new(typeof(SuppressExceptionsDeclarativeExtractor), new SuppressExceptionsDeclarativeExtractor()),
         new(typeof(BodyDeclarativeExtractor), new BodyDeclarativeExtractor())
     ]);
 

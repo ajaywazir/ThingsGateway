@@ -41,7 +41,7 @@ public static class HttpRemoteUtility
     ///     忽略 SSL 证书验证
     /// </summary>
     public static Func<HttpRequestMessage, X509Certificate2?, X509Chain?, SslPolicyErrors, bool> IgnoreSslErrors =>
-        (message, cert, chain, errors) => true;
+        (_, _, _, _) => true;
 
     /// <summary>
     ///     获取使用 IPv4 连接到服务器的回调
@@ -118,8 +118,20 @@ public static class HttpRemoteUtility
         // - IPv4: AddressFamily.InterNetwork
         // - IPv6: AddressFamily.InterNetworkV6
         // - IPv4 或 IPv6: AddressFamily.Unspecified
-        // 注意：当主机没有 IP 地址时，此方法会抛出一个 SocketException 异常
-        var entry = await Dns.GetHostEntryAsync(context.DnsEndPoint.Host, addressFamily, cancellationToken).ConfigureAwait(false);
+
+        IPAddress[] addresses;
+
+        // 当主机是一个 IP 地址，无需进一步解析
+        if (IPAddress.TryParse(context.DnsEndPoint.Host, out var ipAddress))
+        {
+            addresses = [ipAddress];
+        }
+        else
+        {
+            // 注意：当主机没有 IP 地址时，此方法会抛出一个 SocketException 异常
+            var entry = await Dns.GetHostEntryAsync(context.DnsEndPoint.Host, addressFamily, cancellationToken).ConfigureAwait(false);
+            addresses = entry.AddressList;
+        }
 
         // 打开与目标主机/端口的连接
         var socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
@@ -129,7 +141,7 @@ public static class HttpRemoteUtility
 
         try
         {
-            await socket.ConnectAsync(entry.AddressList, context.DnsEndPoint.Port, cancellationToken).ConfigureAwait(false);
+            await socket.ConnectAsync(addresses, context.DnsEndPoint.Port, cancellationToken).ConfigureAwait(false);
 
             // 如果你想选择特定的 IP 地址来连接服务器
             // await socket.ConnectAsync(

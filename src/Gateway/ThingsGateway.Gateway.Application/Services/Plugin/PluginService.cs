@@ -351,7 +351,6 @@ internal sealed class PluginService : IPluginService
             {
                 item.Value.AssemblyLoadContext.Unload();
             }
-            GC.Collect();
             ClearCache();
             _assemblyLoadContextDict.Clear();
         }
@@ -619,7 +618,6 @@ internal sealed class PluginService : IPluginService
             _assemblyLoadContextDict.Remove(path);
             //卸载
             assemblyLoadContext.AssemblyLoadContext.Unload();
-            GC.Collect();
         }
     }
 

@@ -198,8 +198,9 @@ public class JWTEncryption
     /// <param name="refreshTokenExpiredTime">新刷新 Token 有效期（分钟）</param>
     /// <param name="tokenPrefix"></param>
     /// <param name="clockSkew"></param>
+    /// <param name="onRefreshing">当刷新时触发</param>
     /// <returns></returns>
-    public static async Task<bool> AutoRefreshToken(AuthorizationHandlerContext context, DefaultHttpContext httpContext, long? expiredTime = null, int refreshTokenExpiredTime = 43200, string tokenPrefix = "Bearer ", long clockSkew = 5)
+    public static async Task<bool> AutoRefreshToken(AuthorizationHandlerContext context, DefaultHttpContext httpContext, long? expiredTime = null, int refreshTokenExpiredTime = 43200, string tokenPrefix = "Bearer ", long clockSkew = 5, Action<string, string> onRefreshing = null)
     {
         // 如果验证有效，则跳过刷新
         if (context.User.Identity.IsAuthenticated)
@@ -245,7 +246,11 @@ public class JWTEncryption
         // 返回新的 Token
         httpContext.Response.Headers[accessTokenKey] = accessToken;
         // 返回新的 刷新Token
-        httpContext.Response.Headers[xAccessTokenKey] = GenerateRefreshToken(accessToken, refreshTokenExpiredTime);
+        var refreshAccessToken = GenerateRefreshToken(accessToken, refreshTokenExpiredTime); ;
+        httpContext.Response.Headers[xAccessTokenKey] = refreshAccessToken;
+
+        // 调用刷新后回调函数
+        onRefreshing?.Invoke(accessToken, refreshAccessToken);
 
         // 处理 axios 问题
         httpContext.Response.Headers.TryGetValue(accessControlExposeKey, out var acehs);

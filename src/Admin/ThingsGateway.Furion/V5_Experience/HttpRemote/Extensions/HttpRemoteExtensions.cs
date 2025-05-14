@@ -16,6 +16,7 @@ using Microsoft.Net.Http.Headers;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.RegularExpressions;
 
 using ThingsGateway.Extensions;
 using ThingsGateway.Utilities;
@@ -27,7 +28,7 @@ namespace ThingsGateway.HttpRemote.Extensions;
 /// <summary>
 ///     HTTP 远程服务拓展类
 /// </summary>
-public static class HttpRemoteExtensions
+public static partial class HttpRemoteExtensions
 {
     /// <summary>
     ///     添加 HTTP 远程请求分析工具处理委托
@@ -69,6 +70,56 @@ public static class HttpRemoteExtensions
         bool disableInProduction) =>
         builder.AddProfilerDelegatingHandler(() =>
             disableInProduction && GetHostEnvironmentName(builder.Services)?.ToLower() == "production");
+
+    /// <summary>
+    ///     配置 <see cref="HttpClient" /> 额外选项
+    /// </summary>
+    /// <param name="builder">
+    ///     <see cref="IHttpClientBuilder" />
+    /// </param>
+    /// <param name="configure">自定义配置选项</param>
+    /// <returns>
+    ///     <see cref="IHttpClientBuilder" />
+    /// </returns>
+    public static IHttpClientBuilder ConfigureOptions(this IHttpClientBuilder builder,
+        Action<HttpClientOptions> configure)
+    {
+        // 空检查
+        ArgumentNullException.ThrowIfNull(configure);
+
+        builder.Services.AddOptions<HttpClientOptions>(builder.Name).Configure(options =>
+        {
+            options.IsDefault = false;
+            configure.Invoke(options);
+        });
+
+        return builder;
+    }
+
+    /// <summary>
+    ///     配置 <see cref="HttpClient" /> 额外选项
+    /// </summary>
+    /// <param name="builder">
+    ///     <see cref="IHttpClientBuilder" />
+    /// </param>
+    /// <param name="configure">自定义配置选项</param>
+    /// <returns>
+    ///     <see cref="IHttpClientBuilder" />
+    /// </returns>
+    public static IHttpClientBuilder ConfigureOptions(this IHttpClientBuilder builder,
+        Action<HttpClientOptions, IServiceProvider> configure)
+    {
+        // 空检查
+        ArgumentNullException.ThrowIfNull(configure);
+
+        builder.Services.AddOptions<HttpClientOptions>(builder.Name).Configure<IServiceProvider>((options, provider) =>
+        {
+            options.IsDefault = false;
+            configure.Invoke(options, provider);
+        });
+
+        return builder;
+    }
 
     /// <summary>
     ///     为 <see cref="HttpClient" /> 启用性能优化
@@ -160,17 +211,26 @@ public static class HttpRemoteExtensions
                 ? [new KeyValuePair<string, IEnumerable<string>>("Declarative", [methodSignature])]
                 : null;
 
+        // 格式化 HttpClient 实例的配置条目
+        IEnumerable<KeyValuePair<string, IEnumerable<string>>>? httpClientKeyValues =
+            httpRequestMessage.Options.TryGetValue(new HttpRequestOptionsKey<string>(Constants.HTTP_CLIENT_NAME),
+                out var httpClientName)
+                ? [new KeyValuePair<string, IEnumerable<string>>("HttpClient Name", [httpClientName])]
+                : null;
+
         // 格式化常规条目
         var generalEntry = StringUtility.FormatKeyValuesSummary(new[]
-        {
-            new KeyValuePair<string, IEnumerable<string>>("Request URL",
-                [httpRequestMessage.RequestUri?.OriginalString!]),
-            new KeyValuePair<string, IEnumerable<string>>("HTTP Method", [httpRequestMessage.Method.ToString()]),
-            new KeyValuePair<string, IEnumerable<string>>("Status Code",
-                [$"{(int)httpResponseMessage.StatusCode} {httpResponseMessage.StatusCode}"]),
-            new KeyValuePair<string, IEnumerable<string>>("HTTP Content",
-                [$"{httpContent?.GetType().Name}"])
-        }.ConcatIgnoreNull(declarativeKeyValues).ConcatIgnoreNull(generalCustomKeyValues), generalSummary);
+            {
+                new KeyValuePair<string, IEnumerable<string>>("Request URL",
+                    [httpRequestMessage.RequestUri?.OriginalString!]),
+                new KeyValuePair<string, IEnumerable<string>>("HTTP Method", [httpRequestMessage.Method.ToString()]),
+                new KeyValuePair<string, IEnumerable<string>>("Status Code",
+                    [$"{(int)httpResponseMessage.StatusCode} {httpResponseMessage.StatusCode}"]),
+                new KeyValuePair<string, IEnumerable<string>>("HTTP Version", [httpResponseMessage.Version.ToString()]),
+                new KeyValuePair<string, IEnumerable<string>>("HTTP Content",
+                    [$"{httpContent?.GetType().Name}"])
+            }.ConcatIgnoreNull(httpClientKeyValues).ConcatIgnoreNull(declarativeKeyValues)
+            .ConcatIgnoreNull(generalCustomKeyValues), generalSummary);
 
         // 格式化响应条目
         var responseEntry = httpResponseMessage.ProfilerHeaders(responseSummary);
@@ -203,19 +263,43 @@ public static class HttpRemoteExtensions
         // 默认只读取 5KB 的内容
         const int maxBytesToDisplay = 5120;
 
-        // 读取内容为字节数组
+        /*
+         * 读取内容为字节数组
+         *
+         * 由于 HttpContent 的流设计为单次读取（即流内容在首次读取后会被消耗，无法重复读取），
+         * 当前实现（即使用 ReadAsByteArrayAsync(cancellationToken)）中对于较大内容会一次性加载至内存，
+         * 这可能导致性能问题（如内存占用过高或响应延迟），不过目前尚未找到更优的解决方案。
+         *
+         * 强烈建议在生产环境中禁用或关闭此类一次性读取操作，尤其是对于高并发或大流量场景，
+         * 以避免因内存溢出（OOM）或线程阻塞导致的服务不可用风险。
+         */
         var buffer = await httpContent.ReadAsByteArrayAsync(cancellationToken).ConfigureAwait(false);
+        var total = buffer.Length;
 
         // 计算要显示的部分
-        var bytesToShow = Math.Min(buffer.Length, maxBytesToDisplay);
-        var partialContent = Encoding.UTF8.GetString(buffer, 0, bytesToShow);
+        var bytesToShow = Math.Min(total, maxBytesToDisplay);
+
+        // 注册 CodePagesEncodingProvider，使得程序能够识别并使用 Windows 代码页中的各种编码
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+        // 获取内容编码
+        var charset = httpContent.Headers.ContentType?.CharSet ?? "utf-8";
+        var partialContent = Encoding.GetEncoding(charset).GetString(buffer, 0, bytesToShow);
+
+        // 检查是否是完整的 Unicode 转义字符串
+        if (total == bytesToShow && UnicodeEscapeRegex().IsMatch(partialContent))
+        {
+            partialContent = Regex.Unescape(partialContent);
+        }
 
         // 如果实际读取的数据小于最大显示大小，则直接返回；否则，添加省略号表示内容被截断
-        var bodyString = buffer.Length <= maxBytesToDisplay ? partialContent : partialContent + " ... [truncated]";
+        var bodyString = total <= maxBytesToDisplay
+            ? partialContent
+            : partialContent + $" ... [truncated, total: {total} bytes]";
 
         return StringUtility.FormatKeyValuesSummary(
             [new KeyValuePair<string, IEnumerable<string>>(string.Empty, [bodyString])],
-            $"{summary} ({httpContent.GetType().Name})");
+            $"{summary} ({httpContent.GetType().Name}, total: {total} bytes)");
     }
 
     /// <summary>
@@ -359,4 +443,13 @@ public static class HttpRemoteExtensions
             ? null
             : Convert.ToString(hostEnvironment.GetType().GetProperty("EnvironmentName")?.GetValue(hostEnvironment));
     }
+
+    /// <summary>
+    ///     Unicode 转义正则表达式
+    /// </summary>
+    /// <returns>
+    ///     <see cref="Regex" />
+    /// </returns>
+    [GeneratedRegex(@"\\u([0-9a-fA-F]{4})")]
+    private static partial Regex UnicodeEscapeRegex();
 }

@@ -13,6 +13,8 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+using ThingsGateway.Converters.Json;
+
 namespace ThingsGateway.Shapeless;
 
 /// <summary>
@@ -26,9 +28,14 @@ public sealed class ClayOptions
     public static ClayOptions Default => new();
 
     /// <summary>
-    ///     允许访问缺失的属性或数组越界的 <see cref="ClayOptions" /> 实例
+    ///     允许属性名不区分大小写、访问缺失的属性或数组越界的 <see cref="ClayOptions" /> 实例
     /// </summary>
-    public static ClayOptions Flexible => new() { AllowMissingProperty = true, AllowIndexOutOfRange = true };
+    public static ClayOptions Flexible => new()
+    {
+        PropertyNameCaseInsensitive = true,
+        AllowMissingProperty = true,
+        AllowIndexOutOfRange = true
+    };
 
     /// <summary>
     ///     配置用于包裹非对象和非数组类型的键名
@@ -101,6 +108,12 @@ public sealed class ClayOptions
     public bool PropertyNameCaseInsensitive { get; set; }
 
     /// <summary>
+    ///     路径分隔符
+    /// </summary>
+    /// <remarks>默认值为：<c>:</c>。</remarks>
+    public string[] PathSeparator { get; set; } = [":"];
+
+    /// <summary>
     ///     是否是只读模式
     /// </summary>
     /// <remarks>默认值为：<c>false</c>。</remarks>
@@ -112,11 +125,20 @@ public sealed class ClayOptions
     public JsonSerializerOptions JsonSerializerOptions { get; set; } = new(JsonSerializerOptions.Default)
     {
         PropertyNameCaseInsensitive = true,
+        // 允许 String 转 Number
         NumberHandling = JsonNumberHandling.AllowReadingFromString,
         // 解决中文乱码问题
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
         AllowTrailingCommas = true,
-        Converters = { new ClayJsonConverter() }
+        Converters =
+        {
+            new ClayJsonConverter(),
+            new ObjectToClayJsonConverter(),
+            new DateTimeConverterUsingDateTimeParseAsFallback(),
+            new DateTimeOffsetConverterUsingDateTimeOffsetParseAsFallback(),
+            // 允许 Number 或 Boolean 转 String
+            new StringJsonConverter()
+        }
     };
 
     /// <summary>

@@ -9,7 +9,7 @@
 // 许可证的完整文本可以在源代码树根目录中的 LICENSE-APACHE 和 LICENSE-MIT 文件中找到。
 // ------------------------------------------------------------------------
 
-using System.Runtime.CompilerServices;
+
 using System.Security.Cryptography;
 using System.Text;
 
@@ -29,34 +29,36 @@ public class AESEncryption
     /// <param name="iv">偏移量</param>
     /// <param name="mode">模式</param>
     /// <param name="padding">填充</param>
+    /// <param name="isBase64"></param>
     /// <returns></returns>
-    public static string Encrypt(string text, string skey, byte[] iv = null, CipherMode mode = CipherMode.CBC, PaddingMode padding = PaddingMode.PKCS7)
+    public static string Encrypt(string text, string skey, byte[] iv = null, CipherMode mode = CipherMode.CBC, PaddingMode padding = PaddingMode.PKCS7, bool isBase64 = false)
     {
-        var bKey = Encoding.UTF8.GetBytes(skey);
+        var bKey = !isBase64 ? Encoding.UTF8.GetBytes(skey) : Convert.FromBase64String(skey);
+        if (bKey.Length != 16 && bKey.Length != 24 && bKey.Length != 32) throw new ArgumentException("The key length must be 16, 24, or 32 bytes.");
 
         using var aesAlg = Aes.Create();
         aesAlg.Key = bKey;
         aesAlg.Mode = mode;
         aesAlg.Padding = padding;
 
-        // 如果是 ECB 模式，不需要 IV
         if (mode != CipherMode.ECB)
         {
-            aesAlg.IV = iv ?? aesAlg.IV; // 如果未提供 IV，则使用随机生成的 IV
+            aesAlg.IV = iv ?? aesAlg.IV;
+            if (iv != null && iv.Length != 16) throw new ArgumentException("The IV length must be 16 bytes.");
         }
 
-        using var encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+        using var encryptor = aesAlg.CreateEncryptor();
         using var msEncrypt = new MemoryStream();
         using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
-        using (var swEncrypt = new StreamWriter(csEncrypt))
+        using (var swEncrypt = new StreamWriter(csEncrypt, Encoding.UTF8))
         {
             swEncrypt.Write(text);
         }
 
         var encryptedContent = msEncrypt.ToArray();
 
-        // 如果是 CBC 模式，将 IV 和密文拼接在一起
-        if (mode != CipherMode.ECB)
+        // 仅在未提供 IV 时拼接 IV
+        if (mode != CipherMode.ECB && iv == null)
         {
             var result = new byte[aesAlg.IV.Length + encryptedContent.Length];
             Buffer.BlockCopy(aesAlg.IV, 0, result, 0, aesAlg.IV.Length);
@@ -76,35 +78,43 @@ public class AESEncryption
     /// <param name="iv">偏移量</param>
     /// <param name="mode">模式</param>
     /// <param name="padding">填充</param>
+    /// <param name="isBase64"></param>
     /// <returns></returns>
-    public static string Decrypt(string hash, string skey, byte[] iv = null, CipherMode mode = CipherMode.CBC, PaddingMode padding = PaddingMode.PKCS7)
+    public static string Decrypt(string hash, string skey, byte[] iv = null, CipherMode mode = CipherMode.CBC, PaddingMode padding = PaddingMode.PKCS7, bool isBase64 = false)
     {
         var fullCipher = Convert.FromBase64String(hash);
-
-        var bKey = Encoding.UTF8.GetBytes(skey);
+        var bKey = !isBase64 ? Encoding.UTF8.GetBytes(skey) : Convert.FromBase64String(skey);
+        if (bKey.Length != 16 && bKey.Length != 24 && bKey.Length != 32) throw new ArgumentException("The key length must be 16, 24, or 32 bytes.");
 
         using var aesAlg = Aes.Create();
         aesAlg.Key = bKey;
         aesAlg.Mode = mode;
         aesAlg.Padding = padding;
 
-        // 如果是 ECB 模式，不需要 IV
         if (mode != CipherMode.ECB)
         {
-            var bVector = new byte[16];
-            var cipher = new byte[fullCipher.Length - bVector.Length];
+            if (iv == null)
+            {
+                if (fullCipher.Length < aesAlg.BlockSize / 8) throw new ArgumentException("The ciphertext length is insufficient to extract the IV.");
 
-            Unsafe.CopyBlock(ref bVector[0], ref fullCipher[0], (uint)bVector.Length);
-            Unsafe.CopyBlock(ref cipher[0], ref fullCipher[bVector.Length], (uint)(fullCipher.Length - bVector.Length));
-
-            aesAlg.IV = iv ?? bVector;
-            fullCipher = cipher;
+                iv = new byte[aesAlg.BlockSize / 8];
+                var cipher = new byte[fullCipher.Length - iv.Length];
+                Buffer.BlockCopy(fullCipher, 0, iv, 0, iv.Length);
+                Buffer.BlockCopy(fullCipher, iv.Length, cipher, 0, cipher.Length);
+                aesAlg.IV = iv;
+                fullCipher = cipher;
+            }
+            else
+            {
+                if (iv.Length != 16) throw new ArgumentException("The IV length must be 16 bytes.");
+                aesAlg.IV = iv;
+            }
         }
 
-        using var decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+        using var decryptor = aesAlg.CreateDecryptor();
         using var msDecrypt = new MemoryStream(fullCipher);
         using var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read);
-        using var srDecrypt = new StreamReader(csDecrypt);
+        using var srDecrypt = new StreamReader(csDecrypt, Encoding.UTF8);
 
         return srDecrypt.ReadToEnd();
     }
@@ -117,19 +127,13 @@ public class AESEncryption
     /// <param name="iv">偏移量</param>
     /// <param name="mode">模式</param>
     /// <param name="padding">填充</param>
+    /// <param name="isBase64"></param>
     /// <returns>加密后的字节数组</returns>
-    public static byte[] Encrypt(byte[] bytes, string skey, byte[] iv = null, CipherMode mode = CipherMode.CBC, PaddingMode padding = PaddingMode.PKCS7)
+    public static byte[] Encrypt(byte[] bytes, string skey, byte[] iv = null, CipherMode mode = CipherMode.CBC, PaddingMode padding = PaddingMode.PKCS7, bool isBase64 = false)
     {
-        // 确保密钥长度为 128 位、192 位或 256 位
-        var bKey = new byte[32]; // 256 位密钥
-        var keyBytes = Encoding.UTF8.GetBytes(skey);
-        Array.Copy(keyBytes, bKey, Math.Min(keyBytes.Length, bKey.Length));
-
-        // 如果是 ECB 模式，不需要 IV
-        if (mode != CipherMode.ECB)
-        {
-            iv ??= GenerateRandomIV(); // 生成随机 IV
-        }
+        // 验证密钥长度
+        var bKey = !isBase64 ? Encoding.UTF8.GetBytes(skey) : Convert.FromBase64String(skey);
+        if (bKey.Length != 16 && bKey.Length != 24 && bKey.Length != 32) throw new ArgumentException("The key length must be 16, 24, or 32 bytes.");
 
         using var aesAlg = Aes.Create();
         aesAlg.Key = bKey;
@@ -138,34 +142,29 @@ public class AESEncryption
 
         if (mode != CipherMode.ECB)
         {
-            aesAlg.IV = iv;
+            aesAlg.IV = iv ?? GenerateRandomIV();
+            if (aesAlg.IV.Length != 16) throw new ArgumentException("The IV length must be 16 bytes.");
         }
 
         using var memoryStream = new MemoryStream();
-        using var cryptoStream = new CryptoStream(memoryStream, aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV), CryptoStreamMode.Write);
-
-        cryptoStream.Write(bytes, 0, bytes.Length);
-        cryptoStream.FlushFinalBlock();
-
-        // 如果是 CBC 模式，将 IV 和密文拼接在一起
-        if (mode != CipherMode.ECB)
+        using (var cryptoStream = new CryptoStream(memoryStream, aesAlg.CreateEncryptor(), CryptoStreamMode.Write))
         {
-            var result = new byte[aesAlg.IV.Length + memoryStream.ToArray().Length];
+            cryptoStream.Write(bytes, 0, bytes.Length);
+            cryptoStream.FlushFinalBlock();
+        }
+
+        var encryptedContent = memoryStream.ToArray();
+
+        // 仅在未提供 IV 时拼接 IV
+        if (mode != CipherMode.ECB && iv == null)
+        {
+            var result = new byte[aesAlg.IV.Length + encryptedContent.Length];
             Buffer.BlockCopy(aesAlg.IV, 0, result, 0, aesAlg.IV.Length);
-            Buffer.BlockCopy(memoryStream.ToArray(), 0, result, aesAlg.IV.Length, memoryStream.ToArray().Length);
+            Buffer.BlockCopy(encryptedContent, 0, result, aesAlg.IV.Length, encryptedContent.Length);
             return result;
         }
 
-        // 如果是 ECB 模式，直接返回密文
-        return memoryStream.ToArray();
-    }
-
-    // 生成随机 IV
-    private static byte[] GenerateRandomIV()
-    {
-        using var aes = Aes.Create();
-        aes.GenerateIV();
-        return aes.IV;
+        return encryptedContent;
     }
 
     /// <summary>
@@ -176,25 +175,13 @@ public class AESEncryption
     /// <param name="iv">偏移量</param>
     /// <param name="mode">模式</param>
     /// <param name="padding">填充</param>
+    /// <param name="isBase64"></param>
     /// <returns></returns>
-    public static byte[] Decrypt(byte[] bytes, string skey, byte[] iv = null, CipherMode mode = CipherMode.CBC, PaddingMode padding = PaddingMode.PKCS7)
+    public static byte[] Decrypt(byte[] bytes, string skey, byte[] iv = null, CipherMode mode = CipherMode.CBC, PaddingMode padding = PaddingMode.PKCS7, bool isBase64 = false)
     {
-        // 确保密钥长度为 128 位、192 位或 256 位
-        var bKey = new byte[32]; // 256 位密钥
-        var keyBytes = Encoding.UTF8.GetBytes(skey);
-        Array.Copy(keyBytes, bKey, Math.Min(keyBytes.Length, bKey.Length));
-
-        // 如果是 ECB 模式，不需要 IV
-        if (mode != CipherMode.ECB)
-        {
-            if (iv == null)
-            {
-                // 从密文中提取 IV
-                iv = new byte[16];
-                Array.Copy(bytes, iv, iv.Length);
-                bytes = bytes.Skip(iv.Length).ToArray();
-            }
-        }
+        // 验证密钥长度
+        var bKey = !isBase64 ? Encoding.UTF8.GetBytes(skey) : Convert.FromBase64String(skey);
+        if (bKey.Length != 16 && bKey.Length != 24 && bKey.Length != 32) throw new ArgumentException("The key length must be 16, 24, or 32 bytes.");
 
         using var aesAlg = Aes.Create();
         aesAlg.Key = bKey;
@@ -203,21 +190,36 @@ public class AESEncryption
 
         if (mode != CipherMode.ECB)
         {
+            if (iv == null)
+            {
+                // 提取IV
+                if (bytes.Length < 16) throw new ArgumentException("The ciphertext length is insufficient to extract the IV.");
+                iv = bytes.Take(16).ToArray();
+                bytes = bytes.Skip(16).ToArray();
+            }
+            else
+            {
+                if (iv.Length != 16) throw new ArgumentException("The IV length must be 16 bytes.");
+            }
             aesAlg.IV = iv;
         }
 
         using var memoryStream = new MemoryStream(bytes);
-        using var cryptoStream = new CryptoStream(memoryStream, aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV), CryptoStreamMode.Read);
+        using var cryptoStream = new CryptoStream(memoryStream, aesAlg.CreateDecryptor(), CryptoStreamMode.Read);
         using var originalStream = new MemoryStream();
 
-        var buffer = new byte[1024];
-        var readBytes = 0;
-
-        while ((readBytes = cryptoStream.Read(buffer, 0, buffer.Length)) > 0)
-        {
-            originalStream.Write(buffer, 0, readBytes);
-        }
-
+        cryptoStream.CopyTo(originalStream);
         return originalStream.ToArray();
+    }
+
+    /// <summary>
+    /// 生成随机 IV
+    /// </summary>
+    /// <returns></returns>
+    private static byte[] GenerateRandomIV()
+    {
+        using var aes = Aes.Create();
+        aes.GenerateIV();
+        return aes.IV;
     }
 }

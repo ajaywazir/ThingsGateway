@@ -78,9 +78,9 @@ public partial interface ISchedulerFactory
     /// <returns><see cref="IJob"/></returns>
     IJob CreateJob(IServiceProvider serviceProvider, JobFactoryContext context);
 
-    /// <summary>
-    /// GC 垃圾回收器回收处理
-    /// </summary>
-    /// <remarks>避免频繁 GC 回收</remarks>
-    void GCCollect();
+    ///// <summary>
+    ///// GC 垃圾回收器回收处理
+    ///// </summary>
+    ///// <remarks>避免频繁 GC 回收</remarks>
+    //void GCCollect();
 }

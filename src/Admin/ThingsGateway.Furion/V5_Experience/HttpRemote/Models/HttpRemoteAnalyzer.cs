@@ -36,7 +36,7 @@ public sealed class HttpRemoteAnalyzer
     /// <summary>
     ///     分析数据
     /// </summary>
-    public string Data => _cachedData ??= _dataBuffer.ToString();
+    public string Data => _cachedData ??= _dataBuffer.ToString().TrimEnd(Environment.NewLine.ToCharArray());
 
     /// <summary>
     ///     追加分析数据
@@ -44,7 +44,7 @@ public sealed class HttpRemoteAnalyzer
     /// <param name="value">分析数据</param>
     internal void AppendData(string? value)
     {
-        _dataBuffer.Append(value);
+        _dataBuffer.AppendLine(value);
         _cachedData = null;
     }
 

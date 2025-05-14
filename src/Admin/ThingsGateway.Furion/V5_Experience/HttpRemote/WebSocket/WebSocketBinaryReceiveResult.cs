@@ -34,5 +34,5 @@ public sealed class WebSocketBinaryReceiveResult : WebSocketReceiveResult
     /// <summary>
     ///     二进制消息
     /// </summary>
-    public byte[] Message { get; internal init; } = default!;
+    public byte[] Message { get; internal init; } = null!;
 }

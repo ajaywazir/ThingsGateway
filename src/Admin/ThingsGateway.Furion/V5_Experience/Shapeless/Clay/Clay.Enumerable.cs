@@ -38,6 +38,11 @@ public partial class Clay
     public IEnumerable<object> Keys => AsEnumerable().Select(u => u.Key);
 
     /// <summary>
+    ///     获取单一对象键（属性名）的列表
+    /// </summary>
+    public IEnumerable<string> MemberNames => AsEnumerateObject().Select(u => u.Key);
+
+    /// <summary>
     ///     获取值或元素的列表
     /// </summary>
     public IEnumerable<dynamic?> Values => AsEnumerable().Select(u => u.Value);
@@ -126,6 +131,17 @@ public partial class Clay
             yield return DeserializeNode(current, Options);
         }
     }
+
+    /// <summary>
+    ///     将流变对象转换为 <see cref="Dictionary{TKey,TValue}" />
+    /// </summary>
+    /// <returns>
+    ///     <see cref="Dictionary{TKey,TValue}" />
+    /// </returns>
+    public Dictionary<string, dynamic?> ToDictionary() =>
+        IsObject
+            ? As<Dictionary<string, dynamic?>>()!
+            : As<Dictionary<int, dynamic?>>()!.ToDictionary(u => u.Key.ToString(), u => u.Value);
 
     /// <summary>
     ///     遍历 <see cref="Clay" />

@@ -133,6 +133,34 @@ internal static class InternalApp
     }
 
     /// <summary>
+    /// 配置 Furion 框架（非 Web）
+    /// </summary>
+    /// <param name="hostApplicationBuilder"></param>
+    /// <param name="autoRegisterBackgroundService"></param>
+    internal static void ConfigureApplication(IHostApplicationBuilder hostApplicationBuilder, bool autoRegisterBackgroundService = true)
+    {
+        // 存储环境对象
+        HostEnvironment = hostApplicationBuilder.Environment;
+
+        // 加载配置
+        AddJsonFiles(hostApplicationBuilder.Configuration, hostApplicationBuilder.Environment);
+
+        // 存储配置对象
+        Configuration = hostApplicationBuilder.Configuration;
+
+        // 存储服务提供器
+        InternalServices = hostApplicationBuilder.Services;
+
+        // 存储根服务
+        hostApplicationBuilder.Services.AddHostedService<GenericHostLifetimeEventsHostedService>();
+
+        // 初始化应用服务
+        hostApplicationBuilder.Services.AddApp();
+
+        // 自动注册 BackgroundService
+        if (autoRegisterBackgroundService) hostApplicationBuilder.Services.AddAppHostedService();
+    }
+    /// <summary>
     /// 自动装载主机配置
     /// </summary>
     /// <param name="builder"></param>

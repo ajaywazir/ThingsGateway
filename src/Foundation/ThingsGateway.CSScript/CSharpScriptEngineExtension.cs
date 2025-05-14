@@ -62,7 +62,6 @@ public static class CSharpScriptEngineExtension
             {
                 item?.Value?.TryDispose();
                 item?.Value?.GetType().Assembly.Unload();
-                GC.Collect();
             }
         }
         catch
@@ -130,7 +129,6 @@ public static class CSharpScriptEngineExtension
         {_using}
         {_body}
     ");
-                    GC.Collect();
                     Instance.Set(field, runScript);
                 }
             }

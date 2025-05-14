@@ -109,6 +109,15 @@ internal sealed class ServerSentEventsManager
             var httpResponseMessage = _httpRemoteService.Send(RequestBuilder, HttpCompletionOption.ResponseHeadersRead,
                 cancellationToken);
 
+            // 空检查
+            if (httpResponseMessage is null)
+            {
+                // 输出调试信息
+                Debugging.Error("The response content was not read, as it was empty.");
+
+                return;
+            }
+
             // 获取 HTTP 响应体中的内容流
             using var contentStream = httpResponseMessage.Content.ReadAsStream(cancellationToken);
 
@@ -203,9 +212,17 @@ internal sealed class ServerSentEventsManager
             var httpResponseMessage = await _httpRemoteService.SendAsync(RequestBuilder,
                 HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
 
-            // 获取 HTTP 响应体中的内容流
-            using var contentStream = (await httpResponseMessage.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false));
+            // 空检查
+            if (httpResponseMessage is null)
+            {
+                // 输出调试信息
+                Debugging.Error("The response content was not read, as it was empty.");
 
+                return;
+            }
+
+            // 获取 HTTP 响应体中的内容流
+            using var contentStream = await httpResponseMessage.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
             // 初始化 StreamReader 实例
             using var streamReader = new StreamReader(contentStream, Encoding.UTF8);
 
@@ -382,10 +399,10 @@ internal sealed class ServerSentEventsManager
                     ? retryInterval
                     : _httpServerSentEventsBuilder.DefaultRetryInterval;
                 break;
-            // 所有其他的字段名都会被忽略
+            // 其他的字段名存储在 CustomFields 属性中
             default:
-                // 保持数据不变
-                return true;
+                serverSentEventsData.AddCustomField(key, value);
+                break;
         }
 
         return true;

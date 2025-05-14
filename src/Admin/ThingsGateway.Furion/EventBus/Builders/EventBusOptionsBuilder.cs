@@ -72,7 +72,7 @@ public sealed class EventBusOptionsBuilder
     /// <summary>
     /// 是否启用执行完成触发 GC 回收
     /// </summary>
-    public bool GCCollect { get; set; } = true;
+    public bool GCCollect { get; set; } = false;
 
     /// <summary>
     /// 是否启用日志记录

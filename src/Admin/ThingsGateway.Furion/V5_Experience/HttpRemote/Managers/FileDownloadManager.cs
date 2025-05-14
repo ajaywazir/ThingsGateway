@@ -115,6 +115,15 @@ internal sealed class FileDownloadManager
             var httpResponseMessage = _httpRemoteService.Send(RequestBuilder, HttpCompletionOption.ResponseHeadersRead,
                 cancellationToken);
 
+            // 空检查
+            if (httpResponseMessage is null)
+            {
+                // 输出调试信息
+                Debugging.Error("The response content was not read, as it was empty.");
+
+                return;
+            }
+
             // 根据文件是否存在及配置的行为来决定是否应继续进行文件下载
             if (!ShouldContinueWithDownload(httpResponseMessage, out var destinationPath))
             {
@@ -228,6 +237,15 @@ internal sealed class FileDownloadManager
             var httpResponseMessage = await _httpRemoteService.SendAsync(RequestBuilder,
                 HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
 
+            // 空检查
+            if (httpResponseMessage is null)
+            {
+                // 输出调试信息
+                Debugging.Error("The response content was not read, as it was empty.");
+
+                return;
+            }
+
             // 根据文件是否存在及配置的行为来决定是否应继续进行文件下载
             if (!ShouldContinueWithDownload(httpResponseMessage, out var destinationPath))
             {
@@ -246,7 +264,7 @@ internal sealed class FileDownloadManager
                 bufferSize, true);
 
             // 获取 HTTP 响应体中的内容流
-            using var contentStream = (await httpResponseMessage.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false));
+            using var contentStream = await httpResponseMessage.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
 
             // 循环读取数据直到取消请求或读取完毕
             int numBytesRead;
@@ -485,6 +503,9 @@ internal sealed class FileDownloadManager
     /// </returns>
     internal string GetFileName(HttpResponseMessage httpResponseMessage)
     {
+        // 空检查
+        ArgumentNullException.ThrowIfNull(httpResponseMessage);
+
         // 获取文件下载保存的文件的名称
         var fileName = Path.GetFileName(_httpFileDownloadBuilder.DestinationPath);
 

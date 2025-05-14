@@ -97,6 +97,15 @@ internal sealed class LongPollingManager
                 // 发送 HTTP 远程请求
                 var httpResponseMessage = _httpRemoteService.Send(RequestBuilder, cancellationToken);
 
+                // 空检查
+                if (httpResponseMessage is null)
+                {
+                    // 输出调试信息
+                    Debugging.Error("The response content was not read, as it was empty.");
+
+                    continue;
+                }
+
                 // 发送响应数据对象到通道
                 dataChannel.Writer.TryWrite(httpResponseMessage);
 
@@ -166,6 +175,15 @@ internal sealed class LongPollingManager
             {
                 // 发送 HTTP 远程请求
                 var httpResponseMessage = await _httpRemoteService.SendAsync(RequestBuilder, cancellationToken).ConfigureAwait(false);
+
+                // 空检查
+                if (httpResponseMessage is null)
+                {
+                    // 输出调试信息
+                    Debugging.Error("The response content was not read, as it was empty.");
+
+                    continue;
+                }
 
                 // 发送响应数据对象到通道
                 await dataChannel.Writer.WriteAsync(httpResponseMessage, cancellationToken).ConfigureAwait(false);

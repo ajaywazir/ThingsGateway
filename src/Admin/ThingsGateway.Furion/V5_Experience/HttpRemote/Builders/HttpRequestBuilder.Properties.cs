@@ -158,6 +158,11 @@ public sealed partial class HttpRequestBuilder
     public Uri? BaseAddress { get; private set; }
 
     /// <summary>
+    ///     HTTP 版本
+    /// </summary>
+    public Version? Version { get; private set; }
+
+    /// <summary>
     ///     <see cref="HttpClient" /> 实例提供器
     /// </summary>
     /// <value>
@@ -181,7 +186,7 @@ public sealed partial class HttpRequestBuilder
     /// <summary>
     ///     用于处理在设置 <see cref="HttpRequestMessage" /> 的请求消息的内容时的操作
     /// </summary>
-    public Action<HttpContent?>? OnPreSetContent { get; private set; }
+    public Action<HttpContent>? OnPreSetContent { get; private set; }
 
     /// <summary>
     ///     用于处理在发送 HTTP 请求之前的操作
@@ -201,7 +206,13 @@ public sealed partial class HttpRequestBuilder
     /// <summary>
     ///     <inheritdoc cref="HttpMultipartFormDataBuilder" />
     /// </summary>
-    internal HttpMultipartFormDataBuilder? MultipartFormDataBuilder { get; private set; }
+    public HttpMultipartFormDataBuilder? MultipartFormDataBuilder { get; private set; }
+
+    /// <summary>
+    ///     是否移除默认的内容的 <c>Content-Type</c>
+    /// </summary>
+    /// <remarks>默认值为：<c>false</c>。</remarks>
+    public bool OmitContentType { get; private set; }
 
     /// <summary>
     ///     如果 HTTP 响应的 <c>IsSuccessStatusCode</c> 属性是 <c>false</c>，则引发异常。
@@ -273,4 +284,15 @@ public sealed partial class HttpRequestBuilder
         get;
         private set;
     }
+
+    /// <summary>
+    ///     异常抑制类型集合
+    /// </summary>
+    /// <remarks>当配置了异常抑制类型集合后，框架将抑制（即不抛出）该集合中匹配的异常类型。</remarks>
+    internal HashSet<Type>? SuppressExceptionTypes { get; private set; }
+
+    /// <summary>
+    ///     超时发生时要执行的操作
+    /// </summary>
+    internal Action? TimeoutAction { get; private set; }
 }

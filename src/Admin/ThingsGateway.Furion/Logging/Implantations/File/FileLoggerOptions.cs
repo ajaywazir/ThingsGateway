@@ -11,6 +11,8 @@
 
 using Microsoft.Extensions.Logging;
 
+using System.Globalization;
+
 namespace ThingsGateway.Logging;
 
 /// <summary>
@@ -104,4 +106,10 @@ public sealed class FileLoggerOptions
     /// 日志消息内容转换（如脱敏处理）
     /// </summary>
     public Func<string, string> MessageProcess { get; set; }
+
+    /// <summary>
+    /// 格式化提供器
+    /// </summary>
+    /// <remarks></remarks>
+    public IFormatProvider? FormatProvider { get; set; } = CultureInfo.InvariantCulture;
 }

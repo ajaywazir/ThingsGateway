@@ -76,6 +76,12 @@ public sealed partial class HttpRequestBuilder
         // 初始化 HttpRequestMessage 实例
         var httpRequestMessage = new HttpRequestMessage(HttpMethod, finalRequestUri);
 
+        // 设置 HTTP 版本
+        if (Version is not null)
+        {
+            httpRequestMessage.Version = Version;
+        }
+
         // 启用性能优化
         EnablePerformanceOptimization(httpRequestMessage);
 
@@ -160,18 +166,44 @@ public sealed partial class HttpRequestBuilder
     /// </param>
     internal void AppendPathSegments(UriBuilder uriBuilder)
     {
+        // 空检查
+        if ((PathSegments == null || PathSegments.Count == 0) &&
+            (PathSegmentsToRemove == null || PathSegmentsToRemove.Count == 0))
+        {
+            return;
+        }
+
+        // 记录原路径是否以斜杠结尾（修复核心逻辑）
+        var originalPath = uriBuilder.Uri.AbsolutePath;
+        var endsWithSlash = originalPath.Length > 1 && originalPath.EndsWith('/');
+
         // 解析 URL 中的路径片段列表
-        var pathSegments = uriBuilder.Path.Split('/', StringSplitOptions.RemoveEmptyEntries).Concat([]);
+        var pathSegments = uriBuilder.Path.Split('/', StringSplitOptions.RemoveEmptyEntries);
 
-        // 追加路径片段
-        pathSegments = pathSegments.Concat(PathSegments.ConcatIgnoreNull([]).Where(u => !string.IsNullOrWhiteSpace(u))
-            .Select(u => u.TrimStart('/').TrimEnd('/')));
+        // 追加并处理新路径片段
+        var newPathSegments = pathSegments.Concat(PathSegments.ConcatIgnoreNull([])
+            .Where(u => !string.IsNullOrWhiteSpace(u)).Select(u => u.TrimStart('/').TrimEnd('/')));
 
-        // 构建路径片段赋值给 UriBuilder 的 Path 属性
-        uriBuilder.Path = '/' + string.Join('/',
-            // 过滤已标记为移除的路径片段
-            pathSegments.WhereIf(PathSegmentsToRemove is { Count: > 0 },
-                u => PathSegmentsToRemove?.TryGetValue(u, out _) == false));
+        // 过滤需要移除的路径片段
+        var filteredSegments = newPathSegments.WhereIf(PathSegmentsToRemove is { Count: > 0 },
+            u => PathSegmentsToRemove?.Contains(u) == false).ToArray();
+
+        // 构建最终路径
+        if (filteredSegments.Length != 0)
+        {
+            uriBuilder.Path = $"/{string.Join('/', filteredSegments)}";
+
+            // 恢复原路径的结尾斜杠（当存在路径片段时）
+            if (endsWithSlash)
+            {
+                uriBuilder.Path += "/";
+            }
+        }
+        // 没有路径片段时设置为根路径
+        else
+        {
+            uriBuilder.Path = "/";
+        }
     }
 
     /// <summary>
@@ -182,6 +214,13 @@ public sealed partial class HttpRequestBuilder
     /// </param>
     internal void AppendQueryParameters(UriBuilder uriBuilder)
     {
+        // 空检查
+        if ((QueryParameters is null || QueryParameters.Count == 0) &&
+            (QueryParametersToRemove is null || QueryParametersToRemove.Count == 0))
+        {
+            return;
+        }
+
         // 解析 URL 中的查询字符串为键值对列表
         var queryParameters = uriBuilder.Query.ParseFormatKeyValueString(['&'], '?');
 
@@ -300,6 +339,16 @@ public sealed partial class HttpRequestBuilder
         // 遍历请求标头集合并追加到 HttpRequestMessage.Headers 中
         foreach (var (key, values) in Headers)
         {
+            // 替换 Referer 标头的 "{BASE_ADDRESS}" 模板字符串
+            if (key.IsIn([HeaderNames.Referer], StringComparer.OrdinalIgnoreCase) &&
+                values.FirstOrDefault() == Constants.REFERER_HEADER_BASE_ADDRESS_TEMPLATE)
+            {
+                httpRequestMessage.Headers.Referrer = new Uri(
+                    $"{httpRequestMessage.RequestUri?.Scheme}://{httpRequestMessage.RequestUri?.Host}{(httpRequestMessage.RequestUri?.IsDefaultPort != true ? $":{httpRequestMessage.RequestUri?.Port}" : string.Empty)}",
+                    UriKind.RelativeOrAbsolute);
+                continue;
+            }
+
             httpRequestMessage.Headers.TryAddWithoutValidation(key, values);
         }
     }
@@ -486,6 +535,18 @@ public sealed partial class HttpRequestBuilder
         // 构建 HttpContent 实例
         var httpContent = httpContentProcessorFactory.Build(RawContent, ContentType!, ContentEncoding, processors);
 
+        // 空检查
+        if (httpContent is null)
+        {
+            return;
+        }
+
+        // 检查是否移除默认的内容的 Content-Type，解决对接 Java 程序时可能出现失败问题
+        if (OmitContentType)
+        {
+            httpContent.Headers.ContentType = null;
+        }
+
         // 调用用于处理在设置请求消息的内容时的操作
         OnPreSetContent?.Invoke(httpContent);
 
@@ -513,6 +574,9 @@ public sealed partial class HttpRequestBuilder
         {
             httpRequestMessage.Options.AddOrUpdate(Constants.DISABLED_PROFILER_KEY, "TRUE");
         }
+
+        // 添加 HttpClient 实例的配置名称
+        httpRequestMessage.Options.AddOrUpdate(Constants.HTTP_CLIENT_NAME, HttpClientName ?? string.Empty);
     }
 
     /// <summary>

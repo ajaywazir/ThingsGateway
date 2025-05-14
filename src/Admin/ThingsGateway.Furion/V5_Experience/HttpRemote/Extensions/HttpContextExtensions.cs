@@ -42,7 +42,7 @@ public static partial class HttpContextExtensions
     ///         </item>
     ///     </list>
     /// </remarks>
-    internal static HashSet<string> _ignoreResponseHeaders =
+    internal static readonly HashSet<string> _ignoreResponseHeaders =
     [
         "Content-Type", "Connection", "Transfer-Encoding", "Keep-Alive", "Upgrade", "Proxy-Connection"
     ];
@@ -64,7 +64,7 @@ public static partial class HttpContextExtensions
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    public static HttpResponseMessage Forward(this HttpContext? httpContext, string? requestUri = null,
+    public static HttpResponseMessage? Forward(this HttpContext? httpContext, string? requestUri = null,
         Action<HttpRequestBuilder>? configure = null,
         HttpCompletionOption completionOption = HttpCompletionOption.ResponseContentRead,
         HttpContextForwardOptions? forwardOptions = null) =>
@@ -90,7 +90,7 @@ public static partial class HttpContextExtensions
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    public static HttpResponseMessage Forward(this HttpContext? httpContext, HttpMethod httpMethod,
+    public static HttpResponseMessage? Forward(this HttpContext? httpContext, HttpMethod httpMethod,
         string? requestUri = null, Action<HttpRequestBuilder>? configure = null,
         HttpCompletionOption completionOption = HttpCompletionOption.ResponseContentRead,
         HttpContextForwardOptions? forwardOptions = null) =>
@@ -115,7 +115,7 @@ public static partial class HttpContextExtensions
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    public static HttpResponseMessage Forward(this HttpContext? httpContext, Uri? requestUri = null,
+    public static HttpResponseMessage? Forward(this HttpContext? httpContext, Uri? requestUri = null,
         Action<HttpRequestBuilder>? configure = null,
         HttpCompletionOption completionOption = HttpCompletionOption.ResponseContentRead,
         HttpContextForwardOptions? forwardOptions = null) =>
@@ -140,7 +140,7 @@ public static partial class HttpContextExtensions
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    public static HttpResponseMessage Forward(this HttpContext? httpContext, HttpMethod httpMethod,
+    public static HttpResponseMessage? Forward(this HttpContext? httpContext, HttpMethod httpMethod,
         Uri? requestUri = null, Action<HttpRequestBuilder>? configure = null,
         HttpCompletionOption completionOption = HttpCompletionOption.ResponseContentRead,
         HttpContextForwardOptions? forwardOptions = null)
@@ -180,7 +180,7 @@ public static partial class HttpContextExtensions
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    public static Task<HttpResponseMessage> ForwardAsync(this HttpContext? httpContext, string? requestUri = null,
+    public static Task<HttpResponseMessage?> ForwardAsync(this HttpContext? httpContext, string? requestUri = null,
         Action<HttpRequestBuilder>? configure = null,
         HttpCompletionOption completionOption = HttpCompletionOption.ResponseContentRead,
         HttpContextForwardOptions? forwardOptions = null) =>
@@ -206,7 +206,7 @@ public static partial class HttpContextExtensions
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    public static Task<HttpResponseMessage> ForwardAsync(this HttpContext? httpContext, HttpMethod httpMethod,
+    public static Task<HttpResponseMessage?> ForwardAsync(this HttpContext? httpContext, HttpMethod httpMethod,
         string? requestUri = null, Action<HttpRequestBuilder>? configure = null,
         HttpCompletionOption completionOption = HttpCompletionOption.ResponseContentRead,
         HttpContextForwardOptions? forwardOptions = null) =>
@@ -231,7 +231,7 @@ public static partial class HttpContextExtensions
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    public static Task<HttpResponseMessage> ForwardAsync(this HttpContext? httpContext, Uri? requestUri = null,
+    public static Task<HttpResponseMessage?> ForwardAsync(this HttpContext? httpContext, Uri? requestUri = null,
         Action<HttpRequestBuilder>? configure = null,
         HttpCompletionOption completionOption = HttpCompletionOption.ResponseContentRead,
         HttpContextForwardOptions? forwardOptions = null) =>
@@ -256,7 +256,7 @@ public static partial class HttpContextExtensions
     /// <returns>
     ///     <see cref="HttpResponseMessage" />
     /// </returns>
-    public static async Task<HttpResponseMessage> ForwardAsync(this HttpContext? httpContext, HttpMethod httpMethod,
+    public static async Task<HttpResponseMessage?> ForwardAsync(this HttpContext? httpContext, HttpMethod httpMethod,
         Uri? requestUri = null, Action<HttpRequestBuilder>? configure = null,
         HttpCompletionOption completionOption = HttpCompletionOption.ResponseContentRead,
         HttpContextForwardOptions? forwardOptions = null)
@@ -297,7 +297,7 @@ public static partial class HttpContextExtensions
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    public static HttpRemoteResult<TResult> Forward<TResult>(this HttpContext? httpContext, string? requestUri = null,
+    public static HttpRemoteResult<TResult>? Forward<TResult>(this HttpContext? httpContext, string? requestUri = null,
         Action<HttpRequestBuilder>? configure = null,
         HttpCompletionOption completionOption = HttpCompletionOption.ResponseContentRead,
         HttpContextForwardOptions? forwardOptions = null) =>
@@ -324,7 +324,7 @@ public static partial class HttpContextExtensions
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    public static HttpRemoteResult<TResult> Forward<TResult>(this HttpContext? httpContext, HttpMethod httpMethod,
+    public static HttpRemoteResult<TResult>? Forward<TResult>(this HttpContext? httpContext, HttpMethod httpMethod,
         string? requestUri = null, Action<HttpRequestBuilder>? configure = null,
         HttpCompletionOption completionOption = HttpCompletionOption.ResponseContentRead,
         HttpContextForwardOptions? forwardOptions = null) =>
@@ -350,7 +350,7 @@ public static partial class HttpContextExtensions
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    public static HttpRemoteResult<TResult> Forward<TResult>(this HttpContext? httpContext, Uri? requestUri = null,
+    public static HttpRemoteResult<TResult>? Forward<TResult>(this HttpContext? httpContext, Uri? requestUri = null,
         Action<HttpRequestBuilder>? configure = null,
         HttpCompletionOption completionOption = HttpCompletionOption.ResponseContentRead,
         HttpContextForwardOptions? forwardOptions = null) =>
@@ -376,7 +376,7 @@ public static partial class HttpContextExtensions
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    public static HttpRemoteResult<TResult> Forward<TResult>(this HttpContext? httpContext, HttpMethod httpMethod,
+    public static HttpRemoteResult<TResult>? Forward<TResult>(this HttpContext? httpContext, HttpMethod httpMethod,
         Uri? requestUri = null, Action<HttpRequestBuilder>? configure = null,
         HttpCompletionOption completionOption = HttpCompletionOption.ResponseContentRead,
         HttpContextForwardOptions? forwardOptions = null)
@@ -393,7 +393,7 @@ public static partial class HttpContextExtensions
         var result = httpRemoteService.Send<TResult>(httpRequestBuilder, completionOption, httpContext.RequestAborted);
 
         // 根据配置选项将 HttpResponseMessage 信息转发到 HttpContext 中
-        ForwardResponseMessage(httpContext, result.ResponseMessage, httpContextForwardBuilder.ForwardOptions);
+        ForwardResponseMessage(httpContext, result?.ResponseMessage, httpContextForwardBuilder.ForwardOptions);
 
         return result;
     }
@@ -416,7 +416,7 @@ public static partial class HttpContextExtensions
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    public static Task<HttpRemoteResult<TResult>> ForwardAsync<TResult>(this HttpContext? httpContext,
+    public static Task<HttpRemoteResult<TResult>?> ForwardAsync<TResult>(this HttpContext? httpContext,
         string? requestUri = null, Action<HttpRequestBuilder>? configure = null,
         HttpCompletionOption completionOption = HttpCompletionOption.ResponseContentRead,
         HttpContextForwardOptions? forwardOptions = null) =>
@@ -443,7 +443,7 @@ public static partial class HttpContextExtensions
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    public static Task<HttpRemoteResult<TResult>> ForwardAsync<TResult>(this HttpContext? httpContext,
+    public static Task<HttpRemoteResult<TResult>?> ForwardAsync<TResult>(this HttpContext? httpContext,
         HttpMethod httpMethod, string? requestUri = null, Action<HttpRequestBuilder>? configure = null,
         HttpCompletionOption completionOption = HttpCompletionOption.ResponseContentRead,
         HttpContextForwardOptions? forwardOptions = null) =>
@@ -469,7 +469,7 @@ public static partial class HttpContextExtensions
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    public static Task<HttpRemoteResult<TResult>> ForwardAsync<TResult>(this HttpContext? httpContext,
+    public static Task<HttpRemoteResult<TResult>?> ForwardAsync<TResult>(this HttpContext? httpContext,
         Uri? requestUri = null, Action<HttpRequestBuilder>? configure = null,
         HttpCompletionOption completionOption = HttpCompletionOption.ResponseContentRead,
         HttpContextForwardOptions? forwardOptions = null) =>
@@ -495,7 +495,7 @@ public static partial class HttpContextExtensions
     /// <returns>
     ///     <see cref="HttpRemoteResult{TResult}" />
     /// </returns>
-    public static async Task<HttpRemoteResult<TResult>> ForwardAsync<TResult>(this HttpContext? httpContext,
+    public static async Task<HttpRemoteResult<TResult>?> ForwardAsync<TResult>(this HttpContext? httpContext,
         HttpMethod httpMethod, Uri? requestUri = null, Action<HttpRequestBuilder>? configure = null,
         HttpCompletionOption completionOption = HttpCompletionOption.ResponseContentRead,
         HttpContextForwardOptions? forwardOptions = null)
@@ -513,7 +513,7 @@ public static partial class HttpContextExtensions
             httpContext.RequestAborted).ConfigureAwait(false);
 
         // 根据配置选项将 HttpResponseMessage 信息转发到 HttpContext 中
-        ForwardResponseMessage(httpContext, result.ResponseMessage, httpContextForwardBuilder.ForwardOptions);
+        ForwardResponseMessage(httpContext, result?.ResponseMessage, httpContextForwardBuilder.ForwardOptions);
 
         return result;
     }
@@ -605,13 +605,21 @@ public static partial class HttpContextExtensions
     /// <param name="forwardOptions">
     ///     <see cref="HttpContextForwardOptions" />
     /// </param>
-    internal static void ForwardResponseMessage(HttpContext httpContext, HttpResponseMessage httpResponseMessage,
+    internal static void ForwardResponseMessage(HttpContext httpContext, HttpResponseMessage? httpResponseMessage,
         HttpContextForwardOptions forwardOptions)
     {
         // 空检查
         ArgumentNullException.ThrowIfNull(httpContext);
-        ArgumentNullException.ThrowIfNull(httpResponseMessage);
         ArgumentNullException.ThrowIfNull(forwardOptions);
+
+        // 空检查
+        if (httpResponseMessage is null)
+        {
+            // 输出调试信息
+            Debugging.Error("The response content was not read, as it was empty.");
+
+            return;
+        }
 
         // 获取 HttpResponse 实例
         var httpResponse = httpContext.Response;

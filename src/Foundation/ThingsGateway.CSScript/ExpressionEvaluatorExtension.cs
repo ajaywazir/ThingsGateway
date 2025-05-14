@@ -78,7 +78,6 @@ public static class ExpressionEvaluatorExtension
             {
                 item?.Value?.TryDispose();
                 item?.Value?.GetType().Assembly.Unload();
-                GC.Collect();
             }
         }
         catch
@@ -140,7 +139,6 @@ public static class ExpressionEvaluatorExtension
             }}
         }}
     ");
-            GC.Collect();
             Instance.Set(field, runScript);
         }
 

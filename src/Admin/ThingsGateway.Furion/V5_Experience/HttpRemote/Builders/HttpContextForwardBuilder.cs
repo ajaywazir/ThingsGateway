@@ -38,7 +38,7 @@ public sealed class HttpContextForwardBuilder
     /// <summary>
     ///     忽略在转发时需要跳过的请求标头列表
     /// </summary>
-    internal static HashSet<string> _ignoreRequestHeaders =
+    internal static readonly HashSet<string> _ignoreRequestHeaders =
     [
         Constants.X_FORWARD_TO_HEADER, "Host", "Accept", "Accept-CH", "Accept-Charset", "Accept-Encoding",
         "Accept-Language", "Accept-Patch", "Accept-Post", "Accept-Ranges"
@@ -356,8 +356,7 @@ public sealed class HttpContextForwardBuilder
             if (multipartSection.AsFileSection() is not null)
             {
                 // 复制多部分表单内容文件节内容
-                await CopyFileMultipartSectionAsync(multipartSection, httpMultipartFormDataBuilder, httpRequestBuilder,
-                    cancellationToken).ConfigureAwait(false);
+                await CopyFileMultipartSectionAsync(multipartSection, httpMultipartFormDataBuilder, cancellationToken).ConfigureAwait(false);
             }
             else
             {
@@ -410,15 +409,11 @@ public sealed class HttpContextForwardBuilder
     /// <param name="httpMultipartFormDataBuilder">
     ///     <see cref="HttpMultipartFormDataBuilder" />
     /// </param>
-    /// <param name="httpRequestBuilder">
-    ///     <see cref="HttpRequestBuilder" />
-    /// </param>
     /// <param name="cancellationToken">
     ///     <see cref="CancellationToken" />
     /// </param>
     internal static async Task CopyFileMultipartSectionAsync(MultipartSection multipartSection,
-        HttpMultipartFormDataBuilder httpMultipartFormDataBuilder, HttpRequestBuilder httpRequestBuilder,
-        CancellationToken cancellationToken)
+        HttpMultipartFormDataBuilder httpMultipartFormDataBuilder, CancellationToken cancellationToken)
     {
         // 初始化 MemoryStream 实例
         var memoryStream = new MemoryStream();
@@ -433,10 +428,8 @@ public sealed class HttpContextForwardBuilder
         var fileMultipartSection = multipartSection.AsFileSection()!;
 
         // 添加文件流
-        httpMultipartFormDataBuilder.AddStream(memoryStream, fileMultipartSection.Name, fileMultipartSection.FileName);
-
-        // 添加文件流到请求结束时需要释放的集合中
-        httpRequestBuilder.AddDisposable(memoryStream);
+        httpMultipartFormDataBuilder.AddStream(memoryStream, fileMultipartSection.Name, fileMultipartSection.FileName,
+            disposeStreamOnRequestCompletion: true);
     }
 
     /// <summary>

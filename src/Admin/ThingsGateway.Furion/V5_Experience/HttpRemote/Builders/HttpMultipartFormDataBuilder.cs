@@ -124,12 +124,9 @@ public sealed class HttpMultipartFormDataBuilder
     ///     <see cref="HttpMultipartFormDataBuilder" />
     /// </returns>
     /// <exception cref="JsonException"></exception>
-    public HttpMultipartFormDataBuilder AddJson(object rawJson, string? name = null, Encoding? contentEncoding = null,
+    public HttpMultipartFormDataBuilder AddJson(object? rawJson, string? name = null, Encoding? contentEncoding = null,
         string? contentType = null)
     {
-        // 空检查
-        ArgumentNullException.ThrowIfNull(rawJson);
-
         // 检查是否配置表单名或不是字符串类型
         if (!string.IsNullOrWhiteSpace(name) || rawJson is not string rawString)
         {
@@ -292,10 +289,8 @@ public sealed class HttpMultipartFormDataBuilder
         // 从互联网 URL 地址中加载流
         var fileStream = Helpers.GetStreamFromRemote(url);
 
-        // 添加文件流到请求结束时需要释放的集合中
-        _httpRequestBuilder.AddDisposable(fileStream);
-
-        return AddStream(fileStream, name, newFileName, contentType, contentEncoding);
+        return AddStream(fileStream, name, newFileName, contentType, contentEncoding,
+            true);
     }
 
     /// <summary>
@@ -365,10 +360,8 @@ public sealed class HttpMultipartFormDataBuilder
         // 读取文件流（没有 using）
         var fileStream = File.OpenRead(filePath);
 
-        // 添加文件流到请求结束时需要释放的集合中
-        _httpRequestBuilder.AddDisposable(fileStream);
-
-        return AddStream(fileStream, name, newFileName, contentType, contentEncoding);
+        return AddStream(fileStream, name, newFileName, contentType, contentEncoding,
+            true);
     }
 
     /// <summary>
@@ -407,10 +400,8 @@ public sealed class HttpMultipartFormDataBuilder
         // 初始化带读写进度的文件流
         var progressFileStream = new ProgressFileStream(fileStream, filePath, progressChannel, newFileName);
 
-        // 添加文件流到请求结束时需要释放的集合中
-        _httpRequestBuilder.AddDisposable(progressFileStream);
-
-        return AddStream(progressFileStream, name, newFileName, contentType, contentEncoding);
+        return AddStream(progressFileStream, name, newFileName, contentType, contentEncoding,
+            true);
     }
 
     /// <summary>
@@ -500,11 +491,12 @@ public sealed class HttpMultipartFormDataBuilder
     /// <param name="fileName">文件的名称</param>
     /// <param name="contentType">内容类型</param>
     /// <param name="contentEncoding">内容编码</param>
+    /// <param name="disposeStreamOnRequestCompletion">是否在请求结束后自动释放流。默认值为：<c>false</c></param>
     /// <returns>
     ///     <see cref="HttpMultipartFormDataBuilder" />
     /// </returns>
     public HttpMultipartFormDataBuilder AddStream(Stream stream, string name = "file", string? fileName = null,
-        string? contentType = null, Encoding? contentEncoding = null)
+        string? contentType = null, Encoding? contentEncoding = null, bool disposeStreamOnRequestCompletion = false)
     {
         // 空检查
         ArgumentNullException.ThrowIfNull(stream);
@@ -528,6 +520,12 @@ public sealed class HttpMultipartFormDataBuilder
             ContentEncoding = encoding,
             FileName = fileName
         });
+
+        // 是否在请求结束后自动释放流
+        if (disposeStreamOnRequestCompletion)
+        {
+            _httpRequestBuilder.AddDisposable(stream);
+        }
 
         return this;
     }
@@ -693,6 +691,20 @@ public sealed class HttpMultipartFormDataBuilder
             RawContent = httpContent,
             ContentEncoding = encoding
         });
+
+        return this;
+    }
+
+    /// <summary>
+    ///     设置是否移除默认的多部分内容的 <c>Content-Type</c>
+    /// </summary>
+    /// <param name="omit">如果为 <c>true</c> 则移除，默认为 <c>false</c></param>
+    /// <returns>
+    ///     <see cref="HttpMultipartFormDataBuilder" />
+    /// </returns>
+    public HttpMultipartFormDataBuilder SetOmitContentType(bool omit)
+    {
+        OmitContentType = omit;
 
         return this;
     }

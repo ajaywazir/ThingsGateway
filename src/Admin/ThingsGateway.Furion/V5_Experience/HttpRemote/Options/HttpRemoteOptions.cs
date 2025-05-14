@@ -12,8 +12,11 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+
+using ThingsGateway.Converters.Json;
 
 namespace ThingsGateway.HttpRemote;
 
@@ -30,7 +33,18 @@ public sealed class HttpRemoteOptions
     {
         PropertyNameCaseInsensitive = true,
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        NumberHandling = JsonNumberHandling.AllowReadingFromString
+        // 允许 String 转 Number
+        NumberHandling = JsonNumberHandling.AllowReadingFromString,
+        // 解决中文乱码问题
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        AllowTrailingCommas = true,
+        Converters =
+        {
+            new DateTimeConverterUsingDateTimeParseAsFallback(),
+            new DateTimeOffsetConverterUsingDateTimeOffsetParseAsFallback(),
+            // 允许 Number 或 Boolean 转 String
+            new StringJsonConverter()
+        }
     };
 
     /// <summary>

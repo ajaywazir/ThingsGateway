@@ -12,6 +12,7 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 
+using System.Globalization;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 
@@ -143,4 +144,11 @@ public sealed class LoggingMonitorSettings
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
         SkipValidation = true
     };
+
+
+    /// <summary>
+    /// 格式化提供器
+    /// </summary>
+    /// <remarks></remarks>
+    public IFormatProvider? FormatProvider { get; set; } = CultureInfo.InvariantCulture;
 }
