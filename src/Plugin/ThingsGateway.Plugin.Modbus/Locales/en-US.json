@@ -1,20 +1,8 @@
 ﻿{
   "ThingsGateway.Plugin.Modbus.ModbusMasterProperty": {
     "ModbusType": "ProtocolType",
-    "Heartbeat": "Heartbeat",
-    "Station": "DefaultStation",
-    "DtuId": "DefaultDtuId",
-    "DataFormat": "DataFormat",
-    "IsStringReverseByteWord": "StringReverseByteWord",
-    "CheckClearTime": "CheckClearTime",
-    "Timeout": "Timeout",
-    "ConnectTimeout": "ConnectTimeout",
-    "SendDelayTime": "SendDelayTime",
-    "CacheTimeout": "CacheTimeout",
-    "MaxPack": "MaxPack",
-    "ReIntervalTime": "ReIntervalTime",
-    "RetryCount": "RetryCount",
-    "MaxConcurrentCount": "MaxConcurrentCount"
+    "Station": "DefaultStation"
+
   },
   "ThingsGateway.Plugin.Modbus.ModbusSlave": {
     "CanStartService": "Unable to Start Service",
@@ -26,24 +14,11 @@
     "Station": "DefaultStation",
     "DataFormat": "DataFormat",
     "IsStringReverseByteWord": "IsStringReverseByteWord",
-    "CheckClearTime": "CheckClearTime",
     "DeviceRpcEnable": "DeviceRpcEnable",
     "IsWriteMemory": "IsWriteMemory",
-    "MulStation": "MultipleStations",
-    "MaxClientCount": "MaxClientCount",
+    "MulStation": "MultipleStations"
 
-    "DtuId": "DtuId",
-    "HeartbeatTime": "HeartbeatTime",
-    "Heartbeat": "Heartbeat",
-
-    "Timeout": "Timeout",
-    "ConnectTimeout": "ConnectTimeout",
-    "SendDelayTime": "SendDelayTime",
-    "CacheTimeout": "CacheTimeout",
-    "MaxPack": "MaxPack",
-    "ReIntervalTime": "ReIntervalTime",
-    "RetryCount": "RetryCount",
-    "MaxConcurrentCount": "MaxConcurrentCount"
+   
   },
 
   "ThingsGateway.Plugin.Modbus.ModbusSlaveVariableProperty": {

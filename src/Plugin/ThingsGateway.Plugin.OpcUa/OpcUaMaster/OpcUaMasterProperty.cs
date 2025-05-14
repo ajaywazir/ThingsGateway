@@ -15,7 +15,7 @@ namespace ThingsGateway.Plugin.OpcUa;
 /// <summary>
 /// <inheritdoc/>
 /// </summary>
-public class OpcUaMasterProperty : CollectPropertyBase
+public class OpcUaMasterProperty : CollectPropertyRetryBase
 {
     /// <summary>
     /// 连接Url

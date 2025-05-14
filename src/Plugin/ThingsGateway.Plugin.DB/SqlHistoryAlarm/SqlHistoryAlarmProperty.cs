@@ -33,4 +33,5 @@ public class SqlHistoryAlarmProperty : BusinessPropertyWithCache
     [Required]
     public string TableName { get; set; } = "historyAlarm";
 
+    public override bool OnlineFilter { get; set; } = false;
 }

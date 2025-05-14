@@ -88,6 +88,18 @@
     "VariableStringLength": "变长字符串",
     "Stringlength": "字符串长度",
     "BcdFormat": "BCD格式"
+  },
+
+  "ThingsGateway.Foundation.DeviceBase": {
+
+    "SendDelayTime": "发送延时",
+    "DataFormat": "解析规则",
+    "Timeout": "读写超时",
+    "IsStringReverseByteWord": "字符串反转"
+  },
+  "ThingsGateway.Foundation.DtuServiceDeviceBase": {
+    "DtuId": "Dtu注册包(UTF8)"
+
   }
 }
   

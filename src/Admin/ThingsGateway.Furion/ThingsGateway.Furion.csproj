@@ -43,18 +43,18 @@
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.14" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.16" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.16" />
 		<PackageReference Include="Microsoft.Extensions.DependencyModel" Version="8.0.2" />
 		<PackageReference Include="System.Reflection.MetadataLoadContext" Version="8.0.1" />
 		<PackageReference Include="System.Text.Json" Version="8.0.5" />
 	</ItemGroup>
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net9.0' ">
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.4" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.4" />
-		<PackageReference Include="Microsoft.Extensions.DependencyModel" Version="9.0.4" />
-		<PackageReference Include="System.Reflection.MetadataLoadContext" Version="9.0.4" />
-		<PackageReference Include="System.Text.Json" Version="9.0.4" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.5" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.5" />
+		<PackageReference Include="Microsoft.Extensions.DependencyModel" Version="9.0.5" />
+		<PackageReference Include="System.Reflection.MetadataLoadContext" Version="9.0.5" />
+		<PackageReference Include="System.Text.Json" Version="9.0.5" />
 
 	</ItemGroup>
 

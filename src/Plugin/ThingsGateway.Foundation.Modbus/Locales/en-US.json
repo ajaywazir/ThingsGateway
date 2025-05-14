@@ -10,36 +10,14 @@
 
   "ThingsGateway.Foundation.Modbus.ModbusMaster": {
     "ModbusType": "ModbusType",
-    "Station": "Station",
-    "DtuId": "DtuId",
-    "CheckClearTime": "CheckClearTime",
-    "Heartbeat": "Heartbeat",
-
-    "CacheTimeout": "CacheTimeout",
-    "SendDelayTime": "SendDelayTime",
-    "DataFormat": "DataFormat",
-    "Timeout": "Timeout",
-    "ConnectTimeout": "ConnectTimeout",
-    "IsStringReverseByteWord": "IsStringReverseByteWord"
+    "Station": "Station"
   },
   "ThingsGateway.Foundation.Modbus.ModbusSlave": {
     "ModbusType": "ModbusType",
     "Station": "Station",
     "CheckClearTime": "CheckClearTime",
     "MulStation": "MulStation",
-    "IsWriteMemory": "IsWriteMemory",
-    "MaxClientCount": "MaxClientCount",
-
-    "DtuId": "DtuId",
-    "HeartbeatTime": "HeartbeatTime",
-    "Heartbeat": "Heartbeat",
-
-    "CacheTimeout": "CacheTimeout",
-    "SendDelayTime": "SendDelayTime",
-    "DataFormat": "DataFormat",
-    "Timeout": "Timeout",
-    "ConnectTimeout": "ConnectTimeout",
-    "IsStringReverseByteWord": "IsStringReverseByteWord"
+    "IsWriteMemory": "IsWriteMemory"
   },
 
   "ThingsGateway.Foundation.Modbus.ModbusResource": {

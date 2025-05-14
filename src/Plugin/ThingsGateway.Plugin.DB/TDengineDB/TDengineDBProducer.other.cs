@@ -16,6 +16,7 @@ using SqlSugar.TDengine;
 using System.Diagnostics;
 using System.Text;
 
+using ThingsGateway.Extension.Generic;
 using ThingsGateway.Foundation;
 using ThingsGateway.Plugin.DB;
 
@@ -90,7 +91,7 @@ public partial class TDengineDBProducer : BusinessBaseWithCacheIntervalVariableM
     }
     private async ValueTask<OperResult> UpdateVarModel(IEnumerable<TDengineDBHistoryValue> item, CancellationToken cancellationToken)
     {
-        var result = await InserableAsync(item.ToList(), cancellationToken).ConfigureAwait(false);
+        var result = await InserableAsync(item.WhereIf(_driverPropertys.OnlineFilter, a => a.IsOnline == true).ToList(), cancellationToken).ConfigureAwait(false);
         if (success != result.IsSuccess)
         {
             if (!result.IsSuccess)

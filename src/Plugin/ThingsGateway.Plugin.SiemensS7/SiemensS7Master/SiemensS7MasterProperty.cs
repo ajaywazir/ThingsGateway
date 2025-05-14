@@ -17,16 +17,14 @@ namespace ThingsGateway.Plugin.SiemensS7;
 /// <summary>
 /// <inheritdoc/>
 /// </summary>
-public class SiemensS7MasterProperty : CollectPropertyBase
+public class SiemensS7MasterProperty : CollectFoundationPackPropertyBase
 {
+    public SiemensS7MasterProperty()
+    {
+        MaxPack = 200;
+    }
     [DynamicProperty]
     public SiemensTypeEnum SiemensS7Type { get; set; }
-
-    /// <summary>
-    /// 最大打包长度
-    /// </summary>
-    [DynamicProperty]
-    public ushort MaxPack { get; set; } = 200;
 
     /// <summary>
     /// Rack
@@ -46,24 +44,6 @@ public class SiemensS7MasterProperty : CollectPropertyBase
     [DynamicProperty]
     public int LocalTSAP { get; set; } = 0;
 
-    /// <summary>
-    /// 读写超时时间
-    /// </summary>
-    [DynamicProperty]
-    public ushort Timeout { get; set; } = 3000;
 
-    /// <summary>
-    /// 帧前时间ms
-    /// </summary>
-    [DynamicProperty]
-    public int SendDelayTime { get; set; } = 0;
-
-
-
-    /// <summary>
-    /// 默认解析顺序
-    /// </summary>
-    [DynamicProperty]
-    public DataFormatEnum DataFormat { get; set; }
 
 }

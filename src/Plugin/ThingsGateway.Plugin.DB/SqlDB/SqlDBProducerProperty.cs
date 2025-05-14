@@ -78,7 +78,4 @@ public class SqlDBProducerProperty : BusinessPropertyWithCacheInterval
     [AutoGenerateColumn(Visible = true, IsVisibleWhenEdit = false, IsVisibleWhenAdd = false)]
     public string? BigTextScriptHistoryTable { get; set; }
 
-
-    [DynamicProperty]
-    public bool GroupUpdate { get; set; } = false;
 }

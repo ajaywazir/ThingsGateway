@@ -15,37 +15,13 @@ namespace ThingsGateway.Plugin.Dlt645;
 /// <summary>
 /// <inheritdoc/>
 /// </summary>
-public class Dlt645_2007MasterProperty : CollectPropertyBase
+public class Dlt645_2007MasterProperty : CollectFoundationDtuPropertyBase
 {
-    /// <summary>
-    /// 读写超时时间
-    /// </summary>
-    [DynamicProperty]
-    public ushort Timeout { get; set; } = 3000;
-
-    /// <summary>
-    /// 帧前时间ms
-    /// </summary>
-    [DynamicProperty]
-    public int SendDelayTime { get; set; } = 0;
-
-    /// <summary>
-    /// 默认解析顺序
-    /// </summary>
-    [DynamicProperty]
-    public DataFormatEnum DataFormat { get; set; }
-
     /// <summary>
     /// 默认地址
     /// </summary>
     [DynamicProperty]
     public string Station { get; set; } = "111111111111";
-
-    /// <summary>
-    /// 默认DtuId
-    /// </summary>
-    [DynamicProperty]
-    public string? DtuId { get; set; }
 
     /// <summary>
     /// 密码

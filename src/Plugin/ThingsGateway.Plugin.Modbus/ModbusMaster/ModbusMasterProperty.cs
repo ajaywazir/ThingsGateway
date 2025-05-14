@@ -17,7 +17,7 @@ namespace ThingsGateway.Plugin.Modbus;
 /// <summary>
 /// <inheritdoc/>
 /// </summary>
-public class ModbusMasterProperty : CollectPropertyBase
+public class ModbusMasterProperty : CollectFoundationDtuPackPropertyBase
 {
     [DynamicProperty]
     public ModbusTypeEnum ModbusType { get; set; }
@@ -28,38 +28,5 @@ public class ModbusMasterProperty : CollectPropertyBase
     [DynamicProperty]
     public byte Station { get; set; } = 1;
 
-    /// <summary>
-    /// 默认DtuId
-    /// </summary>
-    [DynamicProperty]
-    public string? DtuId { get; set; } = "DtuId";
-
-    /// <summary>
-    /// 默认解析顺序
-    /// </summary>
-    [DynamicProperty]
-    public DataFormatEnum DataFormat { get; set; }
-
-    /// <summary>
-    /// 读写超时时间
-    /// </summary>
-    [DynamicProperty]
-    public ushort Timeout { get; set; } = 3000;
-
-    /// <summary>
-    /// 发送延时ms
-    /// </summary>
-    [DynamicProperty]
-    public int SendDelayTime { get; set; } = 0;
-
-
-    /// <summary>
-    /// 最大打包长度
-    /// </summary>
-    [DynamicProperty]
-    public ushort MaxPack { get; set; } = 100;
-
-    [DynamicProperty]
-    public bool IsStringReverseByteWord { get; set; }
 
 }

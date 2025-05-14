@@ -7,8 +7,6 @@
     "OpcIP": "OpcIP",
     "OpcName": "OpcName",
     "UpdateRate": "UpdateRate",
-    "SourceTimestampEnable": "SourceTimestampEnable",
-    "ReIntervalTime": "ReIntervalTime",
-    "RetryCount": "RetryCount"
+    "SourceTimestampEnable": "SourceTimestampEnable"
   }
 }

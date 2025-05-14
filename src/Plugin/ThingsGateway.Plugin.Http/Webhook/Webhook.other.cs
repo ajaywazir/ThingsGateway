@@ -12,6 +12,7 @@ using BootstrapBlazor.Components;
 
 using Mapster;
 
+using ThingsGateway.Extension.Generic;
 using ThingsGateway.Foundation;
 
 using TouchSocket.Core;
@@ -219,7 +220,7 @@ public partial class Webhook : BusinessBaseWithCacheIntervalScript<VariableBasic
 
     private ValueTask<OperResult> UpdateVarModel(IEnumerable<VariableBasicData> item, CancellationToken cancellationToken)
     {
-        var topicArrayList = GetVariableBasicDataTopicArray(item);
+        var topicArrayList = GetVariableBasicDataTopicArray(item.WhereIf(_driverPropertys.OnlineFilter, a => a.IsOnline == true));
         return Update(topicArrayList, cancellationToken);
     }
 

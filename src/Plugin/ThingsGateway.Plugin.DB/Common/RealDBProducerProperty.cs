@@ -38,6 +38,4 @@ public class RealDBProducerProperty : BusinessPropertyWithCacheInterval
     public string? BigTextScriptHistoryTable { get; set; }
 
 
-    [DynamicProperty]
-    public bool GroupUpdate { get; set; } = false;
 }

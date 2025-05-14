@@ -26,6 +26,7 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
 using System.Text;
 
+using ThingsGateway.Extension.Generic;
 using ThingsGateway.Foundation;
 using ThingsGateway.Foundation.Extension.Generic;
 using ThingsGateway.NewLife;
@@ -244,7 +245,7 @@ public partial class MqttClient : BusinessBaseWithCacheIntervalScript<VariableBa
 
     private ValueTask<OperResult> UpdateVarModel(IEnumerable<VariableBasicData> item, CancellationToken cancellationToken)
     {
-        var topicArrayList = GetVariableBasicDataTopicArray(item);
+        var topicArrayList = GetVariableBasicDataTopicArray(item.WhereIf(_driverPropertys.OnlineFilter, a => a.IsOnline == true));
         return Update(topicArrayList, cancellationToken);
     }
 

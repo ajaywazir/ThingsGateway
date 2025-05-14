@@ -38,4 +38,11 @@ public class BusinessPropertyWithCache : BusinessPropertyBase
     /// </summary>
     [DynamicProperty]
     public virtual int QueueMaxCount { get; set; } = 100000;
+
+
+    [DynamicProperty]
+    public virtual bool OnlineFilter { get; set; } = false;
+
+    [DynamicProperty]
+    public bool GroupUpdate { get; set; } = false;
 }

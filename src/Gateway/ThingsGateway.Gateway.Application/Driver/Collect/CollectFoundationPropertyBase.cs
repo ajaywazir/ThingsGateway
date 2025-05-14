@@ -15,22 +15,41 @@ namespace ThingsGateway.Gateway.Application;
 /// <br></br>
 /// 使用<see cref="DynamicPropertyAttribute"/> 标识所需的配置属性
 /// </summary>
-public abstract class CollectPropertyBase : DriverPropertyBase
+public abstract class CollectFoundationPackPropertyBase : CollectFoundationPropertyBase
 {
     /// <summary>
-    /// 最大并发数量
+    /// 最大打包长度
     /// </summary>
-    public virtual int MaxConcurrentCount { get; set; } = 1;
+    [DynamicProperty]
+    public ushort MaxPack { get; set; } = 100;
+
+
+}
+public abstract class CollectFoundationPropertyBase : CollectPropertyRetryBase
+{
+    /// <summary>
+    /// 读写超时时间
+    /// </summary>
+    [DynamicProperty]
+    public virtual ushort Timeout { get; set; } = 3000;
 
     /// <summary>
-    /// 离线后恢复运行的间隔时间
+    /// 帧前时间ms
     /// </summary>
-    public virtual int ReIntervalTime { get; set; } = 0;
+    [DynamicProperty]
+    public virtual int SendDelayTime { get; set; } = 0;
+
+
+    [DynamicProperty]
+    public bool IsStringReverseByteWord { get; set; }
 
     /// <summary>
-    /// 失败重试次数，默认3
+    /// 默认解析顺序
     /// </summary>
-    public virtual int RetryCount { get; set; } = 3;
+    [DynamicProperty]
+    public virtual DataFormatEnum DataFormat { get; set; }
+
+
 }
 
 /// <summary>
@@ -38,17 +57,31 @@ public abstract class CollectPropertyBase : DriverPropertyBase
 /// <br></br>
 /// 使用<see cref="DynamicPropertyAttribute"/> 标识所需的配置属性
 /// </summary>
-public abstract class CollectPropertyRetryBase : CollectPropertyBase
+public abstract class CollectFoundationDtuPropertyBase : CollectFoundationPropertyBase
 {
-    /// <summary>
-    /// 离线后恢复运行的间隔时间
-    /// </summary>
-    [DynamicProperty]
-    public override int ReIntervalTime { get; set; } = 0;
 
     /// <summary>
-    /// 失败重试次数，默认3
+    /// 默认DtuId
     /// </summary>
     [DynamicProperty]
-    public override int RetryCount { get; set; } = 3;
+    public string? DtuId { get; set; }
+
+
+}
+
+/// <summary>
+/// 插件配置项
+/// <br></br>
+/// 使用<see cref="DynamicPropertyAttribute"/> 标识所需的配置属性
+/// </summary>
+public abstract class CollectFoundationDtuPackPropertyBase : CollectFoundationPackPropertyBase
+{
+
+    /// <summary>
+    /// 默认DtuId
+    /// </summary>
+    [DynamicProperty]
+    public string? DtuId { get; set; }
+
+
 }

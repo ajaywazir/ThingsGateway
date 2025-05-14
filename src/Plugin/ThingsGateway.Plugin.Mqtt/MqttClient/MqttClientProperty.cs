@@ -67,12 +67,6 @@ public class MqttClientProperty : BusinessPropertyWithCacheIntervalScript
     internal IBrowserFile ClientKeyFile_BrowserFile { get; set; }
 
     /// <summary>
-    /// 是否显示详细日志
-    /// </summary>
-    [DynamicProperty]
-    public bool DetailLog { get; set; } = true;
-
-    /// <summary>
     /// 是否websocket连接
     /// </summary>
     [DynamicProperty]
@@ -126,8 +120,4 @@ public class MqttClientProperty : BusinessPropertyWithCacheIntervalScript
     [DynamicProperty(Remark = "这个主题接收到任何数据都会把全部的信息发送到变量/设备/报警主题中")]
     public string RpcQuestTopic { get; set; }
 
-
-
-    [DynamicProperty]
-    public bool GroupUpdate { get; set; } = false;
 }

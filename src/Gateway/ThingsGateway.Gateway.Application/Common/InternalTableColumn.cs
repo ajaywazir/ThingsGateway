@@ -125,7 +125,9 @@ internal sealed class InternalTableColumn(string fieldName, Type fieldType, stri
     /// </summary>
     public string? RequiredErrorMessage { get; set; }
 
-
     public bool IsFixedSearchWhenSelect { get; set; } = true;
+
     public int Cols { get; set; }
+
+    public bool? IgnoreWhenExport { get; set; }
 }

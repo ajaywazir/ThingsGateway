@@ -1,4 +1,15 @@
 ﻿{
+  "ThingsGateway.Admin.Application.BaseDataEntity": {
+    "CreateOrgId": "CreateOrgId"
+  },
+  "ThingsGateway.Admin.Application.BaseEntity": {
+    "SortCode": "SortCode",
+    "CreateTime": "CreateTime",
+    "CreateUser": "CreateUser",
+    "UpdateTime": "UpdateTime",
+    "UpdateUser": "UpdateUser"
+  },
+
   "ThingsGateway.Admin.Application.BlazorAuthenticationHandler": {
     "UserExpire": "User expired, please login again"
   },
@@ -24,9 +35,6 @@
     "LatestLoginTime": "LatestLoginTime",
     "LatestLoginDevice": "LatestLoginDevice",
     "LatestLoginAddress": "LatestLoginAddress",
-    "SortCode": "SortCode",
-    "CreateTime": "CreateTime",
-    "UpdateTime": "UpdateTime",
     "OrgNames": "OrgNames",
     "PositionName": "PositionName",
     "OrgId": "Org",
@@ -60,9 +68,6 @@
     "Name": "Name",
     "Name.Required": "{0} is required",
     "Category": "Category",
-    "SortCode": "Sort",
-    "CreateTime": "CreateTime",
-    "UpdateTime": "UpdateTime",
     "OrgId": "Org",
     "Global": "Global",
     "Status": "Status",
@@ -105,9 +110,6 @@
     "Category": "Category",
     "Target": "Target",
     "NavLinkMatch": "NavLinkMatch",
-    "SortCode": "Sort",
-    "CreateTime": "CreateTime",
-    "UpdateTime": "UpdateTime",
     "ParentId": "Parent",
     "ResourceDup": "Duplicate name {0} exists",
     "ResourceParentChoiceSelf": "Parent cannot choose itself",
@@ -134,9 +136,6 @@
     "Status": "Status",
     "OrgId": "Organization",
     "Remark": "Remarks",
-    "SortCode": "SortCode",
-    "CreateTime": "CreateTime",
-    "UpdateTime": "UpdateTime",
     "Dup": "Duplicate position exists with Category {0} and Name {1}",
     "CodeDup": "Duplicate code {0} exists",
     "NameDup": "Duplicate name {0} exists",
@@ -159,9 +158,6 @@
     "Names": "Names",
     "Remark": "Remarks",
     "DirectorId": "Director",
-    "SortCode": "SortCode",
-    "CreateTime": "CreateTime",
-    "UpdateTime": "UpdateTime",
     "Dup": "Duplicate organization exists with Category {0} and Name {1}",
     "CodeDup": "Duplicate code {0} exists",
     "NameDup": "Duplicate name {0} exists",
@@ -358,9 +354,6 @@
     "Name": "Name",
     "Code": "Code",
     "Remark": "Remark",
-    "SortCode": "Sort",
-    "CreateTime": "CreateTime",
-    "UpdateTime": "UpdateTime",
     "DemoCanotUpdateWebsitePolicy": "DEMO environment does not allow modifying website settings",
     "DictDup": "Duplicate configuration exists, category {0}, name {1}"
   },

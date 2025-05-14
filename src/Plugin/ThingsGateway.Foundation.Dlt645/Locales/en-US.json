@@ -3,17 +3,8 @@
     "FEHead": "FEHead",
     "OperCode": "OperCode",
     "Password": "Password",
-    "Station": "Station",
-    "DtuId": "DtuId",
-    "CheckClearTime": "CheckClearTime",
-    "Heartbeat": "Heartbeat",
+    "Station": "Station"
 
-    "CacheTimeout": "CacheTimeout",
-    "SendDelayTime": "SendDelayTime",
-    "DataFormat": "DataFormat",
-    "Timeout": "Timeout",
-    "ConnectTimeout": "ConnectTimeout",
-    "IsStringReverseByteWord": "IsStringReverseByteWord"
   },
 
   "ThingsGateway.Foundation.Dlt645.DltResource": {

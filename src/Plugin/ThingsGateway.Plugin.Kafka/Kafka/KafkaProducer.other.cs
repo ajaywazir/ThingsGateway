@@ -12,6 +12,7 @@ using Confluent.Kafka;
 
 using Mapster;
 
+using ThingsGateway.Extension.Generic;
 using ThingsGateway.Foundation;
 using ThingsGateway.Foundation.Extension.Generic;
 
@@ -162,7 +163,7 @@ public partial class KafkaProducer : BusinessBaseWithCacheIntervalScript<Variabl
 
     private async ValueTask<OperResult> UpdateVarModel(IEnumerable<VariableBasicData> item, CancellationToken cancellationToken)
     {
-        var topicArrayList = GetVariableBasicDataTopicArray(item);
+        var topicArrayList = GetVariableBasicDataTopicArray(item.WhereIf(_driverPropertys.OnlineFilter, a => a.IsOnline == true));
         return await Update(topicArrayList, cancellationToken).ConfigureAwait(false);
     }
 

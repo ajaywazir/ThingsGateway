@@ -17,9 +17,7 @@
     "LoadType": "LoadType",
     "AutoAcceptUntrustedCertificates": "AutoAcceptUntrustedCertificates",
     "ExportC": "ExportCertificate",
-    "SourceTimestampEnable": "SourceTimestampEnable",
-    "ReIntervalTime": "ReIntervalTime",
-    "RetryCount": "RetryCount"
+    "SourceTimestampEnable": "SourceTimestampEnable"
   },
   "ThingsGateway.Plugin.OpcUa.OpcUaServerProperty": {
     "IsAllVariable": "IsAllVariable",

@@ -3,18 +3,8 @@
     "SiemensS7Type": "SiemensS7Type",
     "Rack": "Rack",
     "LocalTSAP": "LocalTSAP",
-    "Slot": "Slot",
+    "Slot": "Slot"
 
-    "DataFormat": "DataFormat",
-    "IsStringReverseByteWord": "StringReverseByteWord",
-    "CheckClearTime": "CheckClearTime",
-    "Timeout": "Timeout",
-    "ConnectTimeout": "ConnectTimeout",
-    "SendDelayTime": "SendDelayTime",
-    "CacheTimeout": "CacheTimeout",
-    "MaxPack": "MaxPack",
-    "ReIntervalTime": "ReIntervalTime",
-    "RetryCount": "RetryCount",
-    "ConcurrentCount": "ConcurrentCount"
+
   }
 }

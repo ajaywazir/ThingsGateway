@@ -17,6 +17,11 @@ namespace ThingsGateway.Gateway.Application;
 /// </summary>
 public class BusinessPropertyWithCacheIntervalScript : BusinessPropertyWithCacheInterval
 {
+    /// <summary>
+    /// 是否显示详细日志
+    /// </summary>
+    [DynamicProperty]
+    public bool DetailLog { get; set; } = true;
 
     /// <summary>
     /// 缩进格式化

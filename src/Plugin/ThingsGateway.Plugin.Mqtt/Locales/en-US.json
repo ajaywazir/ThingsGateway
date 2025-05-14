@@ -1,14 +1,12 @@
 ﻿{
   "ThingsGateway.Plugin.Mqtt.MqttClientVariableProperty": {
-    "VariableRpcEnable": "VariableRpcEnable",
-    "Group": "Group"
+    "VariableRpcEnable": "VariableRpcEnable"
   },
   "ThingsGateway.Plugin.Mqtt.MqttClientProperty": {
     "IP": "IP",
     "Port": "Port",
     "MqttQualityOfServiceLevel": "QoS",
     "MqttProtocolVersion": "MqttProtocolVersion",
-    "DetailLog": "DetailLog",
     "TLS": "TLS",
     "CAFile_BrowserFile": "CAFile",
     "ClientCertificateFile_BrowserFile": "ClientCertificateFile",
@@ -22,55 +20,20 @@
     "ConnectTimeout": "ConnectTimeout",
     "DeviceRpcEnable": "DeviceRpcEnable",
     "RpcWriteTopic": "RpcWriteTopic",
-    "RpcQuestTopic": "RpcQuestTopic",
-    "JsonFormattingIndented": "JsonFormattingIndented",
-    "BigTextScriptDeviceModel": "BigTextScriptDeviceModel",
-    "BigTextScriptVariableModel": "BigTextScriptVariableModel",
-    "BigTextScriptAlarmModel": "BigTextScriptAlarmModel",
-    "IsDeviceList": "IsDeviceList",
-    "IsVariableList": "IsVariableList",
-    "IsAlarmList": "IsAlarmList",
-    "DeviceTopic": "DeviceTopic",
-    "VariableTopic": "VariableTopic",
-    "AlarmTopic": "AlarmTopic",
-    "BusinessUpdateEnum": "BusinessUpdateEnum",
-    "BusinessInterval": "BusinessInterval",
-    "IsAllVariable": "IsAllVariable",
-    "QueueMaxCount": "QueueMaxCount",
-    "CacheFileMaxLength": "CacheFileMaxLength(mb)",
-    "SplitSize": "SplitSize",
-    "CacheEnable": "CacheEnable",
-    "GroupUpdate": "GroupUpdate"
+    "RpcQuestTopic": "RpcQuestTopic"
+    
 
   },
   "ThingsGateway.Plugin.Mqtt.MqttServerProperty": {
     "IP": "IP",
     "Port": "Port",
     "MqttQualityOfServiceLevel": "QoS",
-    "DetailLog": "DetailLog",
     "WebSocketPort": "WebSocketPort",
     "StartWithId": "StartWithId",
     "AnonymousEnable": "AnonymousEnable",
     "DeviceRpcEnable": "DeviceRpcEnable",
-    "RpcWriteTopic": "RpcWriteTopic",
-    "JsonFormattingIndented": "JsonFormattingIndented",
-    "BigTextScriptDeviceModel": "BigTextScriptDeviceModel",
-    "BigTextScriptVariableModel": "BigTextScriptVariableModel",
-    "BigTextScriptAlarmModel": "BigTextScriptAlarmModel",
-    "IsDeviceList": "IsDeviceList",
-    "IsVariableList": "IsVariableList",
-    "IsAlarmList": "IsAlarmList",
-    "DeviceTopic": "DeviceTopic",
-    "VariableTopic": "VariableTopic",
-    "AlarmTopic": "AlarmTopic",
-    "BusinessUpdateEnum": "BusinessUpdateEnum",
-    "BusinessInterval": "BusinessInterval",
-    "IsAllVariable": "IsAllVariable",
-    "QueueMaxCount": "QueueMaxCount",
-    "CacheFileMaxLength": "CacheFileMaxLength(mb)",
-    "SplitSize": "SplitSize",
-    "CacheEnable": "CacheEnable",
-    "GroupUpdate": "GroupUpdate"
+    "RpcWriteTopic": "RpcWriteTopic"
+   
   },
 
   "ThingsGateway.Plugin.Mqtt.MqttCollectProperty": {
@@ -87,27 +50,8 @@
     "UserName": "UserName",
     "Password": "Password",
     "ConnectId": "ConnectId",
-    "ConnectTimeout": "ConnectTimeout",
-    "DeviceRpcEnable": "DeviceRpcEnable",
-    "RpcWriteTopic": "RpcWriteTopic",
-    "RpcQuestTopic": "RpcQuestTopic",
-    "JsonFormattingIndented": "JsonFormattingIndented",
-    "BigTextScriptDeviceModel": "BigTextScriptDeviceModel",
-    "BigTextScriptVariableModel": "BigTextScriptVariableModel",
-    "BigTextScriptAlarmModel": "BigTextScriptAlarmModel",
-    "IsDeviceList": "IsDeviceList",
-    "IsVariableList": "IsVariableList",
-    "IsAlarmList": "IsAlarmList",
-    "DeviceTopic": "DeviceTopic",
-    "VariableTopic": "VariableTopic",
-    "AlarmTopic": "AlarmTopic",
-    "BusinessUpdateEnum": "BusinessUpdateEnum",
-    "BusinessInterval": "BusinessInterval",
-    "IsAllVariable": "IsAllVariable",
-    "QueueMaxCount": "QueueMaxCount",
-    "CacheFileMaxLength": "CacheFileMaxLength(mb)",
-    "SplitSize": "SplitSize",
-    "CacheEnable": "CacheEnable"
+    "ConnectTimeout": "ConnectTimeout"
+   
   }
 
 }

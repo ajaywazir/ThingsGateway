@@ -17,6 +17,7 @@ public class Startup : AppStartup
 {
     public void Configure(IServiceCollection services)
     {
+        Foundation.LocalizerUtil.SetLocalizerFactory((a) => App.CreateLocalizerByType(a));
         services.AddScoped<IPlatformService, PlatformService>();
     }
 }

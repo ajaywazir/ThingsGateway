@@ -30,7 +30,7 @@ public class Startup : AppStartup
         services.AddConfigurableOptions<RpcLogOptions>();
 
         //底层多语言配置
-        //Foundation.LocalizerUtil.SetLocalizerFactory((a) => App.CreateLocalizerByType(a));
+        Foundation.LocalizerUtil.SetLocalizerFactory((a) => App.CreateLocalizerByType(a));
 
         TypeAdapterConfig.GlobalSettings.Scan(App.Assemblies.ToArray());
         // 配置默认全局映射（支持覆盖）

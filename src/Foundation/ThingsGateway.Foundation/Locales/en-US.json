@@ -83,9 +83,20 @@
   "ThingsGateway.Foundation.ConverterConfig": {
     "DataFormat": "DataFormat",
     "Encoding": "Encoding",
-    "EncodingName": "字符串编码",
+    "EncodingName": "EncodingName",
     "VariableStringLength": "VariableStringLength",
     "Stringlength": "Stringlength",
-    "BcdFormat": "BcdFormat格式"
+    "BcdFormat": "BcdFormat"
+  },
+
+  "ThingsGateway.Foundation.DeviceBase": {
+
+    "SendDelayTime": "SendDelayTime",
+    "DataFormat": "DataFormat",
+    "Timeout": "Timeout",
+    "IsStringReverseByteWord": "IsStringReverseByteWord"
+  },
+  "ThingsGateway.Foundation.DtuServiceDeviceBase": {
+    "DtuId": "DtuId(UTF8)"
   }
 }

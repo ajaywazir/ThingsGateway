@@ -3,20 +3,6 @@
     "FEHead": "FEHead",
     "OperCode": "OperCode",
     "Password": "Password",
-    "Station": "DefaultStation",
-    "DtuId": "DefaultDtuId",
-
-    "Heartbeat": "Heartbeat",
-    "DataFormat": "DataFormat",
-    "IsStringReverseByteWord": "StringReverseByteWord",
-    "CheckClearTime": "CheckClearTime",
-    "Timeout": "Timeout",
-    "ConnectTimeout": "ConnectTimeout",
-    "SendDelayTime": "SendDelayTime",
-    "CacheTimeout": "CacheTimeout",
-    "MaxPack": "MaxPack",
-    "ReIntervalTime": "ReIntervalTime",
-    "RetryCount": "RetryCount",
-    "ConcurrentCount": "ConcurrentCount"
+    "Station": "DefaultStation"
   }
 }

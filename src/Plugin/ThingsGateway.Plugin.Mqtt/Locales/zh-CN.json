@@ -1,20 +1,17 @@
 ﻿{
   "ThingsGateway.Plugin.Mqtt.MqttClientVariableProperty": {
-    "VariableRpcEnable": "启用RPC",
-    "Group": "分组名称"
+    "VariableRpcEnable": "启用RPC"
   },
 
   "ThingsGateway.Plugin.Mqtt.MqttClientProperty": {
     "IP": "IP",
     "Port": "端口",
-    "DetailLog": "详细日志",
     "MqttQualityOfServiceLevel": "QoS",
     "MqttProtocolVersion": "协议版本",
     "TLS": "TLS",
     "CAFile_BrowserFile": "CA文件",
     "ClientCertificateFile_BrowserFile": "客户端证书",
     "ClientKeyFile_BrowserFile": "客户端key文件",
-
 
     "IsWebSocket": "Websocket",
     "WebSocketUrl": "WebSocketUrl",
@@ -24,59 +21,20 @@
     "ConnectTimeout": "连接超时时间",
     "DeviceRpcEnable": "允许Rpc写入",
     "RpcWriteTopic": "Rpc写入主题",
-    "RpcQuestTopic": "Rpc请求数据主题",
+    "RpcQuestTopic": "Rpc请求数据主题"
 
-    "JsonFormattingIndented": "Json缩进格式化",
-    "BigTextScriptDeviceModel": "设备上传脚本",
-    "BigTextScriptVariableModel": "变量上传脚本",
-    "BigTextScriptAlarmModel": "报警上传脚本",
-    "IsDeviceList": "设备状态列表上传",
-    "IsVariableList": "变量列表上传",
-    "IsAlarmList": "报警列表上传",
-    "DeviceTopic": "设备主题",
-    "VariableTopic": "变量主题",
-    "AlarmTopic": "报警主题",
-
-    "BusinessUpdateEnum": "上传模式",
-    "BusinessInterval": "定时上传间隔",
-    "IsAllVariable": "选择全部变量",
-    "QueueMaxCount": "内存队列最大数量",
-    "CacheFileMaxLength": "缓存文件最大长度(mb)",
-    "SplitSize": "上传每页条数",
-    "CacheEnable": "启用缓存",
-    "GroupUpdate": "分组上传"
   },
   "ThingsGateway.Plugin.Mqtt.MqttServerProperty": {
     "IP": "IP",
     "Port": "端口",
     "MqttQualityOfServiceLevel": "QoS",
-    "DetailLog": "详细日志",
     "WebSocketPort": "Websocket端口",
     "StartWithId": "允许连接的ID前缀",
 
     "AnonymousEnable": "允许匿名登录",
     "DeviceRpcEnable": "允许Rpc写入",
-    "RpcWriteTopic": "Rpc写入主题",
+    "RpcWriteTopic": "Rpc写入主题"
 
-    "JsonFormattingIndented": "Json缩进格式化",
-    "BigTextScriptDeviceModel": "设备上传脚本",
-    "BigTextScriptVariableModel": "变量上传脚本",
-    "BigTextScriptAlarmModel": "报警上传脚本",
-    "IsDeviceList": "设备状态列表上传",
-    "IsVariableList": "变量列表上传",
-    "IsAlarmList": "报警列表上传",
-    "DeviceTopic": "设备主题",
-    "VariableTopic": "变量主题",
-    "AlarmTopic": "报警主题",
-
-    "BusinessUpdateEnum": "上传模式",
-    "BusinessInterval": "定时上传间隔",
-    "IsAllVariable": "选择全部变量",
-    "QueueMaxCount": "内存队列最大数量",
-    "CacheFileMaxLength": "缓存文件最大长度(mb)",
-    "SplitSize": "上传每页条数",
-    "CacheEnable": "启用缓存",
-    "GroupUpdate": "分组上传"
   },
 
   "ThingsGateway.Plugin.Mqtt.MqttCollectProperty": {
@@ -93,29 +51,10 @@
     "UserName": "用户名",
     "Password": "密码",
     "ConnectId": "连接ID",
-    "ConnectTimeout": "连接超时时间",
-    "DeviceRpcEnable": "允许Rpc写入",
-    "RpcWriteTopic": "Rpc写入主题",
-    "RpcQuestTopic": "Rpc请求数据主题",
+    "ConnectTimeout": "连接超时时间"
 
-    "JsonFormattingIndented": "Json缩进格式化",
-    "BigTextScriptDeviceModel": "设备上传脚本",
-    "BigTextScriptVariableModel": "变量上传脚本",
-    "BigTextScriptAlarmModel": "报警上传脚本",
-    "IsDeviceList": "设备状态列表上传",
-    "IsVariableList": "变量列表上传",
-    "IsAlarmList": "报警列表上传",
-    "DeviceTopic": "设备主题",
-    "VariableTopic": "变量主题",
-    "AlarmTopic": "报警主题",
 
-    "BusinessUpdateEnum": "上传模式",
-    "BusinessInterval": "定时上传间隔",
-    "IsAllVariable": "选择全部变量",
-    "QueueMaxCount": "内存队列最大数量",
-    "CacheFileMaxLength": "缓存文件最大长度(mb)",
-    "SplitSize": "上传每页条数",
-    "CacheEnable": "启用缓存"
+
   }
 
 }

@@ -103,7 +103,7 @@ public class ChannelRuntime : Channel, IChannelOptions, IDisposable
     /// </summary>
     [System.Text.Json.Serialization.JsonIgnore]
     [Newtonsoft.Json.JsonIgnore]
-    public int? DeviceRuntimeCounts => DeviceRuntimes?.Count;
+    public int? DeviceRuntimeCount => DeviceRuntimes?.Count;
 
     [System.Text.Json.Serialization.JsonIgnore]
     [Newtonsoft.Json.JsonIgnore]

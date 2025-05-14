@@ -3,16 +3,8 @@
     "BigTextConnectStr": "连接字符串",
     "TableName": "表名称",
     "BigTextScriptHistoryTable": "历史表动态脚本",
-    "RealTableBusinessInterval": "实时表定时上传间隔",
+    "RealTableBusinessInterval": "实时表定时上传间隔"
 
-    "BusinessUpdateEnum": "上传模式",
-    "BusinessInterval": "定时上传间隔",
-    "IsAllVariable": "选择全部变量",
-    "QueueMaxCount": "内存队列最大数量",
-    "CacheFileMaxLength": "缓存文件最大长度(mb)",
-    "SplitSize": "上传每页条数",
-    "CacheEnable": "启用缓存",
-    "GroupUpdate": "分组上传"
   },
   "ThingsGateway.Plugin.QuestDB.QuestDBHistoryValue": {
     "Id": "变量Id",
@@ -35,15 +27,8 @@
     "BigTextScriptHistoryTable": "历史表动态脚本",
     "BigTextScriptRealTable": "实时表动态脚本",
     "RealTableBusinessInterval": "实时表定时上传间隔",
-    "SqlDBSplitType": "分表模式",
-    "BusinessUpdateEnum": "上传模式",
-    "BusinessInterval": "定时上传间隔",
-    "IsAllVariable": "选择全部变量",
-    "QueueMaxCount": "内存队列最大数量",
-    "CacheFileMaxLength": "缓存文件最大长度(mb)",
-    "SplitSize": "上传每页条数",
-    "CacheEnable": "启用缓存",
-    "GroupUpdate": "分组上传"
+    "SqlDBSplitType": "分表模式"
+
   },
   "ThingsGateway.Plugin.SqlDB.SQLHistoryValue": {
     "Id": "变量Id",
@@ -80,15 +65,8 @@
   "ThingsGateway.Plugin.SqlHistoryAlarm.SQLHistoryAlarmProperty": {
     "DbType": "数据库类型",
     "BigTextConnectStr": "链接字符串",
-    "TableName": "表名称",
+    "TableName": "表名称"
 
-    "BusinessUpdateEnum": "上传模式",
-    "BusinessInterval": "定时上传间隔",
-    "IsAllVariable": "选择全部变量",
-    "QueueMaxCount": "内存队列最大数量",
-    "CacheFileMaxLength": "缓存文件最大长度(mb)",
-    "SplitSize": "上传每页条数",
-    "CacheEnable": "启用缓存"
   },
   "ThingsGateway.Plugin.SqlHistoryAlarm.HistoryAlarm": {
 

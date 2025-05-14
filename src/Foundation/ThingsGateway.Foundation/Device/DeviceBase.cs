@@ -114,13 +114,7 @@ public abstract class DeviceBase : DisposableObject, IDevice
         this.SafeDispose();
     }
 
-    #region 属性
-
-    /// <inheritdoc/>
-    public virtual int SendDelayTime { get; set; }
-
-    /// <inheritdoc/>
-    public virtual int Timeout { get; set; } = 3000;
+    #region
 
     private ILog? _deviceLogger;
 
@@ -141,6 +135,18 @@ public abstract class DeviceBase : DisposableObject, IDevice
 
     /// <inheritdoc/>
     public bool OnLine => Channel.Online;
+
+
+    #endregion
+
+    #region 属性
+
+    /// <inheritdoc/>
+    public virtual int SendDelayTime { get; set; }
+
+    /// <inheritdoc/>
+    public virtual int Timeout { get; set; } = 3000;
+
 
 
     /// <summary>

@@ -33,12 +33,6 @@ public class MqttServerProperty : BusinessPropertyWithCacheIntervalScript
     public MqttQualityOfServiceLevel MqttQualityOfServiceLevel { get; set; } = MqttQualityOfServiceLevel.AtMostOnce;
 
     /// <summary>
-    /// 是否显示详细日志
-    /// </summary>
-    [DynamicProperty]
-    public bool DetailLog { get; set; } = true;
-
-    /// <summary>
     /// WebSocket端口
     /// </summary>
     [DynamicProperty]
@@ -71,6 +65,4 @@ public class MqttServerProperty : BusinessPropertyWithCacheIntervalScript
 
 
 
-    [DynamicProperty]
-    public bool GroupUpdate { get; set; } = false;
 }

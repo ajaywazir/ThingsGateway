@@ -3,16 +3,9 @@
     "BigTextConnectStr": "ConnectString",
     "TableName": "TableName",
     "BigTextScriptHistoryTable": "DynamicScriptHistoryTable",
-    "RealTableBusinessInterval": "RealTableBusinessInterval",
+    "RealTableBusinessInterval": "RealTableBusinessInterval"
 
-    "BusinessUpdateEnum": "BusinessUpdateEnum",
-    "BusinessInterval": "BusinessInterval",
-    "IsAllVariable": "IsAllVariable",
-    "QueueMaxCount": "QueueMaxCount",
-    "CacheFileMaxLength": "CacheFileMaxLength(mb)",
-    "SplitSize": "SplitSize",
-    "CacheEnable": "CacheEnable",
-    "GroupUpdate": "GroupUpdate"
+
   },
   "ThingsGateway.Plugin.QuestDB.QuestDBHistoryValue": {
     "Id": "Id",
@@ -35,16 +28,8 @@
     "BigTextScriptHistoryTable": "DynamicScriptHistoryTable",
     "BigTextScriptRealTable": "DynamicScriptRealTable",
     "RealTableBusinessInterval": "RealTableBusinessInterval",
-    "SqlDBSplitType": "SplitType",
+    "SqlDBSplitType": "SplitType"
 
-    "BusinessUpdateEnum": "BusinessUpdateEnum",
-    "BusinessInterval": "BusinessInterval",
-    "IsAllVariable": "IsAllVariable",
-    "QueueMaxCount": "QueueMaxCount",
-    "CacheFileMaxLength": "CacheFileMaxLength(mb)",
-    "SplitSize": "SplitSize",
-    "CacheEnable": "CacheEnable",
-    "GroupUpdate": "GroupUpdate"
   },
   "ThingsGateway.Plugin.SqlDB.SQLHistoryValue": {
     "Id": "Id",
@@ -81,15 +66,7 @@
   "ThingsGateway.Plugin.SqlHistoryAlarm.SQLHistoryAlarmProperty": {
     "DbType": "DbType",
     "BigTextConnectStr": "ConnectString",
-    "TableName": "TableName",
-
-    "BusinessUpdateEnum": "BusinessUpdateEnum",
-    "BusinessInterval": "BusinessInterval",
-    "IsAllVariable": "IsAllVariable",
-    "QueueMaxCount": "QueueMaxCount",
-    "CacheFileMaxLength": "CacheFileMaxLength(mb)",
-    "SplitSize": "SplitSize",
-    "CacheEnable": "CacheEnable"
+    "TableName": "TableName"
   },
 
   "ThingsGateway.Plugin.SqlHistoryAlarm.HistoryAlarm": {

@@ -36,8 +36,6 @@ public class ModbusSlaveProperty : BusinessPropertyBase
     [DynamicProperty]
     public bool IsStringReverseByteWord { get; set; }
 
-
-
     /// <summary>
     /// 多站点
     /// </summary>

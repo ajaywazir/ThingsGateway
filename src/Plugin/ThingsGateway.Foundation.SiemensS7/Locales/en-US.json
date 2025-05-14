@@ -10,14 +10,7 @@
     "SiemensS7Type": "SiemensS7Type",
     "LocalTSAP": "LocalTSAP",
     "Rack": "Rack",
-    "Slot": "Slot",
-
-    "CacheTimeout": "CacheTimeout",
-    "SendDelayTime": "SendDelayTime",
-    "DataFormat": "DataFormat",
-    "Timeout": "Timeout",
-    "ConnectTimeout": "ConnectTimeout",
-    "IsStringReverseByteWord": "IsStringReverseByteWord"
+    "Slot": "Slot"
   },
 
   "ThingsGateway.Foundation.SiemensS7.SiemensS7Resource": {

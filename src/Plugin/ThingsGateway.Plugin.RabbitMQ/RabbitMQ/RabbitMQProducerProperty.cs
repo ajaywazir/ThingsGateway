@@ -40,11 +40,7 @@ public class RabbitMQProducerProperty : BusinessPropertyWithCacheIntervalScript
     /// </summary>
     [DynamicProperty]
     public string Password { get; set; } = "guest";
-    /// <summary>
-    /// 是否显示详细日志
-    /// </summary>
-    [DynamicProperty]
-    public bool DetailLog { get; set; } = true;
+
     /// <summary>
     /// IsQueueDeclare
     /// </summary>
@@ -69,9 +65,4 @@ public class RabbitMQProducerProperty : BusinessPropertyWithCacheIntervalScript
     [DynamicProperty]
     public string? ExchangeName { get; set; } = "";
 
-
-
-
-    [DynamicProperty]
-    public bool GroupUpdate { get; set; } = false;
 }

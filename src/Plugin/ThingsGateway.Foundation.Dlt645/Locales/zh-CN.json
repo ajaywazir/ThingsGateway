@@ -3,18 +3,8 @@
     "FEHead": "前导符报文头",
     "OperCode": "操作员代码",
     "Password": "写入密码",
-    "Station": "通讯地址",
-    "DtuId": "Dtu注册包(UTF8)",
-    "CheckClearTime": "连接滑动过期时间",
-    "Heartbeat": "心跳检测(UTF8)",
-    "HeartbeatTime": "心跳间隔时间",
+    "Station": "通讯地址"
 
-    "CacheTimeout": "组包缓存时间",
-    "SendDelayTime": "发送延时",
-    "DataFormat": "解析规则",
-    "Timeout": "读写超时",
-    "ConnectTimeout": "连接超时",
-    "IsStringReverseByteWord": "字符串反转"
   },
 
   "ThingsGateway.Foundation.Dlt645.DltResource": {
@@ -41,7 +31,6 @@
     "StationString": "特指站号",
     "Data": "起始地址",
     "Reverse": "字节反转"
-
   }
 
 }

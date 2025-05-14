@@ -15,7 +15,7 @@ namespace ThingsGateway.Plugin.OpcDa;
 /// <summary>
 /// <inheritdoc/>
 /// </summary>
-public class OpcDaMasterProperty : CollectPropertyBase
+public class OpcDaMasterProperty : CollectPropertyRetryBase
 {
     /// <summary>
     /// OpcIP

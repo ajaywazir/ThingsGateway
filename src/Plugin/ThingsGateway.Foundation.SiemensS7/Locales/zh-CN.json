@@ -10,14 +10,8 @@
     "SiemensS7Type": "S7类型",
     "LocalTSAP": "本地TSAP",
     "Rack": "机架号",
-    "Slot": "槽号",
+    "Slot": "槽号"
 
-    "CacheTimeout": "组包缓存时间",
-    "SendDelayTime": "发送延时",
-    "DataFormat": "解析规则",
-    "Timeout": "读写超时",
-    "ConnectTimeout": "连接超时",
-    "IsStringReverseByteWord": "字符串反转"
   },
 
   "ThingsGateway.Foundation.SiemensS7.SiemensS7Resource": {

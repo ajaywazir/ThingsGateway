@@ -50,7 +50,6 @@ public class Dlt645_2007Master : CollectFoundationBase
 
         ArgumentNullException.ThrowIfNull(channel);
         //载入配置
-        _plc.DataFormat = _driverPropertys.DataFormat;
         _plc.DtuId = _driverPropertys.DtuId;
         _plc.SendDelayTime = _driverPropertys.SendDelayTime;
         _plc.Timeout = _driverPropertys.Timeout;
