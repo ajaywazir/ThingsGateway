@@ -144,7 +144,8 @@
     "RawValue": "原始值",
     "Value": "实时值",
     "AlarmEnable": "报警使能",
-
+    "BusinessGroup": "业务组",
+    "CollectGroup": "采集组",
     "Name": "名称",
     "Description": "描述",
     "DeviceId": "采集设备",
@@ -419,7 +420,7 @@
     "Name": "名称",
     "Name.Required": " {0} 不可为空",
     "Description": "描述",
-    "Group": "业务组",
+    "BusinessGroup": "业务组",
     "CollectGroup": "采集组",
     "DeviceId": "采集设备",
     "DeviceId.MinValue": " {0} 不可为空",

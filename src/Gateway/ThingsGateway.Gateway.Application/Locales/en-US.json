@@ -148,7 +148,8 @@
     "RawValue": "RawValue",
     "Value": "Value",
     "AlarmEnable": "AlarmEnable",
-
+    "BusinessGroup": "BusinessGroup",
+    "CollectGroup": "CollectGroup",
     "Name": "Name",
     "Description": "Description",
     "DeviceId": "CollectionDevice",
@@ -400,7 +401,7 @@
     "Name": "Name",
     "Name.Required": "{0} cannot be empty",
     "Description": "Description",
-    "Group": "Group",
+    "BusinessGroup": "BusinessGroup",
     "CollectGroup": "CollectGroup",
     "DeviceId": "CollectionDevice",
     "DeviceId.MinValue": "{0} cannot be empty",
