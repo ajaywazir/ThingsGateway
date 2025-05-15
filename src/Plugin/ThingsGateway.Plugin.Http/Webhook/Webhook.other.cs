@@ -91,8 +91,8 @@ public partial class Webhook : BusinessBaseWithCacheIntervalScript<VariableBasic
         {
             if (_driverPropertys.GroupUpdate)
             {
-                var varList = variables.Where(a => a.Group.IsNullOrEmpty());
-                var varGroup = variables.Where(a => !a.Group.IsNullOrEmpty()).GroupBy(a => a.Group);
+                var varList = variables.Where(a => a.BusinessGroup.IsNullOrEmpty());
+                var varGroup = variables.Where(a => !a.BusinessGroup.IsNullOrEmpty()).GroupBy(a => a.BusinessGroup);
 
                 foreach (var group in varGroup)
                 {
@@ -118,7 +118,7 @@ public partial class Webhook : BusinessBaseWithCacheIntervalScript<VariableBasic
     {
         if (!_businessPropertyWithCacheIntervalScript.VariableTopic.IsNullOrWhiteSpace())
         {
-            if (_driverPropertys.GroupUpdate && !variable.Group.IsNullOrEmpty() && VariableRuntimeGroups.TryGetValue(variable.Group, out var variableRuntimeGroup))
+            if (_driverPropertys.GroupUpdate && !variable.BusinessGroup.IsNullOrEmpty() && VariableRuntimeGroups.TryGetValue(variable.BusinessGroup, out var variableRuntimeGroup))
             {
 
                 AddQueueVarModel(new CacheDBItem<List<VariableBasicData>>(variableRuntimeGroup.Adapt<List<VariableBasicData>>()));

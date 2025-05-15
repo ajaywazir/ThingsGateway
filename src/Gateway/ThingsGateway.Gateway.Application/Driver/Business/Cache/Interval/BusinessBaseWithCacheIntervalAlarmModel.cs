@@ -75,7 +75,7 @@ public abstract class BusinessBaseWithCacheIntervalAlarmModel<VarModel, DevModel
 
             CollectDevices = GlobalData.GetEnableDevices().Where(a => a.IsCollect == true).ToDictionary(a => a.Id);
 
-            VariableRuntimeGroups = IdVariableRuntimes.GroupBy(a => a.Value.Group ?? string.Empty).ToDictionary(a => a.Key, a => a.Select(a => a.Value).ToList());
+            VariableRuntimeGroups = IdVariableRuntimes.GroupBy(a => a.Value.BusinessGroup ?? string.Empty).ToDictionary(a => a.Key, a => a.Select(a => a.Value).ToList());
 
         }
         else

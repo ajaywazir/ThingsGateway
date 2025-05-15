@@ -105,7 +105,7 @@ public abstract class BusinessBase : DriverBase
         var ids = IdVariableRuntimes.Select(b => b.Value.DeviceId).ToHashSet();
         // 获取当前设备需要采集的设备
         CollectDevices = GlobalData.GetEnableDevices().Where(a => ids.Contains(a.Id)).ToDictionary(a => a.Id);
-        VariableRuntimeGroups = IdVariableRuntimes.Where(a => !a.Value.Group.IsNullOrEmpty()).GroupBy(a => a.Value.Group ?? string.Empty).ToDictionary(a => a.Key, a => a.Select(a => a.Value).ToList());
+        VariableRuntimeGroups = IdVariableRuntimes.Where(a => !a.Value.BusinessGroup.IsNullOrEmpty()).GroupBy(a => a.Value.BusinessGroup ?? string.Empty).ToDictionary(a => a.Key, a => a.Select(a => a.Value).ToList());
 
         return Task.CompletedTask;
     }

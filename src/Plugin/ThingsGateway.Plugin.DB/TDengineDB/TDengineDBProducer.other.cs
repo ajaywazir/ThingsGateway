@@ -55,8 +55,8 @@ public partial class TDengineDBProducer : BusinessBaseWithCacheIntervalVariableM
     {
         if (_driverPropertys.GroupUpdate)
         {
-            var varList = variables.Where(a => a.Group.IsNullOrEmpty());
-            var varGroup = variables.Where(a => !a.Group.IsNullOrEmpty()).GroupBy(a => a.Group);
+            var varList = variables.Where(a => a.BusinessGroup.IsNullOrEmpty());
+            var varGroup = variables.Where(a => !a.BusinessGroup.IsNullOrEmpty()).GroupBy(a => a.BusinessGroup);
 
             foreach (var group in varGroup)
             {
@@ -78,7 +78,7 @@ public partial class TDengineDBProducer : BusinessBaseWithCacheIntervalVariableM
 
     private void UpdateVariable(VariableRuntime variableRuntime, VariableBasicData variable)
     {
-        if (_driverPropertys.GroupUpdate && !variable.Group.IsNullOrEmpty() && VariableRuntimeGroups.TryGetValue(variable.Group, out var variableRuntimeGroup))
+        if (_driverPropertys.GroupUpdate && !variable.BusinessGroup.IsNullOrEmpty() && VariableRuntimeGroups.TryGetValue(variable.BusinessGroup, out var variableRuntimeGroup))
         {
 
             AddQueueVarModel(new CacheDBItem<List<TDengineDBHistoryValue>>(variableRuntimeGroup.Adapt<List<TDengineDBHistoryValue>>(_config)));

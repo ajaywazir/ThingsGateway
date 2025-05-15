@@ -151,7 +151,7 @@ public class Channel : ChannelOptionsBase, IPrimaryIdEntity, IBaseDataEntity, IB
     [SugarColumn(ColumnDescription = "连接超时", IsNullable = true, DefaultValue = "3000")]
     [AutoGenerateColumn(Visible = true, Filterable = true, Sortable = true)]
     [MinValue(100)]
-    public override ushort ConnectTimeout { get; set; } = 3000;
+    public override int ConnectTimeout { get; set; } = 3000;
 
     /// <summary>
     /// 最大并发数

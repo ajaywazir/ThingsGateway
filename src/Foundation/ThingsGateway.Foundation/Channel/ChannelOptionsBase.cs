@@ -82,7 +82,7 @@ namespace ThingsGateway.Foundation
         public virtual int CacheTimeout { get; set; } = 500;
         /// <inheritdoc/>
         [MinValue(100)]
-        public virtual ushort ConnectTimeout { get; set; } = 3000;
+        public virtual int ConnectTimeout { get; set; } = 3000;
 
         #endregion
 

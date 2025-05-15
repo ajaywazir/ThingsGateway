@@ -63,7 +63,7 @@ public class Variable : BaseDataEntity, IValidatableObject
     /// </summary>
     [SugarColumn(ColumnDescription = "分组名称", IsNullable = true)]
     [AutoGenerateColumn(Visible = true, Filterable = true, Sortable = true, Order = 1)]
-    public virtual string Group { get; set; }
+    public virtual string BusinessGroup { get; set; }
 
     /// <summary>
     /// 描述

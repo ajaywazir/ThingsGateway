@@ -88,7 +88,7 @@ public interface IChannelOptions
     /// <summary>
     /// 连接超时时间
     /// </summary>
-    ushort ConnectTimeout { get; set; }
+    int ConnectTimeout { get; set; }
 
     /// <summary>
     /// 通道并发控制锁

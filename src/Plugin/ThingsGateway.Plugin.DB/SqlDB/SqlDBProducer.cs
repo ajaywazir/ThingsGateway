@@ -217,7 +217,7 @@ public partial class SqlDBProducer : BusinessBaseWithCacheIntervalVariableModel<
                     var varList = IdVariableRuntimes.Select(a => a.Value);
                     if (_driverPropertys.GroupUpdate)
                     {
-                        var groups = varList.GroupBy(a => a.Group);
+                        var groups = varList.GroupBy(a => a.BusinessGroup);
                         foreach (var item in groups)
                         {
                             var result = await UpdateAsync(item.Adapt<List<SQLRealValue>>(), cancellationToken).ConfigureAwait(false);

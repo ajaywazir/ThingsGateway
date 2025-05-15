@@ -82,16 +82,25 @@ public class VariableBasicData : IPrimaryIdEntity
 
     /// <inheritdoc cref="Variable.Name"/>
     public string Name { get; set; }
-    /// <inheritdoc cref="Variable.Group"/>
+
+    /// <inheritdoc cref="Variable.CollectGroup"/>
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
-    public string Group { get; set; }
+    public string CollectGroup { get; set; }
+
+    /// <inheritdoc cref="Variable.BusinessGroup"/>
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public string BusinessGroup { get; set; }
+
     /// <inheritdoc cref="VariableRuntime.DeviceName"/>
     public string DeviceName { get; set; }
+
     /// <inheritdoc cref="VariableRuntime.RuntimeType"/>
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
     public string RuntimeType { get; set; }
+
     /// <inheritdoc cref="VariableRuntime.Value"/>
     public object Value { get; set; }
     /// <inheritdoc cref="VariableRuntime.RawValue"/>
