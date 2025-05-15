@@ -10,11 +10,11 @@
       "ConfigId": "DB_Admin", //ID
       //"ConnectionString": "server=localhost;Database=test;Uid=root;Pwd=111111;AllowLoadLocalInfile=true;", //连接字符串
       //"DbType": "MySql", //数据库类型
-      "ConnectionString": "Server=localhost:5236; User Id=SYSDBA; PWD=SYSDBA001; DATABASE=yjtech_hnxt_01;", //连接字符串
-      "DbType": "Dm", //数据库类型
+      "ConnectionString": "Data Source=./DB/Admin.db;", //连接字符串
+      "DbType": "Sqlite", //数据库类型
       "LanguageType": "Chinese", //中文提示
       "IsAutoCloseConnection": true, //是否自动释放
-      "InitDatabase": false, //是否初始化数据库,适用于codefirst
+      "InitDatabase": true, //是否初始化数据库,适用于codefirst
       "InitTable": true, //是否初始化表,适用于codefirst
       "InitSeedData": true, //是否初始化种子数据
       "IsUpdateSeedData": false, //是否更新种子数据
@@ -24,11 +24,11 @@
       "ConfigId": "DB_Log", //ID
       //"ConnectionString": "server=localhost;Database=test;Uid=root;Pwd=111111;AllowLoadLocalInfile=true;", //连接字符串
       //"DbType": "MySql", //数据库类型
-      "ConnectionString": "Server=localhost:5236; User Id=SYSDBA; PWD=SYSDBA001; DATABASE=yjtech_hnxt_01;", //连接字符串
-      "DbType": "Dm", //数据库类型
+      "ConnectionString": "Data Source=./DB/Log.db", //连接字符串
+      "DbType": "Sqlite", //数据库类型
       "LanguageType": "Chinese", //中文提示
       "IsAutoCloseConnection": true, //是否自动释放
-      "InitDatabase": false, //是否初始化数据库,适用于codefirst
+      "InitDatabase": true, //是否初始化数据库,适用于codefirst
       "InitTable": true, //是否初始化表,适用于codefirst
       "InitSeedData": true, //是否初始化种子数据
       "IsUpdateSeedData": false, //是否更新种子数据
@@ -38,11 +38,11 @@
       "ConfigId": "DB_TokenCache", //ID
       //"ConnectionString": "server=localhost;Database=test;Uid=root;Pwd=111111;AllowLoadLocalInfile=true;", //连接字符串
       //"DbType": "MySql", //数据库类型
-      "ConnectionString": "Server=localhost:5236; User Id=SYSDBA; PWD=SYSDBA001; DATABASE=yjtech_hnxt_01;", //连接字符串
-      "DbType": "Dm", //数据库类型
+      "ConnectionString": "Data Source=./DB/TokenCache.db", //连接字符串
+      "DbType": "Sqlite", //数据库类型
       "LanguageType": "Chinese", //中文提示
       "IsAutoCloseConnection": true, //是否自动释放
-      "InitDatabase": false, //是否初始化数据库,适用于codefirst
+      "InitDatabase": true, //是否初始化数据库,适用于codefirst
       "InitTable": true, //是否初始化表,适用于codefirst
       "InitSeedData": true, //是否初始化种子数据
       "IsUpdateSeedData": false, //是否更新种子数据
@@ -52,11 +52,11 @@
       "ConfigId": "DB_HardwareInfo", //ID
       //"ConnectionString": "server=localhost;Database=test;Uid=root;Pwd=111111;AllowLoadLocalInfile=true;", //连接字符串
       //"DbType": "MySql", //数据库类型
-      "ConnectionString": "Server=localhost:5236; User Id=SYSDBA; PWD=SYSDBA001; DATABASE=yjtech_hnxt_01;", //连接字符串
-      "DbType": "Dm", //数据库类型
+      "ConnectionString": "Data Source=./DB/HardwareInfo.db", //连接字符串
+      "DbType": "Sqlite", //数据库类型
       "LanguageType": "Chinese", //中文提示
       "IsAutoCloseConnection": true, //是否自动释放
-      "InitDatabase": false, //是否初始化数据库,适用于codefirst
+      "InitDatabase": true, //是否初始化数据库,适用于codefirst
       "InitTable": true, //是否初始化表,适用于codefirst
       "InitSeedData": true, //是否初始化种子数据
       "IsUpdateSeedData": false, //是否更新种子数据
@@ -66,11 +66,11 @@
       "ConfigId": "DB_Custom", //ID
       //"ConnectionString": "server=localhost;Database=test;Uid=root;Pwd=111111;AllowLoadLocalInfile=true;", //连接字符串
       //"DbType": "MySql", //数据库类型
-      "ConnectionString": "Server=localhost:5236; User Id=SYSDBA; PWD=SYSDBA001; DATABASE=yjtech_hnxt_01;", //连接字符串
-      "DbType": "Dm", //数据库类型
+      "ConnectionString": "Data Source=./DB/ThingsGateway.db", //连接字符串
+      "DbType": "Sqlite", //数据库类型
       "LanguageType": "Chinese", //中文提示
       "IsAutoCloseConnection": true, //是否自动释放
-      "InitDatabase": false, //是否初始化数据库,适用于codefirst
+      "InitDatabase": true, //是否初始化数据库,适用于codefirst
       "InitTable": true, //是否初始化表,适用于codefirst
       "InitSeedData": true, //是否初始化种子数据
       "IsUpdateSeedData": false, //是否更新种子数据
