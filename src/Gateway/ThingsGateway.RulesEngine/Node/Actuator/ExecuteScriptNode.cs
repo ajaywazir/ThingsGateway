@@ -14,54 +14,60 @@ public class ExecuteScriptNode : TextNode, IActuatorNode, IExexcuteExpressionsBa
         Title = "ExecuteScriptNode"; Placeholder = "ExecuteScriptNode.Placeholder";
         Text =
             """
-            using ThingsGateway.RulesEngine;
             using ThingsGateway.Foundation;
             using TouchSocket.Core;
+            
             using System.Text;
+            using ThingsGateway.Gateway.Application;
+            using ThingsGateway.RulesEngine;
 
-            public class TestEx : IExexcuteExpressions
+
+            public class TestExexcuteExpressions : IExexcuteExpressions
             {
 
                 public TouchSocket.Core.ILog Logger { get; set; }
 
                 public async System.Threading.Tasks.Task<NodeOutput> ExecuteAsync(NodeInput input, System.Threading.CancellationToken cancellationToken)
                 {
-
-
                     //想上传mqtt，可以自己写mqtt上传代码，或者通过mqtt插件的公开方法上传
 
                     //直接获取mqttclient插件类型的第一个设备
-                    var driver = GlobalData.ReadOnlyChannels.FirstOrDefault(a => a.Value.PluginName == "ThingsGateway.Plugin.Mqtt.MqttClient").Value?.ReadDeviceRuntimes?.FirstOrDefault().Value?.Driver;
-                    if (driver != null)
-                    {
-                        //找到对应的MqttClient插件设备
-                        var mqttClient = (ThingsGateway.Plugin.Mqtt.MqttClient)driver;
-                        if (mqttClient == null)
-                            throw new("mqttClient NOT FOUND");
-                        var result = await mqttClient.MqttUpAsync("test", Encoding.UTF8.GetBytes("test"),1, default);// 主题 和 负载
-                        if (!result.IsSuccess)
-                            throw new(result.ErrorMessage);
-                        return new NodeOutput() { Value = result };
-                    }
-                    throw new("mqttClient NOT FOUND");
+                    var mqttClient = GlobalData.ReadOnlyChannels.FirstOrDefault(a => a.Value.PluginName == "ThingsGateway.Plugin.Mqtt.MqttClient").Value?.ReadDeviceRuntimes?.FirstOrDefault().Value?.Driver as ThingsGateway.Plugin.Mqtt.MqttClient;
+                    if (mqttClient == null)
+                        throw new("mqttClient NOT FOUND");
 
+                    TopicArray topicArray = new()
+                    {
+                        Topic = "test",
+                        Json = Encoding.UTF8.GetBytes("test")
+                    };
+                    var result = await mqttClient.MqttUpAsync(topicArray, default).ConfigureAwait(false);// 主题 和 负载
+                    if (!result.IsSuccess)
+                        throw new(result.ErrorMessage);
+                    return new NodeOutput() { Value = result };
 
                     //通过设备名称找出mqttClient插件
-                    //var driver = GlobalData.ReadOnlyDevices.FirstOrDefault(a => a.Value.Name == "mqttDevice1").Value?.Driver;
-                    //if (driver != null)
+                    //var mqttClient = GlobalData.ReadOnlyDevices.FirstOrDefault(a => a.Value.Name == "mqttDevice1").Value?.Driver as ThingsGateway.Plugin.Mqtt.MqttClient;
+
+                    //if (mqttClient == null)
+                    //    throw new("mqttClient NOT FOUND");
+
+
+                    //TopicArray topicArray = new()
                     //{
-                    //    //找到对应的MqttClient插件设备
-                    //    var mqttClient = (ThingsGateway.Plugin.Mqtt.MqttClient)driver;
-                    //    if (mqttClient == null)
-                    //        throw new("mqttClient NOT FOUND");
-                    //    var result = await mqttClient.MqttUpAsync("test", "test", default);// 主题 和 负载
-                    //    if (!result.IsSuccess)
-                    //        throw new(result.ErrorMessage);
-                    //    return new NodeOutput() { Value = result };
-                    //}
-                    //throw new("mqttClient NOT FOUND");
+                    //    Topic = "test",
+                    //    Json = Encoding.UTF8.GetBytes("test")
+                    //};
+                    //var result = await mqttClient.MqttUpAsync(topicArray, default).ConfigureAwait(false);// 主题 和 负载
+                    //if (!result.IsSuccess)
+                    //    throw new(result.ErrorMessage);
+                    //return new NodeOutput() { Value = result };
                 }
             }
+
+
+
+            
             
 
             """;
