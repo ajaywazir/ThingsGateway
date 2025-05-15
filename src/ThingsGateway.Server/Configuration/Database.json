@@ -14,7 +14,8 @@
       "DbType": "Sqlite", //数据库类型
       "LanguageType": "Chinese", //中文提示
       "IsAutoCloseConnection": true, //是否自动释放
-      "InitTable": true, //是否初始化数据库,适用于codefirst
+      "InitDatabase": true, //是否初始化数据库,适用于codefirst
+      "InitTable": true, //是否初始化表,适用于codefirst
       "InitSeedData": true, //是否初始化种子数据
       "IsUpdateSeedData": false, //是否更新种子数据
       "IsShowSql": false //是否控制台显示Sql语句
@@ -27,7 +28,8 @@
       "DbType": "Sqlite", //数据库类型
       "LanguageType": "Chinese", //中文提示
       "IsAutoCloseConnection": true, //是否自动释放
-      "InitTable": true, //是否初始化数据库,适用于codefirst
+      "InitDatabase": true, //是否初始化数据库,适用于codefirst
+      "InitTable": true, //是否初始化表,适用于codefirst
       "InitSeedData": true, //是否初始化种子数据
       "IsUpdateSeedData": false, //是否更新种子数据
       "IsShowSql": false //是否控制台显示Sql语句
@@ -40,7 +42,8 @@
       "DbType": "Sqlite", //数据库类型
       "LanguageType": "Chinese", //中文提示
       "IsAutoCloseConnection": true, //是否自动释放
-      "InitTable": true, //是否初始化数据库,适用于codefirst
+      "InitDatabase": true, //是否初始化数据库,适用于codefirst
+      "InitTable": true, //是否初始化表,适用于codefirst
       "InitSeedData": true, //是否初始化种子数据
       "IsUpdateSeedData": false, //是否更新种子数据
       "IsShowSql": false //是否控制台显示Sql语句
@@ -53,7 +56,8 @@
       "DbType": "Sqlite", //数据库类型
       "LanguageType": "Chinese", //中文提示
       "IsAutoCloseConnection": true, //是否自动释放
-      "InitTable": true, //是否初始化数据库,适用于codefirst
+      "InitDatabase": true, //是否初始化数据库,适用于codefirst
+      "InitTable": true, //是否初始化表,适用于codefirst
       "InitSeedData": true, //是否初始化种子数据
       "IsUpdateSeedData": false, //是否更新种子数据
       "IsShowSql": false //是否控制台显示Sql语句
@@ -66,7 +70,8 @@
       "DbType": "Sqlite", //数据库类型
       "LanguageType": "Chinese", //中文提示
       "IsAutoCloseConnection": true, //是否自动释放
-      "InitTable": true, //是否初始化数据库,适用于codefirst
+      "InitDatabase": true, //是否初始化数据库,适用于codefirst
+      "InitTable": true, //是否初始化表,适用于codefirst
       "InitSeedData": true, //是否初始化种子数据
       "IsUpdateSeedData": false, //是否更新种子数据
       "IsShowSql": false //是否控制台显示Sql语句

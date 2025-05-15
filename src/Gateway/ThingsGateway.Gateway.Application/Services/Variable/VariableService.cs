@@ -54,7 +54,7 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
 
     #region 测试
 
-    public async Task<(List<Channel>, List<Device>, List<Variable>)> InsertTestDataAsync(int variableCount, int deviceCount, string slaveUrl = "127.0.0.1:502")
+    public async Task<(List<Channel>, List<Device>, List<Variable>)> InsertTestDataAsync(int variableCount, int deviceCount, string slaveUrl = "127.0.0.1:502", bool businessEnable = false)
     {
         if (slaveUrl.IsNullOrWhiteSpace()) slaveUrl = "127.0.0.1:502";
         if (deviceCount > variableCount) variableCount = deviceCount;
@@ -124,64 +124,69 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
             }
         }
 
-        //Channel serviceChannel = new Channel();
-        //Device serviceDevice = new Device();
 
-        //{
-        //    var id = CommonUtils.GetSingleId();
-        //    var name = $"modbusSlaveChannel{id}";
-        //    serviceChannel.ChannelType = ChannelTypeEnum.TcpService;
-        //    serviceChannel.Name = name;
-        //    serviceChannel.Enable = true;
-        //    serviceChannel.Id = id;
-        //    serviceChannel.CreateUserId = UserManager.UserId;
-        //    serviceChannel.CreateOrgId = UserManager.OrgId;
-        //    serviceChannel.BindUrl = "127.0.0.1:502";
-        //    serviceChannel.PluginName = "ThingsGateway.Plugin.Modbus.ModbusSlave";
-        //    newChannels.Add(serviceChannel);
-        //}
-        //{
-        //    var id = CommonUtils.GetSingleId();
-        //    var name = $"modbusSlaveDevice{id}";
-        //    serviceDevice.Name = name;
-        //    serviceDevice.Id = id;
-        //    serviceDevice.CreateUserId = UserManager.UserId;
-        //    serviceDevice.CreateOrgId = UserManager.OrgId;
-        //    serviceDevice.ChannelId = serviceChannel.Id;
-        //    serviceDevice.IntervalTime = "1000";
-        //    newDevices.Add(serviceDevice);
-        //}
-
-        Channel mqttChannel = new Channel();
-        Device mqttDevice = new Device();
-
+        if (businessEnable)
         {
-            var id = CommonUtils.GetSingleId();
-            var name = $"mqttChannel{id}";
-            mqttChannel.ChannelType = ChannelTypeEnum.Other;
-            mqttChannel.Name = name;
-            mqttChannel.Id = id;
-            mqttChannel.CreateUserId = UserManager.UserId;
-            mqttChannel.CreateOrgId = UserManager.OrgId;
-            mqttChannel.PluginName = "ThingsGateway.Plugin.Mqtt.MqttServer";
-            newChannels.Add(mqttChannel);
-        }
-        {
-            var id = CommonUtils.GetSingleId();
-            var name = $"mqttDevice{id}";
-            mqttDevice.Name = name;
-            mqttDevice.Id = id;
-            mqttDevice.CreateUserId = UserManager.UserId;
-            mqttDevice.CreateOrgId = UserManager.OrgId;
-            mqttDevice.ChannelId = mqttChannel.Id;
-            mqttDevice.IntervalTime = "1000";
-            mqttDevice.DevicePropertys = new Dictionary<string, string>
+
+            Channel serviceChannel = new Channel();
+            Device serviceDevice = new Device();
+
+            {
+                var id = CommonUtils.GetSingleId();
+                var name = $"modbusSlaveChannel{id}";
+                serviceChannel.ChannelType = ChannelTypeEnum.TcpService;
+                serviceChannel.Name = name;
+                serviceChannel.Enable = true;
+                serviceChannel.Id = id;
+                serviceChannel.CreateUserId = UserManager.UserId;
+                serviceChannel.CreateOrgId = UserManager.OrgId;
+                serviceChannel.BindUrl = "127.0.0.1:502";
+                serviceChannel.PluginName = "ThingsGateway.Plugin.Modbus.ModbusSlave";
+                newChannels.Add(serviceChannel);
+            }
+            {
+                var id = CommonUtils.GetSingleId();
+                var name = $"modbusSlaveDevice{id}";
+                serviceDevice.Name = name;
+                serviceDevice.Id = id;
+                serviceDevice.CreateUserId = UserManager.UserId;
+                serviceDevice.CreateOrgId = UserManager.OrgId;
+                serviceDevice.ChannelId = serviceChannel.Id;
+                serviceDevice.IntervalTime = "1000";
+                newDevices.Add(serviceDevice);
+            }
+
+            Channel mqttChannel = new Channel();
+            Device mqttDevice = new Device();
+
+            {
+                var id = CommonUtils.GetSingleId();
+                var name = $"mqttChannel{id}";
+                mqttChannel.ChannelType = ChannelTypeEnum.Other;
+                mqttChannel.Name = name;
+                mqttChannel.Id = id;
+                mqttChannel.CreateUserId = UserManager.UserId;
+                mqttChannel.CreateOrgId = UserManager.OrgId;
+                mqttChannel.PluginName = "ThingsGateway.Plugin.Mqtt.MqttServer";
+                newChannels.Add(mqttChannel);
+            }
+            {
+                var id = CommonUtils.GetSingleId();
+                var name = $"mqttDevice{id}";
+                mqttDevice.Name = name;
+                mqttDevice.Id = id;
+                mqttDevice.CreateUserId = UserManager.UserId;
+                mqttDevice.CreateOrgId = UserManager.OrgId;
+                mqttDevice.ChannelId = mqttChannel.Id;
+                mqttDevice.IntervalTime = "1000";
+                mqttDevice.DevicePropertys = new Dictionary<string, string>
             {
               {"IsAllVariable", "true"}
             };
-            newDevices.Add(mqttDevice);
-        }
+                newDevices.Add(mqttDevice);
+            }
 
+        }
 
         //Channel opcuaChannel = new Channel();
         //Device opcuaDevice = new Device();

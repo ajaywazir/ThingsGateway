@@ -80,7 +80,7 @@ internal interface IVariableService
     /// <summary>
     /// 创建n个modbus变量
     /// </summary>
-    Task<(List<Channel>, List<Device>, List<Variable>)> InsertTestDataAsync(int variableCount, int deviceCount, string slaveUrl = "127.0.0.1:502");
+    Task<(List<Channel>, List<Device>, List<Variable>)> InsertTestDataAsync(int variableCount, int deviceCount, string slaveUrl = "127.0.0.1:502", bool businessEnable = false);
 
     /// <summary>
     /// 表格查询

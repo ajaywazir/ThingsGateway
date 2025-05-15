@@ -133,6 +133,7 @@ public partial class VariableRuntimeInfo : IDisposable
     private int TestDeviceCount { get; set; }
 
     private string SlaveUrl { get; set; }
+    private bool BusinessEnable { get; set; }
 
     #region 修改
     private async Task Copy(IEnumerable<Variable> variables)
@@ -417,7 +418,7 @@ finally
 
             try
             {
-                await Task.Run(() => GlobalData.VariableRuntimeService.InsertTestDataAsync(TestVariableCount, TestDeviceCount, SlaveUrl, AutoRestartThread, default));
+                await Task.Run(() => GlobalData.VariableRuntimeService.InsertTestDataAsync(TestVariableCount, TestDeviceCount, SlaveUrl, BusinessEnable, AutoRestartThread, default));
             }
             finally
             {

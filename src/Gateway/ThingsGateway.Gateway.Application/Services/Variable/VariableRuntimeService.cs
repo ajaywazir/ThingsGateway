@@ -165,7 +165,7 @@ public class VariableRuntimeService : IVariableRuntimeService
 
     }
 
-    public async Task InsertTestDataAsync(int testVariableCount, int testDeviceCount, string slaveUrl, bool restart, CancellationToken cancellationToken)
+    public async Task InsertTestDataAsync(int testVariableCount, int testDeviceCount, string slaveUrl, bool businessEnable, bool restart, CancellationToken cancellationToken)
     {
         try
         {
@@ -173,7 +173,7 @@ public class VariableRuntimeService : IVariableRuntimeService
 
 
 
-            var datas = await GlobalData.VariableService.InsertTestDataAsync(testVariableCount, testDeviceCount, slaveUrl).ConfigureAwait(false);
+            var datas = await GlobalData.VariableService.InsertTestDataAsync(testVariableCount, testDeviceCount, slaveUrl, businessEnable).ConfigureAwait(false);
 
             {
                 var newChannelRuntimes = (datas.Item1).Adapt<List<ChannelRuntime>>();

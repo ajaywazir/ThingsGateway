@@ -31,7 +31,7 @@ public class Startup1 : AppStartup
         DbContext.DbConfigs?.ForEach(it =>
         {
             var connection = DbContext.Db.GetConnection(it.ConfigId);//获取数据库连接对象
-            if (it.InitTable == true)
+            if (it.InitDatabase == true)
                 connection.DbMaintenance.CreateDatabase();//创建数据库,如果存在则不创建
         });
         var fullName = Assembly.GetExecutingAssembly().FullName;//获取程序集全名

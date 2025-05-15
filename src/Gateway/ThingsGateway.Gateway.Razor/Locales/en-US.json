@@ -70,7 +70,8 @@
 
     "TestVariableCount": "TestVariableCount",
     "TestDeviceCount": "TestDeviceCount",
-    "SlaveUrl": "SlaveUrlUrl",
+    "SlaveUrl": "SlaveUrl",
+    "BusinessEnable": "BusinessEnable",
     "Test": "Addition of test variables"
   },
 

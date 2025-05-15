@@ -25,6 +25,11 @@ public sealed class SqlSugarOption : ConnectionConfig
     public bool InitSeedData { get; set; } = false;
 
     /// <summary>
+    /// 初始化数据库
+    /// </summary>
+    public bool InitDatabase { get; set; } = false;
+
+    /// <summary>
     /// 初始化表
     /// </summary>
     public bool InitTable { get; set; } = false;
