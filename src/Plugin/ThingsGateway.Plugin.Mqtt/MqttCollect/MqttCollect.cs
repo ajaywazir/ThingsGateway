@@ -65,7 +65,7 @@ public partial class MqttCollect : CollectBase
                 }
 
                比如vendor/device;ModuleUnoccupied.EquipId，结果是"E12"
-               比如vendor/device;ModuleUnoccupied.EquipId;raw.SelectToken("ModuleUnoccupied.LotId").ToString().ToInt()==1，结果是"E12"
+               比如vendor/device;ModuleUnoccupied.EquipId;((JToken)raw).SelectToken("ModuleUnoccupied.LotId").ToString().ToInt()==1，结果是"E12"
             
             """;
     }
