@@ -22,17 +22,17 @@ public static class DynamicModelExtension
     /// <summary>
     /// GetDynamicModel
     /// </summary>
-    public static IEnumerable<dynamic> GetDynamicModel<T>(this IEnumerable<T> datas, string script) where T : class
+    public static IEnumerable<object> GetDynamicModel<T>(this IEnumerable<T> datas, string script)
     {
         if (!string.IsNullOrEmpty(script))
         {
             //执行脚本，获取新实体
             var getDeviceModel = CSharpScriptEngineExtension.Do<IDynamicModel>(script);
-            return getDeviceModel.GetList(datas);
+            return getDeviceModel.GetList(datas.Cast<object>());
         }
         else
         {
-            return datas;
+            return datas.Cast<object>();
         }
     }
 
@@ -78,7 +78,7 @@ public static class DynamicModelExtension
         return null; // 未找到对应的业务设备Id，返回null
     }
 
-    public static IEnumerable<IGrouping<object[], dynamic>> GroupByKeys(this IEnumerable<dynamic> values, IEnumerable<string> keys)
+    public static IEnumerable<IGrouping<object[], T>> GroupByKeys<T>(this IEnumerable<T> values, IEnumerable<string> keys)
     {
         // 获取动态对象集合中指定键的属性信息
         var properties = GetProperties(values, keys.ToArray());
@@ -87,7 +87,7 @@ public static class DynamicModelExtension
         return values.GroupBy(v => properties.Select(property => property.GetValue(v)).ToArray(), new ArrayEqualityComparer());
     }
 
-    private static PropertyInfo[] GetProperties(this IEnumerable<dynamic> value, params string[] names)
+    private static PropertyInfo[] GetProperties<T>(this IEnumerable<T> value, params string[] names)
     {
         // 获取动态对象集合的类型
         var type = value.GetType().GetGenericArguments().FirstOrDefault() ?? throw new ArgumentNullException(nameof(value));

@@ -23,7 +23,7 @@ namespace ThingsGateway.Gateway.Application;
 /// <summary>
 /// 业务插件，额外实现脚本切换实体
 /// </summary>
-public abstract partial class BusinessBaseWithCacheIntervalScript<VarModel, DevModel, AlarmModel> : BusinessBaseWithCacheIntervalAlarmModel<VarModel, DevModel, AlarmModel> where DevModel : class where VarModel : class where AlarmModel : class
+public abstract partial class BusinessBaseWithCacheIntervalScript<VarModel, DevModel, AlarmModel> : BusinessBaseWithCacheIntervalAlarmModel<VarModel, DevModel, AlarmModel>
 {
     protected sealed override BusinessPropertyWithCacheInterval _businessPropertyWithCacheInterval => _businessPropertyWithCacheIntervalScript;
 
@@ -65,7 +65,7 @@ public abstract partial class BusinessBaseWithCacheIntervalScript<VarModel, DevM
 
     protected List<TopicJson> GetAlarms(IEnumerable<AlarmModel> item)
     {
-        IEnumerable<dynamic>? data = Application.DynamicModelExtension.GetDynamicModel<AlarmModel>(item, _businessPropertyWithCacheIntervalScript.BigTextScriptAlarmModel);
+        var data = Application.DynamicModelExtension.GetDynamicModel<AlarmModel>(item, _businessPropertyWithCacheIntervalScript.BigTextScriptAlarmModel);
         var topicJsonList = new List<TopicJson>();
         var topics = Match(_businessPropertyWithCacheIntervalScript.AlarmTopic);
         if (topics.Count > 0)
@@ -133,7 +133,7 @@ public abstract partial class BusinessBaseWithCacheIntervalScript<VarModel, DevM
 
     protected List<TopicJson> GetDeviceData(IEnumerable<DevModel> item)
     {
-        IEnumerable<dynamic>? data = Application.DynamicModelExtension.GetDynamicModel<DevModel>(item, _businessPropertyWithCacheIntervalScript.BigTextScriptDeviceModel);
+        var data = Application.DynamicModelExtension.GetDynamicModel<DevModel>(item, _businessPropertyWithCacheIntervalScript.BigTextScriptDeviceModel);
         var topicJsonList = new List<TopicJson>();
         var topics = Match(_businessPropertyWithCacheIntervalScript.DeviceTopic);
         if (topics.Count > 0)
@@ -200,7 +200,7 @@ public abstract partial class BusinessBaseWithCacheIntervalScript<VarModel, DevM
 
     protected List<TopicJson> GetVariable(IEnumerable<VarModel> item)
     {
-        IEnumerable<dynamic>? data = Application.DynamicModelExtension.GetDynamicModel<VarModel>(item, _businessPropertyWithCacheIntervalScript.BigTextScriptVariableModel);
+        var data = Application.DynamicModelExtension.GetDynamicModel<VarModel>(item, _businessPropertyWithCacheIntervalScript.BigTextScriptVariableModel);
         var topicJsonList = new List<TopicJson>();
         var topics = Match(_businessPropertyWithCacheIntervalScript.VariableTopic);
         if (topics.Count > 0)
@@ -376,7 +376,7 @@ public abstract partial class BusinessBaseWithCacheIntervalScript<VarModel, DevM
 
     protected List<TopicArray> GetAlarmTopicArrays(IEnumerable<AlarmModel> item)
     {
-        IEnumerable<dynamic>? data = Application.DynamicModelExtension.GetDynamicModel<AlarmModel>(item, _businessPropertyWithCacheIntervalScript.BigTextScriptAlarmModel);
+        var data = Application.DynamicModelExtension.GetDynamicModel<AlarmModel>(item, _businessPropertyWithCacheIntervalScript.BigTextScriptAlarmModel);
         List<TopicArray> topicArrayList = new List<TopicArray>();
         var topics = Match(_businessPropertyWithCacheIntervalScript.AlarmTopic);
         if (topics.Count > 0)
@@ -441,7 +441,7 @@ public abstract partial class BusinessBaseWithCacheIntervalScript<VarModel, DevM
 
     protected List<TopicArray> GetDeviceTopicArray(IEnumerable<DevModel> item)
     {
-        IEnumerable<dynamic>? data = Application.DynamicModelExtension.GetDynamicModel<DevModel>(item, _businessPropertyWithCacheIntervalScript.BigTextScriptDeviceModel);
+        var data = Application.DynamicModelExtension.GetDynamicModel<DevModel>(item, _businessPropertyWithCacheIntervalScript.BigTextScriptDeviceModel);
         List<TopicArray> topicArrayList = new List<TopicArray>();
         var topics = Match(_businessPropertyWithCacheIntervalScript.DeviceTopic);
         if (topics.Count > 0)
@@ -508,7 +508,7 @@ public abstract partial class BusinessBaseWithCacheIntervalScript<VarModel, DevM
 
     protected List<TopicArray> GetVariableTopicArray(IEnumerable<VarModel> item)
     {
-        IEnumerable<dynamic>? data = Application.DynamicModelExtension.GetDynamicModel<VarModel>(item, _businessPropertyWithCacheIntervalScript.BigTextScriptVariableModel);
+        var data = Application.DynamicModelExtension.GetDynamicModel<VarModel>(item, _businessPropertyWithCacheIntervalScript.BigTextScriptVariableModel);
         List<TopicArray> topicArrayList = new List<TopicArray>();
         var topics = Match(_businessPropertyWithCacheIntervalScript.VariableTopic);
         if (topics.Count > 0)

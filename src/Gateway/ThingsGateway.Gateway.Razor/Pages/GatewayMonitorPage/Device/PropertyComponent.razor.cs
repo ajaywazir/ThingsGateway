@@ -36,92 +36,18 @@ public partial class PropertyComponent : IPropertyUIBase
 
     private async Task CheckScript(BusinessPropertyWithCacheIntervalScript businessProperty, string pname)
     {
-        IEnumerable<object> data = null;
         string script = null;
         if (pname == nameof(BusinessPropertyWithCacheIntervalScript.BigTextScriptAlarmModel))
         {
-            data = new List<AlarmVariable>() { new() {
-                Name = "testName",
-                DeviceName = "testDevice",
-                AlarmCode = "1",
-                AlarmTime = DateTime.Now,
-                EventTime = DateTime.Now,
-                AlarmLimit = "3",
-                AlarmType = AlarmTypeEnum.L,
-                EventType=EventTypeEnum.Alarm,
-                Remark1="1",
-                Remark2="2",
-                Remark3="3",
-                Remark4="4",
-                Remark5="5",
-            },
-             new() {
-                Name = "testName2",
-                DeviceName = "testDevice",
-                AlarmCode = "1",
-                AlarmTime = DateTime.Now,
-                EventTime = DateTime.Now,
-                AlarmLimit = "3",
-                AlarmType = AlarmTypeEnum.L,
-                EventType=EventTypeEnum.Alarm,
-                Remark1="1",
-                Remark2="2",
-                Remark3="3",
-                Remark4="4",
-                Remark5="5",
-            }};
             script = businessProperty.BigTextScriptAlarmModel;
         }
         else if (pname == nameof(BusinessPropertyWithCacheIntervalScript.BigTextScriptVariableModel))
         {
-            data = new List<VariableBasicData>() { new() {
-                Name = "testName",
-                DeviceName = "testDevice",
-                Value = "1",
-                ChangeTime = DateTime.Now,
-                CollectTime = DateTime.Now,
-                Remark1="1",
-                Remark2="2",
-                Remark3="3",
-                Remark4="4",
-                Remark5="5",
-            } ,
-             new() {
-                Name = "testName2",
-                DeviceName = "testDevice",
-                Value = "1",
-                ChangeTime = DateTime.Now,
-                CollectTime = DateTime.Now,
-                Remark1="1",
-                Remark2="2",
-                Remark3="3",
-                Remark4="4",
-                Remark5="5",
-            } };
             script = businessProperty.BigTextScriptVariableModel;
 
         }
         else if (pname == nameof(BusinessPropertyWithCacheIntervalScript.BigTextScriptDeviceModel))
         {
-            data = new List<DeviceBasicData>() { new() {
-                Name = "testDevice",
-                ActiveTime = DateTime.Now,
-                Remark1="1",
-                Remark2="2",
-                Remark3="3",
-                Remark4="4",
-                Remark5="5",
-            } ,
-            new() {
-                Name = "testDevice2",
-                ActiveTime = DateTime.Now,
-                Remark1="1",
-                Remark2="2",
-                Remark3="3",
-                Remark4="4",
-                Remark5="5",
-            }};
-
             script = businessProperty.BigTextScriptDeviceModel;
         }
         else
@@ -141,7 +67,7 @@ public partial class PropertyComponent : IPropertyUIBase
 
         op.Component = BootstrapDynamicComponent.CreateComponent<ScriptCheck>(new Dictionary<string, object?>
     {
-        {nameof(ScriptCheck.Data),data },
+        {nameof(ScriptCheck.Data),Array.Empty<object>() },
         {nameof(ScriptCheck.Script),script },
         {nameof(ScriptCheck.OnGetDemo),()=>
                 {

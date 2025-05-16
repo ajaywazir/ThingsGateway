@@ -127,7 +127,7 @@ public class ModbusSlave : BusinessBase
         _modbusVariableQueue?.Clear();
         IdVariableRuntimes.ForEach(a =>
         {
-            VariableValueChange(a.Value, null);
+            VariableValueChange(a.Value, default);
         });
 
         ModbusVariables = IdVariableRuntimes.ToDictionary(a =>

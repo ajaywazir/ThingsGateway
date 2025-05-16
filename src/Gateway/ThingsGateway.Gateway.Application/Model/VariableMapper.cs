@@ -22,5 +22,12 @@ public class VariableMapper : IRegister
 
         config.ForType<VariableRuntime, VariableRuntime>()
 .Ignore(dest => dest.DeviceRuntime);
+
+        config.ForType<VariableRuntime, VariableBasicData>()
+            .BeforeMapping((a, b) => b.VariableRuntime = a);
+        config.ForType<DeviceRuntime, DeviceBasicData>()
+            .BeforeMapping((a, b) => b.DeviceRuntime = a);
+
+
     }
 }

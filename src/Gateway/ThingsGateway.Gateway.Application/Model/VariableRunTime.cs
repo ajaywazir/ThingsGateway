@@ -32,7 +32,10 @@ public class VariableRuntime : Variable, IVariable, IDisposable
     private bool? _isOnlineChanged;
     protected object? _value;
 
-
+    public VariableRuntime()
+    {
+        
+    }
     /// <summary>
     /// 变化时间
     /// </summary>

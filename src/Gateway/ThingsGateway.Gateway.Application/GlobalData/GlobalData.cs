@@ -467,6 +467,8 @@ public static class GlobalData
     /// <param name="deviceRuntime">设备运行时对象</param>
     internal static void DeviceStatusChange(DeviceRuntime deviceRuntime)
     {
+        deviceRuntime.Driver?.LogMessage?.LogInformation($"Status changed: {deviceRuntime.DeviceStatus}");
+
         if (DeviceStatusChangeEvent != null)
         {
             // 触发设备状态变化事件，并将设备运行时对象转换为设备数据对象进行传递
