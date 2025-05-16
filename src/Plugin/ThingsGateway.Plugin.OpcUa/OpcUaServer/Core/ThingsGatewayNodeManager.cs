@@ -60,6 +60,14 @@ public class ThingsGatewayNodeManager : CustomNodeManager2
         lock (Lock)
         {
             if (rootFolder == null) return;
+
+            rootFolder?.SafeDispose();
+            rootFolder = null;
+            rootFolder = CreateFolder(null, "ThingsGateway", "ThingsGateway");
+            rootFolder.EventNotifier = EventNotifiers.SubscribeToEvents;
+            
+            rootFolder.ClearChangeMasks(SystemContext, true);
+
             rootFolder.RemoveReferences(ReferenceTypes.Organizes, true);
             rootFolder.AddReference(ReferenceTypes.Organizes, true, ObjectIds.ObjectsFolder);
             AddRootNotifier(rootFolder);
@@ -84,6 +92,7 @@ public class ThingsGatewayNodeManager : CustomNodeManager2
             }
             AddPredefinedNode(SystemContext, rootFolder);
 
+            rootFolder.ClearChangeMasks(SystemContext, true);
 
         }
 
@@ -110,6 +119,7 @@ public class ThingsGatewayNodeManager : CustomNodeManager2
 
             RefreshVariable();
         }
+
     }
 
     /// <summary>

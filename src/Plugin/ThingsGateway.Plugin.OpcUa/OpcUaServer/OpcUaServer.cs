@@ -51,9 +51,19 @@ public partial class OpcUaServer : BusinessBase
 
     private static readonly string[] separator = new string[] { ";" };
 
-
+    private volatile int VariableChangedCount = 0;
     public override async Task AfterVariablesChangedAsync(CancellationToken cancellationToken)
     {
+        //opcua类库内部有大量缓存，如果刷新变量次数大于一定数量，应该重启服务以防止OOM
+        if (Interlocked.Increment(ref VariableChangedCount) > 100)
+        {
+            _ = Task.Run(async () =>
+            {
+                await this.DeviceThreadManage.RestartDeviceAsync(this.CurrentDevice, false).ConfigureAwait(false);
+            }
+            , cancellationToken);
+            return;
+        }
         // 如果业务属性指定了全部变量，则设置当前设备的变量运行时列表和采集设备列表
         if (_driverPropertys.IsAllVariable)
         {
@@ -74,6 +84,8 @@ public partial class OpcUaServer : BusinessBase
         {
             VariableValueChange(a.Value, a.Value.Adapt<VariableBasicData>());
         });
+
+
         m_server?.NodeManager?.RefreshVariable();
 
     }
