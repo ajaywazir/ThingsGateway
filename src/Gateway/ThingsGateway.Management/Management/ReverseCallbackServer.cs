@@ -10,21 +10,33 @@
 
 using ThingsGateway.Gateway.Application;
 
+using TouchSocket.Core;
 using TouchSocket.Dmtp.Rpc;
 using TouchSocket.Rpc;
+using TouchSocket.Sockets;
 
 namespace ThingsGateway.Management;
 
-public partial class ReverseCallbackServer : SingletonRpcServer
+internal partial class ReverseCallbackServer : SingletonRpcServer
 {
+    RedundancyHostedService RedundancyHostedService;
+    public ReverseCallbackServer(RedundancyHostedService redundancyHostedService)
+    {
+        RedundancyHostedService = redundancyHostedService;
+    }
+
     [DmtpRpc(MethodInvoke = true)]
-    public void UpdateGatewayData(List<DeviceDataWithValue> deviceDatas)
+    public void UpData(ICallContext callContext, List<DeviceDataWithValue> deviceDatas)
     {
 
         foreach (var deviceData in deviceDatas)
         {
             if (GlobalData.ReadOnlyDevices.TryGetValue(deviceData.Name, out var device))
             {
+                device.RpcDriver = RedundancyHostedService;
+                device.Tag = callContext.Caller is IIdClient idClient ? idClient.Id : string.Empty;
+
+
                 device.SetDeviceStatus(deviceData.ActiveTime, deviceData.DeviceStatus == DeviceStatusEnum.OnLine ? false : true, lastErrorMessage: deviceData.LastErrorMessage);
 
                 foreach (var variableData in deviceData.ReadOnlyVariableRuntimes)
@@ -38,12 +50,13 @@ public partial class ReverseCallbackServer : SingletonRpcServer
 
             }
         }
+        RedundancyHostedService.LogMessage?.Trace("Update data success");
     }
 
 
 
     [DmtpRpc(MethodInvoke = true)]
-    public List<DataWithDatabase> GetGatewayData()
+    public List<DataWithDatabase> GetData()
     {
         List<DataWithDatabase> dataWithDatabases = new();
         foreach (var channels in GlobalData.ReadOnlyChannels)
@@ -69,4 +82,9 @@ public partial class ReverseCallbackServer : SingletonRpcServer
 
     }
 
+    [DmtpRpc(MethodInvoke = true)]
+    public Task<Dictionary<string, Dictionary<string, IOperResult>>> Rpc(Dictionary<string, Dictionary<string, string>> deviceDatas, CancellationToken cancellationToken)
+    {
+        return GlobalData.RpcService.InvokeDeviceMethodAsync("Management", deviceDatas, cancellationToken);
+    }
 }

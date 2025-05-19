@@ -224,7 +224,16 @@ public class DeviceRuntime : Device, IDisposable
     [AutoGenerateColumn(Ignore = true)]
     public IDriver? Driver { get; internal set; }
 
+    [System.Text.Json.Serialization.JsonIgnore]
+    [Newtonsoft.Json.JsonIgnore]
+    [AdaptIgnore]
+    [AutoGenerateColumn(Ignore = true)]
+    public IRpcDriver? RpcDriver { get; set; }
 
+    [System.Text.Json.Serialization.JsonIgnore]
+    [Newtonsoft.Json.JsonIgnore]
+    [AutoGenerateColumn(Ignore = true)]
+    public string? Tag { get; set; }
 
     public void Init(ChannelRuntime channelRuntime)
     {

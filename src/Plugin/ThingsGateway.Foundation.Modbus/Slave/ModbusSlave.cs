@@ -18,7 +18,7 @@ namespace ThingsGateway.Foundation.Modbus;
 /// <summary>
 /// ChannelEventHandler
 /// </summary>
-public delegate ValueTask<OperResult> ModbusServerWriteEventHandler(ModbusAddress modbusAddress, IThingsGatewayBitConverter bitConverter, IClientChannel channel);
+public delegate ValueTask<IOperResult> ModbusServerWriteEventHandler(ModbusAddress modbusAddress, IThingsGatewayBitConverter bitConverter, IClientChannel channel);
 
 /// <inheritdoc/>
 public class ModbusSlave : DeviceBase, IModbusAddress

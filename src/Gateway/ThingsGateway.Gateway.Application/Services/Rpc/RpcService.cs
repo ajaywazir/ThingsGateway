@@ -42,15 +42,14 @@ internal sealed class RpcService : IRpcService
     private IStringLocalizer Localizer { get; }
 
     /// <inheritdoc />
-    public async Task<Dictionary<string, Dictionary<string, OperResult>>> InvokeDeviceMethodAsync(string sourceDes, Dictionary<string, Dictionary<string, string>> deviceDatas, CancellationToken cancellationToken = default)
+    public async Task<Dictionary<string, Dictionary<string, IOperResult>>> InvokeDeviceMethodAsync(string sourceDes, Dictionary<string, Dictionary<string, string>> deviceDatas, CancellationToken cancellationToken = default)
     {
         // 初始化用于存储将要写入的变量和方法的字典
-        Dictionary<CollectBase, Dictionary<VariableRuntime, JToken>> writeVariables = new();
-        Dictionary<CollectBase, Dictionary<VariableRuntime, JToken>> writeMethods = new();
+        Dictionary<IRpcDriver, Dictionary<VariableRuntime, JToken>> writeVariables = new();
+        Dictionary<IRpcDriver, Dictionary<VariableRuntime, JToken>> writeMethods = new();
         // 用于存储结果的并发字典
-        ConcurrentDictionary<string, Dictionary<string, OperResult>> results = new();
+        ConcurrentDictionary<string, Dictionary<string, IOperResult>> results = new();
         deviceDatas.ForEach(a => results.TryAdd(a.Key, new()));
-
 
         var deviceDict = GlobalData.Devices;
 
@@ -68,7 +67,8 @@ internal sealed class RpcService : IRpcService
             }
 
             // 查找变量对应的设备
-            var collect = device.Driver as CollectBase;
+            var collect = device.Driver as IRpcDriver;
+            collect ??= device.RpcDriver;
             if (collect == null)
             {
                 // 如果设备不存在，则添加错误信息到结果中并继续下一个设备的处理
@@ -78,7 +78,7 @@ internal sealed class RpcService : IRpcService
                 continue;
             }
             // 检查设备状态，如果设备处于暂停状态，则添加相应的错误信息到结果中并继续下一个变量的处理
-            if (collect.CurrentDevice.DeviceStatus == DeviceStatusEnum.Pause)
+            if (device.DeviceStatus == DeviceStatusEnum.Pause)
             {
                 deviceData.Value.ForEach(a =>
                 results[deviceData.Key].TryAdd(a.Key, new OperResult(Localizer["DevicePause", deviceData.Key]))
@@ -136,46 +136,51 @@ internal sealed class RpcService : IRpcService
                 // 写入日志
                 foreach (var resultItem in result)
                 {
-                    var empty = string.IsNullOrEmpty(resultItem.Key);
-                    string operObj = empty ? deviceDatas[driverData.Key.DeviceName].Select(x => x.Key).ToJsonNetString() : resultItem.Key;
 
-                    string parJson = empty ? deviceDatas.Select(x => x.Value).ToJsonNetString() : deviceDatas[driverData.Key.DeviceName][resultItem.Key];
 
-                    if (!resultItem.Value.IsSuccess || _rpcLogOptions.SuccessLog)
-                        _logQueues.Enqueue(
-                            new RpcLog()
-                            {
-                                LogTime = DateTime.Now,
-                                OperateMessage = resultItem.Value.IsSuccess ? null : resultItem.Value.ToString(),
-                                IsSuccess = resultItem.Value.IsSuccess,
-                                OperateMethod = Localizer["WriteVariable"],
-                                OperateDevice = driverData.Key.DeviceName,
-                                OperateObject = operObj,
-                                OperateSource = sourceDes,
-                                ParamJson = parJson,
-                                ResultJson = null
-                            }
-                        );
-
-                    // 不返回详细错误
-                    if (!resultItem.Value.IsSuccess)
+                    foreach (var variableResult in resultItem.Value)
                     {
-                        OperResult result1 = resultItem.Value;
-                        result1.Exception = null;
-                        result[resultItem.Key] = result1;
-                    }
-                }
 
-                // 将结果添加到结果字典中
-                results[driverData.Key.DeviceName].AddRange(result);
+                        string operObj = variableResult.Key;
+
+                        string parJson = deviceDatas[resultItem.Key][variableResult.Key];
+
+                        if (!variableResult.Value.IsSuccess || _rpcLogOptions.SuccessLog)
+                            _logQueues.Enqueue(
+                                new RpcLog()
+                                {
+                                    LogTime = DateTime.Now,
+                                    OperateMessage = variableResult.Value.IsSuccess ? null : variableResult.Value.ToString(),
+                                    IsSuccess = variableResult.Value.IsSuccess,
+                                    OperateMethod = Localizer["WriteVariable"],
+                                    OperateDevice = resultItem.Key,
+                                    OperateObject = operObj,
+                                    OperateSource = sourceDes,
+                                    ParamJson = parJson,
+                                    ResultJson = null
+                                }
+                            );
+
+                        // 不返回详细错误
+                        if (!variableResult.Value.IsSuccess)
+                        {
+                            var result1 = variableResult.Value;
+                            result1.Exception = null;
+                            resultItem.Value[variableResult.Key] = result1;
+                        }
+                    }
+
+                    // 将结果添加到结果字典中
+                    results[resultItem.Key].AddRange(resultItem.Value);
+                }
             }
             catch (Exception ex)
             {
                 // 将异常信息添加到结果字典中
-                results[driverData.Key.DeviceName].AddRange(driverData.Value.Select((KeyValuePair<VariableRuntime, JToken> a) =>
+                foreach (var item in driverData.Value)
                 {
-                    return new KeyValuePair<string, OperResult>(a.Key.Name, new OperResult(ex));
-                }));
+                    results[item.Key.DeviceName].Add(item.Key.Name, new OperResult(ex));
+                }
             }
         }, cancellationToken).ConfigureAwait(false);
 
@@ -192,42 +197,51 @@ internal sealed class RpcService : IRpcService
                 // 写入日志
                 foreach (var resultItem in result)
                 {
-                    // 写入日志
-                    if (!resultItem.Value.IsSuccess || _rpcLogOptions.SuccessLog)
-                        _logQueues.Enqueue(
-                            new RpcLog()
-                            {
-                                LogTime = DateTime.Now,
-                                OperateMessage = resultItem.Value.IsSuccess ? null : resultItem.Value.ToString(),
-                                IsSuccess = resultItem.Value.IsSuccess,
-                                OperateMethod = operateMethods[resultItem.Key],
-                                OperateDevice = driverData.Key.DeviceName,
-                                OperateObject = resultItem.Key,
-                                OperateSource = sourceDes,
-                                ParamJson = deviceDatas[driverData.Key.DeviceName][resultItem.Key]?.ToString(),
-                                ResultJson = resultItem.Value.Content?.ToJsonNetString()
-                            }
-                        );
 
-                    // 不返回详细错误
-                    if (!resultItem.Value.IsSuccess)
+                    foreach (var variableResult in resultItem.Value)
                     {
-                        OperResult<object> result1 = resultItem.Value;
-                        result1.Exception = null;
-                        result[resultItem.Key] = result1;
-                    }
-                }
+                        string operObj = variableResult.Key;
 
-                results[driverData.Key.DeviceName].AddRange(result.ToDictionary(a => a.Key, a => (OperResult)a.Value));
+                        string parJson = deviceDatas[resultItem.Key][variableResult.Key];
+
+                        // 写入日志
+                        if (!variableResult.Value.IsSuccess || _rpcLogOptions.SuccessLog)
+                            _logQueues.Enqueue(
+                                new RpcLog()
+                                {
+                                    LogTime = DateTime.Now,
+                                    OperateMessage = variableResult.Value.IsSuccess ? null : variableResult.Value.ToString(),
+                                    IsSuccess = variableResult.Value.IsSuccess,
+                                    OperateMethod = operateMethods[variableResult.Key],
+                                    OperateDevice = resultItem.Key,
+                                    OperateObject = operObj,
+                                    OperateSource = sourceDes,
+                                    ParamJson = parJson?.ToString(),
+                                    ResultJson = variableResult.Value is IOperResult<object> operResult ? operResult.Content?.ToJsonNetString() : string.Empty
+                                }
+                            );
+
+                        // 不返回详细错误
+                        if (!variableResult.Value.IsSuccess)
+                        {
+                            var result1 = variableResult.Value;
+                            result1.Exception = null;
+                            resultItem.Value[variableResult.Key] = result1;
+                        }
+                    }
+
+
+                    results[resultItem.Key].AddRange(resultItem.Value.ToDictionary(a => a.Key, a => a.Value));
+                }
 
             }
             catch (Exception ex)
             {
                 // 将异常信息添加到结果字典中
-                results[driverData.Key.DeviceName].AddRange(driverData.Value.Select((KeyValuePair<VariableRuntime, JToken> a) =>
+                foreach (var item in driverData.Value)
                 {
-                    return new KeyValuePair<string, OperResult>(a.Key.Name, new OperResult(ex));
-                }));
+                    results[item.Key.DeviceName].Add(item.Key.Name, new OperResult(ex));
+                }
             }
         }, cancellationToken).ConfigureAwait(false);
 

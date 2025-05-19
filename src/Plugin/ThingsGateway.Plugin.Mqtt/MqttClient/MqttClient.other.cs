@@ -282,9 +282,9 @@ public partial class MqttClient : BusinessBaseWithCacheIntervalScript<VariableBa
         }
     }
 
-    private async ValueTask<Dictionary<string, Dictionary<string, OperResult>>> GetResult(MqttApplicationMessageReceivedEventArgs args, Dictionary<string, Dictionary<string, JToken>> rpcDatas)
+    private async ValueTask<Dictionary<string, Dictionary<string, IOperResult>>> GetResult(MqttApplicationMessageReceivedEventArgs args, Dictionary<string, Dictionary<string, JToken>> rpcDatas)
     {
-        var mqttRpcResult = new Dictionary<string, Dictionary<string, OperResult>>();
+        var mqttRpcResult = new Dictionary<string, Dictionary<string, IOperResult>>();
         rpcDatas.ForEach(a => mqttRpcResult.Add(a.Key, new()));
         try
         {

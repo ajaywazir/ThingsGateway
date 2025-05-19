@@ -13,8 +13,9 @@ using Mapster;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-using System.Threading;
+using Newtonsoft.Json.Linq;
 
+using ThingsGateway.Extension.Generic;
 using ThingsGateway.Gateway.Application;
 using ThingsGateway.NewLife;
 
@@ -26,7 +27,7 @@ using TouchSocket.Sockets;
 
 namespace ThingsGateway.Management;
 
-internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHostedService
+internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHostedService, IRpcDriver
 {
     private readonly ILogger _logger;
     private readonly IRedundancyService _redundancyService;
@@ -52,16 +53,17 @@ internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHo
     private IStringLocalizer Localizer { get; }
     private DoTask RedundancyTask { get; set; }
     private WaitLock RedundancyRestartLock { get; } = new();
-    private LoggerGroup _log { get; set; }
+    public ILog LogMessage { get; set; }
     public TextFileLogger TextLogger { get; }
     public string LogPath { get; }
     private TcpDmtpClient TcpDmtpClient;
     private TcpDmtpService TcpDmtpService;
     private async Task<TcpDmtpClient> GetTcpDmtpClient(RedundancyOptions redundancy)
     {
-        _log = new LoggerGroup() { LogLevel = TouchSocket.Core.LogLevel.Trace };
-        _log?.AddLogger(new EasyLogger(Log_Out) { LogLevel = TouchSocket.Core.LogLevel.Trace });
-        _log?.AddLogger(TextLogger);
+        var log = new LoggerGroup() { LogLevel = TouchSocket.Core.LogLevel.Trace };
+        log?.AddLogger(new EasyLogger(Log_Out) { LogLevel = TouchSocket.Core.LogLevel.Trace });
+        log?.AddLogger(TextLogger);
+        LogMessage = log;
         var tcpDmtpClient = new TcpDmtpClient();
         var config = new TouchSocketConfig()
                .SetRemoteIPHost(redundancy.MasterUri)
@@ -69,10 +71,10 @@ internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHo
                .SetDmtpOption(new DmtpOption() { VerifyToken = redundancy.VerifyToken })
                .ConfigureContainer(a =>
                {
-                   a.AddLogger(_log);
+                   a.AddLogger(LogMessage);
                    a.AddRpcStore(store =>
                    {
-                       store.RegisterServer(new ReverseCallbackServer());
+                       store.RegisterServer(new ReverseCallbackServer(this));
                    });
                })
                .ConfigurePlugins(a =>
@@ -89,9 +91,10 @@ internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHo
 
     private async Task<TcpDmtpService> GetTcpDmtpService(RedundancyOptions redundancy)
     {
-        _log = new LoggerGroup() { LogLevel = TouchSocket.Core.LogLevel.Trace };
-        _log?.AddLogger(new EasyLogger(Log_Out) { LogLevel = TouchSocket.Core.LogLevel.Trace });
-        _log?.AddLogger(TextLogger);
+        var log = new LoggerGroup() { LogLevel = TouchSocket.Core.LogLevel.Trace };
+        log?.AddLogger(new EasyLogger(Log_Out) { LogLevel = TouchSocket.Core.LogLevel.Trace });
+        log?.AddLogger(TextLogger);
+        LogMessage = log;
         var tcpDmtpService = new TcpDmtpService();
         var config = new TouchSocketConfig()
                .SetListenIPHosts(redundancy.MasterUri)
@@ -99,10 +102,10 @@ internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHo
                .SetDmtpOption(new DmtpOption() { VerifyToken = redundancy.VerifyToken })
                .ConfigureContainer(a =>
                {
-                   a.AddLogger(_log);
+                   a.AddLogger(LogMessage);
                    a.AddRpcStore(store =>
                    {
-                       store.RegisterServer(new ReverseCallbackServer());
+                       store.RegisterServer(new ReverseCallbackServer(this));
                    });
                })
                .ConfigurePlugins(a =>
@@ -163,8 +166,8 @@ internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHo
                     {
                         // 将 GlobalData.CollectDevices 和 GlobalData.Variables 同步到从站
                         await item.GetDmtpRpcActor().InvokeAsync(
-                                         nameof(ReverseCallbackServer.UpdateGatewayData), null, waitInvoke, deviceRunTimes).ConfigureAwait(false);
-                        _log?.LogTrace($"{item.GetIPPort()} Update StandbyStation data success");
+                                         nameof(ReverseCallbackServer.UpData), null, waitInvoke, deviceRunTimes).ConfigureAwait(false);
+                        LogMessage?.LogTrace($"{item.GetIPPort()} Update StandbyStation data success");
                     }
 
                 }
@@ -172,7 +175,7 @@ internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHo
             catch (Exception ex)
             {
                 // 输出警告日志，指示同步数据到从站时发生错误
-                _log?.LogWarning(ex, Localizer["ErrorSynchronizingData"]);
+                LogMessage?.LogWarning(ex, Localizer["ErrorSynchronizingData"]);
             }
             await Task.Delay(syncInterval, stoppingToken).ConfigureAwait(false);
         }
@@ -184,7 +187,7 @@ internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHo
         }
         catch (Exception ex)
         {
-            _log?.LogWarning(ex, "Execute");
+            LogMessage?.LogWarning(ex, "Execute");
         }
     }
 
@@ -250,7 +253,7 @@ internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHo
                 else
                 {
                     // 如果设备在线
-                    _log?.LogTrace($"Ping ActiveStation {redundancy.MasterUri} success");
+                    LogMessage?.LogTrace($"Ping ActiveStation {redundancy.MasterUri} success");
                     await StandbyAsync().ConfigureAwait(false);
                 }
             }
@@ -266,11 +269,9 @@ internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHo
         }
         catch (Exception ex)
         {
-            _log?.LogWarning(ex, "Execute");
+            LogMessage?.LogWarning(ex, "Execute");
         }
     }
-
-
 
     public async ValueTask ForcedSync(CancellationToken cancellationToken = default)
     {
@@ -296,18 +297,18 @@ internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHo
 
                     // 将 GlobalData.CollectDevices 和 GlobalData.Variables 同步到从站
                     var data = await TcpDmtpClient.GetDmtpRpcActor().InvokeTAsync<List<DataWithDatabase>>(
-                                       nameof(ReverseCallbackServer.GetGatewayData), waitInvoke).ConfigureAwait(false);
+                                       nameof(ReverseCallbackServer.GetData), waitInvoke).ConfigureAwait(false);
 
                     await GlobalData.ChannelRuntimeService.CopyAsync(data.Select(a => a.Channel).ToList(), data.SelectMany(a => a.DeviceVariables).ToDictionary(a => a.Device, a => a.Variables), true, cancellationToken).ConfigureAwait(false);
 
-                    _log?.LogTrace($"ForcedSync data success");
+                    LogMessage?.LogTrace($"ForcedSync data success");
 
                 }
             }
             catch (Exception ex)
             {
                 // 输出警告日志，指示同步数据到从站时发生错误
-                _log?.LogWarning(ex, "ForcedSync data error");
+                LogMessage?.LogWarning(ex, "ForcedSync data error");
             }
         }
         catch (OperationCanceledException)
@@ -318,7 +319,7 @@ internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHo
         }
         catch (Exception ex)
         {
-            _log?.LogWarning(ex, "Execute");
+            LogMessage?.LogWarning(ex, "Execute");
         }
     }
 
@@ -346,12 +347,12 @@ internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHo
             {
                 if (RedundancyOptions.IsMaster)
                 {
-                    RedundancyTask = new DoTask(a => DoMasterWork(TcpDmtpService, RedundancyOptions.SyncInterval, a), _log); // 创建新的任务
+                    RedundancyTask = new DoTask(a => DoMasterWork(TcpDmtpService, RedundancyOptions.SyncInterval, a), LogMessage); // 创建新的任务
                 }
                 else
                 {
 
-                    RedundancyTask = new DoTask(a => DoSlaveWork(TcpDmtpClient, RedundancyOptions, a), _log); // 创建新的任务
+                    RedundancyTask = new DoTask(a => DoSlaveWork(TcpDmtpClient, RedundancyOptions, a), LogMessage); // 创建新的任务
                 }
 
                 RedundancyTask?.Start(default); // 启动任务
@@ -361,7 +362,7 @@ internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHo
         }
         catch (Exception ex)
         {
-            _log?.LogError(ex, "Start"); // 记录错误日志
+            LogMessage?.LogError(ex, "Start"); // 记录错误日志
             return new(ex);
         }
         finally
@@ -406,7 +407,7 @@ internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHo
             {
                 // 输出日志，指示主站已恢复，从站将切换到备用状态
                 if (first)
-                    _log?.Warning(Localizer["SwitchSlaveState"]);
+                    LogMessage?.Warning(Localizer["SwitchSlaveState"]);
 
                 // 将 IsStart 设置为 false，表示当前设备为从站，切换到备用状态
                 _gatewayRedundantSerivce.StartCollectChannelEnable = false;
@@ -432,7 +433,7 @@ internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHo
             {
                 // 输出日志，指示无法连接冗余站点，本机将切换到正常状态
                 if (first)
-                    _log?.Warning(Localizer["SwitchMasterState"]);
+                    LogMessage?.Warning(Localizer["SwitchMasterState"]);
                 _gatewayRedundantSerivce.StartCollectChannelEnable = true;
                 await RestartAsync().ConfigureAwait(false);
             }
@@ -482,7 +483,7 @@ internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHo
         }
         catch (Exception ex)
         {
-            _log?.LogError(ex, "Stop"); // 记录错误日志
+            LogMessage?.LogError(ex, "Stop"); // 记录错误日志
         }
         finally
         {
@@ -491,4 +492,164 @@ internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHo
         }
     }
 
+
+
+    /// <summary>
+    /// 异步写入方法
+    /// </summary>
+    /// <param name="writeInfoLists">要写入的变量及其对应的数据</param>
+    /// <param name="cancellationToken">取消操作的通知</param>
+    /// <returns>写入操作的结果字典</returns>
+    public async ValueTask<Dictionary<string, Dictionary<string, IOperResult>>> InvokeMethodAsync(Dictionary<VariableRuntime, JToken> writeInfoLists, CancellationToken cancellationToken)
+    {
+        return (await Rpc(writeInfoLists, cancellationToken).ConfigureAwait(false)).ToDictionary(a => a.Key, a => a.Value.ToDictionary(b => b.Key, b => (IOperResult)b.Value));
+    }
+
+    private async ValueTask<Dictionary<string, Dictionary<string, OperResult<object>>>> Rpc(Dictionary<VariableRuntime, JToken> writeInfoLists, CancellationToken cancellationToken)
+    {
+        Dictionary<string, Dictionary<string, OperResult<object>>> dataResult = new();
+
+        Dictionary<string, Dictionary<string, string>> deviceDatas = new();
+        foreach (var item in writeInfoLists)
+        {
+            if (deviceDatas.TryGetValue(item.Key.DeviceName ?? string.Empty, out var variableDatas))
+            {
+                variableDatas.Add(item.Key.Name, item.Value?.ToString() ?? string.Empty);
+            }
+            else
+            {
+                deviceDatas.Add(item.Key.DeviceName ?? string.Empty, new());
+                deviceDatas[item.Key.DeviceName ?? string.Empty].Add(item.Key.Name, item.Value?.ToString() ?? string.Empty);
+            }
+        }
+
+        if (RedundancyOptions.IsMaster)
+        {
+            return NoOnline(dataResult, deviceDatas);
+        }
+        bool online = false;
+        var waitInvoke = new DmtpInvokeOption()
+        {
+            FeedbackType = FeedbackType.WaitInvoke,
+            Token = cancellationToken,
+            Timeout = 30000,
+            SerializationType = SerializationType.Json,
+        };
+
+        try
+        {
+            if (!RedundancyOptions.IsMaster)
+            {
+                online = (await TcpDmtpClient.TryConnectAsync().ConfigureAwait(false)).ResultCode == ResultCode.Success;
+
+                // 如果 online 为 true，表示设备在线
+                if (online)
+                {
+                    // 将 GlobalData.CollectDevices 和 GlobalData.Variables 同步到从站
+                    dataResult = await TcpDmtpClient.GetDmtpRpcActor().InvokeTAsync<Dictionary<string, Dictionary<string, OperResult<object>>>>(
+                                       nameof(ReverseCallbackServer.Rpc), waitInvoke, deviceDatas).ConfigureAwait(false);
+
+                    LogMessage?.LogTrace($"Rpc success");
+
+                    return dataResult;
+                }
+            }
+            else
+            {
+                if (TcpDmtpService.Clients.Count != 0)
+                {
+                    online = true;
+                }
+                // 如果 online 为 true，表示设备在线
+                if (online)
+                {
+                    foreach (var item in deviceDatas)
+                    {
+
+                        if (GlobalData.ReadOnlyDevices.TryGetValue(item.Key, out var device))
+                        {
+                            var key = device.Tag;
+
+                            if (TcpDmtpService.TryGetClient(key, out var client))
+                            {
+                                try
+                                {
+
+                                    var data = await TcpDmtpClient.GetDmtpRpcActor().InvokeTAsync<Dictionary<string, Dictionary<string, OperResult<object>>>>(
+                                                         nameof(ReverseCallbackServer.Rpc), waitInvoke, new Dictionary<string, Dictionary<string, string>>() { { item.Key, item.Value } }).ConfigureAwait(false);
+
+                                    dataResult.AddRange(data);
+
+                                    continue;
+                                }
+                                catch (Exception ex)
+                                {
+                                    dataResult.TryAdd(item.Key, new Dictionary<string, OperResult<object>>());
+
+                                    foreach (var vItem in item.Value)
+                                    {
+                                        dataResult[item.Key].Add(vItem.Key, new OperResult<object>(ex));
+                                    }
+                                }
+                            }
+
+                        }
+
+                        dataResult.TryAdd(item.Key, new Dictionary<string, OperResult<object>>());
+
+                        foreach (var vItem in item.Value)
+                        {
+                            dataResult[item.Key].Add(vItem.Key, new OperResult<object>("No online"));
+                        }
+                    }
+
+                    LogMessage?.LogTrace($"Rpc success");
+                    return dataResult;
+                }
+                else
+                {
+                    LogMessage?.LogWarning("Rpc error, no client online");
+                }
+            }
+
+            return NoOnline(dataResult, deviceDatas);
+
+        }
+        catch (OperationCanceledException)
+        {
+
+            return NoOnline(dataResult, deviceDatas);
+        }
+        catch (Exception ex)
+        {
+            // 输出警告日志，指示同步数据到从站时发生错误
+            LogMessage?.LogWarning(ex, "Rpc error");
+            return NoOnline(dataResult, deviceDatas);
+        }
+    }
+
+    private static Dictionary<string, Dictionary<string, OperResult<object>>> NoOnline(Dictionary<string, Dictionary<string, OperResult<object>>> dataResult, Dictionary<string, Dictionary<string, string>> deviceDatas)
+    {
+        foreach (var item in deviceDatas)
+        {
+            dataResult.TryAdd(item.Key, new Dictionary<string, OperResult<object>>());
+
+            foreach (var vItem in item.Value)
+            {
+                dataResult[item.Key].TryAdd(vItem.Key, new OperResult<object>("No online"));
+            }
+        }
+        return dataResult;
+
+    }
+    /// <summary>
+    /// 异步写入方法
+    /// </summary>
+    /// <param name="writeInfoLists">要写入的变量及其对应的数据</param>
+    /// <param name="cancellationToken">取消操作的通知</param>
+    /// <returns>写入操作的结果字典</returns>
+    public async ValueTask<Dictionary<string, Dictionary<string, IOperResult>>> InVokeWriteAsync(Dictionary<VariableRuntime, JToken> writeInfoLists, CancellationToken cancellationToken)
+    {
+        return (await Rpc(writeInfoLists, cancellationToken).ConfigureAwait(false)).ToDictionary(a => a.Key, a => a.Value.ToDictionary(b => b.Key, b => (IOperResult)b.Value));
+    }
 }

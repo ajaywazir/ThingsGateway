@@ -8,16 +8,16 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
+
+using Newtonsoft.Json.Linq;
+
 namespace ThingsGateway.Gateway.Application;
 
-public interface IRpcService
+public interface IRpcDriver
 {
-    /// <summary>
-    /// 反向RPC入口方法
-    /// </summary>
-    /// <param name="sourceDes">触发该方法的源说明</param>
-    /// <param name="deviceDatas">指定键为变量名称，值为附带方法参数或写入值，方法参数会按逗号分割解析</param>
-    /// <param name="cancellationToken"><see cref="CancellationToken"/> 取消令箭</param>
-    /// <returns></returns>
-    Task<Dictionary<string, Dictionary<string, IOperResult>>> InvokeDeviceMethodAsync(string sourceDes, Dictionary<string, Dictionary<string, string>> deviceDatas, CancellationToken cancellationToken = default);
+
+    ValueTask<Dictionary<string, Dictionary<string, IOperResult>>> InvokeMethodAsync(Dictionary<VariableRuntime, JToken> writeInfoLists, CancellationToken cancellationToken);
+
+    ValueTask<Dictionary<string, Dictionary<string, IOperResult>>> InVokeWriteAsync(Dictionary<VariableRuntime, JToken> writeInfoLists, CancellationToken cancellationToken);
+
 }

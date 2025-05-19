@@ -184,9 +184,9 @@ public partial class MqttServer : BusinessBaseWithCacheIntervalScript<VariableBa
 
     #endregion private
 
-    private async ValueTask<Dictionary<string, Dictionary<string, OperResult>>> GetResult(InterceptingPublishEventArgs args, Dictionary<string, Dictionary<string, JToken>> rpcDatas)
+    private async ValueTask<Dictionary<string, Dictionary<string, IOperResult>>> GetResult(InterceptingPublishEventArgs args, Dictionary<string, Dictionary<string, JToken>> rpcDatas)
     {
-        var mqttRpcResult = new Dictionary<string, Dictionary<string, OperResult>>();
+        var mqttRpcResult = new Dictionary<string, Dictionary<string, IOperResult>>();
         rpcDatas.ForEach(a => mqttRpcResult.Add(a.Key, new()));
         try
         {

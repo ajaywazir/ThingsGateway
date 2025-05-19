@@ -378,7 +378,7 @@ public class VariableRuntime : Variable, IVariable, IDisposable
     }
 
     /// <inheritdoc/>
-    public async ValueTask<OperResult> RpcAsync(string value, string? executive = "brower", CancellationToken cancellationToken = default)
+    public async ValueTask<IOperResult> RpcAsync(string value, string? executive = "brower", CancellationToken cancellationToken = default)
     {
         var data = await GlobalData.RpcService.InvokeDeviceMethodAsync(executive, new Dictionary<string, Dictionary<string, string>>()
         {

@@ -130,7 +130,7 @@ public class ControlController : ControllerBase
     /// </summary>
     [HttpPost("writeVariables")]
     [DisplayName("写入变量")]
-    public async Task<Dictionary<string, Dictionary<string, OperResult>>> WriteVariablesAsync([FromBody] Dictionary<string, Dictionary<string, string>> deviceDatas)
+    public async Task<Dictionary<string, Dictionary<string, IOperResult>>> WriteVariablesAsync([FromBody] Dictionary<string, Dictionary<string, string>> deviceDatas)
     {
         foreach (var deviceData in deviceDatas)
         {

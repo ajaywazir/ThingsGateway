@@ -201,7 +201,7 @@ public class ModbusSlave : BusinessBase
     /// <summary>
     /// RPC写入
     /// </summary>
-    private async ValueTask<OperResult> OnWriteData(ModbusRequest modbusRequest, IThingsGatewayBitConverter bitConverter, IChannel channel)
+    private async ValueTask<IOperResult> OnWriteData(ModbusRequest modbusRequest, IThingsGatewayBitConverter bitConverter, IChannel channel)
     {
         try
         {

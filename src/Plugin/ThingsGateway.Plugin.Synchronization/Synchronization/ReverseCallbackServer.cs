@@ -8,9 +8,12 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
+using ThingsGateway.Foundation;
+
 using TouchSocket.Core;
 using TouchSocket.Dmtp.Rpc;
 using TouchSocket.Rpc;
+using TouchSocket.Sockets;
 
 namespace ThingsGateway.Plugin.Synchronization;
 
@@ -22,12 +25,15 @@ public partial class ReverseCallbackServer : SingletonRpcServer
         Synchronization = synchronization;
     }
     [DmtpRpc(MethodInvoke = true)]
-    public void UpData(List<DeviceDataWithValue> deviceDatas)
+    public void UpData(ICallContext callContext, List<DeviceDataWithValue> deviceDatas)
     {
         foreach (var deviceData in deviceDatas)
         {
             if (GlobalData.ReadOnlyDevices.TryGetValue(deviceData.Name, out var device))
             {
+                device.RpcDriver = Synchronization;
+                device.Tag = callContext.Caller is IIdClient idClient ? idClient.Id : string.Empty;
+
                 device.SetDeviceStatus(deviceData.ActiveTime, deviceData.DeviceStatus == DeviceStatusEnum.OnLine ? false : true, lastErrorMessage: deviceData.LastErrorMessage);
 
                 foreach (var variableData in deviceData.ReadOnlyVariableRuntimes)
@@ -66,4 +72,13 @@ public partial class ReverseCallbackServer : SingletonRpcServer
         }
         return dataWithDatabases;
     }
+
+
+    [DmtpRpc(MethodInvoke = true)]
+    public Task<Dictionary<string, Dictionary<string, IOperResult>>> Rpc(Dictionary<string, Dictionary<string, string>> deviceDatas, CancellationToken cancellationToken)
+    {
+        return GlobalData.RpcService.InvokeDeviceMethodAsync(Synchronization.DeviceName, deviceDatas, cancellationToken);
+    }
+
+
 }

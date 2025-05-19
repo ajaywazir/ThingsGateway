@@ -31,7 +31,7 @@ namespace ThingsGateway.Gateway.Application;
 /// 采集插件，继承实现不同PLC通讯
 /// <para></para>
 /// </summary>
-public abstract class CollectBase : DriverBase
+public abstract class CollectBase : DriverBase, IRpcDriver
 {
     /// <summary>
     /// 插件配置项
@@ -550,7 +550,7 @@ public abstract class CollectBase : DriverBase
     /// <param name="writeInfoLists">要写入的变量及其对应的数据</param>
     /// <param name="cancellationToken">取消操作的通知</param>
     /// <returns>写入操作的结果字典</returns>
-    internal async ValueTask<Dictionary<string, OperResult<object>>> InvokeMethodAsync(Dictionary<VariableRuntime, JToken> writeInfoLists, CancellationToken cancellationToken)
+    public async ValueTask<Dictionary<string, Dictionary<string, IOperResult>>> InvokeMethodAsync(Dictionary<VariableRuntime, JToken> writeInfoLists, CancellationToken cancellationToken)
     {
         // 初始化结果字典
         Dictionary<string, OperResult<object>> results = new Dictionary<string, OperResult<object>>();
@@ -610,7 +610,13 @@ public abstract class CollectBase : DriverBase
         }
 
         // 将转换失败的变量和写入成功的变量的操作结果合并到结果字典中
-        return results.Concat(operResults).ToDictionary(a => a.Key, a => a.Value);
+        return new Dictionary<string, Dictionary<string, IOperResult>>()
+        {
+            {
+               this.DeviceName ,
+            results.Concat(operResults).ToDictionary(a => a.Key, a => (IOperResult)a.Value)
+            }
+        };
     }
 
     /// <summary>
@@ -619,7 +625,7 @@ public abstract class CollectBase : DriverBase
     /// <param name="writeInfoLists">要写入的变量及其对应的数据</param>
     /// <param name="cancellationToken">取消操作的通知</param>
     /// <returns>写入操作的结果字典</returns>
-    internal async ValueTask<Dictionary<string, OperResult>> InVokeWriteAsync(Dictionary<VariableRuntime, JToken> writeInfoLists, CancellationToken cancellationToken)
+    public async ValueTask<Dictionary<string, Dictionary<string, IOperResult>>> InVokeWriteAsync(Dictionary<VariableRuntime, JToken> writeInfoLists, CancellationToken cancellationToken)
     {
         // 初始化结果字典
         Dictionary<string, OperResult> results = new Dictionary<string, OperResult>();
@@ -664,7 +670,14 @@ public abstract class CollectBase : DriverBase
             cancellationToken).ConfigureAwait(false);
 
         // 将转换失败的变量和写入成功的变量的操作结果合并到结果字典中
-        return results.Concat(results1).ToDictionary(a => a.Key, a => a.Value);
+
+        return new Dictionary<string, Dictionary<string, IOperResult>>()
+        {
+            {
+               this.DeviceName ,
+           results.Concat(results1).ToDictionary(a => a.Key, a => (IOperResult)a.Value)
+            }
+        };
     }
 
     /// <summary>

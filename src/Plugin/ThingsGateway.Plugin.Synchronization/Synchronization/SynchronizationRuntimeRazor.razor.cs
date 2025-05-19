@@ -12,9 +12,6 @@
 using BootstrapBlazor.Components;
 
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Localization;
-
-using Rougamo;
 
 using ThingsGateway.Razor;
 
