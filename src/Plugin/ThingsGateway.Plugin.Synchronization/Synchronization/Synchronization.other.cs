@@ -9,16 +9,9 @@
 //------------------------------------------------------------------------------
 
 
-using Microsoft.Extensions.Hosting;
+namespace ThingsGateway.Plugin.Synchronization;
 
-namespace ThingsGateway.Management;
-
-internal interface IRedundancyHostedService : IHostedService
+public partial class Synchronization : BusinessBase
 {
-    Task<OperResult> StartRedundancyTaskAsync();
-    Task StopRedundancyTaskAsync();
-    ValueTask ForcedSync(CancellationToken cancellationToken = default);
 
-    public TextFileLogger TextLogger { get; }
-    public string LogPath { get; }
 }

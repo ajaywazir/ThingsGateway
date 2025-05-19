@@ -13,6 +13,8 @@ using Mapster;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
+using System.Threading;
+
 using ThingsGateway.Gateway.Application;
 using ThingsGateway.NewLife;
 
@@ -268,6 +270,59 @@ internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHo
         }
     }
 
+
+
+    public async ValueTask ForcedSync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            bool online = false;
+            var waitInvoke = new DmtpInvokeOption()
+            {
+                FeedbackType = FeedbackType.WaitInvoke,
+                Token = cancellationToken,
+                Timeout = 30000,
+                SerializationType = SerializationType.Json,
+            };
+
+            try
+            {
+                online = (await TcpDmtpClient.TryConnectAsync().ConfigureAwait(false)).ResultCode == ResultCode.Success;
+
+                // 如果 online 为 true，表示设备在线
+                if (online)
+                {
+
+
+                    // 将 GlobalData.CollectDevices 和 GlobalData.Variables 同步到从站
+                    var data = await TcpDmtpClient.GetDmtpRpcActor().InvokeTAsync<List<DataWithDatabase>>(
+                                       nameof(ReverseCallbackServer.GetGatewayData), waitInvoke).ConfigureAwait(false);
+
+                    await GlobalData.ChannelRuntimeService.CopyAsync(data.Select(a => a.Channel).ToList(), data.SelectMany(a => a.DeviceVariables).ToDictionary(a => a.Device, a => a.Variables), true, cancellationToken).ConfigureAwait(false);
+
+                    _log?.LogTrace($"ForcedSync data success");
+
+                }
+            }
+            catch (Exception ex)
+            {
+                // 输出警告日志，指示同步数据到从站时发生错误
+                _log?.LogWarning(ex, "ForcedSync data error");
+            }
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        catch (ObjectDisposedException)
+        {
+        }
+        catch (Exception ex)
+        {
+            _log?.LogWarning(ex, "Execute");
+        }
+    }
+
+
     private WaitLock _switchLock = new();
 
     /// <inheritdoc/>
@@ -326,6 +381,7 @@ internal sealed class RedundancyHostedService : BackgroundService, IRedundancyHo
             if (RedundancyOptions.IsMaster)
             {
                 TcpDmtpService = await GetTcpDmtpService(RedundancyOptions).ConfigureAwait(false);
+
                 await TcpDmtpService.StartAsync().ConfigureAwait(false);//启动
                 await ActiveAsync().ConfigureAwait(false);
             }

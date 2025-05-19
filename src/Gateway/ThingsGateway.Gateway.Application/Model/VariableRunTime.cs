@@ -34,7 +34,7 @@ public class VariableRuntime : Variable, IVariable, IDisposable
 
     public VariableRuntime()
     {
-        
+
     }
     /// <summary>
     /// 变化时间

@@ -10,9 +10,7 @@
 
 using Newtonsoft.Json;
 
-using ThingsGateway.Gateway.Application;
-
-namespace ThingsGateway.Management;
+namespace ThingsGateway.Plugin.Synchronization;
 
 public class DeviceDataWithValue
 {
@@ -33,7 +31,6 @@ public class DeviceDataWithValue
     /// <inheritdoc cref="DeviceRuntime.ReadOnlyVariableRuntimes"/>
     public Dictionary<string, VariableDataWithValue> ReadOnlyVariableRuntimes { get; set; }
 }
-
 
 
 public class DataWithDatabase

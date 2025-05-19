@@ -1,0 +1,14 @@
+﻿{
+
+  "ThingsGateway.Plugin.Synchronization.SynchronizationProperty": {
+    "IsServer": "是否Tcp服务",
+    "IsMaster": "是否主站",
+    "IsAllVariable": "选择全部变量",
+    "ServerUri": "服务Uri",
+    "VerifyToken": "验证令牌",
+    "HeartbeatInterval": "心跳间隔",
+    "SyncInterval": "同步间隔"
+
+  }
+
+}

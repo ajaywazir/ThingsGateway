@@ -8,17 +8,12 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
+namespace ThingsGateway.Plugin.Synchronization;
 
-using Microsoft.Extensions.Hosting;
-
-namespace ThingsGateway.Management;
-
-internal interface IRedundancyHostedService : IHostedService
+/// <summary>
+/// <inheritdoc/>
+/// </summary>
+public class SynchronizationVariableProperty : VariablePropertyBase
 {
-    Task<OperResult> StartRedundancyTaskAsync();
-    Task StopRedundancyTaskAsync();
-    ValueTask ForcedSync(CancellationToken cancellationToken = default);
-
-    public TextFileLogger TextLogger { get; }
-    public string LogPath { get; }
+    public override bool Enable { get; set; } = true;
 }

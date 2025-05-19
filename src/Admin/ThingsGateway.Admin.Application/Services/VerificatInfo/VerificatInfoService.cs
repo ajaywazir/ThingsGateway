@@ -10,9 +10,6 @@
 
 using SqlSugar;
 
-using ThingsGateway.List;
-using ThingsGateway.NewLife.Json.Extension;
-
 namespace ThingsGateway.Admin.Application;
 
 /// <summary>
@@ -169,7 +166,7 @@ internal sealed class VerificatInfoService : BaseService<VerificatInfo>, IVerifi
     public void RemoveAllClientId()
     {
         using var db = GetDB();
-        db.Updateable<VerificatInfo>().SetColumns(a=>a.ClientIds==null).Where(a => a.Id > 0).ExecuteCommand();
+        db.Updateable<VerificatInfo>().SetColumns(a => a.ClientIds == null).Where(a => a.Id > 0).ExecuteCommand();
         VerificatInfoService.RemoveCache();
     }
 

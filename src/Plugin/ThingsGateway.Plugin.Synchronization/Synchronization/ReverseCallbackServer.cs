@@ -8,19 +8,22 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
-using ThingsGateway.Gateway.Application;
-
+using TouchSocket.Core;
 using TouchSocket.Dmtp.Rpc;
 using TouchSocket.Rpc;
 
-namespace ThingsGateway.Management;
+namespace ThingsGateway.Plugin.Synchronization;
 
 public partial class ReverseCallbackServer : SingletonRpcServer
 {
-    [DmtpRpc(MethodInvoke = true)]
-    public void UpdateGatewayData(List<DeviceDataWithValue> deviceDatas)
+    Synchronization Synchronization;
+    public ReverseCallbackServer(Synchronization synchronization)
     {
-
+        Synchronization = synchronization;
+    }
+    [DmtpRpc(MethodInvoke = true)]
+    public void UpData(List<DeviceDataWithValue> deviceDatas)
+    {
         foreach (var deviceData in deviceDatas)
         {
             if (GlobalData.ReadOnlyDevices.TryGetValue(deviceData.Name, out var device))
@@ -38,35 +41,29 @@ public partial class ReverseCallbackServer : SingletonRpcServer
 
             }
         }
+
+        Synchronization.LogMessage?.Trace("Update data success");
     }
 
-
-
     [DmtpRpc(MethodInvoke = true)]
-    public List<DataWithDatabase> GetGatewayData()
+    public List<DataWithDatabase> GetData()
     {
         List<DataWithDatabase> dataWithDatabases = new();
-        foreach (var channels in GlobalData.ReadOnlyChannels)
+        foreach (var device in Synchronization.CollectDevices)
         {
             DataWithDatabase dataWithDatabase = new();
-            dataWithDatabase.Channel = channels.Value;
+            dataWithDatabase.Channel = device.Value.ChannelRuntime;
             dataWithDatabase.DeviceVariables = new();
-            foreach (var devices in channels.Value.ReadDeviceRuntimes)
-            {
-                DeviceDataWithDatabase deviceDataWithDatabase = new();
+            DeviceDataWithDatabase deviceDataWithDatabase = new();
 
-                deviceDataWithDatabase.Device = devices.Value;
-                deviceDataWithDatabase.Variables = devices.Value.ReadOnlyVariableRuntimes.Select(a => a.Value).Cast<Variable>().ToList();
+            deviceDataWithDatabase.Device = device.Value;
 
+            deviceDataWithDatabase.Variables = device.Value.ReadOnlyVariableRuntimes.Select(a => a.Value).Cast<Variable>().ToList();
 
-                dataWithDatabase.DeviceVariables.Add(deviceDataWithDatabase);
-            }
+            dataWithDatabase.DeviceVariables.Add(deviceDataWithDatabase);
 
             dataWithDatabases.Add(dataWithDatabase);
         }
         return dataWithDatabases;
-
-
     }
-
 }

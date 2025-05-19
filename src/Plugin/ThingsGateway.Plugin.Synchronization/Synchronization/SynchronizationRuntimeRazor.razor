@@ -1,0 +1,15 @@
+﻿@using BootstrapBlazor.Components
+@using Microsoft.Extensions.Localization
+@using ThingsGateway.Extension
+@using ThingsGateway.Foundation
+@using ThingsGateway.Admin.Application
+@using ThingsGateway.Admin.Razor
+@using ThingsGateway.Gateway.Application
+@namespace ThingsGateway.Plugin.Synchronization
+
+
+
+<Button IsDisabled=Synchronization._driverPropertys.IsMaster IsAsync class="mx-2" Color=Color.Primary OnClick="ForcedSync">ForcedSync</Button>
+
+
+

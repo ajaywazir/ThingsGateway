@@ -1,0 +1,14 @@
+﻿{
+
+  "ThingsGateway.Plugin.Synchronization.SynchronizationProperty": {
+    "IsServer": "IsServer",
+    "IsMaster": "IsMaster",
+    "IsAllVariable": "IsAllVariable",
+    "ServerUri": "ServerUri",
+    "VerifyToken": "VerifyToken",
+    "HeartbeatInterval": "HeartbeatInterval",
+    "SyncInterval": "SyncInterval"
+
+  }
+
+}

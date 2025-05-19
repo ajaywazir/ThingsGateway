@@ -21,5 +21,5 @@ public abstract class VariablePropertyBase
     /// 启用
     /// </summary>
     [DynamicProperty()]
-    public bool Enable { get; set; } = true;
+    public virtual bool Enable { get; set; } = true;
 }

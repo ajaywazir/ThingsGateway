@@ -51,7 +51,8 @@
     "UserName": "用户名",
     "Password": "密码",
     "ConnectId": "连接ID",
-    "ConnectTimeout": "连接超时时间"
+    "ConnectTimeout": "连接超时时间",
+    "CheckClearTime": "变量过期时间(s)"
 
 
 

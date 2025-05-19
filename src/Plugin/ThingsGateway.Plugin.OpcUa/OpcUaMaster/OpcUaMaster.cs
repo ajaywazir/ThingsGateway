@@ -42,9 +42,9 @@ public class OpcUaMaster : CollectBase
     /// <inheritdoc/>
     public override Type DriverDebugUIType => typeof(ThingsGateway.Debug.OpcUaMaster);
 
-    public override Type DriverPropertyUIType => typeof(OpcUaMasterPropertyRazor);
+    public override Type DriverPropertyUIType => typeof(OpcUaMasterRuntimeRazor);
 
-
+    public override Type DriverUIType => typeof(OpcUaMasterRuntimeRazor);
 
     protected override async Task InitChannelAsync(IChannel? channel, CancellationToken cancellationToken)
     {

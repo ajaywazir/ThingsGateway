@@ -46,7 +46,7 @@
   },
 
   "ThingsGateway.Management.RedundancyOptions": {
-
+    "ForcedSync": "强制同步",
     "Enable": "启用双机冗余",
     "MasterUri": "主站Url",
     "IsMaster": "是否为主站",
@@ -62,7 +62,8 @@
     "Switch": "切换",
 
     "Restart": "即将重新启动冗余服务",
-    "Confirm": "确认切换冗余状态"
+    "Confirm": "确认切换冗余状态",
+    "ForcedSyncWarning": "强制同步会生成数据库配置信息，是否继续?"
   },
 
   "ThingsGateway.Management._Imports": {

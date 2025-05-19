@@ -12,6 +12,7 @@
 using Mapster;
 
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Web;
 
 using TouchSocket.Core;
 
@@ -82,6 +83,8 @@ public partial class RedundancyOptionsPage
                 else
                     await ToastService.Warning(RedundancyLocalizer[nameof(RedundancyOptions)], $"{RazorLocalizer["Fail", result.ToString()]}");
 
+
+                await InvokeAsync(StateHasChanged);
             }
 
         }
@@ -92,4 +95,16 @@ public partial class RedundancyOptionsPage
     }
 
 
+    private async Task ForcedSync(MouseEventArgs args)
+    {
+        var ret = await SwalService.ShowModal(new SwalOption()
+        {
+            Category = SwalCategory.Warning,
+            Title = RedundancyLocalizer["ForcedSyncWarning"]
+        });
+        if (ret)
+        {
+            await RedundancyHostedService.ForcedSync();
+        }
+    }
 }

@@ -18,31 +18,18 @@ using ThingsGateway.Razor;
 
 namespace ThingsGateway.Plugin.OpcUa
 {
-    public partial class OpcUaMasterPropertyRazor : IPropertyUIBase
+    public partial class OpcUaMasterRuntimeRazor : IDriverUIBase
     {
         [Parameter, EditorRequired]
-        public string Id { get; set; }
-        [Parameter, EditorRequired]
-        public bool CanWrite { get; set; }
-        [Parameter, EditorRequired]
-        public ModelValueValidateForm Model { get; set; }
-
-        [Parameter, EditorRequired]
-        public IEnumerable<IEditorItem> PluginPropertyEditorItems { get; set; }
-
-        IStringLocalizer Localizer { get; set; }
-
-        protected override Task OnParametersSetAsync()
-        {
-            Localizer = App.CreateLocalizerByType(Model.Value.GetType());
-
-            return base.OnParametersSetAsync();
-        }
+        public object Driver { get; set; }
 
         [Inject]
         private DownloadService DownloadService { get; set; }
         [Inject]
         private ToastService ToastService { get; set; }
+
+        [Inject]
+        IStringLocalizer<OpcUaMasterProperty> OpcUaMasterPropertyLocalizer { get; set; }
 
 
         private async Task Export()

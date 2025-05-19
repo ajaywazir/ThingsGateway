@@ -61,6 +61,13 @@
 			<Private>false</Private>
 			<IncludeAssets> native;</IncludeAssets>
 		</PackageReference>
+
+
+		<PackageReference Include="ThingsGateway.Plugin.Synchronization" Version="$(PluginVersion)" GeneratePathProperty="true">
+			<Private>false</Private>
+			<IncludeAssets> native;</IncludeAssets>
+		</PackageReference>
+		
 	</ItemGroup>
 
 	<Target Name="CopyPluginNugetPackages" AfterTargets="Build">
@@ -88,6 +95,7 @@
 			<PkgThingsGateway_Plugin_OpcUaPackageFiles Include="$(PkgThingsGateway_Plugin_OpcUa)\Content\$(PluginTargetFramework)\**\*.*" />
 			<PkgThingsGateway_Plugin_RabbitMQPackageFiles Include="$(PkgThingsGateway_Plugin_RabbitMQ)\Content\$(PluginTargetFramework)\**\*.*" />
 			<PkgThingsGateway_Plugin_HttpPackageFiles Include="$(PkgThingsGateway_Plugin_Http)\Content\$(PluginTargetFramework)\**\*.*" />
+			<PkgThingsGateway_Plugin_SynchronizationPackageFiles Include="$(PkgThingsGateway_Plugin_Synchronization)\Content\$(PluginTargetFramework)\**\*.*" />
 		</ItemGroup>
 
 		<Message Text="将插件复制到插件目录 $(GatewayPluginFolder)" Importance="high" />
@@ -100,7 +108,8 @@
 		<Copy SourceFiles="@(PkgThingsGateway_Plugin_OpcDaPackageFiles)" DestinationFolder="$(GatewayPluginFolder)ThingsGateway.Plugin.OpcDa%(RecursiveDir)" />
 		<Copy SourceFiles="@(PkgThingsGateway_Plugin_OpcUaPackageFiles)" DestinationFolder="$(GatewayPluginFolder)ThingsGateway.Plugin.OpcUa%(RecursiveDir)" />
 		<Copy SourceFiles="@(PkgThingsGateway_Plugin_RabbitMQPackageFiles)" DestinationFolder="$(GatewayPluginFolder)ThingsGateway.Plugin.RabbitMQ%(RecursiveDir)" />
-		<Copy SourceFiles="@(PkgThingsGateway_Plugin_HttpPackageFiles)" DestinationFolder="$(GatewayPluginFolder)ThingsGateway.Plugin.RabbitMQ%(RecursiveDir)" />
+		<Copy SourceFiles="@(PkgThingsGateway_Plugin_HttpPackageFiles)" DestinationFolder="$(GatewayPluginFolder)ThingsGateway.Plugin.Http%(RecursiveDir)" />
+		<Copy SourceFiles="@(PkgThingsGateway_Plugin_SynchronizationPackageFiles)" DestinationFolder="$(GatewayPluginFolder)ThingsGateway.Plugin.Synchronization%(RecursiveDir)" />
 
 	</Target>
 

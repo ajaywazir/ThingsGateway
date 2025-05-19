@@ -11,6 +11,7 @@
 		<ProjectReference Include="..\Plugin\ThingsGateway.Plugin.OpcUa\ThingsGateway.Plugin.OpcUa.csproj" />
 		<ProjectReference Include="..\Plugin\ThingsGateway.Plugin.RabbitMQ\ThingsGateway.Plugin.RabbitMQ.csproj" />
 		<ProjectReference Include="..\Plugin\ThingsGateway.Plugin.Http\ThingsGateway.Plugin.Http.csproj" />
+		<ProjectReference Include="..\Plugin\ThingsGateway.Plugin.Synchronization\ThingsGateway.Plugin.Synchronization.csproj" />
 	</ItemGroup>
 
   

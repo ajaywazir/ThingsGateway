@@ -65,7 +65,7 @@ public class ThingsGatewayNodeManager : CustomNodeManager2
             rootFolder = null;
             rootFolder = CreateFolder(null, "ThingsGateway", "ThingsGateway");
             rootFolder.EventNotifier = EventNotifiers.SubscribeToEvents;
-            
+
             rootFolder.ClearChangeMasks(SystemContext, true);
 
             rootFolder.RemoveReferences(ReferenceTypes.Organizes, true);

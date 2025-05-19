@@ -8,17 +8,9 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
+global using System;
+global using System.Collections.Generic;
+global using System.Threading;
+global using System.Threading.Tasks;
 
-using Microsoft.Extensions.Hosting;
-
-namespace ThingsGateway.Management;
-
-internal interface IRedundancyHostedService : IHostedService
-{
-    Task<OperResult> StartRedundancyTaskAsync();
-    Task StopRedundancyTaskAsync();
-    ValueTask ForcedSync(CancellationToken cancellationToken = default);
-
-    public TextFileLogger TextLogger { get; }
-    public string LogPath { get; }
-}
+global using ThingsGateway.Gateway.Application;

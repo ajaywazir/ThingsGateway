@@ -50,8 +50,9 @@
     "UserName": "UserName",
     "Password": "Password",
     "ConnectId": "ConnectId",
-    "ConnectTimeout": "ConnectTimeout"
-   
+    "ConnectTimeout": "ConnectTimeout",
+    "CheckClearTime": "VariableCheckClearTime(s)"
+
   }
 
 }

@@ -400,7 +400,7 @@ public partial class MqttServer : BusinessBaseWithCacheIntervalScript<VariableBa
         try
         {
             var message = new MqttApplicationMessageBuilder()
-.WithTopic(topicArray.Topic).WithQualityOfServiceLevel(_driverPropertys.MqttQualityOfServiceLevel)
+.WithTopic(topicArray.Topic).WithQualityOfServiceLevel(_driverPropertys.MqttQualityOfServiceLevel).WithRetainFlag()
 .WithPayload(topicArray.Json).Build();
             await _mqttServer.InjectApplicationMessage(
                     new InjectedMqttApplicationMessage(message), cancellationToken).ConfigureAwait(false);

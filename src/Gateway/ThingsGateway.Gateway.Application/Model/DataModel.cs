@@ -21,7 +21,7 @@ public class DeviceBasicData
 {
     [Newtonsoft.Json.JsonIgnore]
     [System.Text.Json.Serialization.JsonIgnore]
-    public DeviceRuntime DeviceRuntime{ get; set; }
+    public DeviceRuntime DeviceRuntime { get; set; }
 
     /// <inheritdoc cref="PrimaryIdEntity.Id"/>
     public long Id { get; set; }

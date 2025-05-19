@@ -87,18 +87,13 @@ public class VariableMethod
             }
 
             dynamic result;
-            switch (MethodInfo.TaskType)
+            switch (MethodInfo.ReturnKind)
             {
-                case TaskReturnType.Task:
-                    await MethodInfo.InvokeAsync(driverBase, os).ConfigureAwait(false);
-                    result = OperResult.Success;
+                case MethodReturnKind.Awaitable:
+                case MethodReturnKind.AwaitableObject:
+                    result = await MethodInfo.InvokeAsync(driverBase, os).ConfigureAwait(false);
                     break;
 
-                case TaskReturnType.TaskObject:
-                    result = await MethodInfo.InvokeObjectAsync(driverBase, os).ConfigureAwait(false);
-                    break;
-
-                case TaskReturnType.None:
                 default:
                     result = MethodInfo.Invoke(driverBase, os);
                     break;

@@ -44,6 +44,7 @@
     "RedundancyDisable": "Redundant gateway site not enabled"
   },
   "ThingsGateway.Management.RedundancyOptions": {
+    "ForcedSync": "Forced Synchronous",
     "Enable": "Enable Dual-Machine Redundancy",
     "MasterUri": "Master Node URL",
     "IsMaster": "IsMaster",
@@ -59,8 +60,9 @@
     "Switch": "Switch",
 
     "Restart": "The redundant service will be restarted soon",
-    "Confirm": "Confirm switching to redundant state"
+    "Confirm": "Confirm switching to redundant state",
 
+    "ForcedSyncWarning": "Forcing synchronization will generate database configuration information.Are you sure you want to continue?"
 
   },
 

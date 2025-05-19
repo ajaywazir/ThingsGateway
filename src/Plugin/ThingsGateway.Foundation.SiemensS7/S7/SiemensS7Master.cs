@@ -401,7 +401,7 @@ public partial class SiemensS7Master : DeviceBase
                 var result2 = await SendThenReturnMessageBaseAsync(new S7Send(ISO_CR), channel).ConfigureAwait(false);
                 if (!result2.IsSuccess)
                 {
-                    if(result2.Exception is OperationCanceledException)
+                    if (result2.Exception is OperationCanceledException)
                         return true;
 
                     Logger?.LogWarning(SiemensS7Resource.Localizer["HandshakeError1", channel.ToString(), result2]);
