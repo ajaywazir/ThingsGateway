@@ -232,7 +232,7 @@ public partial class MqttCollect : CollectBase
                 {
                     foreach (var item in IdVariableRuntimes)
                     {
-                        if (item.Value.CollectTime - DateTime.Now > ETime)
+                        if (DateTime.Now - item.Value.CollectTime > ETime)
                         {
                             item.Value.SetValue(null, DateTime.Now, false);
                         }

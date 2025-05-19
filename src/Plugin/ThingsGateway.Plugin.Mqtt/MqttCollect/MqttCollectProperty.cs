@@ -77,7 +77,4 @@ public class MqttCollectProperty : CollectPropertyBase
     [DynamicProperty]
     public int CheckClearTime { get; set; } = 60000;
 
-
-    public override int ReIntervalTime { get; set; } = 30;
-    public override int RetryCount { get; set; } = 3;
 }

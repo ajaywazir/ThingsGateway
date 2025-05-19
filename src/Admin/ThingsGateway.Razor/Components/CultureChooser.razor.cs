@@ -73,7 +73,7 @@ public partial class CultureChooser
     {
         if (_firstRender)
         {
-            if (OperatingSystem.IsBrowser() || !Runtime.IsWeb)
+            if (OperatingSystem.IsBrowser() || !Runtime.IsWeb || App.EffectiveTypes.FirstOrDefault(a => a.Name.Contains("WebView")) != null)
             {
                 var cultureName = item.Value;
                 if (cultureName != CultureInfo.CurrentCulture.Name)
