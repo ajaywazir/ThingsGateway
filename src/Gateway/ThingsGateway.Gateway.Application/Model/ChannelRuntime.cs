@@ -120,10 +120,7 @@ public class ChannelRuntime : Channel, IChannelOptions, IDisposable
         // 通过插件名称获取插件信息
         PluginInfo = GlobalData.PluginService.GetList().FirstOrDefault(A => A.FullName == PluginName);
 
-        if (PluginInfo == null)
-        {
-            //throw new Exception($"Plugin {PluginName} not found");
-        }
+        GlobalData.Channels.TryRemove(Id, out _);
 
         GlobalData.Channels.TryAdd(Id, this);
 

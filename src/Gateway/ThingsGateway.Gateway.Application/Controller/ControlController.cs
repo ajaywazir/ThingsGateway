@@ -130,7 +130,7 @@ public class ControlController : ControllerBase
     /// </summary>
     [HttpPost("writeVariables")]
     [DisplayName("写入变量")]
-    public async Task<Dictionary<string, Dictionary<string, IOperResult>>> WriteVariablesAsync([FromBody] Dictionary<string, Dictionary<string, string>> deviceDatas)
+    public async Task<Dictionary<string, Dictionary<string, OperResult>>> WriteVariablesAsync([FromBody] Dictionary<string, Dictionary<string, string>> deviceDatas)
     {
         foreach (var deviceData in deviceDatas)
         {
@@ -141,7 +141,7 @@ public class ControlController : ControllerBase
             }
         }
 
-        return await GlobalData.RpcService.InvokeDeviceMethodAsync($"WebApi-{UserManager.UserAccount}-{App.HttpContext?.GetRemoteIpAddressToIPv4()}", deviceDatas).ConfigureAwait(false);
+        return (await GlobalData.RpcService.InvokeDeviceMethodAsync($"WebApi-{UserManager.UserAccount}-{App.HttpContext?.GetRemoteIpAddressToIPv4()}", deviceDatas).ConfigureAwait(false)).ToDictionary(a => a.Key, a => a.Value.ToDictionary(b => b.Key, b => (OperResult)b.Value));
 
     }
 
