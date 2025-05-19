@@ -115,7 +115,7 @@ public sealed class OperDescAttribute : MoAttribute
     private SysOperateLog GetOperLog(Type? localizerType, MethodContext context)
     {
         var methodBase = context.Method;
-        var clientInfo = AppService.ClientInfo;
+        var userAgent = AppService.UserAgent;
         string? paramJson = null;
         if (IsRecordPar)
         {
@@ -138,8 +138,8 @@ public sealed class OperDescAttribute : MoAttribute
             Category = LogCateGoryEnum.Operate,
             ExeStatus = true,
             OpIp = AppService?.RemoteIpAddress ?? string.Empty,
-            OpBrowser = clientInfo?.UA?.Family + clientInfo?.UA?.Major,
-            OpOs = clientInfo?.OS?.Family + clientInfo?.OS?.Major,
+            OpBrowser = userAgent?.Browser,
+            OpOs = userAgent?.Platform,
             OpTime = DateTime.Now,
             OpAccount = UserManager.UserAccount,
             ReqUrl = null,

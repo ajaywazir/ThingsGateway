@@ -52,9 +52,8 @@ public class Startup : AppStartup
     public void AddWebSiteServices(IServiceCollection services)
     {
         services.AddSingleton<IAuthRazorService, HybridAuthRazorService>();
-        var appService = new HybridAppService();
-        services.AddSingleton<IAppService, HybridAppService>(a => appService);
-        services.AddSingleton<HybridAppService>(a => appService);
+        services.AddSingleton<HybridAppService>();
+        services.AddSingleton<IAppService, HybridAppService>(a => a.GetService<HybridAppService>());
 
         services.AddScoped<IPlatformService, HybridPlatformService>();
         services.AddScoped<IGatewayExportService, HybridGatewayExportService>();
@@ -198,7 +197,7 @@ public class Startup : AppStartup
                 var httpContext = context.HttpContext;//获取httpContext
 
                 //获取客户端信息
-                var client = App.GetService<IAppService>().ClientInfo;
+                var client = App.GetService<IAppService>().UserAgent;
                 // 获取控制器/操作描述器
                 var controllerActionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
                 //操作名称默认是控制器名加方法名,自定义操作名称要在action上加Description特性

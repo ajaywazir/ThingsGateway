@@ -55,7 +55,7 @@ public class HardwareJob : IJob, IHardwareJob
     public async Task<List<HistoryHardwareInfo>> GetHistoryHardwareInfos()
     {
         using var db = DbContext.Db.GetConnectionScopeWithAttr<HistoryHardwareInfo>().CopyNew();
-        return await db.Queryable<HistoryHardwareInfo>().ToListAsync().ConfigureAwait(false);
+        return await db.Queryable<HistoryHardwareInfo>().Where(a => a.Date > DateTime.Now.AddDays(-3)).ToListAsync().ConfigureAwait(false);
     }
 
     private bool error = false;

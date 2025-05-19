@@ -1,5 +1,8 @@
 ﻿using System.Buffers;
 
+using ThingsGateway.NewLife.Collections;
+
+
 #if NETFRAMEWORK || NETSTANDARD2_0
 using ValueTask = System.Threading.Tasks.Task;
 #endif
@@ -25,7 +28,7 @@ public sealed class PooledByteBufferWriter : IBufferWriter<Byte>, IDisposable
     /// <param name="initialCapacity"></param>
     public PooledByteBufferWriter(Int32 initialCapacity)
     {
-        _rentedBuffer = ArrayPool<Byte>.Shared.Rent(initialCapacity);
+        _rentedBuffer = Pool.Shared.Rent(initialCapacity);
         _index = 0;
     }
 
@@ -42,7 +45,7 @@ public sealed class PooledByteBufferWriter : IBufferWriter<Byte>, IDisposable
     /// <param name="initialCapacity"></param>
     public void InitializeEmptyInstance(Int32 initialCapacity)
     {
-        _rentedBuffer = ArrayPool<Byte>.Shared.Rent(initialCapacity);
+        _rentedBuffer = Pool.Shared.Rent(initialCapacity);
         _index = 0;
     }
 
@@ -60,7 +63,7 @@ public sealed class PooledByteBufferWriter : IBufferWriter<Byte>, IDisposable
 
         var rentedBuffer = _rentedBuffer;
         _rentedBuffer = null!;
-        ArrayPool<Byte>.Shared.Return(rentedBuffer);
+        Pool.Shared.Return(rentedBuffer);
     }
 
     /// <summary>通知 IBufferWriter，已向输出写入 count 数据项。</summary>
@@ -116,11 +119,11 @@ public sealed class PooledByteBufferWriter : IBufferWriter<Byte>, IDisposable
             }
         }
         var rentedBuffer = _rentedBuffer;
-        _rentedBuffer = ArrayPool<Byte>.Shared.Rent(num4);
+        _rentedBuffer = Pool.Shared.Rent(num4);
         var span = rentedBuffer.AsSpan(0, _index);
         span.CopyTo(_rentedBuffer);
         span.Clear();
-        ArrayPool<Byte>.Shared.Return(rentedBuffer);
+        Pool.Shared.Return(rentedBuffer);
     }
     #endregion
 }

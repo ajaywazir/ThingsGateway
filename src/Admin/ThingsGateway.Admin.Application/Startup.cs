@@ -36,6 +36,7 @@ public class Startup : AppStartup
         services.AddSingleton<ISugarAopService, SugarAopService>();
         services.AddSingleton<ISugarConfigAopService, SugarConfigAopService>();
 
+        services.AddSingleton<IUserAgentService, UserAgentService>();
         services.AddSingleton<IAppService, AppService>();
 
         StaticConfig.EnableAllWhereIF = true;

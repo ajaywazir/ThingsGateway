@@ -17,7 +17,7 @@ using TouchSocket.Sockets;
 
 namespace ThingsGateway.Management;
 
-internal partial class ReverseCallbackServer : SingletonRpcServer
+internal sealed partial class ReverseCallbackServer : SingletonRpcServer
 {
     RedundancyHostedService RedundancyHostedService;
     public ReverseCallbackServer(RedundancyHostedService redundancyHostedService)

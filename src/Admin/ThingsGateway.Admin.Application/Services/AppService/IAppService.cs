@@ -11,8 +11,6 @@
 
 using System.Security.Claims;
 
-using UAParser;
-
 namespace ThingsGateway.Admin.Application;
 
 public interface IAppService
@@ -20,7 +18,7 @@ public interface IAppService
     /// <summary>
     /// ClientInfo
     /// </summary>
-    public ClientInfo? ClientInfo { get; }
+    public UserAgent? UserAgent { get; }
 
     /// <summary>
     /// ClaimsPrincipal

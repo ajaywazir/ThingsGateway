@@ -242,7 +242,7 @@ public static class SpanHelper
             return;
         }
 
-        var array = ArrayPool<Byte>.Shared.Rent(buffer.Length);
+        var array = Pool.Shared.Rent(buffer.Length);
 
         try
         {
@@ -252,7 +252,7 @@ public static class SpanHelper
         }
         finally
         {
-            ArrayPool<Byte>.Shared.Return(array);
+            Pool.Shared.Return(array);
         }
     }
 
@@ -266,7 +266,7 @@ public static class SpanHelper
         if (MemoryMarshal.TryGetArray(buffer, out var segment))
             return stream.WriteAsync(segment.Array!, segment.Offset, segment.Count, cancellationToken);
 
-        var array = ArrayPool<Byte>.Shared.Rent(buffer.Length);
+        var array = Pool.Shared.Rent(buffer.Length);
         buffer.Span.CopyTo(array);
 
         var writeTask = stream.WriteAsync(array, 0, buffer.Length, cancellationToken);
@@ -278,7 +278,7 @@ public static class SpanHelper
             }
             finally
             {
-                ArrayPool<Byte>.Shared.Return(array);
+                Pool.Shared.Return(array);
             }
         }, cancellationToken);
     }

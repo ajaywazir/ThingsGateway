@@ -18,8 +18,6 @@ using ThingsGateway.Logging;
 using ThingsGateway.NewLife.Json.Extension;
 using ThingsGateway.Razor;
 
-using UAParser;
-
 namespace ThingsGateway.Admin.Application;
 
 /// <summary>
@@ -53,7 +51,7 @@ public class DatabaseLoggingWriter : IDatabaseLoggingWriter
         if (loggingMonitor.Validation == null)
         {
             var operation = logMsg.Context.Get(LoggingConst.Operation).ToString();//获取操作名称
-            var client = (ClientInfo)logMsg.Context.Get(LoggingConst.Client);//获取客户端信息
+            var client = (UserAgent)logMsg.Context.Get(LoggingConst.Client);//获取客户端信息
             var path = logMsg.Context.Get(LoggingConst.Path).ToString();//获取操作名称
             var method = logMsg.Context.Get(LoggingConst.Method).ToString();//获取方法
             //表示访问日志
@@ -92,10 +90,10 @@ public class DatabaseLoggingWriter : IDatabaseLoggingWriter
     /// <param name="operation">操作名称</param>
     /// <param name="path">请求地址</param>
     /// <param name="loggingMonitor">loggingMonitor</param>
-    /// <param name="clientInfo">客户端信息</param>
+    /// <param name="userAgent">客户端信息</param>
     /// <param name="flush"></param>
     /// <returns></returns>
-    private async Task<bool> CreateOperationLog(string operation, string path, LoggingMonitorJson loggingMonitor, ClientInfo clientInfo, bool flush)
+    private async Task<bool> CreateOperationLog(string operation, string path, LoggingMonitorJson loggingMonitor, UserAgent userAgent, bool flush)
     {
         //账号
         var opAccount = loggingMonitor.AuthorizationClaims?.Where(it => it.Type == ClaimConst.Account).Select(it => it.Value).FirstOrDefault();
@@ -120,8 +118,8 @@ public class DatabaseLoggingWriter : IDatabaseLoggingWriter
             Category = LogCateGoryEnum.Operate,
             ExeStatus = true,
             OpIp = loggingMonitor.RemoteIPv4,
-            OpBrowser = clientInfo?.UA?.Family + clientInfo?.UA?.Major,
-            OpOs = clientInfo?.OS?.Family + clientInfo?.OS?.Major,
+            OpBrowser = userAgent?.Browser,
+            OpOs = userAgent?.Platform,
             OpTime = loggingMonitor.LogDateTime.LocalDateTime,
             OpAccount = opAccount,
             ReqMethod = loggingMonitor.HttpMethod,
@@ -161,9 +159,9 @@ public class DatabaseLoggingWriter : IDatabaseLoggingWriter
     /// <param name="operation">访问类型</param>
     /// <param name="path"></param>
     /// <param name="loggingMonitor">loggingMonitor</param>
-    /// <param name="clientInfo">客户端信息</param>
+    /// <param name="userAgent">客户端信息</param>
     /// <param name="flush"></param>
-    private async Task<bool> CreateVisitLog(string operation, string path, LoggingMonitorJson loggingMonitor, ClientInfo clientInfo, bool flush)
+    private async Task<bool> CreateVisitLog(string operation, string path, LoggingMonitorJson loggingMonitor, UserAgent userAgent, bool flush)
     {
         long verificatId = 0;//验证Id
         var opAccount = "";//用户账号
@@ -188,8 +186,8 @@ public class DatabaseLoggingWriter : IDatabaseLoggingWriter
             Category = path == "/api/auth/login" ? LogCateGoryEnum.Login : LogCateGoryEnum.Logout,
             ExeStatus = true,
             OpIp = loggingMonitor.RemoteIPv4,
-            OpBrowser = clientInfo?.UA?.Family + clientInfo?.UA?.Major,
-            OpOs = clientInfo?.OS?.Family + clientInfo?.OS?.Major,
+            OpBrowser = userAgent?.Browser,
+            OpOs = userAgent?.Platform,
             OpTime = loggingMonitor.LogDateTime.LocalDateTime,
             VerificatId = verificatId,
             OpAccount = opAccount,

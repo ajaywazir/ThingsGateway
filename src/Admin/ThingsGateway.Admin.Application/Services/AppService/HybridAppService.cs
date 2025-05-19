@@ -13,19 +13,17 @@ using Microsoft.Extensions.DependencyInjection;
 
 using System.Security.Claims;
 
-using UAParser;
-
 namespace ThingsGateway.Admin.Application;
 
 public class HybridAppService : IAppService
 {
-    public HybridAppService()
+    public HybridAppService(IUserAgentService userAgentService)
     {
         var str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0";
-        ClientInfo = Parser.GetDefault().Parse(str);
+        UserAgent = userAgentService.Parse(str);
         RemoteIpAddress = "127.0.0.1";
     }
-    public ClientInfo? ClientInfo { get; }
+    public UserAgent? UserAgent { get; }
 
     private static BlazorHybridAuthenticationStateProvider _authenticationStateProvider;
     private static BlazorHybridAuthenticationStateProvider AuthenticationStateProvider

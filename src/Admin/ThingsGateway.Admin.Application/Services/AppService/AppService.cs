@@ -15,12 +15,15 @@ using Microsoft.AspNetCore.WebUtilities;
 
 using System.Security.Claims;
 
-using UAParser;
-
 namespace ThingsGateway.Admin.Application;
 
 public class AppService : IAppService
 {
+    private readonly IUserAgentService UserAgentService;
+    public AppService(IUserAgentService userAgentService)
+    {
+        UserAgentService = userAgentService;
+    }
     public string GetReturnUrl(string returnUrl)
     {
         var url = QueryHelpers.AddQueryString(CookieAuthenticationDefaults.LoginPath, new Dictionary<string, string?>
@@ -41,18 +44,16 @@ public class AppService : IAppService
         {
         }
     }
-    public Parser Parser = Parser.GetDefault();
-    public ClientInfo? ClientInfo
+    public UserAgent? UserAgent
     {
         get
         {
             var str = App.HttpContext?.Request?.Headers?.UserAgent;
-            ClientInfo? clientInfo = null;
             if (!string.IsNullOrEmpty(str))
             {
-                clientInfo = Parser.Parse(str);
+                return UserAgentService.Parse(str);
             }
-            return clientInfo;
+            return null;
         }
     }
 

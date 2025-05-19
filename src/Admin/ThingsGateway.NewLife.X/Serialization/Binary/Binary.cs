@@ -157,7 +157,7 @@ public class Binary : FormatterBase, IBinary
 #if NETCOREAPP || NETSTANDARD2_1_OR_GREATER
         Stream.Write(buffer);
 #else
-        var array = ArrayPool<Byte>.Shared.Rent(buffer.Length);
+        var array = Pool.Shared.Rent(buffer.Length);
         try
         {
             buffer.CopyTo(array);
@@ -166,7 +166,7 @@ public class Binary : FormatterBase, IBinary
         }
         finally
         {
-            ArrayPool<Byte>.Shared.Return(array);
+            Pool.Shared.Return(array);
         }
 #endif
     }
