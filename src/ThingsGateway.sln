@@ -99,6 +99,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThingsGateway.Upgrade", "Up
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThingsGateway.UpgradeServer", "Upgrade\ThingsGateway.UpgradeServer\ThingsGateway.UpgradeServer.csproj", "{29DCAC9C-2D0F-E251-E907-F07D804CA117}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThingsGateway.Plugin.Synchronization", "Plugin\ThingsGateway.Plugin.Synchronization\ThingsGateway.Plugin.Synchronization.csproj", "{438B86D4-0CAE-DCC3-E952-90CE77BB8661}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -261,6 +263,10 @@ Global
 		{29DCAC9C-2D0F-E251-E907-F07D804CA117}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29DCAC9C-2D0F-E251-E907-F07D804CA117}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29DCAC9C-2D0F-E251-E907-F07D804CA117}.Release|Any CPU.Build.0 = Release|Any CPU
+		{438B86D4-0CAE-DCC3-E952-90CE77BB8661}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{438B86D4-0CAE-DCC3-E952-90CE77BB8661}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{438B86D4-0CAE-DCC3-E952-90CE77BB8661}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{438B86D4-0CAE-DCC3-E952-90CE77BB8661}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -303,10 +309,11 @@ Global
 		{7E4696E3-1170-6AF6-844C-265BBCEC5DA7} = {36510D70-161F-4241-B8D0-781E21032816}
 		{7D5E01DE-D6D7-E45D-58FD-E01B38A312B2} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{29DCAC9C-2D0F-E251-E907-F07D804CA117} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{438B86D4-0CAE-DCC3-E952-90CE77BB8661} = {36510D70-161F-4241-B8D0-781E21032816}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {199B1B96-4F56-4828-9531-813BA02DB282}
-		RESX_NeutralResourcesLanguage = zh-Hans
 		RESX_Rules = {"EnabledRules":[]}
+		RESX_NeutralResourcesLanguage = zh-Hans
+		SolutionGuid = {199B1B96-4F56-4828-9531-813BA02DB282}
 	EndGlobalSection
 EndGlobal
