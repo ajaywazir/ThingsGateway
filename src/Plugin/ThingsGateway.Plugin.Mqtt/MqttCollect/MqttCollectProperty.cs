@@ -27,7 +27,7 @@ public class MqttCollectProperty : CollectPropertyBase
     /// 是否显示详细日志
     /// </summary>
     [DynamicProperty]
-    public bool DetailLog { get; set; } = true;
+    public bool DetailLog { get; set; } = false;
 
     /// <summary>
     /// 端口

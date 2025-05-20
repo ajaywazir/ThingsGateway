@@ -15,14 +15,14 @@ namespace ThingsGateway.NewLife.Json.Extension;
 /// <summary>
 /// json扩展
 /// </summary>
-public static class JsonExtensions
+public static class JsonExtension
 {
     /// <summary>
     /// 默认Json规则
     /// </summary>
     public static JsonSerializerSettings IndentedOptions;
     public static JsonSerializerSettings NoneIndentedOptions;
-    static JsonExtensions()
+    static JsonExtension()
     {
         IndentedOptions = new JsonSerializerSettings
         {
@@ -81,4 +81,52 @@ public static class JsonExtensions
     {
         return Newtonsoft.Json.JsonConvert.SerializeObject(item, indented == false ? NoneIndentedOptions : IndentedOptions);
     }
+
+
+
 }
+
+public class ByteArrayToNumberArrayConverter : JsonConverter<byte[]>
+{
+    public override void WriteJson(JsonWriter writer, byte[]? value, JsonSerializer serializer)
+    {
+        if (value == null)
+        {
+            writer.WriteNull();
+            return;
+        }
+        // 将 byte[] 转换为数值数组
+        writer.WriteStartArray();
+        foreach (var b in value)
+        {
+            writer.WriteValue(b);
+        }
+        writer.WriteEndArray();
+    }
+
+    public override byte[] ReadJson(JsonReader reader, Type objectType, byte[]? existingValue, bool hasExistingValue, JsonSerializer serializer)
+    {
+        // 从数值数组读取 byte[]
+        if (reader.TokenType == JsonToken.StartArray)
+        {
+            var byteList = new System.Collections.Generic.List<byte>();
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonToken.EndArray)
+                {
+                    break;
+                }
+
+                if (reader.TokenType == JsonToken.Integer)
+                {
+                    byteList.Add(Convert.ToByte(reader.Value));
+                }
+            }
+            return byteList.ToArray();
+        }
+        throw new JsonSerializationException("Invalid JSON format for byte array.");
+    }
+
+    public override bool CanRead => true;
+}
+

@@ -356,7 +356,7 @@ public abstract class CollectBase : DriverBase, IRpcDriver
             {
                 // 方法调用成功时记录日志并增加成功计数器
                 if (LogMessage.LogLevel <= TouchSocket.Core.LogLevel.Trace)
-                    LogMessage?.Trace(string.Format("{0} - Execute method[{1}] - Succeeded {2}", DeviceName, readVariableMethods.MethodInfo.Name, readResult.Content?.ToJsonNetString()));
+                    LogMessage?.Trace(string.Format("{0} - Execute method[{1}] - Succeeded {2}", DeviceName, readVariableMethods.MethodInfo.Name, readResult.Content?.ToSystemTextJsonString()));
                 readResultCount.deviceMethodsVariableSuccessNum++;
                 CurrentDevice.SetDeviceStatus(TimerX.Now, false);
             }
@@ -562,7 +562,7 @@ public abstract class CollectBase : DriverBase, IRpcDriver
             if (!string.IsNullOrEmpty(deviceVariable.WriteExpressions))
             {
                 // 提取原始数据
-                object rawdata = jToken is JValue jValue ? jValue.Value : jToken is JArray jArray ? jArray : jToken.ToString();
+                object rawdata = jToken.GetObjectFromJToken();
                 try
                 {
                     // 根据写入表达式转换数据
@@ -613,8 +613,8 @@ public abstract class CollectBase : DriverBase, IRpcDriver
         return new Dictionary<string, Dictionary<string, IOperResult>>()
         {
             {
-               this.DeviceName ,
-            results.Concat(operResults).ToDictionary(a => a.Key, a => (IOperResult)a.Value)
+             DeviceName ,
+             results.Concat(operResults).ToDictionary(a => a.Key, a => (IOperResult)a.Value)
             }
         };
     }
@@ -638,7 +638,7 @@ public abstract class CollectBase : DriverBase, IRpcDriver
             if (!string.IsNullOrEmpty(deviceVariable.WriteExpressions))
             {
                 // 提取原始数据
-                object rawdata = jToken is JValue jValue ? jValue.Value : jToken is JArray jArray ? jArray : jToken.ToString();
+                object rawdata = jToken.GetObjectFromJToken();
                 try
                 {
                     // 根据写入表达式转换数据
@@ -674,8 +674,8 @@ public abstract class CollectBase : DriverBase, IRpcDriver
         return new Dictionary<string, Dictionary<string, IOperResult>>()
         {
             {
-               this.DeviceName ,
-           results.Concat(results1).ToDictionary(a => a.Key, a => (IOperResult)a.Value)
+                DeviceName ,
+                results.Concat(results1).ToDictionary(a => a.Key, a => (IOperResult)a.Value)
             }
         };
     }

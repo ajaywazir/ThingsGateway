@@ -99,7 +99,7 @@ public class DatabaseLoggingWriter : IDatabaseLoggingWriter
         var opAccount = loggingMonitor.AuthorizationClaims?.Where(it => it.Type == ClaimConst.Account).Select(it => it.Value).FirstOrDefault();
 
         //获取参数json字符串，
-        var paramJson = loggingMonitor.Parameters == null || loggingMonitor.Parameters.Count == 0 ? null : loggingMonitor.Parameters[0].Value.ToJsonNetString();
+        var paramJson = loggingMonitor.Parameters == null || loggingMonitor.Parameters.Count == 0 ? null : loggingMonitor.Parameters[0].Value.ToSystemTextJsonString();
 
         //获取结果json字符串
         var resultJson = string.Empty;
@@ -107,7 +107,7 @@ public class DatabaseLoggingWriter : IDatabaseLoggingWriter
         {
             if (loggingMonitor.ReturnInformation.Value != null)//如果返回值不为空
             {
-                resultJson = loggingMonitor.ReturnInformation.Value.ToJsonNetString();
+                resultJson = loggingMonitor.ReturnInformation.Value.ToSystemTextJsonString();
             }
         }
 
@@ -168,7 +168,7 @@ public class DatabaseLoggingWriter : IDatabaseLoggingWriter
         if (path == "/api/auth/login")
         {
             //如果是登录，用户信息就从返回值里拿
-            var result = loggingMonitor.ReturnInformation?.Value?.ToJsonNetString();//返回值转json
+            var result = loggingMonitor.ReturnInformation?.Value?.ToSystemTextJsonString();//返回值转json
             var userInfo = result.FromJsonNetString<UnifyResult<LoginOutput>>();//格式化成user表
             opAccount = userInfo.Data.Account;//赋值账号
             verificatId = userInfo.Data.VerificatId;
@@ -194,10 +194,10 @@ public class DatabaseLoggingWriter : IDatabaseLoggingWriter
 
             ReqMethod = loggingMonitor.HttpMethod,
             ReqUrl = path,
-            ResultJson = loggingMonitor.ReturnInformation?.Value?.ToJsonNetString(),
+            ResultJson = loggingMonitor.ReturnInformation?.Value?.ToSystemTextJsonString(),
             ClassName = loggingMonitor.DisplayName,
             MethodName = loggingMonitor.ActionName,
-            ParamJson = loggingMonitor.Parameters?.ToJsonNetString(),
+            ParamJson = loggingMonitor.Parameters?.ToSystemTextJsonString(),
         };
         _operateLogMessageQueue.Enqueue(sysLogVisit);
 

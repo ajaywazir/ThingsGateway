@@ -59,7 +59,7 @@ public partial class OpcUaServer : BusinessBase
         {
             _ = Task.Run(async () =>
             {
-                await this.DeviceThreadManage.RestartDeviceAsync(this.CurrentDevice, false).ConfigureAwait(false);
+                await DeviceThreadManage.RestartDeviceAsync(CurrentDevice, false).ConfigureAwait(false);
             }
             , cancellationToken);
             return;

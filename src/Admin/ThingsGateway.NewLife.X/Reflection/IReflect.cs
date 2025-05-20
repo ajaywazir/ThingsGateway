@@ -627,6 +627,8 @@ public class DefaultReflect : IReflect
     /// <returns></returns>
     public virtual Type? GetElementType(Type type)
     {
+        if (type == null) return null;
+
         if (type.HasElementType) return type.GetElementType();
 
         if (type.As<IEnumerable>())

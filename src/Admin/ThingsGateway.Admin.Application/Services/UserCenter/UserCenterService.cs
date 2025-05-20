@@ -203,7 +203,7 @@ internal sealed class UserCenterService : BaseService<SysUser>, IUserCenterServi
     public async Task UpdateWorkbenchInfoAsync(WorkbenchInfo input)
     {
         //关系表保存个人工作台
-        await _relationService.SaveRelationAsync(RelationCategoryEnum.UserWorkbenchData, input.Id, null, input.Shortcuts.ToJsonNetString(),
+        await _relationService.SaveRelationAsync(RelationCategoryEnum.UserWorkbenchData, input.Id, null, input.Shortcuts.ToSystemTextJsonString(),
             true).ConfigureAwait(false);
     }
 

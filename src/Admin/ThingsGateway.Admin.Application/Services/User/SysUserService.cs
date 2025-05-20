@@ -435,7 +435,7 @@ internal sealed class SysUserService : BaseService<SysUser>, ISysUserService
         if (sysUser != null)
         {
             await _relationService.SaveRelationBatchAsync(RelationCategoryEnum.UserHasOpenApiPermission, input.Id,
-                 input.GrantInfoList.Select(a => (a.ApiUrl, a.ToJsonNetString())),
+                 input.GrantInfoList.Select(a => (a.ApiUrl, a.ToSystemTextJsonString())),
                 true).ConfigureAwait(false);//添加到数据库
             DeleteUserFromCache(input.Id);
         }
@@ -557,7 +557,7 @@ internal sealed class SysUserService : BaseService<SysUser>, ISysUserService
     public async Task GrantResourceAsync(GrantResourceData input)
     {
         var menuIds = input.GrantInfoList.Select(it => it.MenuId).ToList();//菜单ID
-        var extJsons = input.GrantInfoList.Select(it => it.ToJsonNetString()).ToList();//拓展信息
+        var extJsons = input.GrantInfoList.Select(it => it.ToSystemTextJsonString()).ToList();//拓展信息
         var relationUsers = new List<SysRelation>();//要添加的用户资源和授权关系表
         var sysUser = await GetUserByIdAsync(input.Id).ConfigureAwait(false);//获取用户
         await CheckApiDataScopeAsync(sysUser.OrgId, sysUser.CreateUserId).ConfigureAwait(false);
@@ -613,7 +613,7 @@ internal sealed class SysUserService : BaseService<SysUser>, ISysUserService
                     TargetId = it.ApiRoute,
                     Category = RelationCategoryEnum.UserHasPermission,
                     ExtJson = new RelationPermission { ApiUrl = it.ApiRoute }
-                            .ToJsonNetString()
+                            .ToSystemTextJsonString()
                 });
                 relationUsers.AddRange(relationUserPer);//合并列表
             }

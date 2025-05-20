@@ -73,7 +73,7 @@ public partial class MqttClient : BusinessBaseWithCacheIntervalScript<VariableBa
                 var topicArray = new TopicArray()
                 {
                     Topic = "v1/gateway/connect",
-                    Json = Serialize(json, _driverPropertys.JsonFormattingIndented)
+                    Payload = json.ToSystemTextJsonUtf8Bytes(_driverPropertys.JsonFormattingIndented)
                 };
 
                 topicJsonTBList.Add(topicArray);
@@ -87,7 +87,7 @@ public partial class MqttClient : BusinessBaseWithCacheIntervalScript<VariableBa
                 var topicArray = new TopicArray()
                 {
                     Topic = "v1/gateway/disconnect",
-                    Json = Serialize(json, _driverPropertys.JsonFormattingIndented)
+                    Payload = json.ToSystemTextJsonUtf8Bytes(_driverPropertys.JsonFormattingIndented)
                 };
 
                 topicJsonTBList.Add(topicArray);
@@ -393,11 +393,11 @@ public partial class MqttClient : BusinessBaseWithCacheIntervalScript<VariableBa
                     thingsBoardRpcResponseData.device = thingsBoardRpcData.device;
                     thingsBoardRpcResponseData.id = thingsBoardRpcData.data.id;
                     thingsBoardRpcResponseData.data.success = mqttRpcResult[thingsBoardRpcResponseData.device].All(b => b.Value.IsSuccess);
-                    thingsBoardRpcResponseData.data.message = mqttRpcResult[thingsBoardRpcResponseData.device].Select(a => a.Value.ErrorMessage).ToJsonNetString(_driverPropertys.JsonFormattingIndented);
+                    thingsBoardRpcResponseData.data.message = mqttRpcResult[thingsBoardRpcResponseData.device].Select(a => a.Value.ErrorMessage).ToSystemTextJsonString(_driverPropertys.JsonFormattingIndented);
 
                     var variableMessage = new MqttApplicationMessageBuilder()
 .WithTopic($"{args.ApplicationMessage.Topic}")
-.WithPayload(thingsBoardRpcResponseData.ToJsonNetString(_driverPropertys.JsonFormattingIndented)).Build();
+.WithPayload(thingsBoardRpcResponseData.ToSystemTextJsonString(_driverPropertys.JsonFormattingIndented)).Build();
                     await _mqttClient.PublishAsync(variableMessage).ConfigureAwait(false);
 
 
@@ -425,7 +425,7 @@ public partial class MqttClient : BusinessBaseWithCacheIntervalScript<VariableBa
 
                     var variableMessage = new MqttApplicationMessageBuilder()
 .WithTopic($"{args.ApplicationMessage.Topic}/Response")
-.WithPayload(mqttRpcResult.ToJsonNetString(_driverPropertys.JsonFormattingIndented)).Build();
+.WithPayload(mqttRpcResult.ToSystemTextJsonString(_driverPropertys.JsonFormattingIndented)).Build();
                     await _mqttClient.PublishAsync(variableMessage).ConfigureAwait(false);
 
 
@@ -456,7 +456,7 @@ public partial class MqttClient : BusinessBaseWithCacheIntervalScript<VariableBa
                         ResultCode = a.ResultCode.ToString()
                     }
                     )
-                    .ToJsonNetString(_driverPropertys.JsonFormattingIndented)}");
+                    .ToSystemTextJsonString(_driverPropertys.JsonFormattingIndented)}");
             }
         }
     }
@@ -473,7 +473,7 @@ public partial class MqttClient : BusinessBaseWithCacheIntervalScript<VariableBa
             {
                 var variableMessage = new MqttApplicationMessageBuilder()
     .WithTopic(topicArray.Topic).WithQualityOfServiceLevel(_driverPropertys.MqttQualityOfServiceLevel).WithRetainFlag()
-    .WithPayload(topicArray.Json).Build();
+    .WithPayload(topicArray.Payload).Build();
                 var result = await _mqttClient.PublishAsync(variableMessage, cancellationToken).ConfigureAwait(false);
                 if (result.IsSuccess)
                 {

@@ -67,7 +67,7 @@ public partial class OpcDaMaster : IDisposable
         LogMessage.AddLogger(logger);
 
         _plc.LogEvent = (a, b, c, d) => LogMessage.Log((LogLevel)a, b, c, d);
-        _plc.DataChangedHandler += (a, b, c) => LogMessage.Trace(c.ToJsonNetString());
+        _plc.DataChangedHandler += (a, b, c) => LogMessage.Trace(c.ToSystemTextJsonString());
         base.OnInitialized();
     }
 
@@ -173,9 +173,9 @@ public partial class OpcDaMaster : IDisposable
                 foreach (var item in data)
                 {
                     if (item.Value.Item1)
-                        LogMessage?.LogInformation(item.ToJsonNetString());
+                        LogMessage?.LogInformation(item.ToSystemTextJsonString());
                     else
-                        LogMessage?.LogWarning(item.ToJsonNetString());
+                        LogMessage?.LogWarning(item.ToSystemTextJsonString());
                 }
             }
         }

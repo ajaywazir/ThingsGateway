@@ -232,15 +232,7 @@ public class OpcUaMaster : CollectBase
 
                     foreach (var item in data1)
                     {
-                        object value;
-                        if (data.Item3 is JValue jValue)
-                        {
-                            value = jValue.Value;
-                        }
-                        else
-                        {
-                            value = data.Item3;
-                        }
+                        object value = data.Item3.GetObjectFromJToken();
 
                         var isGood = StatusCode.IsGood(data.Item2.StatusCode);
                         if (_driverProperties.SourceTimestampEnable)
@@ -269,7 +261,7 @@ public class OpcUaMaster : CollectBase
         }
         catch (Exception ex)
         {
-            return new OperResult<byte[]>($"ReadSourceAsync {addresss.ToJsonNetString()}：{Environment.NewLine}{ex}");
+            return new OperResult<byte[]>($"ReadSourceAsync {addresss.ToSystemTextJsonString()}：{Environment.NewLine}{ex}");
         }
         finally
         {
@@ -352,15 +344,8 @@ public class OpcUaMaster : CollectBase
 
             if (!VariableAddresDicts.TryGetValue(data.monitoredItem.StartNodeId.ToString(), out var itemReads)) return;
 
-            object value;
-            if (data.jToken is JValue jValue)
-            {
-                value = jValue.Value;
-            }
-            else
-            {
-                value = data.jToken;
-            }
+            object value = data.jToken.GetObjectFromJToken();
+
             var isGood = StatusCode.IsGood(data.dataValue.StatusCode);
             if (_driverProperties.SourceTimestampEnable)
             {
@@ -372,14 +357,7 @@ public class OpcUaMaster : CollectBase
                     return;
                 if (DisposedValue)
                     return;
-                if (item.DataType == DataTypeEnum.Object)
-                    if (type.Namespace.StartsWith("System"))
-                    {
-                        var enumValues = Enum.GetValues<DataTypeEnum>();
-                        var stringList = enumValues.Select(e => e.ToString());
-                        if (stringList.Contains(type.Name))
-                            try { item.DataType = Enum.Parse<DataTypeEnum>(type.Name); } catch { }
-                    }
+
                 if (isGood)
                 {
                     item.SetValue(value, time);
@@ -403,4 +381,5 @@ public class OpcUaMaster : CollectBase
             success = false;
         }
     }
+
 }

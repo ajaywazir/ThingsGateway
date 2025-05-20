@@ -77,7 +77,7 @@ internal sealed class SysDictService : BaseService<SysDict>, ISysDictService
         //更新数据
         List<SysDict> dicts = new List<SysDict>()
         {
-            new SysDict() { DictType = DictTypeEnum.System, Category = nameof(PagePolicy), Name = nameof(PagePolicy.Shortcuts), Code = input.Shortcuts.ToJsonNetString() },
+            new SysDict() { DictType = DictTypeEnum.System, Category = nameof(PagePolicy), Name = nameof(PagePolicy.Shortcuts), Code = input.Shortcuts.ToSystemTextJsonString() },
     };
         var storageable = await db.Storageable(dicts).WhereColumns(it => new { it.DictType, it.Category, it.Name }).ToStorageAsync().ConfigureAwait(false);
 

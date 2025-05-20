@@ -100,7 +100,7 @@ public partial class OpcUaMaster : IDisposable
         LogMessage.AddLogger(logger);
 
         _plc.LogEvent = (a, b, c, d) => LogMessage.Log((LogLevel)a, b, c, d);
-        _plc.DataChangedHandler += (a) => LogMessage.Trace(a.ToJsonNetString());
+        _plc.DataChangedHandler += (a) => LogMessage.Trace(a.ToSystemTextJsonString());
         base.OnInitialized();
     }
 
@@ -205,9 +205,9 @@ public partial class OpcUaMaster : IDisposable
             foreach (var item in data)
             {
                 if (item.Value.Item1)
-                    LogMessage?.LogInformation(item.ToJsonNetString());
+                    LogMessage?.LogInformation(item.ToSystemTextJsonString());
                 else
-                    LogMessage?.LogWarning(item.ToJsonNetString());
+                    LogMessage?.LogWarning(item.ToSystemTextJsonString());
             }
         }
     }

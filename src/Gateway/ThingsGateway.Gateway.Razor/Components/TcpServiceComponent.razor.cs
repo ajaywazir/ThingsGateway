@@ -74,7 +74,7 @@ public partial class TcpServiceComponent : IDriverUIBase
                     }
                     return data;
                 }).ToList();
-                data[i].PluginInfos = pluginInfos.ToJsonNetString();
+                data[i].PluginInfos = pluginInfos.ToSystemTextJsonString();
             }
 
             var query = data.GetQueryData(options);

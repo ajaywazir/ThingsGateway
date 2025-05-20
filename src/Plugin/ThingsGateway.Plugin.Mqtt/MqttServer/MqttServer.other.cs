@@ -267,7 +267,7 @@ public partial class MqttServer : BusinessBaseWithCacheIntervalScript<VariableBa
                 {
                     Messages.Add(new MqttApplicationMessageBuilder()
     .WithTopic(topicArray.Topic)
-    .WithPayload(topicArray.Json).Build());
+    .WithPayload(topicArray.Payload).Build());
                 }
             }
         }
@@ -282,7 +282,7 @@ public partial class MqttServer : BusinessBaseWithCacheIntervalScript<VariableBa
                     {
                         Messages.Add(new MqttApplicationMessageBuilder()
         .WithTopic(topicArray.Topic)
-        .WithPayload(topicArray.Json).Build());
+        .WithPayload(topicArray.Payload).Build());
                     }
                 }
             }
@@ -296,7 +296,7 @@ public partial class MqttServer : BusinessBaseWithCacheIntervalScript<VariableBa
                 {
                     Messages.Add(new MqttApplicationMessageBuilder()
     .WithTopic(topicArray.Topic)
-    .WithPayload(topicArray.Json).Build());
+    .WithPayload(topicArray.Payload).Build());
                 }
             }
         }
@@ -336,7 +336,7 @@ public partial class MqttServer : BusinessBaseWithCacheIntervalScript<VariableBa
         {
             var variableMessage = new MqttApplicationMessageBuilder()
 .WithTopic($"{args.ApplicationMessage.Topic}/Response")
-.WithPayload(mqttRpcResult.ToJsonNetString(_driverPropertys.JsonFormattingIndented)).Build();
+.WithPayload(mqttRpcResult.ToSystemTextJsonString(_driverPropertys.JsonFormattingIndented)).Build();
             await _mqttServer.InjectApplicationMessage(
                      new InjectedMqttApplicationMessage(variableMessage)).ConfigureAwait(false);
         }
@@ -401,7 +401,7 @@ public partial class MqttServer : BusinessBaseWithCacheIntervalScript<VariableBa
         {
             var message = new MqttApplicationMessageBuilder()
 .WithTopic(topicArray.Topic).WithQualityOfServiceLevel(_driverPropertys.MqttQualityOfServiceLevel).WithRetainFlag()
-.WithPayload(topicArray.Json).Build();
+.WithPayload(topicArray.Payload).Build();
             await _mqttServer.InjectApplicationMessage(
                     new InjectedMqttApplicationMessage(message), cancellationToken).ConfigureAwait(false);
 

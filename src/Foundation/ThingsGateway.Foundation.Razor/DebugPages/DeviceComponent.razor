@@ -84,7 +84,7 @@
                             </div>
                             <div class="col-12 col-md-4 p-1">
 
-                                <BootstrapLabel Value=@(item.Value?.ToJsonNetString()) title=@(item.LastErrorMessage) class=@(item.IsOnline?"green--text":"red--text")>@(item.Value?.ToJsonNetString())</BootstrapLabel>
+                                <BootstrapLabel Value=@(item.Value?.ToSystemTextJsonString()) title=@(item.LastErrorMessage) class=@(item.IsOnline?"green--text":"red--text")>@(item.Value?.ToSystemTextJsonString())</BootstrapLabel>
 
                             </div>
                         </div>

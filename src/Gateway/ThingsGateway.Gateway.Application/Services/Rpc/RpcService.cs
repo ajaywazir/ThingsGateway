@@ -217,7 +217,7 @@ internal sealed class RpcService : IRpcService
                                     OperateObject = operObj,
                                     OperateSource = sourceDes,
                                     ParamJson = parJson?.ToString(),
-                                    ResultJson = variableResult.Value is IOperResult<object> operResult ? operResult.Content?.ToJsonNetString() : string.Empty
+                                    ResultJson = variableResult.Value is IOperResult<object> operResult ? operResult.Content?.ToSystemTextJsonString() : string.Empty
                                 }
                             );
 

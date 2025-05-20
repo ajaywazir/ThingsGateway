@@ -34,7 +34,7 @@ public partial class VariableEditComponent
         var ret = "";
         if (d != null)
         {
-            ret = d.ToJsonNetString();
+            ret = d.ToSystemTextJsonString();
         }
         return ret;
     }

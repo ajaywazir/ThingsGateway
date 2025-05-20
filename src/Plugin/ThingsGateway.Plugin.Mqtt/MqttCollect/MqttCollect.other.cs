@@ -128,7 +128,7 @@ public partial class MqttCollect : CollectBase
                         ResultCode = a.ResultCode.ToString()
                     }
                     )
-                    .ToJsonNetString()}");
+                    .ToSystemTextJsonString()}");
             }
         }
     }

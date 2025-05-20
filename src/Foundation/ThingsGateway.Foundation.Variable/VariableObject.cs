@@ -71,8 +71,7 @@ public abstract class VariableObject
         var jToken = JToken.FromObject(value);
         if (!string.IsNullOrEmpty(variableRuntimeProperty.Attribute.WriteExpressions))
         {
-            object rawdata = jToken is JValue jValue ? jValue.Value : jToken is JArray jArray ? jArray : jToken.ToString();
-
+            object rawdata = jToken.GetObjectFromJToken();
             object data = variableRuntimeProperty.Attribute.WriteExpressions.GetExpressionsResult(rawdata, Device?.Logger);
             jToken = JToken.FromObject(data);
         }

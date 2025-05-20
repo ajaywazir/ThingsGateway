@@ -213,7 +213,7 @@ public partial class RabbitMQProducer : BusinessBaseWithCacheIntervalScript<Vari
         {
             if (_channel != null)
             {
-                await _channel.BasicPublishAsync(_driverPropertys.ExchangeName, topicArray.Topic, topicArray.Json, cancellationToken).ConfigureAwait(false);
+                await _channel.BasicPublishAsync(_driverPropertys.ExchangeName, topicArray.Topic, topicArray.Payload, cancellationToken).ConfigureAwait(false);
 
                 if (_driverPropertys.DetailLog)
                 {

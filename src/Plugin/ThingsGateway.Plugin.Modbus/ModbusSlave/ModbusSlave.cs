@@ -227,7 +227,7 @@ public class ModbusSlave : BusinessBase
                     var int16Data = thingsGatewayBitConverter.ToUInt16(writeData, 0);
                     var wData = BitHelper.GetBit(int16Data, bitIndex.Value);
 
-                    var result = await item.Value.RpcAsync(wData.ToJsonNetString(), $"{nameof(ModbusSlave)}-{CurrentDevice.Name}-{$"{channel}"}").ConfigureAwait(false);
+                    var result = await item.Value.RpcAsync(wData.ToSystemTextJsonString(), $"{nameof(ModbusSlave)}-{CurrentDevice.Name}-{$"{channel}"}").ConfigureAwait(false);
 
                     if (!result.IsSuccess)
                         return result;
@@ -237,7 +237,7 @@ public class ModbusSlave : BusinessBase
                 {
                     var data = thingsGatewayBitConverter.GetDataFormBytes(_plc, addressStr, writeData, 0, dType, item.Value.ArrayLength ?? 1);
 
-                    var result = await item.Value.RpcAsync(data.ToJsonNetString(), $"{nameof(ModbusSlave)}-{CurrentDevice.Name}-{$"{channel}"}").ConfigureAwait(false);
+                    var result = await item.Value.RpcAsync(data.ToSystemTextJsonString(), $"{nameof(ModbusSlave)}-{CurrentDevice.Name}-{$"{channel}"}").ConfigureAwait(false);
 
                     if (!result.IsSuccess)
                         return result;

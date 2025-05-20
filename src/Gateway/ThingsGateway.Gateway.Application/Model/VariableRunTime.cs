@@ -12,6 +12,8 @@ using BootstrapBlazor.Components;
 
 using Mapster;
 
+using Newtonsoft.Json.Linq;
+
 using SqlSugar;
 
 using ThingsGateway.Gateway.Application.Extensions;
@@ -142,7 +144,7 @@ public class VariableRuntime : Variable, IVariable, IDisposable
     /// 实时值
     /// </summary>
     [AutoGenerateColumn(Visible = true, Order = 6)]
-    public string? RuntimeType => Value?.GetType()?.Name;
+    public string? RuntimeType => Value?.GetType()?.ToString();
 
     /// <summary>
     /// 设置变量值与时间/质量戳
@@ -210,6 +212,11 @@ public class VariableRuntime : Variable, IVariable, IDisposable
         }
         else
         {
+            if (data is JToken jToken)
+            {
+                data = jToken.GetObjectFromJToken();
+            }
+
             //判断变化，插件传入的Value可能是基础类型，也有可能是class，比较器无法识别是否变化，这里json处理序列化比较
             //检查IComparable
             if (!data.Equals(_value))
@@ -221,7 +228,7 @@ public class VariableRuntime : Variable, IVariable, IDisposable
                 else
                 {
                     if (_value != null)
-                        changed = data.ToJsonNetString(false) != _value.ToJsonNetString(false);
+                        changed = data.ToSystemTextJsonString(false) != _value.ToSystemTextJsonString(false);
                     else
                         changed = true;
                 }

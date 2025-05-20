@@ -127,10 +127,10 @@ public sealed class OperDescAttribute : MoAttribute
             {
                 parametersDict[parametersInfo[i].Name!] = args[i];
             }
-            paramJson = parametersDict.ToJsonNetString();
+            paramJson = parametersDict.ToSystemTextJsonString();
         }
         var result = context.ReturnValue;
-        var resultJson = IsRecordPar ? result?.ToJsonNetString() : null;
+        var resultJson = IsRecordPar ? result?.ToSystemTextJsonString() : null;
         //操作日志表实体
         var log = new SysOperateLog
         {

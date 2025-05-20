@@ -14,11 +14,11 @@ public struct TopicArray
 {
     public TopicArray(string topic, byte[] json, int count)
     {
-        Topic = topic; Json = json; Count = count;
+        Topic = topic; Payload = json; Count = count;
     }
 
     public int Count { get; set; } = 1;
-    public byte[] Json { get; set; }
+    public byte[] Payload { get; set; }
     public string Topic { get; set; }
 
 }

@@ -277,7 +277,7 @@ internal sealed class SysRoleService : BaseService<SysRole>, ISysRoleService
         if (isSuperAdmin)
             throw Oops.Bah(Localizer["CanotGrantAdmin"]);
         var menuIds = input.GrantInfoList.Select(it => it.MenuId).ToList();//菜单ID
-        var extJsons = input.GrantInfoList.Select(it => it.ToJsonNetString()).ToList();//拓展信息
+        var extJsons = input.GrantInfoList.Select(it => it.ToSystemTextJsonString()).ToList();//拓展信息
         var relationRoles = new List<SysRelation>();//要添加的角色资源和授权关系表
         var sysRole = (await GetAllAsync().ConfigureAwait(false)).FirstOrDefault(it => it.Id == input.Id);//获取角色
 
@@ -338,7 +338,7 @@ internal sealed class SysRoleService : BaseService<SysRole>, ISysRoleService
                     ExtJson = new RelationPermission
                     {
                         ApiUrl = it.ApiRoute,
-                    }.ToJsonNetString()
+                    }.ToSystemTextJsonString()
                 });
                 relationRoles.AddRange(relationRolePer);//合并列表
             }
@@ -410,7 +410,7 @@ internal sealed class SysRoleService : BaseService<SysRole>, ISysRoleService
         if (sysRole != null)
         {
             await _relationService.SaveRelationBatchAsync(RelationCategoryEnum.RoleHasOpenApiPermission, input.Id,
-                 input.GrantInfoList.Select(a => (a.ApiUrl, a.ToJsonNetString()))
+                 input.GrantInfoList.Select(a => (a.ApiUrl, a.ToSystemTextJsonString()))
                 , true).ConfigureAwait(false);//添加到数据库
             await ClearTokenUtil.DeleteUserCacheByRoleIds(new List<long> { input.Id }).ConfigureAwait(false);//清除角色下用户缓存
         }

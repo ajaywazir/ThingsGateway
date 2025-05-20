@@ -403,7 +403,7 @@ finally
                 Title = GatewayLocalizer["DeleteConfirmTitle"],
                 BodyTemplate = (__builder) =>
                 {
-                    var data = modelIds.Select(a => a.Name).ToJsonNetString();
+                    var data = modelIds.Select(a => a.Name).ToSystemTextJsonString();
                     __builder.OpenElement(0, "div");
                     __builder.AddAttribute(1, "class", "w-100 ");
                     __builder.OpenElement(2, "span");
@@ -932,7 +932,7 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
                 Title = GatewayLocalizer["DeleteConfirmTitle"],
                 BodyTemplate = (__builder) =>
                 {
-                    var data = modelIds.Select(a => a.Name).ToJsonNetString();
+                    var data = modelIds.Select(a => a.Name).ToSystemTextJsonString();
                     __builder.OpenElement(0, "div");
                     __builder.AddAttribute(1, "class", "w-100 ");
                     __builder.OpenElement(2, "span");

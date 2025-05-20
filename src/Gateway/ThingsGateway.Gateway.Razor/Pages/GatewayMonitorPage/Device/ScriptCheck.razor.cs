@@ -34,7 +34,7 @@ public partial class ScriptCheck
     private Type type;
     protected override void OnInitialized()
     {
-        Input = Data.ToJsonNetString();
+        Input = Data.ToSystemTextJsonString();
         type = Data.GetType();
         base.OnInitialized();
     }
@@ -45,7 +45,7 @@ public partial class ScriptCheck
         {
             Data = (IEnumerable<object>)Newtonsoft.Json.JsonConvert.DeserializeObject(Input, type);
             var value = Data.GetDynamicModel(Script);
-            Output = value.ToJsonNetString();
+            Output = value.ToSystemTextJsonString();
         }
 
         catch (Exception ex)

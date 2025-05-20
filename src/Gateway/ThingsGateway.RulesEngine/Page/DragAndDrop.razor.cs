@@ -115,7 +115,7 @@ public partial class DragAndDrop
         {
 
             var data = RuleHelpers.Save(_blazorDiagram);
-            await DownloadService.DownloadFromStreamAsync("RulesJson.json", new MemoryStream(Encoding.UTF8.GetBytes(data.ToJsonNetString())));
+            await DownloadService.DownloadFromStreamAsync("RulesJson.json", new MemoryStream(Encoding.UTF8.GetBytes(data.ToSystemTextJsonString())));
 
         }
         catch (Exception ex)

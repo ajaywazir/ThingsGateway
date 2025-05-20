@@ -90,7 +90,7 @@ public abstract class DeviceComponentBase : ComponentBase, IDisposable
                 var data = await Plc.ReadAsync(RegisterAddress, ArrayLength, DataType);
                 if (data.IsSuccess)
                 {
-                    Plc.Logger?.LogInformation(data.Content.ToJsonNetString());
+                    Plc.Logger?.LogInformation(data.Content.ToSystemTextJsonString());
                 }
                 else
                 {

@@ -34,7 +34,7 @@ public partial class USheet
             await _sheetExcel.PushDataAsync(new UniverSheetData()
             {
                 CommandName = "SetWorkbook",
-                WorkbookData = Model.ToJsonNetString(),
+                WorkbookData = Model.ToSystemTextJsonString(),
             });
         });
     }

@@ -226,7 +226,7 @@ public class OpcDaMaster : CollectBase
                 return;
             if (DisposedValue)
                 return;
-            LogMessage.Trace($"{ToString()} Change:{Environment.NewLine} {values?.ToJsonNetString()}");
+            LogMessage.Trace($"{ToString()} Change:{Environment.NewLine} {values?.ToSystemTextJsonString()}");
 
             foreach (var data in values)
             {
@@ -255,26 +255,7 @@ public class OpcDaMaster : CollectBase
                     }
                     if (quality == 192)
                     {
-                        if (item.DataType == DataTypeEnum.Object)
-                            if (type.Namespace.StartsWith("System"))
-                            {
-                                var enumValues = Enum.GetValues<DataTypeEnum>();
-                                var stringList = enumValues.Select(e => e.ToString());
-                                if (stringList.Contains(type.Name))
-                                    try { item.DataType = Enum.Parse<DataTypeEnum>(type.Name); } catch { }
-                            }
-
-                        var jToken = JToken.FromObject(value);
-                        object newValue;
-                        if (jToken is JValue jValue)
-                        {
-                            newValue = jValue.Value;
-                        }
-                        else
-                        {
-                            newValue = jToken;
-                        }
-                        item.SetValue(newValue, time);
+                        item.SetValue(value, time);
                     }
                     else
                     {

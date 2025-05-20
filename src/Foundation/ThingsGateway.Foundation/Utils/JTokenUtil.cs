@@ -48,25 +48,88 @@ public static class JTokenUtil
     /// 根据JToken获取Object类型值<br></br>
     /// 对应返回 对象字典 或 类型数组 或 类型值
     /// </summary>
-    public static object? GetObjectFromJToken(this JToken jtoken)
+    public static object? GetObjectFromJToken(this JToken token)
     {
-        if (jtoken == null)
+        if (token == null)
             return null;
-        switch (jtoken.Type)
+
+        switch (token.Type)
         {
             case JTokenType.Object:
-                // 如果是对象类型，递归调用本方法获取嵌套的键值对
-                return jtoken.Children<JProperty>()
-                    .ToDictionary(prop => prop.Name, prop => GetObjectFromJToken(prop.Value));
+                var obj = new Dictionary<string, object>();
+                foreach (var prop in (JObject)token)
+                    obj[prop.Key] = GetObjectFromJToken(prop.Value);
+                return obj;
 
             case JTokenType.Array:
-                // 如果是数组类型，递归调用本方法获取嵌套的元素
-                return jtoken.Select(GetObjectFromJToken).ToArray();
+                var array = (JArray)token;
 
+                if (array.All(x => x.Type == JTokenType.Integer))
+                    return array.Select(x => x.Value<long>()).ToList();
+
+                if (array.All(x => x.Type == JTokenType.Float))
+                    return array.Select(x => x.Value<double>()).ToList();
+
+                if (array.All(x => x.Type == JTokenType.String))
+                    return array.Select(x => x.Value<string>()).ToList();
+
+                if (array.All(x => x.Type == JTokenType.Boolean))
+                    return array.Select(x => x.Value<bool>()).ToList();
+
+                if (array.All(x => x.Type == JTokenType.Date))
+                    return array.Select(x => x.Value<DateTime>()).ToList();
+
+                if (array.All(x => x.Type == JTokenType.TimeSpan))
+                    return array.Select(x => x.Value<TimeSpan>()).ToList();
+
+                if (array.All(x => x.Type == JTokenType.Guid))
+                    return array.Select(x => x.Value<Guid>()).ToList();
+
+                if (array.All(x => x.Type == JTokenType.Uri))
+                    return array.Select(x => x.Value<Uri>()).ToList();
+
+                // 否则递归
+                return array.Select(x => GetObjectFromJToken(x)).ToList();
+
+            case JTokenType.Integer:
+                return token.ToObject<long>();
+
+            case JTokenType.Float:
+                return token.ToObject<double>();
+
+            case JTokenType.String:
+                return token.ToObject<string>();
+
+            case JTokenType.Boolean:
+                return token.ToObject<bool>();
+
+            case JTokenType.Null:
+            case JTokenType.Undefined:
+                return null;
+
+            case JTokenType.Date:
+                return token.ToObject<DateTime>();
+
+            case JTokenType.TimeSpan:
+                return token.ToObject<TimeSpan>();
+
+            case JTokenType.Guid:
+                return token.ToObject<Guid>();
+
+            case JTokenType.Uri:
+                return token.ToObject<Uri>();
+
+            case JTokenType.Bytes:
+                return token.ToObject<byte[]>();
+
+            case JTokenType.Comment:
+            case JTokenType.Raw:
+            case JTokenType.Property:
+            case JTokenType.Constructor:
             default:
-                // 其他类型直接转换为对应的 Object 类型值
-                return (jtoken as JValue)?.Value;
+                return token.ToString();
         }
+
     }
 
     #region json

@@ -19,6 +19,7 @@ using System.Globalization;
 
 using ThingsGateway.Foundation.OpcUa;
 using ThingsGateway.Gateway.Application;
+using ThingsGateway.NewLife.Reflection;
 
 using TouchSocket.Core;
 
@@ -288,12 +289,13 @@ public class ThingsGatewayNodeManager : CustomNodeManager2
         object newValue;
         try
         {
+            if (value is JToken token) value = token.GetObjectFromJToken();
+
             if (!tag.IsDataTypeInit && value != null)
             {
                 SetDataType(tag, value);
-                SetRank(tag, value);
             }
-            var jToken = JToken.FromObject(value is JToken jToken1 ? jToken1.ToString() : value);
+            var jToken = JToken.FromObject(value);
             var dataValue = JsonUtils.DecoderObject(
                Server.MessageContext,
            tag.DataType,
@@ -317,44 +319,20 @@ public class ThingsGatewayNodeManager : CustomNodeManager2
         void SetDataType(OpcUaTag tag, object value)
         {
             tag.IsDataTypeInit = true;
-            var tp = value.GetType();
-            if (tp == typeof(JArray))
-            {
-                try
-                {
-                    tp = ((JValue)((JArray)value).FirstOrDefault()).Value.GetType();
-                    tag.ValueRank = ValueRanks.OneOrMoreDimensions;
-                }
-                catch
-                {
-                }
-            }
-            if (tp == typeof(JValue))
-            {
-                tp = ((JValue)value).Value.GetType();
+
+            var elementType = value?.GetType()?.GetElementTypeEx();
+            if (elementType != null)
+                tag.ValueRank = ValueRanks.OneOrMoreDimensions;
+            else
                 tag.ValueRank = ValueRanks.Scalar;
-            }
+
+
+            var tp = elementType ?? value?.GetType() ?? typeof(string);
+
             tag.DataType = DataNodeType(tp);
             tag.ClearChangeMasks(SystemContext, false);
         }
 
-        void SetRank(OpcUaTag tag, object value)
-        {
-            tag.IsDataTypeInit = true;
-            var tp = value.GetType();
-            if (tp == typeof(JArray))
-            {
-                try
-                {
-                    tp = ((JValue)((JArray)value).FirstOrDefault()).Value.GetType();
-                    tag.ValueRank = ValueRanks.OneOrMoreDimensions;
-                }
-                catch
-                {
-                }
-            }
-            tag.ClearChangeMasks(SystemContext, false);
-        }
     }
 
     /// <summary>

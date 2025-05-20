@@ -210,7 +210,7 @@ public partial class KafkaProducer : BusinessBaseWithCacheIntervalScript<Variabl
         {
             using CancellationTokenSource cancellationTokenSource = new(_driverPropertys.Timeout);
             using CancellationTokenSource stoppingToken = CancellationTokenSource.CreateLinkedTokenSource(cancellationTokenSource.Token, cancellationToken);
-            var result = await _producer.ProduceAsync(topicArray.Topic, new Message<Null, byte[]> { Value = topicArray.Json }, stoppingToken.Token).ConfigureAwait(false);
+            var result = await _producer.ProduceAsync(topicArray.Topic, new Message<Null, byte[]> { Value = topicArray.Payload }, stoppingToken.Token).ConfigureAwait(false);
             if (result.Status != PersistenceStatus.Persisted)
             {
                 return new OperResult("Upload fail");

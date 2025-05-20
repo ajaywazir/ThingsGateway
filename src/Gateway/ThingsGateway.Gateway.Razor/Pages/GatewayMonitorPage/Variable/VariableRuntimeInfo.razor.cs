@@ -58,7 +58,7 @@ public partial class VariableRuntimeInfo : IDisposable
         var ret = "";
         if (d is TableColumnContext<VariableRuntime, object?> data && data?.Value != null)
         {
-            ret = data.Value.ToJsonNetString();
+            ret = data.Value.ToSystemTextJsonString();
         }
         return Task.FromResult(ret);
     }
