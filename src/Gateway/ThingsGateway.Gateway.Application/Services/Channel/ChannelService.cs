@@ -386,7 +386,7 @@ internal sealed class ChannelService : BaseService<Channel>, IChannelService
                     if (channel == null)
                     {
                         importPreviewOutput.HasError = true;
-                        importPreviewOutput.Results.Add((row++, false, Localizer["ImportNullError"]));
+                        importPreviewOutput.Results.Add((Interlocked.Increment(ref row), false, Localizer["ImportNullError"]));
                         return;
                     }
 
@@ -409,7 +409,7 @@ internal sealed class ChannelService : BaseService<Channel>, IChannelService
                     if (stringBuilder.Length > 0)
                     {
                         importPreviewOutput.HasError = true;
-                        importPreviewOutput.Results.Add((row++, false, stringBuilder.ToString()));
+                        importPreviewOutput.Results.Add((Interlocked.Increment(ref row), false, stringBuilder.ToString()));
                         return;
                     }
 
@@ -430,19 +430,19 @@ internal sealed class ChannelService : BaseService<Channel>, IChannelService
 
                     if (channel.IsUp && ((dataScope != null && dataScope?.Count > 0 && !dataScope.Contains(channel.CreateOrgId)) || dataScope?.Count == 0 && channel.CreateUserId != UserManager.UserId))
                     {
-                        importPreviewOutput.Results.Add((row++, false, "Operation not permitted"));
+                        importPreviewOutput.Results.Add((Interlocked.Increment(ref row), false, "Operation not permitted"));
                     }
                     else
                     {
                         channels.Add(channel);
-                        importPreviewOutput.Results.Add((row++, true, null));
+                        importPreviewOutput.Results.Add((Interlocked.Increment(ref row), true, null));
                     }
                     return;
                 }
                 catch (Exception ex)
                 {
                     importPreviewOutput.HasError = true;
-                    importPreviewOutput.Results.Add((row++, false, ex.Message));
+                    importPreviewOutput.Results.Add((Interlocked.Increment(ref row), false, ex.Message));
                     return;
                 }
             });
