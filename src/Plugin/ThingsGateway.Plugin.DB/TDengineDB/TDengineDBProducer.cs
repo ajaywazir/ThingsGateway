@@ -101,7 +101,7 @@ public partial class TDengineDBProducer : BusinessBaseWithCacheIntervalVariableM
     internal ISugarQueryable<TDengineDBHistoryValue> Query(DBHistoryValuePageInput input)
     {
         var db = TDengineDBUtil.GetDb(_driverPropertys.DbType, _driverPropertys.BigTextConnectStr, _driverPropertys.TableNameLow);
-        var query = db.Queryable<TDengineDBHistoryValue>()
+        var query = db.Queryable<TDengineDBHistoryValue>().AsTDengineSTable()
                              .WhereIF(input.StartTime != null, a => a.CreateTime >= input.StartTime)
                            .WhereIF(input.EndTime != null, a => a.CreateTime <= input.EndTime)
                            .WhereIF(!string.IsNullOrEmpty(input.VariableName), it => it.Name.Contains(input.VariableName))
