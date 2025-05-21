@@ -104,7 +104,7 @@ public class HardwareJob : IJob, IHardwareJob
             {
                 HardwareInfo.MachineInfo.Refresh();
                 HardwareInfo.UpdateTime = TimerX.Now.ToDefaultDateTimeFormat();
-                HardwareInfo.WorkingSet = (Environment.WorkingSet / 1024.0 / 1024.0).ToString("F2");
+                HardwareInfo.WorkingSet = (Environment.WorkingSet / 1024.0 / 1024.0).ToInt();
                 error = false;
             }
             catch (Exception ex)
@@ -126,11 +126,11 @@ public class HardwareJob : IJob, IHardwareJob
                             var his = new HistoryHardwareInfo()
                             {
                                 Date = TimerX.Now,
-                                DriveUsage = (100 - (HardwareInfo.DriveInfo.TotalFreeSpace * 100.00 / HardwareInfo.DriveInfo.TotalSize)).ToString("F2"),
-                                Battery = (HardwareInfo.MachineInfo.Battery * 100).ToString("F2"),
+                                DriveUsage = (100 - (HardwareInfo.DriveInfo.TotalFreeSpace * 100.00 / HardwareInfo.DriveInfo.TotalSize)).ToInt(),
+                                Battery = (HardwareInfo.MachineInfo.Battery * 100).ToInt(),
                                 MemoryUsage = (HardwareInfo.WorkingSet),
-                                CpuUsage = (HardwareInfo.MachineInfo.CpuRate * 100).ToString("F2"),
-                                Temperature = (HardwareInfo.MachineInfo.Temperature).ToString("F2"),
+                                CpuUsage = (HardwareInfo.MachineInfo.CpuRate * 100).ToInt(),
+                                Temperature = (HardwareInfo.MachineInfo.Temperature).ToInt(),
                             };
                             await db.Insertable(his).ExecuteCommandAsync(stoppingToken).ConfigureAwait(false);
                             MemoryCache.Remove(CacheKey);

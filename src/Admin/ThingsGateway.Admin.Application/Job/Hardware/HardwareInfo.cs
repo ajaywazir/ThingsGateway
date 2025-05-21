@@ -51,7 +51,7 @@ public class HardwareInfo
     /// 进程占用内存
     /// </summary>
     [AutoGenerateColumn(Ignore = true)]
-    public string WorkingSet { get; set; }
+    public int WorkingSet { get; set; }
 
     /// <summary>
     /// 更新时间

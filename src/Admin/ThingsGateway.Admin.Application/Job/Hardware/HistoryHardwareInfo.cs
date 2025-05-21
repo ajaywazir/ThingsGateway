@@ -19,23 +19,23 @@ public class HistoryHardwareInfo
 {
     /// <inheritdoc/>
     [SugarColumn(ColumnDescription = "磁盘使用率")]
-    public string DriveUsage { get; set; }
+    public int DriveUsage { get; set; }
 
     /// <inheritdoc/>
     [SugarColumn(ColumnDescription = "内存")]
-    public string MemoryUsage { get; set; }
+    public int MemoryUsage { get; set; }
 
     /// <inheritdoc/>
     [SugarColumn(ColumnDescription = "CPU使用率")]
-    public string CpuUsage { get; set; }
+    public int CpuUsage { get; set; }
 
     /// <inheritdoc/>
     [SugarColumn(ColumnDescription = "温度")]
-    public string Temperature { get; set; }
+    public int Temperature { get; set; }
 
     /// <inheritdoc/>
     [SugarColumn(ColumnDescription = "电池")]
-    public string Battery { get; set; }
+    public int Battery { get; set; }
 
     /// <inheritdoc/>
     [SugarColumn(ColumnDescription = "时间")]
