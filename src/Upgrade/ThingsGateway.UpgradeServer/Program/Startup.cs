@@ -308,7 +308,7 @@ public class Startup : AppStartup
         var certificate = new X509Certificate2("ThingsGateway.pfx", "ThingsGateway",X509KeyStorageFlags.EphemeralKeySet);
 #endif
         services.AddDataProtection()
-            .PersistKeysToFileSystem(new DirectoryInfo("../keys"))
+            .PersistKeysToFileSystem(new DirectoryInfo("keys"))
             .ProtectKeysWithCertificate(certificate)
             .UseCryptographicAlgorithms(new AuthenticatedEncryptorConfiguration
             {
