@@ -17,6 +17,7 @@ using System.Runtime.InteropServices;
 
 using ThingsGateway.Extension;
 using ThingsGateway.NewLife;
+using ThingsGateway.NewLife.Caching;
 using ThingsGateway.NewLife.Threading;
 using ThingsGateway.Schedule;
 
@@ -51,11 +52,20 @@ public class HardwareJob : IJob, IHardwareJob
 
     #endregion 属性
 
+    private MemoryCache MemoryCache = new() { };
+    private const string CacheKey = "HistoryHardwareInfo";
     /// <inheritdoc/>
     public async Task<List<HistoryHardwareInfo>> GetHistoryHardwareInfos()
     {
-        using var db = DbContext.Db.GetConnectionScopeWithAttr<HistoryHardwareInfo>().CopyNew();
-        return await db.Queryable<HistoryHardwareInfo>().Where(a => a.Date > DateTime.Now.AddDays(-3)).ToListAsync().ConfigureAwait(false);
+        var historyHardwareInfos = MemoryCache.Get<List<HistoryHardwareInfo>>(CacheKey);
+        if (historyHardwareInfos == null)
+        {
+            using var db = DbContext.Db.GetConnectionScopeWithAttr<HistoryHardwareInfo>().CopyNew();
+            historyHardwareInfos = await db.Queryable<HistoryHardwareInfo>().Where(a => a.Date > DateTime.Now.AddDays(-3)).ToListAsync().ConfigureAwait(false);
+
+            MemoryCache.Set(CacheKey, historyHardwareInfos);
+        }
+        return historyHardwareInfos;
     }
 
     private bool error = false;
@@ -123,10 +133,15 @@ public class HardwareJob : IJob, IHardwareJob
                                 Temperature = (HardwareInfo.MachineInfo.Temperature).ToString("F2"),
                             };
                             await db.Insertable(his).ExecuteCommandAsync(stoppingToken).ConfigureAwait(false);
+                            MemoryCache.Remove(CacheKey);
                         }
                         var sevenDaysAgo = TimerX.Now.AddDays(-HardwareInfoOptions.DaysAgo);
                         //删除特定信息
-                        await db.Deleteable<HistoryHardwareInfo>(a => a.Date <= sevenDaysAgo).ExecuteCommandAsync(stoppingToken).ConfigureAwait(false);
+                        var result = await db.Deleteable<HistoryHardwareInfo>(a => a.Date <= sevenDaysAgo).ExecuteCommandAsync(stoppingToken).ConfigureAwait(false);
+                        if (result > 0)
+                        {
+                            MemoryCache.Remove(CacheKey);
+                        }
                     }
                 }
                 error = false;

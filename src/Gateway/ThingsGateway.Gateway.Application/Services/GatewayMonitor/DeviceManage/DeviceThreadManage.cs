@@ -38,8 +38,8 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
     /// </summary>
     public static volatile int CycleInterval = ManageHelper.ChannelThreadOptions.MaxCycleInterval;
 
-    private static IDispatchService<DeviceRuntime> devicelRuntimeDispatchService;
-    private static IDispatchService<DeviceRuntime> DeviceRuntimeDispatchService
+    private IDispatchService<DeviceRuntime> devicelRuntimeDispatchService;
+    private IDispatchService<DeviceRuntime> DeviceRuntimeDispatchService
     {
         get
         {

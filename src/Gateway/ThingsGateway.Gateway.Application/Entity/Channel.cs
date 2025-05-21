@@ -140,7 +140,7 @@ public class Channel : ChannelOptionsBase, IPrimaryIdEntity, IBaseDataEntity, IB
     /// <summary>
     /// 缓存超时
     /// </summary>
-    [SugarColumn(ColumnDescription = "缓存超时", IsNullable = true, DefaultValue = "500")]
+    [SugarColumn(ColumnDescription = "缓存超时", IsNullable = true)]
     [AutoGenerateColumn(Visible = true, Filterable = true, Sortable = true)]
     [MinValue(100)]
     public override int CacheTimeout { get; set; } = 500;
@@ -148,7 +148,7 @@ public class Channel : ChannelOptionsBase, IPrimaryIdEntity, IBaseDataEntity, IB
     /// <summary>
     /// 连接超时
     /// </summary>
-    [SugarColumn(ColumnDescription = "连接超时", IsNullable = true, DefaultValue = "3000")]
+    [SugarColumn(ColumnDescription = "连接超时", IsNullable = true)]
     [AutoGenerateColumn(Visible = true, Filterable = true, Sortable = true)]
     [MinValue(100)]
     public override int ConnectTimeout { get; set; } = 3000;
@@ -156,26 +156,26 @@ public class Channel : ChannelOptionsBase, IPrimaryIdEntity, IBaseDataEntity, IB
     /// <summary>
     /// 最大并发数
     /// </summary>
-    [SugarColumn(ColumnDescription = "最大并发数", IsNullable = true, DefaultValue = "1")]
+    [SugarColumn(ColumnDescription = "最大并发数", IsNullable = true)]
     [AutoGenerateColumn(Visible = true, Filterable = true, Sortable = true)]
     [MinValue(1)]
     public override int MaxConcurrentCount { get; set; } = 1;
 
-    [SugarColumn(ColumnDescription = "最大连接数", IsNullable = true, DefaultValue = "10000")]
+    [SugarColumn(ColumnDescription = "最大连接数", IsNullable = true)]
     [AutoGenerateColumn(Visible = true, Filterable = true, Sortable = true)]
     public override int MaxClientCount { get; set; } = 10000;
 
-    [SugarColumn(ColumnDescription = "客户端滑动过期时间", IsNullable = true, DefaultValue = "120000")]
+    [SugarColumn(ColumnDescription = "客户端滑动过期时间", IsNullable = true)]
     [AutoGenerateColumn(Visible = true, Filterable = true, Sortable = true)]
     public override int CheckClearTime { get; set; } = 120000;
 
     [SugarColumn(ColumnDescription = "心跳内容", IsNullable = true)]
     [AutoGenerateColumn(Visible = true, Filterable = true, Sortable = true)]
-    public override string Heartbeat { get; set; } = "Heartbeat";
+    public override string Heartbeat { get; set; }
 
     #region dtu终端
 
-    [SugarColumn(ColumnDescription = "心跳间隔", IsNullable = true, DefaultValue = "60000")]
+    [SugarColumn(ColumnDescription = "心跳间隔", IsNullable = true)]
     [AutoGenerateColumn(Visible = true, Filterable = true, Sortable = true)]
     public override int HeartbeatTime { get; set; } = 60000;
 
@@ -185,7 +185,7 @@ public class Channel : ChannelOptionsBase, IPrimaryIdEntity, IBaseDataEntity, IB
 
     #endregion
 
-    [SugarColumn(ColumnDescription = "Dtu类型", IsNullable = true, DefaultValue = "0")]
+    [SugarColumn(ColumnDescription = "Dtu类型", IsNullable = true)]
     [AutoGenerateColumn(Visible = true, Filterable = true, Sortable = true)]
     public override DtuSeviceType DtuSeviceType { get; set; }
 

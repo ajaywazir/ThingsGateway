@@ -1,5 +1,4 @@
-﻿using System.Buffers;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.InteropServices;
 
 using ThingsGateway.NewLife.Collections;

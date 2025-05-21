@@ -21,8 +21,8 @@ namespace ThingsGateway.Gateway.Application;
 internal sealed class ChannelThreadManage : IChannelThreadManage
 {
     private ILogger _logger;
-    private static IDispatchService<ChannelRuntime> channelRuntimeDispatchService;
-    private static IDispatchService<ChannelRuntime> ChannelRuntimeDispatchService
+    private IDispatchService<ChannelRuntime> channelRuntimeDispatchService;
+    private IDispatchService<ChannelRuntime> ChannelRuntimeDispatchService
     {
         get
         {

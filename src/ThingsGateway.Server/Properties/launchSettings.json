@@ -18,7 +18,15 @@
       "dotnetRunMessages": true,
       "applicationUrl": "http://*:5000"
     },
-
+    "PostgreSQL": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "PostgreSQL "
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://*:5000"
+    },
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,

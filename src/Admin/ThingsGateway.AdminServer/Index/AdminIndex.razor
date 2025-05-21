@@ -39,19 +39,4 @@
     </div>
 </div>
 
-<div class="row g-2 mx-1 form-inline">
-    <div class="col-12  col-md-12">
-        <Card IsShadow=true class="m-2 flex-fill" Color="Color.Primary">
-            <HeaderTemplate>
-                @Localizer["HardwareInfoChart"]
-            </HeaderTemplate>
-
-            <BodyTemplate>
-                <Chart @ref=CPULineChart OnInitAsync="OnCPUInit" Height="var(--line-chart-height)" Width="100%" OnAfterInitAsync="()=>{chartInit=true;return Task.CompletedTask;}" />
-            </BodyTemplate>
-        </Card>
-    </div>
-</div>
-
-
 
