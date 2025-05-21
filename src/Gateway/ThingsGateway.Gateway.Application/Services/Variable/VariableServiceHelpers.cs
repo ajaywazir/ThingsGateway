@@ -187,7 +187,7 @@ public static class VariableServiceHelpers
 
 
 
-        variableExports = new(variableExports.OrderBy(a => a[ExportString.DeviceName]).ThenBy(a => a[varName]));
+        //variableExports = new(variableExports.OrderBy(a => a[ExportString.DeviceName]).ThenBy(a => a[varName]));
 
         //添加设备页
         sheets.Add(ExportString.VariableName, variableExports);
