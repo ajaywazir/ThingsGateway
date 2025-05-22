@@ -24,9 +24,8 @@ public static class ParallelExtensions
     /// <param name="body">要执行的操作</param>
     public static void ParallelForEach<T>(this IEnumerable<T> source, Action<T> body)
     {
-        // 创建并行操作的选项对象，设置最大并行度为当前处理器数量的一半
         ParallelOptions options = new();
-        options.MaxDegreeOfParallelism = Environment.ProcessorCount / 2 == 0 ? 1 : Environment.ProcessorCount / 2;
+        options.MaxDegreeOfParallelism = Environment.ProcessorCount;
         // 使用 Parallel.ForEach 执行指定的操作
         Parallel.ForEach(source, options, (variable) =>
         {
@@ -42,9 +41,8 @@ public static class ParallelExtensions
     /// <param name="body">要执行的操作</param>
     public static void ParallelForEach<T>(this IEnumerable<T> source, Action<T, ParallelLoopState, long> body)
     {
-        // 创建并行操作的选项对象，设置最大并行度为当前处理器数量的一半
         ParallelOptions options = new();
-        options.MaxDegreeOfParallelism = Environment.ProcessorCount / 2 == 0 ? 1 : Environment.ProcessorCount / 2;
+        options.MaxDegreeOfParallelism = Environment.ProcessorCount;
         // 使用 Parallel.ForEach 执行指定的操作
         Parallel.ForEach(source, options, (variable, state, index) =>
         {

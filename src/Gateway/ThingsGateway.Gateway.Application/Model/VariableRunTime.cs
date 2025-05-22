@@ -17,6 +17,7 @@ using Newtonsoft.Json.Linq;
 using SqlSugar;
 
 using ThingsGateway.Gateway.Application.Extensions;
+using ThingsGateway.NewLife.Extension;
 using ThingsGateway.NewLife.Json.Extension;
 
 namespace ThingsGateway.Gateway.Application;
@@ -34,10 +35,6 @@ public class VariableRuntime : Variable, IVariable, IDisposable
     private bool? _isOnlineChanged;
     protected object? _value;
 
-    public VariableRuntime()
-    {
-
-    }
     /// <summary>
     /// 变化时间
     /// </summary>
@@ -343,7 +340,7 @@ public class VariableRuntime : Variable, IVariable, IDisposable
     public void Init(DeviceRuntime deviceRuntime)
     {
 
-        GlobalData.AlarmEnableIdVariables.TryRemove(Id, out _);
+        GlobalData.AlarmEnableIdVariables.Remove(Id);
         if (GlobalData.RealAlarmIdVariables.TryRemove(Id, out var oldAlarm))
         {
             oldAlarm.EventType = EventTypeEnum.Finish;
@@ -352,12 +349,12 @@ public class VariableRuntime : Variable, IVariable, IDisposable
         }
 
 
-        DeviceRuntime?.VariableRuntimes?.TryRemove(Name, out _);
+        DeviceRuntime?.VariableRuntimes?.Remove(Name);
 
         DeviceRuntime = deviceRuntime;
 
         DeviceRuntime?.VariableRuntimes?.TryAdd(Name, this);
-        GlobalData.IdVariables.TryRemove(Id, out _);
+        GlobalData.IdVariables.Remove(Id);
         GlobalData.IdVariables.TryAdd(Id, this);
         if (AlarmEnable)
         {
@@ -369,11 +366,11 @@ public class VariableRuntime : Variable, IVariable, IDisposable
     public void Dispose()
     {
 
-        DeviceRuntime?.VariableRuntimes?.TryRemove(Name, out _);
+        DeviceRuntime?.VariableRuntimes?.Remove(Name);
 
-        GlobalData.IdVariables.TryRemove(Id, out _);
+        GlobalData.IdVariables.Remove(Id);
 
-        GlobalData.AlarmEnableIdVariables.TryRemove(Id, out _);
+        GlobalData.AlarmEnableIdVariables.Remove(Id);
         if (GlobalData.RealAlarmIdVariables.TryRemove(Id, out var oldAlarm))
         {
             oldAlarm.EventType = EventTypeEnum.Finish;
