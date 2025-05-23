@@ -80,7 +80,9 @@ public static class DbContext
     {
         db.CurrentConnectionConfig.MoreSettings = new ConnMoreSettings
         {
-            SqlServerCodeFirstNvarchar = true//设置默认nvarchar
+            SqlServerCodeFirstNvarchar = true, //设置默认nvarchar
+
+            IsNoReadXmlDescription = true
         };
     }
 
