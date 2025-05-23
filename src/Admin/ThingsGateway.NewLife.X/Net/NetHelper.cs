@@ -5,7 +5,6 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 
 using ThingsGateway.NewLife.Caching;
-using ThingsGateway.NewLife.Collections;
 using ThingsGateway.NewLife.Net;
 
 namespace ThingsGateway.NewLife;
@@ -52,7 +51,7 @@ public static class NetHelper
 #endif
         {
             UInt32 dummy = 0;
-            var inOptionValues = Pool.Shared.Rent(Marshal.SizeOf(dummy) * 3);
+            var inOptionValues = ArrayPool<Byte>.Shared.Rent(Marshal.SizeOf(dummy) * 3);
 
             // 是否启用Keep-Alive
             BitConverter.GetBytes((UInt32)(isKeepAlive ? 1 : 0)).CopyTo(inOptionValues, 0);
@@ -63,7 +62,7 @@ public static class NetHelper
 
             socket.IOControl(IOControlCode.KeepAliveValues, inOptionValues, null);
 
-            Pool.Shared.Return(inOptionValues);
+            ArrayPool<Byte>.Shared.Return(inOptionValues);
 
             return;
         }
@@ -538,11 +537,11 @@ public static class NetHelper
     private static void Wake(String mac)
     {
         mac = mac.Replace("-", null).Replace(":", null);
-        var buffer = Pool.Shared.Rent(mac.Length / 2);
+        var buffer = ArrayPool<Byte>.Shared.Rent(mac.Length / 2);
         for (var i = 0; i < buffer.Length; i++)
             buffer[i] = Byte.Parse(mac.Substring(i * 2, 2), NumberStyles.HexNumber);
 
-        var bts = Pool.Shared.Rent(6 + 16 * buffer.Length);
+        var bts = ArrayPool<Byte>.Shared.Rent(6 + 16 * buffer.Length);
         for (var i = 0; i < 6; i++)
             bts[i] = 0xFF;
         for (Int32 i = 6, k = 0; i < bts.Length; i++, k++)
@@ -560,8 +559,8 @@ public static class NetHelper
         client.Close();
         //client.SendAsync(bts, bts.Length, new IPEndPoint(IPAddress.Broadcast, 7));
 
-        Pool.Shared.Return(bts);
-        Pool.Shared.Return(buffer);
+        ArrayPool<Byte>.Shared.Return(bts);
+        ArrayPool<Byte>.Shared.Return(buffer);
     }
     #endregion
 

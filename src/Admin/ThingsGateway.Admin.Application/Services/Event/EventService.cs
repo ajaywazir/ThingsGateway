@@ -16,9 +16,9 @@ namespace ThingsGateway.Admin.Application;
 /// 内存推送事件服务
 /// </summary>
 /// <typeparam name="TEntry"></typeparam>
-public class EventService<TEntry> : IEventService<TEntry>
+public class EventService<TEntry> : IEventService<TEntry>, IDisposable
 {
-    private ConcurrentDictionary<string, Func<TEntry, Task>> Cache { get; } = new();
+    private ConcurrentDictionary<string, Func<TEntry, Task>> Cache = new();
 
     public void Dispose()
     {

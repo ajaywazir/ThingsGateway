@@ -8,4 +8,6 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
+global using System.Buffers;
+
 global using ThingsGateway.NewLife.Extension;

@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
 using System.Xml;
 
-using ThingsGateway.NewLife.Collections;
 using ThingsGateway.NewLife.Reflection;
 
 namespace ThingsGateway.NewLife.Serialization;
@@ -144,10 +143,10 @@ public class XmlGeneral : XmlHandlerBase
         else if (type == typeof(Byte[]))
         {
             // 用字符串长度作为预设缓冲区的长度
-            var buf = Pool.Shared.Rent(reader.Value.Length);
+            var buf = ArrayPool<Byte>.Shared.Rent(reader.Value.Length);
             var count = reader.ReadContentAsBase64(buf, 0, buf.Length);
             value = buf.ReadBytes(0, count);
-            Pool.Shared.Return(buf);
+            ArrayPool<Byte>.Shared.Return(buf);
 
             return true;
         }

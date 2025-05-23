@@ -1,7 +1,4 @@
-﻿using System.Buffers;
-using System.Runtime.CompilerServices;
-
-using ThingsGateway.NewLife.Collections;
+﻿using System.Runtime.CompilerServices;
 
 namespace ThingsGateway.NewLife.Buffers;
 
@@ -83,7 +80,7 @@ internal sealed class BufferSegment : ReadOnlySequenceSegment<Byte>
         }
         else if (_array != null)
         {
-            Pool.Shared.Return(_array);
+            ArrayPool<Byte>.Shared.Return(_array);
             _array = null;
         }
         base.Memory = default;

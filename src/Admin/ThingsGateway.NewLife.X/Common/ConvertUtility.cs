@@ -2,8 +2,6 @@
 using System.Globalization;
 using System.Reflection;
 
-using ThingsGateway.NewLife.Collections;
-
 namespace ThingsGateway.NewLife.Extension;
 
 /// <summary>工具类</summary>
@@ -452,12 +450,12 @@ public class DefaultConvert
                     // 凑够8字节
                     if (buf.Length < 8)
                     {
-                        var bts = Pool.Shared.Rent(8);
+                        var bts = ArrayPool<Byte>.Shared.Rent(8);
                         Buffer.BlockCopy(buf, 0, bts, 0, buf.Length);
 
                         var dec = BitConverter.ToDouble(bts, 0).ToDecimal();
 
-                        Pool.Shared.Return(bts);
+                        ArrayPool<Byte>.Shared.Return(bts);
 
                         return dec;
                     }

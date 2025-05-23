@@ -51,6 +51,9 @@
 
 		<!--动态适用GC-->
 		<GarbageCollectionAdaptationMode>1</GarbageCollectionAdaptationMode>
+
+		<!--<TieredCompilation>false</TieredCompilation>-->
+		
 		<!--使用自托管线程池-->
 		<!--<UseWindowsThreadPool>false</UseWindowsThreadPool> -->
 

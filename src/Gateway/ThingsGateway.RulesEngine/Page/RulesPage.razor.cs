@@ -30,6 +30,7 @@ public partial class RulesPage
     }
     protected override async ValueTask DisposeAsync(bool disposing)
     {
+        RulesDispatchService.UnSubscribe(Notify);
         if (Module != null)
         {
             await Module.InvokeVoidAsync("disposeJS", DiagramsJS);
@@ -155,10 +156,6 @@ public partial class RulesPage
     [NotNull]
     private IDispatchService<Rules>? RulesDispatchService { get; set; }
 
-    public void Dispose()
-    {
-        RulesDispatchService.UnSubscribe(Notify);
-    }
     private ExecutionContext? context;
 
     protected override async Task OnInitializedAsync()
