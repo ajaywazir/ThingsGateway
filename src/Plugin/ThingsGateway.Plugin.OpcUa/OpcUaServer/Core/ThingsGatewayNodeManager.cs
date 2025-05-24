@@ -510,7 +510,7 @@ public class ThingsGatewayNodeManager : CustomNodeManager2
             {
                 if (GlobalData.ReadOnlyIdVariables.TryGetValue(item.Value.Id, out var variableRuntime))
                 {
-                    writeInfos.Add((variableRuntime, hashSetNodeId[item.Key].Value.Value?.ToString()));
+                    writeInfos.Add((variableRuntime, hashSetNodeId[item.Key].Value.Value?.ToJsonString()));
                 }
             }
 
@@ -635,7 +635,7 @@ public class ThingsGatewayNodeManager : CustomNodeManager2
                             new()
                             {
                                 {
-                                    variableRuntime.DeviceName,   new Dictionary<string, string>() { {opcuaTag.SymbolicName, value?.ToString() } }
+                                    variableRuntime.DeviceName,   new Dictionary<string, string>() { {opcuaTag.SymbolicName, value?.ToJsonString() } }
                                 }
                             }
                             ).GetAwaiter().GetResult();

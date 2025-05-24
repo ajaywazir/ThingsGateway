@@ -234,6 +234,7 @@ public partial class SiemensS7Master : DeviceBase
                     }
                     else
                     {
+                        siemensS7Addresses.Add(addresses);
                         addresses = new();
                         dataLen = 0;
                         itemLen = 1;
@@ -250,7 +251,6 @@ public partial class SiemensS7Master : DeviceBase
                             return dictOperResult;
                         }
                     }
-                    siemensS7Addresses.Add(addresses);
 
                 }
 
@@ -278,6 +278,7 @@ public partial class SiemensS7Master : DeviceBase
             }
         }
     }
+
     #region 读写
 
     /// <inheritdoc/>
