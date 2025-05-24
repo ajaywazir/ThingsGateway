@@ -223,14 +223,17 @@ public partial class SiemensS7Master : DeviceBase
                 ushort dataLen = 0;
                 ushort itemLen = 1;
                 List<SiemensS7Address> addresses = new();
-                foreach (var item in sAddresss)
+                for (int i = 0; i < sAddresss.Length; i++)
                 {
+                    var item = sAddresss[i];
                     dataLen = (ushort)(dataLen + item.Data.Length + 4);
                     ushort telegramLen = (ushort)(itemLen * 12 + 19 + dataLen);
                     if (telegramLen < PduLength)
                     {
                         addresses.Add(item);
                         itemLen++;
+                        if (i == sAddresss.Length - 1)
+                            siemensS7Addresses.Add(addresses);
                     }
                     else
                     {
