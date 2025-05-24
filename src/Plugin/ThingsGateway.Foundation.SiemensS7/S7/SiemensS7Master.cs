@@ -247,6 +247,8 @@ public partial class SiemensS7Master : DeviceBase
                         {
                             addresses.Add(item);
                             itemLen++;
+                            if (i == sAddresss.Length - 1)
+                                siemensS7Addresses.Add(addresses);
                         }
                         else
                         {
