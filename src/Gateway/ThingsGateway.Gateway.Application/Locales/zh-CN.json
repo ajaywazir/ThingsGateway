@@ -78,7 +78,14 @@
     "PauseDeviceThreadAsync": "控制设备线程启停",
     "RestartAllThread": "重启全部线程",
     "RestartDeviceThreadAsync": "重启设备线程",
-    "WriteVariablesAsync": "写入变量"
+    "WriteVariablesAsync": "写入变量",
+    "BatchSaveChannelAsync": "保存通道",
+    "BatchSaveDeviceAsync": "保存设备",
+    "BatchSaveVariableAsync": "保存变量",
+    "DeleteChannelAsync": "删除通道",
+    "DeleteDeviceAsync": "删除设备",
+    "DeleteVariableAsync": "删除变量",
+    "InsertTestDataAsync": "增加测试数据"
   },
   "ThingsGateway.Gateway.Application.RuntimeInfoController": {
     "RuntimeInfoController": "获取运行态信息",

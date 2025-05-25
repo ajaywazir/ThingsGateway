@@ -13,6 +13,8 @@ using Microsoft.Extensions.Logging;
 
 using System.Collections.Concurrent;
 
+using ThingsGateway.Extension.Generic;
+
 namespace ThingsGateway.Logging;
 
 /// <summary>
@@ -34,9 +36,12 @@ public sealed class EmptyLoggerProvider : ILoggerProvider
     /// <returns><see cref="ILogger"/></returns>
     public ILogger CreateLogger(string categoryName)
     {
-        return _emptyLoggers.GetOrAdd(categoryName, name => new EmptyLogger());
+        return _emptyLoggers.GetOrAdd(categoryName, name => new EmptyLogger(categoryName, this));
     }
-
+    public void RemoveCache(string categoryName)
+    {
+        _emptyLoggers.Remove(categoryName);
+    }
     /// <summary>
     /// 释放非托管资源
     /// </summary>

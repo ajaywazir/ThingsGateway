@@ -18,7 +18,7 @@ namespace ThingsGateway.Logging;
 /// </summary>
 /// <remarks>https://docs.microsoft.com/zh-cn/dotnet/core/extensions/custom-logging-provider</remarks>
 [SuppressSniffer]
-public sealed class FileLogger : ILogger
+public sealed class FileLogger : ILogger, IDisposable
 {
     /// <summary>
     /// 记录器类别名称
@@ -56,6 +56,11 @@ public sealed class FileLogger : ILogger
     public IDisposable BeginScope<TState>(TState state)
     {
         return _fileLoggerProvider.ScopeProvider?.Push(state);
+    }
+
+    public void Dispose()
+    {
+        _fileLoggerProvider.RemoveCache(_logName);
     }
 
     /// <summary>

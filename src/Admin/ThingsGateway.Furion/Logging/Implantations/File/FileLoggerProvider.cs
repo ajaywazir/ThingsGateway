@@ -13,6 +13,8 @@ using Microsoft.Extensions.Logging;
 
 using System.Collections.Concurrent;
 
+using ThingsGateway.Extension.Generic;
+
 namespace ThingsGateway.Logging;
 
 /// <summary>
@@ -115,6 +117,10 @@ public sealed class FileLoggerProvider : ILoggerProvider, ISupportExternalScope
     public ILogger CreateLogger(string categoryName)
     {
         return _fileLoggers.GetOrAdd(categoryName, name => new FileLogger(name, this));
+    }
+    public void RemoveCache(string categoryName)
+    {
+        _fileLoggers.Remove(categoryName);
     }
 
     /// <summary>

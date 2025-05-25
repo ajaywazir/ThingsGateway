@@ -18,8 +18,17 @@ namespace ThingsGateway.Logging;
 /// </summary>
 /// <remarks>https://docs.microsoft.com/zh-cn/dotnet/core/extensions/custom-logging-provider</remarks>
 [SuppressSniffer]
-public sealed class EmptyLogger : ILogger
+public sealed class EmptyLogger : ILogger, IDisposable
 {
+    public EmptyLogger(string categoryName, EmptyLoggerProvider emptyLoggerProvider)
+    {
+        _logName = categoryName;
+        _emptyLoggerProvider = emptyLoggerProvider;
+    }
+
+    private string _logName { get; }
+    private EmptyLoggerProvider _emptyLoggerProvider { get; }
+
     /// <summary>
     /// 开始逻辑操作范围
     /// </summary>
@@ -29,6 +38,11 @@ public sealed class EmptyLogger : ILogger
     public IDisposable BeginScope<TState>(TState state)
     {
         return default;
+    }
+
+    public void Dispose()
+    {
+        _emptyLoggerProvider.RemoveCache(_logName);
     }
 
     /// <summary>

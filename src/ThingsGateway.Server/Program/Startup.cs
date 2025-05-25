@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
@@ -29,8 +28,8 @@ using System.Text.Unicode;
 using ThingsGateway.Admin.Application;
 using ThingsGateway.Admin.Razor;
 using ThingsGateway.Extension;
-using ThingsGateway.Logging;
 using ThingsGateway.NewLife.Caching;
+using ThingsGateway.NewLife.Extension;
 
 namespace ThingsGateway.Server;
 
@@ -161,7 +160,8 @@ public class Startup : AppStartup
         {
             options.WriteFilter = (logMsg) =>
             {
-                return true;
+                if (logMsg.Message.IsNullOrEmpty()) return false;
+                else return true;
             };
 
             options.MessageFormat = (logMsg) =>
@@ -211,39 +211,40 @@ public class Startup : AppStartup
         #region api日志
 
         //Monitor日志配置
-        services.AddMonitorLogging(options =>
-        {
-            options.JsonIndented = true;// 是否美化 JSON
-            options.GlobalEnabled = false;//全局启用
-            options.ConfigureLogger((logger, logContext, context) =>
-            {
-                var httpContext = context.HttpContext;//获取httpContext
+        //services.AddMonitorLogging(options =>
+        //{
+        //    options.JsonIndented = true;// 是否美化 JSON
+        //    options.GlobalEnabled = false;//全局启用
+        //    options.ConfigureLogger((logger, logContext, context) =>
+        //    {
+        //        var httpContext = context.HttpContext;//获取httpContext
 
-                //获取客户端信息
-                var userAgent = App.GetService<IAppService>().UserAgent;
-                // 获取控制器/操作描述器
-                var controllerActionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
-                //操作名称默认是控制器名加方法名,自定义操作名称要在action上加Description特性
-                var option = $"{controllerActionDescriptor.ControllerName}/{controllerActionDescriptor.ActionName}";
+        //        //获取客户端信息
+        //        var userAgent = App.GetService<IAppService>().UserAgent;
+        //        // 获取控制器/操作描述器
+        //        var controllerActionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
+        //        //操作名称默认是控制器名加方法名,自定义操作名称要在action上加Description特性
+        //        var option = $"{controllerActionDescriptor.ControllerName}/{controllerActionDescriptor.ActionName}";
 
-                var desc = App.CreateLocalizerByType(controllerActionDescriptor.ControllerTypeInfo.AsType())[controllerActionDescriptor.MethodInfo.Name];
-                //获取特性
-                option = desc.Value;//则将操作名称赋值为控制器上写的title
+        //        var desc = App.CreateLocalizerByType(controllerActionDescriptor.ControllerTypeInfo.AsType())[controllerActionDescriptor.MethodInfo.Name];
+        //        //获取特性
+        //        option = desc.Value;//则将操作名称赋值为控制器上写的title
 
-                logContext.Set(LoggingConst.CateGory, option);//传操作名称
-                logContext.Set(LoggingConst.Operation, option);//传操作名称
-                logContext.Set(LoggingConst.Client, userAgent);//客户端信息
-                logContext.Set(LoggingConst.Path, httpContext.Request.Path.Value);//请求地址
-                logContext.Set(LoggingConst.Method, httpContext.Request.Method);//请求方法
-            });
-        });
+        //        logContext.Set(LoggingConst.CateGory, option);//传操作名称
+        //        logContext.Set(LoggingConst.Operation, option);//传操作名称
+        //        logContext.Set(LoggingConst.Client, userAgent);//客户端信息
+        //        logContext.Set(LoggingConst.Path, httpContext.Request.Path.Value);//请求地址
+        //        logContext.Set(LoggingConst.Method, httpContext.Request.Method);//请求方法
+        //    });
+        //});
+        services.AddMvcFilter<RequestAuditFilter>();
 
         //日志写入数据库配置
         services.AddDatabaseLogging<DatabaseLoggingWriter>(options =>
         {
             options.WriteFilter = (logMsg) =>
             {
-                return logMsg.LogName == "System.Logging.LoggingMonitor";//只写入LoggingMonitor日志
+                return logMsg.LogName == "System.Logging.RequestAudit";
             };
         });
 

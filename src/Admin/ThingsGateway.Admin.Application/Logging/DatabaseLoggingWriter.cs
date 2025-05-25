@@ -39,33 +39,31 @@ public class DatabaseLoggingWriter : IDatabaseLoggingWriter
     /// <param name="flush"></param>
     public async Task WriteAsync(LogMessage logMsg, bool flush)
     {
-        //获取请求json字符串
-        var jsonString = logMsg.Context.Get("loggingMonitor").ToString();
         //转成实体
-        var loggingMonitor = jsonString.FromJsonNetString<LoggingMonitorJson>();
+        var requestAuditData = logMsg.Context.Get(nameof(RequestAuditData)) as RequestAuditData;
         //日志时间赋值
-        loggingMonitor.LogDateTime = logMsg.LogDateTime;
-        // loggingMonitor.ReturnInformation.Value
+        requestAuditData.LogDateTime = logMsg.LogDateTime;
+        // requestAuditData.ReturnInformation.Value
         //验证失败不记录日志
         bool save = false;
-        if (loggingMonitor.Validation == null)
+        if (requestAuditData.Validation == null)
         {
-            var operation = logMsg.Context.Get(LoggingConst.Operation).ToString();//获取操作名称
-            var client = (UserAgent)logMsg.Context.Get(LoggingConst.Client);//获取客户端信息
-            var path = logMsg.Context.Get(LoggingConst.Path).ToString();//获取操作名称
-            var method = logMsg.Context.Get(LoggingConst.Method).ToString();//获取方法
+            var operation = requestAuditData.Operation;//获取操作名称
+            var client = requestAuditData.Client;//获取客户端信息
+            var path = requestAuditData.Path;//获取操作名称
+            var method = requestAuditData.Method;//获取方法
             //表示访问日志
             if (path == "/api/auth/login" || path == "/api/auth/logout")
             {
                 //如果没有异常信息
-                if (loggingMonitor.Exception == null)
+                if (requestAuditData.Exception == null)
                 {
-                    save = await CreateVisitLog(operation, path, loggingMonitor, client, flush).ConfigureAwait(false);//添加到访问日志
+                    save = await CreateVisitLog(operation, path, requestAuditData, client, flush).ConfigureAwait(false);//添加到访问日志
                 }
                 else
                 {
                     //添加到异常日志
-                    save = await CreateOperationLog(operation, path, loggingMonitor, client, flush).ConfigureAwait(false);
+                    save = await CreateOperationLog(operation, path, requestAuditData, client, flush).ConfigureAwait(false);
                 }
             }
             else
@@ -74,7 +72,7 @@ public class DatabaseLoggingWriter : IDatabaseLoggingWriter
                 if (!operation.IsNullOrWhiteSpace() && method == "POST")
                 {
                     //添加到操作日志
-                    save = await CreateOperationLog(operation, path, loggingMonitor, client, flush).ConfigureAwait(false);
+                    save = await CreateOperationLog(operation, path, requestAuditData, client, flush).ConfigureAwait(false);
                 }
             }
         }
@@ -89,27 +87,21 @@ public class DatabaseLoggingWriter : IDatabaseLoggingWriter
     /// </summary>
     /// <param name="operation">操作名称</param>
     /// <param name="path">请求地址</param>
-    /// <param name="loggingMonitor">loggingMonitor</param>
+    /// <param name="requestAuditData">requestAuditData</param>
     /// <param name="userAgent">客户端信息</param>
     /// <param name="flush"></param>
     /// <returns></returns>
-    private async Task<bool> CreateOperationLog(string operation, string path, LoggingMonitorJson loggingMonitor, UserAgent userAgent, bool flush)
+    private async Task<bool> CreateOperationLog(string operation, string path, RequestAuditData requestAuditData, UserAgent userAgent, bool flush)
     {
         //账号
-        var opAccount = loggingMonitor.AuthorizationClaims?.Where(it => it.Type == ClaimConst.Account).Select(it => it.Value).FirstOrDefault();
+        var opAccount = requestAuditData.AuthorizationClaims?.Where(it => it.Type == ClaimConst.Account).Select(it => it.Value).FirstOrDefault();
 
         //获取参数json字符串，
-        var paramJson = loggingMonitor.Parameters == null || loggingMonitor.Parameters.Count == 0 ? null : loggingMonitor.Parameters[0].Value.ToSystemTextJsonString();
+        var paramJson = requestAuditData.Parameters == null || requestAuditData.Parameters.Count == 0 ? null : requestAuditData.Parameters.ToSystemTextJsonString();
 
         //获取结果json字符串
-        var resultJson = string.Empty;
-        if (loggingMonitor.ReturnInformation != null)//如果有返回值
-        {
-            if (loggingMonitor.ReturnInformation.Value != null)//如果返回值不为空
-            {
-                resultJson = loggingMonitor.ReturnInformation.Value.ToSystemTextJsonString();
-            }
-        }
+        var resultJson = requestAuditData.ReturnInformation?.ToSystemTextJsonString();
+
 
         //操作日志表实体
         var sysLogOperate = new SysOperateLog
@@ -117,29 +109,29 @@ public class DatabaseLoggingWriter : IDatabaseLoggingWriter
             Name = operation,
             Category = LogCateGoryEnum.Operate,
             ExeStatus = true,
-            OpIp = loggingMonitor.RemoteIPv4,
+            OpIp = requestAuditData.RemoteIPv4,
             OpBrowser = userAgent?.Browser,
             OpOs = userAgent?.Platform,
-            OpTime = loggingMonitor.LogDateTime.LocalDateTime,
+            OpTime = requestAuditData.LogDateTime.LocalDateTime,
             OpAccount = opAccount,
-            ReqMethod = loggingMonitor.HttpMethod,
+            ReqMethod = requestAuditData.Method,
             ReqUrl = path,
             ResultJson = resultJson,
-            ClassName = loggingMonitor.DisplayName,
-            MethodName = loggingMonitor.ActionName,
+            ClassName = requestAuditData.ControllerName,
+            MethodName = requestAuditData.ActionName,
             ParamJson = paramJson,
             VerificatId = UserManager.VerificatId,
         };
         //如果异常不为空
-        if (loggingMonitor.Exception != null)
+        if (requestAuditData.Exception != null)
         {
             sysLogOperate.Category = LogCateGoryEnum.Exception;//操作类型为异常
             sysLogOperate.ExeStatus = false;//操作状态为失败
 
-            if (loggingMonitor.Exception.Type == typeof(AppFriendlyException).ToString())
-                sysLogOperate.ExeMessage = loggingMonitor?.Exception.Message;
+            if (requestAuditData.Exception.Type == typeof(AppFriendlyException).ToString())
+                sysLogOperate.ExeMessage = requestAuditData?.Exception.Message;
             else
-                sysLogOperate.ExeMessage = $"{loggingMonitor.Exception.Type}:{loggingMonitor.Exception.Message}{Environment.NewLine}{loggingMonitor.Exception.StackTrace}";
+                sysLogOperate.ExeMessage = $"{requestAuditData.Exception.Type}:{requestAuditData.Exception.Message}{Environment.NewLine}{requestAuditData.Exception.StackTrace}";
         }
 
         _operateLogMessageQueue.Enqueue(sysLogOperate);
@@ -158,17 +150,17 @@ public class DatabaseLoggingWriter : IDatabaseLoggingWriter
     /// </summary>
     /// <param name="operation">访问类型</param>
     /// <param name="path"></param>
-    /// <param name="loggingMonitor">loggingMonitor</param>
+    /// <param name="requestAuditData">requestAuditData</param>
     /// <param name="userAgent">客户端信息</param>
     /// <param name="flush"></param>
-    private async Task<bool> CreateVisitLog(string operation, string path, LoggingMonitorJson loggingMonitor, UserAgent userAgent, bool flush)
+    private async Task<bool> CreateVisitLog(string operation, string path, RequestAuditData requestAuditData, UserAgent userAgent, bool flush)
     {
         long verificatId = 0;//验证Id
         var opAccount = "";//用户账号
         if (path == "/api/auth/login")
         {
             //如果是登录，用户信息就从返回值里拿
-            var result = loggingMonitor.ReturnInformation?.Value?.ToSystemTextJsonString();//返回值转json
+            var result = requestAuditData.ReturnInformation?.ToSystemTextJsonString();//返回值转json
             var userInfo = result.FromJsonNetString<UnifyResult<LoginOutput>>();//格式化成user表
             opAccount = userInfo.Data.Account;//赋值账号
             verificatId = userInfo.Data.VerificatId;
@@ -176,8 +168,8 @@ public class DatabaseLoggingWriter : IDatabaseLoggingWriter
         else
         {
             //如果是登录出，用户信息就从AuthorizationClaims里拿
-            opAccount = loggingMonitor.AuthorizationClaims.Where(it => it.Type == ClaimConst.Account).Select(it => it.Value).FirstOrDefault();
-            verificatId = loggingMonitor.AuthorizationClaims.Where(it => it.Type == ClaimConst.VerificatId).Select(it => it.Value).FirstOrDefault().ToLong();
+            opAccount = requestAuditData.AuthorizationClaims.Where(it => it.Type == ClaimConst.Account).Select(it => it.Value).FirstOrDefault();
+            verificatId = requestAuditData.AuthorizationClaims.Where(it => it.Type == ClaimConst.VerificatId).Select(it => it.Value).FirstOrDefault().ToLong();
         }
         //日志表实体
         var sysLogVisit = new SysOperateLog
@@ -185,19 +177,19 @@ public class DatabaseLoggingWriter : IDatabaseLoggingWriter
             Name = operation,
             Category = path == "/api/auth/login" ? LogCateGoryEnum.Login : LogCateGoryEnum.Logout,
             ExeStatus = true,
-            OpIp = loggingMonitor.RemoteIPv4,
+            OpIp = requestAuditData.RemoteIPv4,
             OpBrowser = userAgent?.Browser,
             OpOs = userAgent?.Platform,
-            OpTime = loggingMonitor.LogDateTime.LocalDateTime,
+            OpTime = requestAuditData.LogDateTime.LocalDateTime,
             VerificatId = verificatId,
             OpAccount = opAccount,
 
-            ReqMethod = loggingMonitor.HttpMethod,
+            ReqMethod = requestAuditData.Method,
             ReqUrl = path,
-            ResultJson = loggingMonitor.ReturnInformation?.Value?.ToSystemTextJsonString(),
-            ClassName = loggingMonitor.DisplayName,
-            MethodName = loggingMonitor.ActionName,
-            ParamJson = loggingMonitor.Parameters?.ToSystemTextJsonString(),
+            ResultJson = requestAuditData.ReturnInformation?.ToSystemTextJsonString(),
+            ClassName = requestAuditData.ControllerName,
+            MethodName = requestAuditData.ActionName,
+            ParamJson = requestAuditData.Parameters?.ToSystemTextJsonString(),
         };
         _operateLogMessageQueue.Enqueue(sysLogVisit);
 

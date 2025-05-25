@@ -20,7 +20,7 @@ namespace ThingsGateway.Logging;
 /// </summary>
 /// <remarks>https://docs.microsoft.com/zh-cn/dotnet/core/extensions/custom-logging-provider</remarks>
 [SuppressSniffer]
-public sealed class DatabaseLogger : ILogger
+public sealed class DatabaseLogger : ILogger, IDisposable
 {
     /// <summary>
     /// 记录器类别名称
@@ -58,6 +58,11 @@ public sealed class DatabaseLogger : ILogger
     public IDisposable BeginScope<TState>(TState state)
     {
         return _databaseLoggerProvider.ScopeProvider?.Push(state);
+    }
+
+    public void Dispose()
+    {
+        _databaseLoggerProvider.RemoveCache(_logName);
     }
 
     /// <summary>

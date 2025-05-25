@@ -96,6 +96,7 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
     }
 
     #endregion 动态配置
+    Microsoft.Extensions.Logging.ILogger? _logger;
 
     /// <summary>
     /// 通道线程构造函数，用于初始化通道线程实例。
@@ -113,9 +114,9 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
         // 设置通道信息
         CurrentChannel = channelRuntime;
 
-        var logger = App.RootServices.GetService<Microsoft.Extensions.Logging.ILoggerFactory>().CreateLogger($"DeviceThreadManage[{channelRuntime.Name}]");
+        _logger = App.RootServices.GetService<Microsoft.Extensions.Logging.ILoggerFactory>().CreateLogger($"DeviceThreadManage[{channelRuntime.Name}]");
         // 添加默认日志记录器
-        LogMessage.AddLogger(new EasyLogger(logger.Log_Out) { LogLevel = TouchSocket.Core.LogLevel.Trace });
+        LogMessage.AddLogger(new EasyLogger(_logger.Log_Out) { LogLevel = TouchSocket.Core.LogLevel.Trace });
 
         // 根据配置获取通道实例
         Channel = channelRuntime.GetChannel(config);
@@ -898,7 +899,7 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
         try
         {
             await NewDeviceLock.WaitAsync().ConfigureAwait(false);
-
+            _logger?.TryDispose();
             await PrivateRemoveDevicesAsync(Drivers.Keys).ConfigureAwait(false);
             if (Channel?.Collects.Count == 0)
                 Channel?.SafeDispose();

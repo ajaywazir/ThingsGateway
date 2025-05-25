@@ -25,7 +25,7 @@ namespace ThingsGateway.Admin.Application;
 [Description("登录")]
 [Route("openapi/auth")]
 [Authorize(AuthenticationSchemes = "Bearer")]
-[LoggingMonitor]
+[RequestAudit]
 [ApiController]
 public class OpenApiController : ControllerBase
 {

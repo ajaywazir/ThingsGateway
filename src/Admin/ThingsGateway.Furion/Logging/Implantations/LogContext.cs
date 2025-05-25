@@ -17,7 +17,6 @@ namespace ThingsGateway.Logging;
 [SuppressSniffer]
 public sealed class LogContext : IDisposable
 {
-
     /// <summary>
     /// 日志上下文数据
     /// </summary>

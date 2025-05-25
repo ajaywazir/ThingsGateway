@@ -64,24 +64,31 @@ public sealed class OperDescAttribute : MoAttribute
 
     public override void OnException(MethodContext context)
     {
-        //插入异常日志
-        SysOperateLog log = GetOperLog(LocalizerType, context);
+        if (App.HttpContext.Request.Path.StartsWithSegments("/_blazor"))
+        {
+            //插入异常日志
+            SysOperateLog log = GetOperLog(LocalizerType, context);
 
-        log.Category = LogCateGoryEnum.Exception;//操作类型为异常
-        log.ExeStatus = false;//操作状态为失败
-        if (context.Exception is AppFriendlyException exception)
-            log.ExeMessage = exception?.Message;
-        else
-            log.ExeMessage = context.Exception?.ToString();
+            log.Category = LogCateGoryEnum.Exception;//操作类型为异常
+            log.ExeStatus = false;//操作状态为失败
+            if (context.Exception is AppFriendlyException exception)
+                log.ExeMessage = exception?.Message;
+            else
+                log.ExeMessage = context.Exception?.ToString();
 
-        OperDescAttribute.WriteToQueue(log);
+            OperDescAttribute.WriteToQueue(log);
+        }
     }
 
     public override void OnSuccess(MethodContext context)
     {
-        //插入操作日志
-        SysOperateLog log = GetOperLog(LocalizerType, context);
-        OperDescAttribute.WriteToQueue(log);
+        if (App.HttpContext.Request.Path.StartsWithSegments("/_blazor"))
+        {
+
+            //插入操作日志
+            SysOperateLog log = GetOperLog(LocalizerType, context);
+            OperDescAttribute.WriteToQueue(log);
+        }
     }
 
     /// <summary>

@@ -15,7 +15,7 @@ namespace ThingsGateway.Admin.Application;
 
 [ApiDescriptionSettings(false)]
 [Route("api/auth")]
-[LoggingMonitor]
+[RequestAudit]
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;

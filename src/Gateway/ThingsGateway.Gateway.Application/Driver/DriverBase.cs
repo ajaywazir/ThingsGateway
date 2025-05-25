@@ -326,11 +326,14 @@ public abstract class DriverBase : DisposableObject, IDriver
 
     protected override void Dispose(bool disposing)
     {
+        TextLogger?.Dispose();
+        _logger?.TryDispose();
         IdVariableRuntimes?.Clear();
         IdVariableRuntimes = null;
         var device = CurrentDevice;
         if (device != null)
             device.Driver = null;
+
         LogMessage?.Logs?.ForEach(a => a.TryDispose());
         LogMessage = null;
         pluginPropertyEditorItems?.Clear();

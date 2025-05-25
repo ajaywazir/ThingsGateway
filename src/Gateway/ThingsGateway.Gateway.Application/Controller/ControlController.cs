@@ -35,11 +35,13 @@ namespace ThingsGateway.Gateway.Application;
 [ApiDescriptionSettings("ThingsGateway.OpenApi", Order = 200)]
 [Route("openApi/control")]
 [RolePermission]
-[LoggingMonitor]
+[RequestAudit]
 [ApiController]
 [Authorize(AuthenticationSchemes = "Bearer")]
 public class ControlController : ControllerBase
 {
+
+
 
     /// <summary>
     /// 清空全部缓存
@@ -175,8 +177,50 @@ public class ControlController : ControllerBase
         return GlobalData.VariableRuntimeService.BatchSaveVariableAsync(variables.Adapt<List<Variable>>(), type, restart, default);
     }
 
+    /// <summary>
+    /// 删除通道
+    /// </summary>
+    [HttpPost("deleteChannel")]
+    [DisplayName("删除通道")]
+    public Task<bool> DeleteChannelAsync([FromBody] List<long> ids, bool restart)
+    {
+        if (ids == null || ids.Count == 0) ids = GlobalData.Channels.Keys.ToList();
+        return GlobalData.ChannelRuntimeService.DeleteChannelAsync(ids, restart, default);
+    }
 
 
+    /// <summary>
+    /// 删除设备
+    /// </summary>
+    [HttpPost("deleteDevice")]
+    [DisplayName("删除设备")]
+    public Task<bool> DeleteDeviceAsync([FromBody] List<long> ids, bool restart)
+    {
+        if (ids == null || ids.Count == 0) ids = GlobalData.IdDevices.Keys.ToList();
+        return GlobalData.DeviceRuntimeService.DeleteDeviceAsync(ids, restart, default);
+    }
+
+    /// <summary>
+    /// 删除变量
+    /// </summary>
+    [HttpPost("deleteVariable")]
+    [DisplayName("删除变量")]
+    public Task<bool> DeleteVariableAsync([FromBody] List<long> ids, bool restart)
+    {
+        if (ids == null || ids.Count == 0) ids = GlobalData.IdVariables.Keys.ToList();
+        return GlobalData.VariableRuntimeService.DeleteVariableAsync(ids, restart, default);
+    }
+
+
+    /// <summary>
+    /// 增加测试数据
+    /// </summary>
+    [HttpPost("insertTestData")]
+    [DisplayName("增加测试数据")]
+    public Task InsertTestDataAsync(int testVariableCount, int testDeviceCount, string slaveUrl, bool businessEnable, bool restart)
+    {
+        return GlobalData.VariableRuntimeService.InsertTestDataAsync(testVariableCount, testDeviceCount, slaveUrl, businessEnable, restart, default);
+    }
 }
 public class ChannelInput
 {

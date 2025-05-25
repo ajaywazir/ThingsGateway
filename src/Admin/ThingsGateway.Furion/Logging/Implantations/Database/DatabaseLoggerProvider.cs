@@ -14,6 +14,8 @@ using Microsoft.Extensions.Logging;
 
 using System.Collections.Concurrent;
 
+using ThingsGateway.Extension.Generic;
+
 namespace ThingsGateway.Logging;
 
 /// <summary>
@@ -54,6 +56,8 @@ public sealed class DatabaseLoggerProvider : ILoggerProvider, ISupportExternalSc
     /// <remarks>实现不间断写入</remarks>
     private Task _processQueueTask;
 
+
+
     /// <summary>
     /// 构造函数
     /// </summary>
@@ -82,7 +86,10 @@ public sealed class DatabaseLoggerProvider : ILoggerProvider, ISupportExternalSc
     {
         return _databaseLoggers.GetOrAdd(categoryName, name => new DatabaseLogger(name, this));
     }
-
+    public void RemoveCache(string categoryName)
+    {
+        _databaseLoggers.Remove(categoryName);
+    }
     /// <summary>
     /// 设置作用域提供器
     /// </summary>

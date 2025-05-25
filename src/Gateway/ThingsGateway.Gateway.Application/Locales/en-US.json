@@ -80,7 +80,14 @@
     "WriteVariablesAsync": "Write variables",
     "RemoveAllCache": "Remove all cache",
     "RemoveCache": "Remove device/channel Cache",
-    "RestartAllThread": "Restart all thread"
+    "RestartAllThread": "Restart all thread",
+    "BatchSaveChannelAsync": "BatchSaveChannel",
+    "BatchSaveDeviceAsync": "BatchSaveDevice",
+    "BatchSaveVariableAsync": "BatchSaveVariable",
+    "DeleteChannelAsync": "DeleteChannel",
+    "DeleteDeviceAsync": "DeleteDevice",
+    "DeleteVariableAsync": "DeleteVariable",
+    "InsertTestDataAsync": "InsertTestData"
   },
   "ThingsGateway.Gateway.Application.RuntimeInfoController": {
     "RuntimeInfoController": "Get runtime information",

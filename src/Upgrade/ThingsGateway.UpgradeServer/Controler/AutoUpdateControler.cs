@@ -21,7 +21,7 @@ namespace ThingsGateway.Upgrade;
 [ApiDescriptionSettings("ThingsGateway.OpenApi", Order = 200)]
 [Route("openApi/autoUpdate")]
 [RolePermission]
-[LoggingMonitor]
+[RequestAudit]
 [Authorize(AuthenticationSchemes = "Bearer")]
 public class AutoUpdateController : ControllerBase
 {
