@@ -10,7 +10,8 @@
 		<PackageReference Include="Rougamo.Fody" Version="5.0.0" />
 		<PackageReference Include="TouchSocket.Dmtp" Version="3.1.5" />
 		<PackageReference Include="TouchSocket.WebApi.Swagger" Version="3.1.5" />
-		<PackageReference Include="ThingsGateway.Authentication" Version="$(AuthenticationVersion)" />
+		<!--<PackageReference Include="ThingsGateway.Authentication" Version="$(AuthenticationVersion)" />-->
+		<ProjectReference Include="..\..\PluginPro\ThingsGateway.Authentication\ThingsGateway.Authentication.csproj" />
 
 	</ItemGroup>
 

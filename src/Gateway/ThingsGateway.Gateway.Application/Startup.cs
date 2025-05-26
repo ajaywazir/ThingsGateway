@@ -18,6 +18,8 @@ using SqlSugar;
 
 using System.Reflection;
 
+using ThingsGateway.Authentication;
+
 namespace ThingsGateway.Gateway.Application;
 
 [AppStartup(-100)]
@@ -25,6 +27,9 @@ public class Startup : AppStartup
 {
     public void Configure(IServiceCollection services)
     {
+
+        ProAuthentication.TryGetAuthorizeInfo(out var authorizeInfo);
+
         services.AddConfigurableOptions<ChannelThreadOptions>();
         services.AddConfigurableOptions<GatewayLogOptions>();
         services.AddConfigurableOptions<RpcLogOptions>();
