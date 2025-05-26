@@ -90,6 +90,7 @@ public class RuntimeInfoController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [HttpPost("checkRealAlarm")]
+    [RequestAudit]
     [DisplayName("确认实时报警")]
     public async Task CheckRealAlarm(long variableId)
     {

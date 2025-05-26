@@ -357,7 +357,7 @@ public partial class OpcUaServer : BusinessBase
             {
                 StoreType = CertificateStoreType.X509Store,
                 StorePath = "CurrentUser\\UAServer_ThingsGateway",
-                SubjectName = _driverPropertys.BigTextSubjectName,
+                SubjectName = $"{_driverPropertys.BigTextSubjectName}{_driverPropertys.OpcUaStringUrl}",
                 //ValidationOptions = CertificateValidationOptions.SuppressHostNameInvalid,
             },
 

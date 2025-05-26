@@ -88,6 +88,8 @@ public class Startup : AppStartup
         }
         ;
 
+        services.AddMvcFilter<RequestAuditFilter>();
+
         services.AddControllers()
             .AddNewtonsoftJson(options => SetNewtonsoftJsonSetting(options.SerializerSettings))
             //.AddXmlSerializerFormatters()
@@ -237,7 +239,6 @@ public class Startup : AppStartup
         //        logContext.Set(LoggingConst.Method, httpContext.Request.Method);//请求方法
         //    });
         //});
-        services.AddMvcFilter<RequestAuditFilter>();
 
         //日志写入数据库配置
         services.AddDatabaseLogging<DatabaseLoggingWriter>(options =>

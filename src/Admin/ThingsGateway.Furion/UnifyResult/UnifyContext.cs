@@ -349,7 +349,7 @@ public static class UnifyContext
     /// <param name="result"></param>
     /// <param name="data"></param>
     /// <returns></returns>
-    internal static bool CheckVaildResult(IActionResult result, out object data)
+    public static bool CheckVaildResult(IActionResult result, out object data)
     {
         data = default;
 

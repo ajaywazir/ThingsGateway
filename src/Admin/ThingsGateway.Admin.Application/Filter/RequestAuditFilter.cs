@@ -21,29 +21,36 @@ using System.Logging;
 using ThingsGateway.FriendlyException;
 using ThingsGateway.Logging;
 using ThingsGateway.NewLife.Json.Extension;
+using ThingsGateway.UnifyResult;
 
 namespace ThingsGateway.Admin.Application;
 
-public class RequestAuditFilter : IAsyncActionFilter
+public class RequestAuditFilter : IAsyncActionFilter, IOrderedFilter
 {
+    private const int FilterOrder = -3000;
+    public int Order => FilterOrder;
+
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
+        var timeOperation = Stopwatch.StartNew();
+        var resultContext = await next().ConfigureAwait(false);
+        // 计算接口执行时间
+        timeOperation.Stop();
 
         var controllerActionDescriptor = (context.ActionDescriptor as ControllerActionDescriptor);
         // 获取动作方法描述器
         var actionMethod = controllerActionDescriptor?.MethodInfo;
 
+
         // 处理 Blazor Server
         if (actionMethod == null)
         {
-            _ = await next.Invoke().ConfigureAwait(false);
             return;
         }
 
         // 排除 WebSocket 请求处理
         if (context.HttpContext.IsWebSocketRequest())
         {
-            _ = await next().ConfigureAwait(false);
             return;
         }
 
@@ -51,7 +58,6 @@ public class RequestAuditFilter : IAsyncActionFilter
         if (actionMethod.IsDefined(typeof(SuppressRequestAuditAttribute), true)
             || actionMethod.DeclaringType.IsDefined(typeof(SuppressRequestAuditAttribute), true))
         {
-            _ = await next().ConfigureAwait(false);
             return;
         }
 
@@ -65,10 +71,7 @@ public class RequestAuditFilter : IAsyncActionFilter
             return;
         }
 
-        // 计算接口执行时间
-        var timeOperation = Stopwatch.StartNew();
-        var resultContext = await next().ConfigureAwait(false);
-        timeOperation.Stop();
+
 
 
         var logData = new RequestAuditData();
@@ -88,21 +91,29 @@ public class RequestAuditFilter : IAsyncActionFilter
         var requestUrl = Uri.UnescapeDataString(httpRequest.GetRequestUrlAddress());
         logData.RequestUrl = requestUrl;
 
-
+        object returnValue = null;
+        Type finalReturnType;
         var result = resultContext.Result as IActionResult;
-        var data = result switch
+        // 解析返回值
+        if (UnifyContext.CheckVaildResult(result, out var data))
         {
-            // 处理内容结果
-            ContentResult content => content.Content,
-            // 处理对象结果
-            ObjectResult obj => obj.Value,
-            // 处理 JSON 对象
-            JsonResult json => json.Value,
-            _ => null,
-        };
-        logData.ReturnInformation = data;
+            returnValue = data;
+            finalReturnType = data?.GetType();
+        }
+        // 处理文件类型
+        else if (result is FileResult fresult)
+        {
+            returnValue = new
+            {
+                FileName = fresult.FileDownloadName,
+                fresult.ContentType,
+                Length = fresult is FileContentResult cresult ? (object)cresult.FileContents.Length : null
+            };
+            finalReturnType = fresult?.GetType();
+        }
+        else finalReturnType = result?.GetType();
 
-
+        logData.ReturnInformation = returnValue;
 
         //获取客户端信息
         var client = App.GetService<IAppService>().UserAgent;

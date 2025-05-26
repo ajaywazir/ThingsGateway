@@ -83,6 +83,7 @@ public class Startup : AppStartup
             // setting.Converters.Add(new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal }); // 解决DateTimeOffset异常
         }
         ;
+        services.AddMvcFilter<RequestAuditFilter>();
 
         services.AddControllers()
             .AddNewtonsoftJson(options => SetNewtonsoftJsonSetting(options.SerializerSettings))
@@ -233,7 +234,6 @@ public class Startup : AppStartup
         //        logContext.Set(LoggingConst.Method, httpContext.Request.Method);//请求方法
         //    });
         //});
-        services.AddMvcFilter<RequestAuditFilter>();
 
         //日志写入数据库配置
         services.AddDatabaseLogging<DatabaseLoggingWriter>(options =>

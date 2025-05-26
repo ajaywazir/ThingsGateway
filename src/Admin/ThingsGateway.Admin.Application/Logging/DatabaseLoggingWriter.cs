@@ -16,7 +16,6 @@ using ThingsGateway.Extension;
 using ThingsGateway.FriendlyException;
 using ThingsGateway.Logging;
 using ThingsGateway.NewLife.Json.Extension;
-using ThingsGateway.Razor;
 
 namespace ThingsGateway.Admin.Application;
 
@@ -160,8 +159,7 @@ public class DatabaseLoggingWriter : IDatabaseLoggingWriter
         if (path == "/api/auth/login")
         {
             //如果是登录，用户信息就从返回值里拿
-            var result = requestAuditData.ReturnInformation?.ToSystemTextJsonString();//返回值转json
-            var userInfo = result.FromJsonNetString<UnifyResult<LoginOutput>>();//格式化成user表
+            dynamic userInfo = requestAuditData.ReturnInformation;
             opAccount = userInfo.Data.Account;//赋值账号
             verificatId = userInfo.Data.VerificatId;
         }
