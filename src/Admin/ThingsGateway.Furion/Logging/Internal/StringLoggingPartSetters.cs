@@ -96,7 +96,7 @@ public sealed partial class StringLoggingPart
     /// </summary>
     /// <param name="properties">建议使用 ConcurrentDictionary 类型</param>
     /// <returns></returns>
-    public StringLoggingPart ScopeContext(IDictionary<object, object> properties)
+    public StringLoggingPart ScopeContext(IDictionary<string, object> properties)
     {
         if (properties == null) return this;
         LogContext = new LogContext { Properties = properties };

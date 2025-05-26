@@ -84,7 +84,7 @@ public static class StringLoggingExtensions
     /// <param name="message"></param>
     /// <param name="properties">建议使用 ConcurrentDictionary 类型</param>
     /// <returns></returns>
-    public static StringLoggingPart ScopeContext(this string message, IDictionary<object, object> properties)
+    public static StringLoggingPart ScopeContext(this string message, IDictionary<string, object> properties)
     {
         return StringLoggingPart.Default().SetMessage(message).ScopeContext(properties);
     }

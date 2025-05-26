@@ -98,6 +98,18 @@ public class Startup : AppStartup
         CodeFirstUtils.CodeFirst(fullName!);//CodeFirst
 
 
+        try
+        {
+            using var db = DbContext.GetDB<SysOperateLog>();
+            if (!db.DbMaintenance.IsAnyIndex("idx_operatelog_optime_date"))
+            {
+                var indexsql = "CREATE INDEX idx_operatelog_optime_date ON sys_operatelog(strftime('%Y-%m-%d', OpTime));";
+                db.Ado.ExecuteCommand(indexsql);
+            }
+        }
+        catch { }
+
+
         //删除在线用户统计
         var verificatInfoService = App.RootServices.GetService<IVerificatInfoService>();
         verificatInfoService.RemoveAllClientId();

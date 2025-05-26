@@ -26,11 +26,11 @@ public static class LogContextExtensions
     /// <param name="key">键</param>
     /// <param name="value">值</param>
     /// <returns></returns>
-    public static LogContext Set(this LogContext logContext, object key, object value)
+    public static LogContext Set(this LogContext logContext, string key, object value)
     {
         if (logContext == null || key == null) return logContext;
 
-        logContext.Properties ??= new Dictionary<object, object>();
+        logContext.Properties ??= new Dictionary<string, object>();
 
         logContext.Properties.Remove(key);
         logContext.Properties.Add(key, value);
@@ -43,7 +43,7 @@ public static class LogContextExtensions
     /// <param name="logContext"></param>
     /// <param name="properties"></param>
     /// <returns></returns>
-    public static LogContext SetRange(this LogContext logContext, IDictionary<object, object> properties)
+    public static LogContext SetRange(this LogContext logContext, IDictionary<string, object> properties)
     {
         if (logContext == null
             || properties == null
@@ -63,7 +63,7 @@ public static class LogContextExtensions
     /// <param name="logContext"></param>
     /// <param name="key">键</param>
     /// <returns></returns>
-    public static object Get(this LogContext logContext, object key)
+    public static object Get(this LogContext logContext, string key)
     {
         if (logContext == null
             || key == null
@@ -80,7 +80,7 @@ public static class LogContextExtensions
     /// <param name="logContext"></param>
     /// <param name="key">键</param>
     /// <returns></returns>
-    public static T Get<T>(this LogContext logContext, object key)
+    public static T Get<T>(this LogContext logContext, string key)
     {
         var value = logContext.Get(key);
         return value.ChangeType<T>();

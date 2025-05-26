@@ -37,7 +37,7 @@ public sealed class SqlSugarOption : ConnectionConfig
     /// <summary>
     /// 是否控制台显示Sql语句
     /// </summary>
-    public bool IsShowSql { get; set; }
+    public bool? IsShowSql { get; set; }
 
     /// <summary>
     /// 更新数据

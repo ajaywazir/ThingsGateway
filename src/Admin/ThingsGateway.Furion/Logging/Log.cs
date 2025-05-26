@@ -59,7 +59,7 @@ public static class Log
     /// </summary>
     /// <param name="properties">建议使用 ConcurrentDictionary 类型</param>
     /// <returns></returns>
-    public static (ILogger logger, IDisposable scope) ScopeContext(IDictionary<object, object> properties)
+    public static (ILogger logger, IDisposable scope) ScopeContext(IDictionary<string, object> properties)
     {
         return GetLogger(StringLoggingPart.Default().ScopeContext(properties));
     }

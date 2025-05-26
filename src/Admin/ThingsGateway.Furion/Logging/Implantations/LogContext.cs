@@ -20,7 +20,7 @@ public sealed class LogContext : IDisposable
     /// <summary>
     /// 日志上下文数据
     /// </summary>
-    public IDictionary<object, object> Properties { get; set; }
+    public IDictionary<string, object> Properties { get; set; }
 
     /// <summary>
     /// 原生日志上下文数据

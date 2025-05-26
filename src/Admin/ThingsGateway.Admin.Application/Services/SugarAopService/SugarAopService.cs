@@ -117,6 +117,25 @@ public class SugarAopService : ISugarAopService
         db.Aop.DataExecuted = (value, entity) =>
         {
         };
+
+
+        db.Aop.OnLogExecuted = (sql, pars) =>
+        {
+            //执行时间超过1秒
+            if (db.Ado.SqlExecutionTime.TotalSeconds > 1)
+            {
+                //代码CS文件名
+                var fileName = db.Ado.SqlStackTrace.FirstFileName;
+                //代码行数
+                var fileLine = db.Ado.SqlStackTrace.FirstLine;
+                //方法名
+                var FirstMethodName = db.Ado.SqlStackTrace.FirstMethodName;
+
+                DbContext.WriteLog($"{fileName}-{FirstMethodName}-{fileLine} 执行时间超过1秒");
+                DbContext.WriteLogWithSql(UtilMethods.GetNativeSql(sql, pars));
+
+            }
+        };
     }
 
 }

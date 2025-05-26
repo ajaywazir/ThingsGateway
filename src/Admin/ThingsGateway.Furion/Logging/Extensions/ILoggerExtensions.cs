@@ -25,7 +25,7 @@ public static class ILoggerExtensions
     /// <param name="logger"></param>
     /// <param name="properties">建议使用 ConcurrentDictionary 类型</param>
     /// <returns></returns>
-    public static IDisposable ScopeContext(this ILogger logger, IDictionary<object, object> properties)
+    public static IDisposable ScopeContext(this ILogger logger, IDictionary<string, object> properties)
     {
         if (logger == null) throw new ArgumentNullException(nameof(logger));
 
