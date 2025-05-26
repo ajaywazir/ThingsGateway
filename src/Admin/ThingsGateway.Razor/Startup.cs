@@ -27,6 +27,12 @@ public class Startup : AppStartup
     {
         services.AddBootstrapBlazor(
             option => option.JSModuleVersion = Random.Shared.Next(10000).ToString()
+            ,jsonLocalizationOptions=> {
+                jsonLocalizationOptions.DisableGetLocalizerFromResourceManager = true;
+                jsonLocalizationOptions.DisableGetLocalizerFromService = true;
+                jsonLocalizationOptions.IgnoreLocalizerMissing=true;
+                jsonLocalizationOptions.UseKeyWhenValueIsNull = true;
+            }
             );
         services.AddConfigurableOptions<MenuOptions>();
         services.ConfigureIconThemeOptions(options => options.ThemeKey = "fa");
