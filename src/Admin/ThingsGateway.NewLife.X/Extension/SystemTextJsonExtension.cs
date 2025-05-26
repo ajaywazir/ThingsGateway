@@ -37,7 +37,8 @@ public static class SystemTextJsonExtension
         {
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
             WriteIndented = true, // 缩进
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull // 忽略 null
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull, // 忽略 null
+            NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
         };
         // 如有自定义Converter，这里添加
         // IndentedOptions.Converters.Add(new ByteArrayJsonConverter());
@@ -50,7 +51,8 @@ public static class SystemTextJsonExtension
         {
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
             WriteIndented = false, // 不缩进
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
         };
         NoneIndentedOptions.Converters.Add(new ByteArrayToNumberArrayConverterSystemTextJson());
         NoneIndentedOptions.Converters.Add(new JTokenSystemTextJsonConverter());
