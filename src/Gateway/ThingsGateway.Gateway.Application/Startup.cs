@@ -133,10 +133,14 @@ public class Startup : AppStartup
         try
         {
             using var db = DbContext.GetDB<BackendLog>();
-            if (!db.DbMaintenance.IsAnyIndex("idx_backendlog_logtime_date"))
+            if (db.CurrentConnectionConfig.DbType == SqlSugar.DbType.Sqlite)
             {
-                var indexsql = "CREATE INDEX idx_backendlog_logtime_date ON backend_log(strftime('%Y-%m-%d', LogTime));";
-                db.Ado.ExecuteCommand(indexsql);
+
+                if (!db.DbMaintenance.IsAnyIndex("idx_backendlog_logtime_date"))
+                {
+                    var indexsql = "CREATE INDEX idx_backendlog_logtime_date ON backend_log(strftime('%Y-%m-%d', LogTime));";
+                    db.Ado.ExecuteCommand(indexsql);
+                }
             }
         }
         catch { }
@@ -144,10 +148,14 @@ public class Startup : AppStartup
         try
         {
             using var db = DbContext.GetDB<RpcLog>();
-            if (!db.DbMaintenance.IsAnyIndex("idx_rpclog_logtime_date"))
+            if (db.CurrentConnectionConfig.DbType == SqlSugar.DbType.Sqlite)
             {
-                var indexsql = "CREATE INDEX idx_rpclog_logtime_date ON rpc_log(strftime('%Y-%m-%d', LogTime));";
-                db.Ado.ExecuteCommand(indexsql);
+
+                if (!db.DbMaintenance.IsAnyIndex("idx_rpclog_logtime_date"))
+                {
+                    var indexsql = "CREATE INDEX idx_rpclog_logtime_date ON rpc_log(strftime('%Y-%m-%d', LogTime));";
+                    db.Ado.ExecuteCommand(indexsql);
+                }
             }
         }
         catch { }

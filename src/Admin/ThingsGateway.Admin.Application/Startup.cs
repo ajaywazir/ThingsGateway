@@ -101,10 +101,13 @@ public class Startup : AppStartup
         try
         {
             using var db = DbContext.GetDB<SysOperateLog>();
-            if (!db.DbMaintenance.IsAnyIndex("idx_operatelog_optime_date"))
+            if (db.CurrentConnectionConfig.DbType == SqlSugar.DbType.Sqlite)
             {
-                var indexsql = "CREATE INDEX idx_operatelog_optime_date ON sys_operatelog(strftime('%Y-%m-%d', OpTime));";
-                db.Ado.ExecuteCommand(indexsql);
+                if (!db.DbMaintenance.IsAnyIndex("idx_operatelog_optime_date"))
+                {
+                    var indexsql = "CREATE INDEX idx_operatelog_optime_date ON sys_operatelog(strftime('%Y-%m-%d', OpTime));";
+                    db.Ado.ExecuteCommand(indexsql);
+                }
             }
         }
         catch { }
