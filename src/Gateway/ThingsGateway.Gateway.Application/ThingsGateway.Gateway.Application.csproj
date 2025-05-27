@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<Import Project="$(SolutionDir)Version.props" />
 	<Import Project="$(SolutionDir)PackNuget.props" />
@@ -10,8 +10,7 @@
 		<PackageReference Include="Rougamo.Fody" Version="5.0.0" />
 		<PackageReference Include="TouchSocket.Dmtp" Version="3.1.5" />
 		<PackageReference Include="TouchSocket.WebApi.Swagger" Version="3.1.5" />
-		<!--<PackageReference Include="ThingsGateway.Authentication" Version="$(AuthenticationVersion)" />-->
-		<ProjectReference Include="..\..\PluginPro\ThingsGateway.Authentication\ThingsGateway.Authentication.csproj" />
+		<PackageReference Include="ThingsGateway.Authentication" Version="$(AuthenticationVersion)" />
 
 	</ItemGroup>
 
