@@ -12,6 +12,7 @@ using Mapster;
 
 using Newtonsoft.Json.Linq;
 
+using ThingsGateway.Admin.Application;
 using ThingsGateway.Extension.Generic;
 using ThingsGateway.Foundation;
 
@@ -20,6 +21,8 @@ using TouchSocket.Dmtp;
 using TouchSocket.Dmtp.Rpc;
 using TouchSocket.Rpc;
 using TouchSocket.Sockets;
+
+using Yitter.IdGenerator;
 
 namespace ThingsGateway.Plugin.Synchronization;
 
@@ -258,10 +261,7 @@ public partial class Synchronization : BusinessBase, IRpcDriver
                     var data = await _tcpDmtpClient.GetDmtpRpcActor().InvokeTAsync<List<DataWithDatabase>>(
                                        nameof(ReverseCallbackServer.GetData), waitInvoke).ConfigureAwait(false);
 
-                    data.ForEach(a => a.Channel.Enable = false);
-                    await GlobalData.ChannelRuntimeService.CopyAsync(data.Select(a => a.Channel).ToList(), data.SelectMany(a => a.DeviceVariables).ToDictionary(a => a.Device, a => a.Variables), true, cancellationToken).ConfigureAwait(false);
-
-                    LogMessage?.LogTrace($"ForcedSync data success");
+                    await Add(data, cancellationToken).ConfigureAwait(false);
 
                 }
             }
@@ -277,10 +277,10 @@ public partial class Synchronization : BusinessBase, IRpcDriver
                     foreach (var item in _tcpDmtpService.Clients)
                     {
                         var data = await item.GetDmtpRpcActor().InvokeTAsync<List<DataWithDatabase>>(nameof(ReverseCallbackServer.GetData), waitInvoke).ConfigureAwait(false);
-                        data.ForEach(a => a.Channel.Enable = false);
 
-                        await GlobalData.ChannelRuntimeService.CopyAsync(data.Select(a => a.Channel).ToList(), data.SelectMany(a => a.DeviceVariables).ToDictionary(a => a.Device, a => a.Variables), true, cancellationToken).ConfigureAwait(false);
-                        LogMessage?.LogTrace($"{item.GetIPPort()}: ForcedSync data success");
+
+                        await Add(data, cancellationToken).ConfigureAwait(false);
+
                     }
 
                 }
@@ -299,6 +299,25 @@ public partial class Synchronization : BusinessBase, IRpcDriver
             LogMessage?.LogWarning(ex, "ForcedSync data error");
         }
 
+    }
+    private async Task Add(List<DataWithDatabase> data, CancellationToken cancellationToken)
+    {
+        data.ForEach(a =>
+        {
+            a.Channel.Enable = false;
+            a.Channel.Id = CommonUtils.GetSingleId();
+            a.DeviceVariables.ForEach(b =>
+            {
+                b.Device.Id = 0;
+                b.Variables.ForEach(c =>
+                {
+                    c.Id = 0;
+                });
+            });
+        });
+        await GlobalData.ChannelRuntimeService.CopyAsync(data.Select(a => a.Channel).ToList(), data.SelectMany(a => a.DeviceVariables).ToDictionary(a => a.Device, a => a.Variables), true, cancellationToken).ConfigureAwait(false);
+
+        LogMessage?.LogTrace($"ForcedSync data success");
     }
 
     /// <summary>

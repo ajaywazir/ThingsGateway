@@ -518,7 +518,7 @@ internal sealed class PluginService : IPluginService
     {
         var fileInfo = new FileInfo(path);
         if (fileInfo.Exists)
-            fileInfo.MoveTo($"{path}{YitIdHelper.NextId()}{DelEx}", true);
+            fileInfo.MoveTo($"{path}{CommonUtils.GetSingleId()}{DelEx}", true);
         else
             return false;
         return true;

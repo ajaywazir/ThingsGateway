@@ -10,6 +10,7 @@
 
 using Mapster;
 
+using ThingsGateway.Admin.Application;
 using ThingsGateway.Gateway.Application;
 
 using Yitter.IdGenerator;
@@ -54,14 +55,14 @@ public partial class ChannelCopyComponent
             for (int i = 0; i < CopyCount; i++)
             {
                 Channel channel = Model.Adapt<Channel>();
-                channel.Id = YitIdHelper.NextId();
+                channel.Id = CommonUtils.GetSingleId();
                 channel.Name = $"{CopyChannelNamePrefix}{CopyChannelNameSuffixNumber + i}";
 
                 int index = 0;
                 foreach (var item in Devices)
                 {
                     Device device = item.Key.Adapt<Device>();
-                    device.Id = YitIdHelper.NextId();
+                    device.Id = CommonUtils.GetSingleId();
                     device.Name = $"{channel.Name}_{CopyDeviceNamePrefix}{CopyDeviceNameSuffixNumber + (index++)}";
                     device.ChannelId = channel.Id;
                     List<Variable> variables = new();
@@ -69,7 +70,7 @@ public partial class ChannelCopyComponent
                     foreach (var variable in item.Value)
                     {
                         Variable v = variable.Adapt<Variable>();
-                        v.Id = YitIdHelper.NextId();
+                        v.Id = CommonUtils.GetSingleId();
                         v.DeviceId = device.Id;
                         variables.Add(v);
                     }

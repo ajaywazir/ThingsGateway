@@ -28,7 +28,7 @@ public class UserIdProvider : IUserIdProvider
 
         if (UserId > 0)
         {
-            return $"{UserId}{SysHub.Separate}{YitIdHelper.NextId()}";//返回用户ID
+            return $"{UserId}{SysHub.Separate}{CommonUtils.GetSingleId()}";//返回用户ID
         }
 
         return connection.ConnectionId;

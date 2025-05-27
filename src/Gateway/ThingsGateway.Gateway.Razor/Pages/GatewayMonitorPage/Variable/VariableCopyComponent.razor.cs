@@ -10,6 +10,7 @@
 
 using Mapster;
 
+using ThingsGateway.Admin.Application;
 using ThingsGateway.Gateway.Application;
 
 using Yitter.IdGenerator;
@@ -47,7 +48,7 @@ public partial class VariableCopyComponent
                 var variable = Model.Adapt<List<Variable>>();
                 foreach (var item in variable)
                 {
-                    item.Id = YitIdHelper.NextId();
+                    item.Id = CommonUtils.GetSingleId();
                     item.Name = $"{CopyVariableNamePrefix}{CopyVariableNameSuffixNumber + i}";
                     variables.Add(item);
                 }
