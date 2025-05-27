@@ -12,7 +12,7 @@ namespace ThingsGateway.Gateway.Application;
 
 public interface IGatewayExportService
 {
-    Task OnChannelExport(ExportFilter exportFilter);
-    Task OnDeviceExport(ExportFilter exportFilter);
-    Task OnVariableExport(ExportFilter exportFilter);
+    Task<bool> OnChannelExport(ExportFilter exportFilter);
+    Task<bool> OnDeviceExport(ExportFilter exportFilter);
+    Task<bool> OnVariableExport(ExportFilter exportFilter);
 }

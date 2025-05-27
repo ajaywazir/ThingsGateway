@@ -220,9 +220,10 @@ public partial class ChannelTable : IDisposable
 
     private async Task ExcelExportAsync(ITableExportContext<ChannelRuntime> tableExportContext, bool all = false)
     {
+        bool ret;
         if (all)
         {
-            await GatewayExportService.OnChannelExport(new() { QueryPageOptions = new() });
+            ret = await GatewayExportService.OnChannelExport(new() { QueryPageOptions = new() });
         }
         else
         {
@@ -230,16 +231,16 @@ public partial class ChannelTable : IDisposable
             {
 
                 case ChannelDevicePluginTypeEnum.PluginName:
-                    await GatewayExportService.OnChannelExport(new() { QueryPageOptions = new(), PluginName = SelectModel.PluginName });
+                    ret = await GatewayExportService.OnChannelExport(new() { QueryPageOptions = new(), PluginName = SelectModel.PluginName });
                     break;
                 case ChannelDevicePluginTypeEnum.Channel:
-                    await GatewayExportService.OnChannelExport(new() { QueryPageOptions = new(), ChannelId = SelectModel.ChannelRuntime.Id });
+                    ret = await GatewayExportService.OnChannelExport(new() { QueryPageOptions = new(), ChannelId = SelectModel.ChannelRuntime.Id });
                     break;
                 case ChannelDevicePluginTypeEnum.Device:
-                    await GatewayExportService.OnChannelExport(new() { QueryPageOptions = new(), DeviceId = SelectModel.DeviceRuntime.Id, PluginType = SelectModel.DeviceRuntime.PluginType });
+                    ret = await GatewayExportService.OnChannelExport(new() { QueryPageOptions = new(), DeviceId = SelectModel.DeviceRuntime.Id, PluginType = SelectModel.DeviceRuntime.PluginType });
                     break;
                 default:
-                    await GatewayExportService.OnChannelExport(new() { QueryPageOptions = new() });
+                    ret = await GatewayExportService.OnChannelExport(new() { QueryPageOptions = new() });
 
                     break;
             }
@@ -247,7 +248,8 @@ public partial class ChannelTable : IDisposable
         }
 
         // 返回 true 时自动弹出提示框
-        await ToastService.Default();
+        if (ret)
+            await ToastService.Default();
     }
 
     async Task ExcelChannelAsync(ITableExportContext<ChannelRuntime> tableExportContext)

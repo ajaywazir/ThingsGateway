@@ -35,18 +35,30 @@ public sealed class HybridGatewayExportService : IGatewayExportService
 
     }
 
-    public async Task OnChannelExport(ExportFilter exportFilter)
+    public async Task<bool> OnChannelExport(ExportFilter exportFilter)
     {
-        exportFilter.QueryPageOptions.IsPage = false;
-        exportFilter.QueryPageOptions.IsVirtualScroll = false;
+        try
+        {
 
-        var sheets = await _channelService.ExportChannelAsync(exportFilter).ConfigureAwait(false);
-        var path = await _importExportService.CreateFileAsync<Device>(sheets, "Channel", false).ConfigureAwait(false);
 
-        Open(path);
+            exportFilter.QueryPageOptions.IsPage = false;
+            exportFilter.QueryPageOptions.IsVirtualScroll = false;
+
+            var sheets = await _channelService.ExportChannelAsync(exportFilter).ConfigureAwait(false);
+            var path = await _importExportService.CreateFileAsync<Device>(sheets, "Channel", false).ConfigureAwait(false);
+
+            Open(path);
+            return true;
+
+        }
+        catch
+        {
+
+            return false;
+        }
     }
 
-    private static void Open(string path)
+    private static bool Open(string path)
     {
         path = System.IO.Path.GetDirectoryName(path); // Ensure the path is absolute
 
@@ -63,25 +75,47 @@ public sealed class HybridGatewayExportService : IGatewayExportService
         {
             System.Diagnostics.Process.Start("open", path);
         }
+
+        return true;
     }
 
-    public async Task OnDeviceExport(ExportFilter exportFilter)
+    public async Task<bool> OnDeviceExport(ExportFilter exportFilter)
     {
-        exportFilter.QueryPageOptions.IsPage = false;
-        exportFilter.QueryPageOptions.IsVirtualScroll = false;
-        var sheets = await _deviceService.ExportDeviceAsync(exportFilter).ConfigureAwait(false);
-        var path = await _importExportService.CreateFileAsync<Device>(sheets, "Device", false).ConfigureAwait(false);
-        Open(path);
+        try
+        {
 
+            exportFilter.QueryPageOptions.IsPage = false;
+            exportFilter.QueryPageOptions.IsVirtualScroll = false;
+            var sheets = await _deviceService.ExportDeviceAsync(exportFilter).ConfigureAwait(false);
+            var path = await _importExportService.CreateFileAsync<Device>(sheets, "Device", false).ConfigureAwait(false);
+            Open(path);
 
+            return true;
+
+        }
+        catch
+        {
+
+            return false;
+        }
     }
 
-    public async Task OnVariableExport(ExportFilter exportFilter)
+    public async Task<bool> OnVariableExport(ExportFilter exportFilter)
     {
-        exportFilter.QueryPageOptions.IsPage = false;
-        exportFilter.QueryPageOptions.IsVirtualScroll = false;
-        var sheets = await _variableService.ExportVariableAsync(exportFilter).ConfigureAwait(false);
-        var path = await _importExportService.CreateFileAsync<Variable>(sheets, "Variable", false).ConfigureAwait(false);
-        Open(path);
+        try
+        {
+
+            exportFilter.QueryPageOptions.IsPage = false;
+            exportFilter.QueryPageOptions.IsVirtualScroll = false;
+            var sheets = await _variableService.ExportVariableAsync(exportFilter).ConfigureAwait(false);
+            var path = await _importExportService.CreateFileAsync<Variable>(sheets, "Variable", false).ConfigureAwait(false);
+            Open(path);
+            return true;
+        }
+        catch
+        {
+
+            return false;
+        }
     }
 }

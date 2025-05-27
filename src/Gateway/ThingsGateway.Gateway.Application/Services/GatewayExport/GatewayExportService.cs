@@ -26,28 +26,53 @@ internal sealed class GatewayExportService : IGatewayExportService
 
     private IJSRuntime JSRuntime { get; set; }
 
-    public async Task OnChannelExport(ExportFilter exportFilter)
+    public async Task<bool> OnChannelExport(ExportFilter exportFilter)
     {
-        await using var ajaxJS = await JSRuntime.InvokeAsync<IJSObjectReference>("import", $"/_content/ThingsGateway.Razor/js/downloadFile.js");
-        string url = "api/gatewayExport/channel";
-        string fileName = $"{DateTime.Now.ToFileDateTimeFormat()}.xlsx";
-        await ajaxJS.InvokeVoidAsync("postJson_downloadFile", url, fileName, exportFilter.ToJsonString());
+        try
+        {
+
+            await using var ajaxJS = await JSRuntime.InvokeAsync<IJSObjectReference>("import", $"/_content/ThingsGateway.Razor/js/downloadFile.js");
+            string url = "api/gatewayExport/channel";
+            string fileName = $"{DateTime.Now.ToFileDateTimeFormat()}.xlsx";
+            return await ajaxJS.InvokeAsync<bool>("postJson_downloadFile", url, fileName, exportFilter.ToJsonString());
+
+        }
+        catch
+        {
+            return false;
+        }
     }
 
-    public async Task OnDeviceExport(ExportFilter exportFilter)
+    public async Task<bool> OnDeviceExport(ExportFilter exportFilter)
     {
-        await using var ajaxJS = await JSRuntime.InvokeAsync<IJSObjectReference>("import", $"/_content/ThingsGateway.Razor/js/downloadFile.js");
-        string url = "api/gatewayExport/device";
-        string fileName = $"{DateTime.Now.ToFileDateTimeFormat()}.xlsx";
-        await ajaxJS.InvokeVoidAsync("postJson_downloadFile", url, fileName, exportFilter.ToJsonString());
+        try
+        {
+
+
+            await using var ajaxJS = await JSRuntime.InvokeAsync<IJSObjectReference>("import", $"/_content/ThingsGateway.Razor/js/downloadFile.js");
+            string url = "api/gatewayExport/device";
+            string fileName = $"{DateTime.Now.ToFileDateTimeFormat()}.xlsx";
+            return await ajaxJS.InvokeAsync<bool>("postJson_downloadFile", url, fileName, exportFilter.ToJsonString());
+        }
+        catch
+        {
+            return false;
+        }
     }
 
-    public async Task OnVariableExport(ExportFilter exportFilter)
+    public async Task<bool> OnVariableExport(ExportFilter exportFilter)
     {
-        await using var ajaxJS = await JSRuntime.InvokeAsync<IJSObjectReference>("import", $"/_content/ThingsGateway.Razor/js/downloadFile.js");
-        string url = "api/gatewayExport/variable";
-        string fileName = $"{DateTime.Now.ToFileDateTimeFormat()}.xlsx";
-        await ajaxJS.InvokeVoidAsync("postJson_downloadFile", url, fileName, exportFilter.ToJsonString());
+        try
+        {
+            await using var ajaxJS = await JSRuntime.InvokeAsync<IJSObjectReference>("import", $"/_content/ThingsGateway.Razor/js/downloadFile.js");
+            string url = "api/gatewayExport/variable";
+            string fileName = $"{DateTime.Now.ToFileDateTimeFormat()}.xlsx";
+            return await ajaxJS.InvokeAsync<bool>("postJson_downloadFile", url, fileName, exportFilter.ToJsonString());
+        }
+        catch
+        {
+            return false;
+        }
 
     }
 }

@@ -221,9 +221,10 @@ public partial class DeviceTable : IDisposable
 
     private async Task ExcelExportAsync(ITableExportContext<DeviceRuntime> tableExportContext, bool all = false)
     {
+        bool ret;
         if (all)
         {
-            await GatewayExportService.OnDeviceExport(new() { QueryPageOptions = new() });
+            ret = await GatewayExportService.OnDeviceExport(new() { QueryPageOptions = new() });
         }
         else
         {
@@ -231,16 +232,16 @@ public partial class DeviceTable : IDisposable
             {
 
                 case ChannelDevicePluginTypeEnum.PluginName:
-                    await GatewayExportService.OnDeviceExport(new() { QueryPageOptions = new(), PluginName = SelectModel.PluginName });
+                    ret = await GatewayExportService.OnDeviceExport(new() { QueryPageOptions = new(), PluginName = SelectModel.PluginName });
                     break;
                 case ChannelDevicePluginTypeEnum.Channel:
-                    await GatewayExportService.OnDeviceExport(new() { QueryPageOptions = new(), ChannelId = SelectModel.ChannelRuntime.Id });
+                    ret = await GatewayExportService.OnDeviceExport(new() { QueryPageOptions = new(), ChannelId = SelectModel.ChannelRuntime.Id });
                     break;
                 case ChannelDevicePluginTypeEnum.Device:
-                    await GatewayExportService.OnDeviceExport(new() { QueryPageOptions = new(), DeviceId = SelectModel.DeviceRuntime.Id, PluginType = SelectModel.DeviceRuntime.PluginType });
+                    ret = await GatewayExportService.OnDeviceExport(new() { QueryPageOptions = new(), DeviceId = SelectModel.DeviceRuntime.Id, PluginType = SelectModel.DeviceRuntime.PluginType });
                     break;
                 default:
-                    await GatewayExportService.OnDeviceExport(new() { QueryPageOptions = new() });
+                    ret = await GatewayExportService.OnDeviceExport(new() { QueryPageOptions = new() });
 
                     break;
             }
@@ -248,7 +249,8 @@ public partial class DeviceTable : IDisposable
         }
 
         // 返回 true 时自动弹出提示框
-        await ToastService.Default();
+        if (ret)
+            await ToastService.Default();
     }
 
     async Task ExcelDeviceAsync(ITableExportContext<DeviceRuntime> tableExportContext)

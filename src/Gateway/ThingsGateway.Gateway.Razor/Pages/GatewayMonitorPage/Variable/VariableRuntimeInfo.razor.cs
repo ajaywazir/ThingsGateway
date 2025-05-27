@@ -268,9 +268,10 @@ public partial class VariableRuntimeInfo : IDisposable
 
     private async Task ExcelExportAsync(ITableExportContext<VariableRuntime> tableExportContext, bool all = false)
     {
+        bool ret;
         if (all)
         {
-            await GatewayExportService.OnVariableExport(new() { QueryPageOptions = new() });
+            ret = await GatewayExportService.OnVariableExport(new() { QueryPageOptions = new() });
         }
         else
         {
@@ -278,16 +279,16 @@ public partial class VariableRuntimeInfo : IDisposable
             {
 
                 case ChannelDevicePluginTypeEnum.PluginName:
-                    await GatewayExportService.OnVariableExport(new() { QueryPageOptions = new(), PluginName = SelectModel.PluginName });
+                    ret = await GatewayExportService.OnVariableExport(new() { QueryPageOptions = new(), PluginName = SelectModel.PluginName });
                     break;
                 case ChannelDevicePluginTypeEnum.Channel:
-                    await GatewayExportService.OnVariableExport(new() { QueryPageOptions = new(), ChannelId = SelectModel.ChannelRuntime.Id });
+                    ret = await GatewayExportService.OnVariableExport(new() { QueryPageOptions = new(), ChannelId = SelectModel.ChannelRuntime.Id });
                     break;
                 case ChannelDevicePluginTypeEnum.Device:
-                    await GatewayExportService.OnVariableExport(new() { QueryPageOptions = new(), DeviceId = SelectModel.DeviceRuntime.Id, PluginType = SelectModel.DeviceRuntime.PluginType });
+                    ret = await GatewayExportService.OnVariableExport(new() { QueryPageOptions = new(), DeviceId = SelectModel.DeviceRuntime.Id, PluginType = SelectModel.DeviceRuntime.PluginType });
                     break;
                 default:
-                    await GatewayExportService.OnVariableExport(new() { QueryPageOptions = new() });
+                    ret = await GatewayExportService.OnVariableExport(new() { QueryPageOptions = new() });
 
                     break;
             }
@@ -295,7 +296,8 @@ public partial class VariableRuntimeInfo : IDisposable
         }
 
         // 返回 true 时自动弹出提示框
-        await ToastService.Default();
+        if (ret)
+            await ToastService.Default();
     }
 
     async Task ExcelVariableAsync(ITableExportContext<VariableRuntime> tableExportContext)

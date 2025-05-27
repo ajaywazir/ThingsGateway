@@ -530,20 +530,21 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
     }
     async Task ExportCurrentChannel(ContextMenuItem item, object value)
     {
+        bool ret;
         if (value is not ChannelDeviceTreeItem channelDeviceTreeItem) return;
 
         if (channelDeviceTreeItem.TryGetChannelRuntime(out var channelRuntime))
         {
-            await GatewayExportService.OnChannelExport(new() { QueryPageOptions = new(), DeviceId = channelRuntime.Id });
+            ret = await GatewayExportService.OnChannelExport(new() { QueryPageOptions = new(), DeviceId = channelRuntime.Id });
         }
         else if (channelDeviceTreeItem.TryGetPluginName(out var pluginName))
         {
             //插件名称
-            await GatewayExportService.OnChannelExport(new() { QueryPageOptions = new(), PluginName = pluginName });
+            ret = await GatewayExportService.OnChannelExport(new() { QueryPageOptions = new(), PluginName = pluginName });
         }
         else if (channelDeviceTreeItem.TryGetPluginType(out var pluginType))
         {
-            await GatewayExportService.OnChannelExport(new ExportFilter() { QueryPageOptions = new(), PluginType = pluginType });
+            ret = await GatewayExportService.OnChannelExport(new ExportFilter() { QueryPageOptions = new(), PluginType = pluginType });
         }
         else
         {
@@ -551,14 +552,17 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
         }
 
         // 返回 true 时自动弹出提示框
-        await ToastService.Default();
+        if (ret)
+            await ToastService.Default();
     }
     async Task ExportAllChannel(ContextMenuItem item, object value)
     {
-        await GatewayExportService.OnChannelExport(new() { QueryPageOptions = new() });
+        bool ret;
+        ret = await GatewayExportService.OnChannelExport(new() { QueryPageOptions = new() });
 
         // 返回 true 时自动弹出提示框
-        await ToastService.Default();
+        if (ret)
+            await ToastService.Default();
     }
 
 
@@ -1065,25 +1069,26 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
 
     async Task ExportCurrentDevice(ContextMenuItem item, object value)
     {
+        bool ret;
         if (value is not ChannelDeviceTreeItem channelDeviceTreeItem) return;
 
         if (channelDeviceTreeItem.TryGetDeviceRuntime(out var deviceRuntime))
         {
-            await GatewayExportService.OnDeviceExport(new() { QueryPageOptions = new(), DeviceId = deviceRuntime.Id });
+            ret = await GatewayExportService.OnDeviceExport(new() { QueryPageOptions = new(), DeviceId = deviceRuntime.Id });
         }
         else if (channelDeviceTreeItem.TryGetChannelRuntime(out var channelRuntime))
         {
-            await GatewayExportService.OnDeviceExport(new() { QueryPageOptions = new(), ChannelId = channelRuntime.Id });
+            ret = await GatewayExportService.OnDeviceExport(new() { QueryPageOptions = new(), ChannelId = channelRuntime.Id });
         }
         else if (channelDeviceTreeItem.TryGetPluginName(out var pluginName))
         {
             //插件名称
-            await GatewayExportService.OnDeviceExport(new() { QueryPageOptions = new(), PluginName = pluginName });
+            ret = await GatewayExportService.OnDeviceExport(new() { QueryPageOptions = new(), PluginName = pluginName });
         }
         else if (channelDeviceTreeItem.TryGetPluginType(out var pluginType))
         {
             //采集
-            await GatewayExportService.OnDeviceExport(new() { QueryPageOptions = new(), PluginType = pluginType });
+            ret = await GatewayExportService.OnDeviceExport(new() { QueryPageOptions = new(), PluginType = pluginType });
         }
         else
         {
@@ -1091,14 +1096,17 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
         }
 
         // 返回 true 时自动弹出提示框
-        await ToastService.Default();
+        if (ret)
+            await ToastService.Default();
     }
     async Task ExportAllDevice(ContextMenuItem item, object value)
     {
-        await GatewayExportService.OnDeviceExport(new() { QueryPageOptions = new() });
+        bool ret;
+        ret = await GatewayExportService.OnDeviceExport(new() { QueryPageOptions = new() });
 
         // 返回 true 时自动弹出提示框
-        await ToastService.Default();
+        if (ret)
+            await ToastService.Default();
     }
 
     async Task ImportDevice(ContextMenuItem item, object value)
