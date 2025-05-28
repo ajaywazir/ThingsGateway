@@ -71,13 +71,25 @@ public static class App
     /// </summary>
     public static IServiceProvider RootServices => InternalApp.RootServices;
 
+    private static IHostApplicationLifetime hostApplicationLifetime;
+    public static IHostApplicationLifetime HostApplicationLifetime
+    {
+        get
+        {
+            if ((hostApplicationLifetime == null))
+            {
+                hostApplicationLifetime = RootServices?.GetService<IHostApplicationLifetime>();
+            }
+            return hostApplicationLifetime;
+        }
+    }
+
     private static IStringLocalizerFactory? stringLocalizerFactory;
 
     /// <summary>
     /// 本地化服务工厂
     /// </summary>
     public static IStringLocalizerFactory? StringLocalizerFactory
-
     {
         get
         {

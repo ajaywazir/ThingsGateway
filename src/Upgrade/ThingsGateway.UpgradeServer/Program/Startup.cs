@@ -157,6 +157,7 @@ public class Startup : AppStartup
         {
             options.WriteFilter = (logMsg) =>
             {
+                if (App.HostApplicationLifetime.ApplicationStopping.IsCancellationRequested && logMsg.LogLevel >= LogLevel.Warning) return false;
                 if (string.IsNullOrEmpty(logMsg.Message)) return false;
                 else return true;
             };

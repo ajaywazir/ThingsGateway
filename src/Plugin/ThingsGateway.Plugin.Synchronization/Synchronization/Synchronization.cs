@@ -63,11 +63,8 @@ public partial class Synchronization : BusinessBase, IRpcDriver
 
     protected override async ValueTask ProtectedExecuteAsync(CancellationToken cancellationToken)
     {
-
         try
         {
-
-
             if (_driverPropertys.IsServer)
             {
                 if (_tcpDmtpService.ServerState != ServerState.Running)
@@ -309,11 +306,11 @@ public partial class Synchronization : BusinessBase, IRpcDriver
             a.Channel.Id = CommonUtils.GetSingleId();
             a.DeviceVariables.ForEach(b =>
             {
-                b.Device.ChannelId=a.Channel.Id;
+                b.Device.ChannelId = a.Channel.Id;
                 b.Device.Id = CommonUtils.GetSingleId();
                 b.Variables.ForEach(c =>
                 {
-                    c.DeviceId= b.Device.Id;
+                    c.DeviceId = b.Device.Id;
                     c.Id = 0;
                 });
             });

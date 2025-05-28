@@ -37,7 +37,6 @@ using ThingsGateway.Debug;
 using ThingsGateway.Extension;
 using ThingsGateway.Gateway.Application;
 using ThingsGateway.NewLife.Caching;
-using ThingsGateway.NewLife.Extension;
 
 namespace ThingsGateway.Server;
 
@@ -138,7 +137,8 @@ public class Startup : AppStartup
         {
             options.WriteFilter = (logMsg) =>
             {
-                if (logMsg.Message.IsNullOrEmpty()) return false;
+                if (App.HostApplicationLifetime.ApplicationStopping.IsCancellationRequested && logMsg.LogLevel >= LogLevel.Warning) return false;
+                if (string.IsNullOrEmpty(logMsg.Message)) return false;
                 else return true;
             };
 
