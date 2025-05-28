@@ -61,14 +61,14 @@ internal sealed class HeartbeatAndReceivePlugin : PluginBase, ITcpConnectedPlugi
         {
             return;//此处可判断，如果为服务器，则不用使用心跳。
         }
-
+        if (HeartbeatTime > 0)
+            SendHeartbeat = true;
         HeartbeatTime = Math.Max(HeartbeatTime, 1000);
 
         if (DtuId.IsNullOrWhiteSpace()) return;
 
         if (client is ITcpClient tcpClient)
         {
-            SendHeartbeat = true;
             await tcpClient.SendAsync(DtuIdByte).ConfigureAwait(false);
 
             if (Task == null)
