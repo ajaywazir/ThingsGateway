@@ -132,6 +132,7 @@ public partial class Synchronization : BusinessBase, IRpcDriver
 
 
                     // 如果 online 为 true，表示设备在线
+                    if (online)
                     {
                         var deviceRunTimes = CollectDevices.Where(a => a.Value.IsCollect == true).Select(a => a.Value).Adapt<List<DeviceDataWithValue>>();
 
@@ -308,9 +309,11 @@ public partial class Synchronization : BusinessBase, IRpcDriver
             a.Channel.Id = CommonUtils.GetSingleId();
             a.DeviceVariables.ForEach(b =>
             {
-                b.Device.Id = 0;
+                b.Device.ChannelId=a.Channel.Id;
+                b.Device.Id = CommonUtils.GetSingleId();
                 b.Variables.ForEach(c =>
                 {
+                    c.DeviceId= b.Device.Id;
                     c.Id = 0;
                 });
             });
@@ -340,12 +343,12 @@ public partial class Synchronization : BusinessBase, IRpcDriver
         {
             if (deviceDatas.TryGetValue(item.Key.DeviceName ?? string.Empty, out var variableDatas))
             {
-                variableDatas.Add(item.Key.Name, item.Value?.ToString() ?? string.Empty);
+                variableDatas.TryAdd(item.Key.Name, item.Value?.ToString() ?? string.Empty);
             }
             else
             {
-                deviceDatas.Add(item.Key.DeviceName ?? string.Empty, new());
-                deviceDatas[item.Key.DeviceName ?? string.Empty].Add(item.Key.Name, item.Value?.ToString() ?? string.Empty);
+                deviceDatas.TryAdd(item.Key.DeviceName ?? string.Empty, new());
+                deviceDatas[item.Key.DeviceName ?? string.Empty].TryAdd(item.Key.Name, item.Value?.ToString() ?? string.Empty);
             }
         }
 
@@ -402,7 +405,7 @@ public partial class Synchronization : BusinessBase, IRpcDriver
                                 try
                                 {
 
-                                    var data = await _tcpDmtpClient.GetDmtpRpcActor().InvokeTAsync<Dictionary<string, Dictionary<string, OperResult<object>>>>(
+                                    var data = await client.GetDmtpRpcActor().InvokeTAsync<Dictionary<string, Dictionary<string, OperResult<object>>>>(
                                                          nameof(ReverseCallbackServer.Rpc), waitInvoke, new Dictionary<string, Dictionary<string, string>>() { { item.Key, item.Value } }).ConfigureAwait(false);
 
                                     dataResult.AddRange(data);
@@ -415,7 +418,7 @@ public partial class Synchronization : BusinessBase, IRpcDriver
 
                                     foreach (var vItem in item.Value)
                                     {
-                                        dataResult[item.Key].Add(vItem.Key, new OperResult<object>(ex));
+                                        dataResult[item.Key].TryAdd(vItem.Key, new OperResult<object>(ex));
                                     }
                                 }
                             }
@@ -426,7 +429,7 @@ public partial class Synchronization : BusinessBase, IRpcDriver
 
                         foreach (var vItem in item.Value)
                         {
-                            dataResult[item.Key].Add(vItem.Key, new OperResult<object>("No online"));
+                            dataResult[item.Key].TryAdd(vItem.Key, new OperResult<object>("No online"));
                         }
                     }
 

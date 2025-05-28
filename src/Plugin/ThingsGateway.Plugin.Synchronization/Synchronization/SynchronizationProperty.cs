@@ -15,7 +15,7 @@ namespace ThingsGateway.Plugin.Synchronization;
 /// <summary>
 /// <inheritdoc/>
 /// </summary>
-public class SynchronizationProperty : BusinessPropertyBase
+public class SynchronizationProperty : BusinessPropertyBase, IBusinessPropertyAllVariableBase
 {
     [DynamicProperty]
     public bool IsServer { get; set; } = true;
