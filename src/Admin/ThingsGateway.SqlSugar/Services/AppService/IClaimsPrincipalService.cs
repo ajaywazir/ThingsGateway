@@ -8,28 +8,11 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
-using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Localization;
+using System.Security.Claims;
 
-using System.Diagnostics.CodeAnalysis;
+namespace ThingsGateway.Admin.Application;
 
-namespace ThingsGateway.AdminServer;
-
-public partial class AccessDenied
+public interface IClaimsPrincipalService
 {
-    [SupplyParameterFromQuery]
-    [Parameter]
-    public string? ReturnUrl { get; set; }
-
-    [Inject]
-    [NotNull]
-    private IAppService? AppService { get; set; }
-
-    [Inject]
-    [NotNull]
-    private IStringLocalizer<NotFound404>? Localizer { get; set; }
-
-    [Inject]
-    [NotNull]
-    private NavigationManager? NavigationManager { get; set; }
+    public ClaimsPrincipal? User { get; }
 }

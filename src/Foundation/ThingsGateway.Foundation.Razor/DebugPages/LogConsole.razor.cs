@@ -34,12 +34,10 @@ public partial class LogConsole : IDisposable
     public EventCallback<LogLevel> LogLevelChanged { get; set; }
 
     [Parameter]
-    public string CardStyle { get; set; } = "height: 100%;";
-    [Parameter]
     public string HeaderText { get; set; } = "Log";
 
     [Parameter]
-    public string HeightString { get; set; } = "100%";
+    public string HeightString { get; set; } = "calc(100% - 300px)";
 
     [Parameter, EditorRequired]
     public string LogPath { get; set; }

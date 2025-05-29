@@ -18,9 +18,7 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-		<PackageReference Include="BootstrapBlazor.TableExport" Version="9.2.5" />
 		<PackageReference Include="Rougamo.Fody" Version="5.0.0" />
-		<PackageReference Include="SqlSugarCore" Version="5.1.4.193" />
 	</ItemGroup>
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.1" />
@@ -49,6 +47,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\ThingsGateway.Razor\ThingsGateway.Razor.csproj" />
+		<ProjectReference Include="..\ThingsGateway.SqlSugar\ThingsGateway.SqlSugar.csproj" />
 	</ItemGroup>
 
 </Project>

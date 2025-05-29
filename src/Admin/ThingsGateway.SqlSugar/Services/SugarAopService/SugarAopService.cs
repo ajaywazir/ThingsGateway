@@ -17,10 +17,10 @@ namespace ThingsGateway.Admin.Application;
 
 public class SugarAopService : ISugarAopService
 {
-    private IAppService _appService;
-    public SugarAopService(IAppService appService)
+    private IClaimsPrincipalService _claimsPrincipalService;
+    public SugarAopService(IClaimsPrincipalService appService)
     {
-        _appService = appService;
+        _claimsPrincipalService = appService;
     }
     /// <summary>
     /// Aop设置
@@ -85,7 +85,7 @@ public class SugarAopService : ISugarAopService
                 if (entityInfo.PropertyName == nameof(BaseEntity.CreateTime))
                     entityInfo.SetValue(DateTime.Now);
 
-                if (_appService.User != null)
+                if (_claimsPrincipalService.User != null)
                 {
                     //创建人
                     if (entityInfo.PropertyName == nameof(BaseEntity.CreateUserId))
@@ -103,7 +103,7 @@ public class SugarAopService : ISugarAopService
                 if (entityInfo.PropertyName == nameof(BaseEntity.UpdateTime))
                     entityInfo.SetValue(DateTime.Now);
                 //更新人
-                if (_appService.User != null)
+                if (_claimsPrincipalService.User != null)
                 {
                     if (entityInfo.PropertyName == nameof(BaseEntity.UpdateUserId))
                         entityInfo.SetValue(UserManager.UserId);

@@ -11,6 +11,7 @@
 
     // nuget动态加载的程序集
     "SupportPackageNamePrefixs": [
+      "ThingsGateway.SqlSugar",
       "ThingsGateway.Admin.Application",
       "ThingsGateway.Admin.Razor",
       "ThingsGateway.Gateway.Application",

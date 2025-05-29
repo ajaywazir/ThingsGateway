@@ -41,6 +41,7 @@ public class SingleFilePublish : ISingleFilePublish
             "ThingsGateway.Razor",
             "ThingsGateway.Admin.Razor"   ,
             "ThingsGateway.Admin.Application",
+            "ThingsGateway.SqlSugar",
 
             "ThingsGateway.Foundation.Razor"   ,
             "ThingsGateway.UpgradeServer"   ,

@@ -5,7 +5,7 @@
 
 <ChannelRuntimeInfo1 ChannelRuntime="ChannelRuntime" />
 
-<LogConsole CardStyle="height: calc(100% - 330px);" LogLevel=@((ChannelRuntime?.DeviceThreadManage?.LogMessage)?.LogLevel??TouchSocket.Core.LogLevel.Trace)
+<LogConsole HeightString="calc(100% - 270px)" LogLevel=@((ChannelRuntime?.DeviceThreadManage?.LogMessage)?.LogLevel ?? TouchSocket.Core.LogLevel.Trace)
             LogLevelChanged="(logLevel)=>
         {
                 ChannelRuntime.DeviceThreadManage?.SetLogAsync(logLevel);

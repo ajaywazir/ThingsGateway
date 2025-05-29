@@ -20,9 +20,11 @@ namespace ThingsGateway.Admin.Application;
 public class AppService : IAppService
 {
     private readonly IUserAgentService UserAgentService;
-    public AppService(IUserAgentService userAgentService)
+    private readonly IClaimsPrincipalService ClaimsPrincipalService;
+    public AppService(IUserAgentService userAgentService, IClaimsPrincipalService claimsPrincipalService)
     {
         UserAgentService = userAgentService;
+        ClaimsPrincipalService = claimsPrincipalService;
     }
     public string GetReturnUrl(string returnUrl)
     {
@@ -70,7 +72,7 @@ public class AppService : IAppService
             ExpiresUtc = diffTime,
         }).ConfigureAwait(false);
     }
-    public ClaimsPrincipal? User => App.User;
+    public ClaimsPrincipal? User => ClaimsPrincipalService.User;
 
     public string? RemoteIpAddress => App.HttpContext?.GetRemoteIpAddressToIPv4();
 

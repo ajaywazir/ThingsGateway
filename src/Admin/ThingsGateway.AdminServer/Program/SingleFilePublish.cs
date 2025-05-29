@@ -40,7 +40,8 @@ public class SingleFilePublish : ISingleFilePublish
             "ThingsGateway.NewLife.X",
             "ThingsGateway.Razor",
             "ThingsGateway.Admin.Razor"   ,
-            "ThingsGateway.Admin.Application"
+            "ThingsGateway.Admin.Application",
+            "ThingsGateway.SqlSugar",
         ];
     }
 }

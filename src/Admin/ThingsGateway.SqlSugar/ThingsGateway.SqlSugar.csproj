@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="$(SolutionDir)Version.props" />
+	<Import Project="$(SolutionDir)PackNuget.props" />
+
+	<PropertyGroup>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+	</PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net8.0;net9.0;</TargetFrameworks>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="SqlSugarCore" Version="5.1.4.193" />
+		<PackageReference Include="BootstrapBlazor.TableExport" Version="9.2.5" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\README.md" Pack="true" PackagePath="\" />
+		<None Include="..\README.zh-CN.md" Pack="true" PackagePath="\" />
+		<None Remove="$(SolutionDir)..\README.md" Pack="false" PackagePath="\" />
+		<None Remove="$(SolutionDir)..\README.zh-CN.md" Pack="false" PackagePath="\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\ThingsGateway.Razor\ThingsGateway.Razor.csproj" />
+	</ItemGroup>
+
+</Project>

@@ -21,7 +21,7 @@
 
         @if (Logger != null)
         {
-            <LogConsole LogLevel=@(Logger.LogLevel) LogLevelChanged="(a)=>{
+            <LogConsole HeightString="calc(100% - 100px)" LogLevel=@(Logger.LogLevel) LogLevelChanged="(a)=>{
 Logger.LogLevel=a;
 }" LogPath=@LogPath HeaderText=@HeaderText></LogConsole>
         }

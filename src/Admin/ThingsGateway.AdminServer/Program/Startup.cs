@@ -18,17 +18,10 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 
-using Newtonsoft.Json;
-
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
-
-using ThingsGateway.Admin.Application;
-using ThingsGateway.Admin.Razor;
-using ThingsGateway.Extension;
-using ThingsGateway.NewLife.Caching;
 
 namespace ThingsGateway.AdminServer;
 

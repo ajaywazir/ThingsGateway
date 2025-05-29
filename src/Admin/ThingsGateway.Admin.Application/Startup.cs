@@ -13,8 +13,6 @@ using BootstrapBlazor.Components;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-using SqlSugar;
-
 using System.Reflection;
 
 using ThingsGateway.UnifyResult;
@@ -28,18 +26,11 @@ public class Startup : AppStartup
     {
         Directory.CreateDirectory("DB");
 
-        services.AddConfigurableOptions<SqlSugarOptions>();
         services.AddConfigurableOptions<AdminLogOptions>();
         services.AddConfigurableOptions<TenantOptions>();
 
-        services.AddSingleton(typeof(IDataService<>), typeof(BaseService<>));
-        services.AddSingleton<ISugarAopService, SugarAopService>();
-        services.AddSingleton<ISugarConfigAopService, SugarConfigAopService>();
-
         services.AddSingleton<IUserAgentService, UserAgentService>();
         services.AddSingleton<IAppService, AppService>();
-
-        StaticConfig.EnableAllWhereIF = true;
 
         services.AddConfigurableOptions<EmailOptions>();
         services.AddConfigurableOptions<HardwareInfoOptions>();
@@ -57,7 +48,6 @@ public class Startup : AppStartup
 
         services.AddSingleton<IVerificatInfoService, VerificatInfoService>();
         services.AddSingleton<IUserCenterService, UserCenterService>();
-        services.AddSingleton<ISugarAopService, SugarAopService>();
         services.AddSingleton<ISysDictService, SysDictService>();
         services.AddSingleton<ISysOperateLogService, SysOperateLogService>();
         services.AddSingleton<IRelationService, RelationService>();
