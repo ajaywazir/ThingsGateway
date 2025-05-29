@@ -43,10 +43,7 @@ public partial class ChannelRuntimeInfo1 : IDisposable
         {
             try
             {
-                await InvokeAsync(() =>
-                {
-                    StateHasChanged();
-                });
+                await InvokeAsync(StateHasChanged);
             }
             catch (Exception ex)
             {

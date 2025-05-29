@@ -17,8 +17,6 @@ using Microsoft.Extensions.Logging;
 
 using ThingsGateway.NewLife;
 
-using TouchSocket.Core;
-
 namespace ThingsGateway.Gateway.Application;
 
 public class ChannelRuntimeService : IChannelRuntimeService
@@ -199,9 +197,7 @@ public class ChannelRuntimeService : IChannelRuntimeService
 
     public async Task RestartChannelAsync(IEnumerable<ChannelRuntime> oldChannelRuntimes)
     {
-        oldChannelRuntimes.SelectMany(a => a.DeviceRuntimes.SelectMany(a => a.Value.VariableRuntimes)).ParallelForEach(a => a.Value.SafeDispose());
-        oldChannelRuntimes.SelectMany(a => a.DeviceRuntimes).ParallelForEach(a => a.Value.SafeDispose());
-        oldChannelRuntimes.ParallelForEach(a => a.SafeDispose());
+        RuntimeServiceHelper.RemoveOldChannelRuntimes(oldChannelRuntimes);
         var ids = oldChannelRuntimes.Select(a => a.Id).ToHashSet();
         try
         {
@@ -228,5 +224,6 @@ public class ChannelRuntimeService : IChannelRuntimeService
             WaitLock.Release();
         }
     }
+
 
 }

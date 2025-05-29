@@ -6,7 +6,8 @@
 @using BootstrapBlazor.Components
 @namespace ThingsGateway.Debug
 
-<Card HeaderText=@HeaderText class=@("w-100") style=@($"{CardStyle}")>
+
+    <Card HeaderText=@HeaderText class=@("w-100 h-100") style=@($"display: flex; flex: 1;{CardStyle}")>
     <HeaderTemplate>
         <div class="flex-fill">
         </div>
@@ -36,7 +37,7 @@
 
     </HeaderTemplate>
     <BodyTemplate>
-        <div style=@($"height:{HeightString};overflow-y:scroll")>
+                <div style=@($"height:{HeightString};overflow-y:scroll;flex-fill;")>
             <Virtualize Items="CurrentMessages??new  List<LogMessage>()" Context="itemMessage" ItemSize="60" OverscanCount=2>
                 <ItemContent>
                     @*       <Tooltip Placement="Placement.Bottom" Title=@itemMessage.Message.Substring(0, Math.Min(itemMessage.Message.Length, 500))> *@
@@ -54,6 +55,5 @@
 
     </BodyTemplate>
 </Card>
-
 
 

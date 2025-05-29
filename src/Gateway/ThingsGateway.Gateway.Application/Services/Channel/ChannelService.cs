@@ -33,16 +33,6 @@ namespace ThingsGateway.Gateway.Application;
 
 internal sealed class ChannelService : BaseService<Channel>, IChannelService
 {
-    private readonly IDispatchService<Channel> _dispatchService;
-
-    /// <inheritdoc cref="IChannelService"/>
-    public ChannelService(
-    IDispatchService<Channel>? dispatchService
-        )
-    {
-        _dispatchService = dispatchService;
-    }
-
     #region CURD
 
     /// <inheritdoc/>
@@ -181,7 +171,6 @@ internal sealed class ChannelService : BaseService<Channel>, IChannelService
     public void DeleteChannelFromCache()
     {
         App.CacheService.Remove(ThingsGatewayCacheConst.Cache_Channel);//删除通道缓存
-        _dispatchService.Dispatch(new());
     }
 
     /// <summary>

@@ -17,7 +17,6 @@ using SqlSugar;
 
 using ThingsGateway.Admin.Razor;
 using ThingsGateway.Gateway.Application;
-using ThingsGateway.NewLife;
 using ThingsGateway.NewLife.Extension;
 using ThingsGateway.NewLife.Json.Extension;
 
@@ -127,7 +126,7 @@ public partial class ChannelDeviceTree
              {nameof(ChannelEditComponent.OnValidSubmit), async () =>
             {
                 await Task.Run(() =>GlobalData.ChannelRuntimeService.SaveChannelAsync(oneModel,itemChangedType,AutoRestartThread));
-               await Notify();
+               ////await Notify();
             }},
             {nameof(ChannelEditComponent.Model),oneModel },
             {nameof(ChannelEditComponent.ValidateEnable),true },
@@ -175,7 +174,7 @@ public partial class ChannelDeviceTree
             {
 
                 await Task.Run(() =>GlobalData.ChannelRuntimeService.CopyAsync(channels,devices,AutoRestartThread, default));
-                    await Notify();
+                    //await Notify();
 
             }},
             {nameof(ChannelCopyComponent.Model),oneModel },
@@ -252,7 +251,7 @@ public partial class ChannelDeviceTree
                 Spinner.SetRun(true);
                 await Task.Run(() => GlobalData.ChannelRuntimeService.BatchEditAsync(changedModels, oldModel, oneModel,AutoRestartThread));
 
-              await Notify();
+              //await Notify();
                 await InvokeAsync(() =>
                 {
 
@@ -304,7 +303,7 @@ public partial class ChannelDeviceTree
     }
 finally
                 {
-               await Notify();
+               //await Notify();
             await InvokeAsync( ()=>
             {
 
@@ -422,7 +421,7 @@ finally
                 Spinner.SetRun(true);
 
                 await Task.Run(() => GlobalData.ChannelRuntimeService.DeleteChannelAsync(modelIds.Select(a => a.Id), AutoRestartThread, default));
-                await Notify();
+                //await Notify();
                 await InvokeAsync(() =>
                 {
                     Spinner.SetRun(false);
@@ -466,7 +465,7 @@ finally
 
                 var key = await GlobalData.GetCurrentUserChannels().ConfigureAwait(false);
                 await Task.Run(() => GlobalData.ChannelRuntimeService.DeleteChannelAsync(key.Select(a => a.Id), AutoRestartThread, default));
-                await Notify();
+                //await Notify();
                 await InvokeAsync(() =>
                 {
                     Spinner.SetRun(false);
@@ -592,7 +591,7 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
 
             });
             await Task.Run(() => GlobalData.ChannelRuntimeService.ImportChannelAsync(value, AutoRestartThread));
-            await Notify();
+            //await Notify();
             await InvokeAsync(() =>
             {
                 Spinner.SetRun(false);
@@ -647,7 +646,7 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
             {
 
                 await Task.Run(() =>GlobalData.DeviceRuntimeService.CopyAsync(devices,AutoRestartThread, default));
-               await Notify();
+               //await Notify();
 
             }},
             {nameof(DeviceCopyComponent.Model),oneModel },
@@ -697,7 +696,7 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
              {nameof(DeviceEditComponent.OnValidSubmit), async () =>
              {
                  await Task.Run(() =>GlobalData.DeviceRuntimeService.SaveDeviceAsync(oneModel,itemChangedType, AutoRestartThread));
-               await Notify();
+               //await Notify();
             }},
             {nameof(DeviceEditComponent.Model),oneModel },
             {nameof(DeviceEditComponent.AutoRestartThread),AutoRestartThread },
@@ -783,7 +782,7 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
 
                 });
                 await Task.Run(() =>GlobalData.DeviceRuntimeService.BatchEditAsync(changedModels,oldModel,oneModel,AutoRestartThread));
-                await Notify();
+                //await Notify();
                          await InvokeAsync(() =>
             {
                                 Spinner.SetRun(false);
@@ -832,7 +831,7 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
     }
 finally
                 {
-                await Notify();
+                //await Notify();
                                  await InvokeAsync( ()=>
             {
 
@@ -955,7 +954,7 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
                 Spinner.SetRun(true);
 
                 await Task.Run(() => GlobalData.DeviceRuntimeService.DeleteDeviceAsync(modelIds.Select(a => a.Id), AutoRestartThread, default));
-                await Notify();
+                //await Notify();
                 await InvokeAsync(() =>
                 {
                     Spinner.SetRun(false);
@@ -1002,7 +1001,7 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
                 var data = await GlobalData.GetCurrentUserDevices().ConfigureAwait(false);
 
                 await Task.Run(() => GlobalData.DeviceRuntimeService.DeleteDeviceAsync(data.Select(a => a.Id), AutoRestartThread, default));
-                await Notify();
+                //await Notify();
                 await InvokeAsync(() =>
                 {
                     Spinner.SetRun(false);
@@ -1136,7 +1135,7 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
             });
 
             await Task.Run(() => GlobalData.DeviceRuntimeService.ImportDeviceAsync(value, AutoRestartThread));
-            await Notify();
+            //await Notify();
             await InvokeAsync(() =>
             {
                 Spinner.SetRun(false);
@@ -1210,6 +1209,8 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
     private ChannelDeviceTreeItem UnknownItem = new() { ChannelDevicePluginType = ChannelDevicePluginTypeEnum.PluginType, PluginType = null };
 
     private TreeViewItem<ChannelDeviceTreeItem> UnknownTreeViewItem;
+
+    SmartTriggerScheduler? scheduler;
     protected override async Task OnInitializedAsync()
     {
 
@@ -1264,8 +1265,8 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
 
         Items = ZItem;
         ChannelRuntimeDispatchService.Subscribe(Refresh);
-        DeviceRuntimeDispatchService.Subscribe(Refresh);
 
+        scheduler = new SmartTriggerScheduler(Notify, TimeSpan.FromMilliseconds(3000));
 
         _ = Task.Run(async () =>
         {
@@ -1289,43 +1290,20 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
         await base.OnInitializedAsync();
     }
 
-    private WaitLock WaitLock = new();
-
-    private volatile bool _isExecuting = false;
 
     private async Task Notify()
     {
-        if (_isExecuting) return;
-        try
+        if (Disposed) return;
+        await OnClickSearch(SearchText);
+
+        Value = GetValue(Value);
+        if (ChannelDeviceChanged != null)
         {
-            await WaitLock.WaitAsync();
-
-            if (_isExecuting) return;
-
-            _isExecuting = true;
-
-            try
-            {
-                if (Disposed) return;
-                await OnClickSearch(SearchText);
-
-                Value = GetValue(Value);
-                if (ChannelDeviceChanged != null)
-                {
-                    await ChannelDeviceChanged.Invoke(Value);
-                }
-                await InvokeAsync(StateHasChanged);
-            }
-            finally
-            {
-                await Task.Delay(1000);
-                _isExecuting = false;
-            }
+            await ChannelDeviceChanged.Invoke(Value);
         }
-        finally
-        {
-            WaitLock.Release();
-        }
+        await InvokeAsync(StateHasChanged);
+
+
     }
 
     private static ChannelDeviceTreeItem GetValue(ChannelDeviceTreeItem channelDeviceTreeItem)
@@ -1354,18 +1332,15 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
 
 
 
-    private async Task Refresh(DispatchEntry<DeviceRuntime> entry)
+    private Task Refresh(DispatchEntry<ChannelRuntime> entry)
     {
-        await Notify();
+        scheduler.Trigger();
+        return Task.CompletedTask;
     }
-    private async Task Refresh(DispatchEntry<ChannelRuntime> entry)
-    {
-        await Notify();
-    }
-    [Inject]
-    private IDispatchService<DeviceRuntime> DeviceRuntimeDispatchService { get; set; }
+
     [Inject]
     private IDispatchService<ChannelRuntime> ChannelRuntimeDispatchService { get; set; }
+
     private string SearchText;
 
     private async Task<List<TreeViewItem<ChannelDeviceTreeItem>>> OnClickSearch(string searchText)
@@ -1523,7 +1498,6 @@ EventCallback.Factory.Create<MouseEventArgs>(this, async e =>
     {
         Disposed = true;
         ChannelRuntimeDispatchService.UnSubscribe(Refresh);
-        DeviceRuntimeDispatchService.UnSubscribe(Refresh);
         return base.DisposeAsync(disposing);
     }
 

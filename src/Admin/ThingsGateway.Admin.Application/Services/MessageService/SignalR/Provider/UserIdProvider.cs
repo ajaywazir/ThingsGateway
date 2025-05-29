@@ -11,8 +11,6 @@
 using Microsoft.AspNetCore.Http.Connections.Features;
 using Microsoft.AspNetCore.SignalR;
 
-using Yitter.IdGenerator;
-
 namespace ThingsGateway.Admin.Application;
 
 /// <summary>

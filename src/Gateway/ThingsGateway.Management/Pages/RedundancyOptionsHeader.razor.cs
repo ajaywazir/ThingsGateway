@@ -31,8 +31,14 @@ public partial class RedundancyOptionsHeader : IDisposable
         {
             while (!Disposed)
             {
-                await InvokeAsync(StateHasChanged);
-                await Task.Delay(3000);
+                try
+                {
+                    await InvokeAsync(StateHasChanged);
+                }
+                finally
+                {
+                    await Task.Delay(3000);
+                }
             }
         });
         return base.OnInitializedAsync();

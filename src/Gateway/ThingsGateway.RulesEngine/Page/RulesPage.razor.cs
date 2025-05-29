@@ -167,15 +167,15 @@ public partial class RulesPage
 
     private async Task Notify()
     {
-        var current = ExecutionContext.Capture();
         try
         {
-            ExecutionContext.Restore(context);
+            if (table != null)
+                await table.QueryAsync();
             await InvokeAsync(StateHasChanged);
         }
         finally
         {
-            ExecutionContext.Restore(current);
+
         }
     }
 

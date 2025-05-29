@@ -35,9 +35,12 @@ internal sealed class RulesEngineHostedService : BackgroundService, IRulesEngine
     internal const string LogPathFormat = "Logs/RulesEngineLog/{0}";
     internal const string LogDir = "Logs/RulesEngineLog";
     private readonly ILogger _logger;
+    private IDispatchService<Rules> dispatchService;
+
     /// <inheritdoc cref="RulesEngineHostedService"/>
     public RulesEngineHostedService(ILogger<RulesEngineHostedService> logger, IStringLocalizer<RulesEngineHostedService> localizer)
     {
+        dispatchService = App.GetService<IDispatchService<Rules>>();
         _logger = logger;
         Localizer = localizer;
     }
@@ -60,8 +63,7 @@ internal sealed class RulesEngineHostedService : BackgroundService, IRulesEngine
             {
                 var data = Init(rules);
                 await Start(data.rulesLog, data.blazorDiagram, TokenSource.Token).ConfigureAwait(false);
-                var service = App.GetService<IDispatchService<Rules>>();
-                service.Dispatch(new());
+                dispatchService.Dispatch(null);
             }
 
         }
@@ -89,8 +91,7 @@ internal sealed class RulesEngineHostedService : BackgroundService, IRulesEngine
                     BlazorDiagrams.Remove(del.Key);
                 }
             }
-            var service = App.GetService<IDispatchService<Rules>>();
-            service.Dispatch(new());
+            dispatchService.Dispatch(null);
         }
         finally
         {
@@ -198,8 +199,8 @@ internal sealed class RulesEngineHostedService : BackgroundService, IRulesEngine
             var item = Init(rules);
             await Start(item.rulesLog, item.blazorDiagram, cancellationToken).ConfigureAwait(false);
         }
-        var service = App.GetService<IDispatchService<Rules>>();
-        service.Dispatch(new());
+        dispatchService.Dispatch(null);
+
 
         _ = Task.Factory.StartNew(async () =>
         {

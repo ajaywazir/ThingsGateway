@@ -241,7 +241,7 @@ public class DeviceRuntime : Device, IDisposable
 
         ChannelRuntime = channelRuntime;
         ChannelRuntime?.DeviceRuntimes?.TryRemove(Id, out _);
-        ChannelRuntime.DeviceRuntimes.TryAdd(Id, this);
+        ChannelRuntime?.DeviceRuntimes?.TryAdd(Id, this);
 
         GlobalData.IdDevices.TryRemove(Id, out _);
         GlobalData.IdDevices.TryAdd(Id, this);

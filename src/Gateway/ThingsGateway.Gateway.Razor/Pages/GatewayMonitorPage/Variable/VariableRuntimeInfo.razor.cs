@@ -39,11 +39,16 @@ public partial class VariableRuntimeInfo : IDisposable
     public void Dispose()
     {
         Disposed = true;
+        VariableRuntimeDispatchService.UnSubscribe(Refresh);
         GC.SuppressFinalize(this);
     }
 
     protected override void OnInitialized()
     {
+        VariableRuntimeDispatchService.Subscribe(Refresh);
+
+        scheduler = new SmartTriggerScheduler(Notify, TimeSpan.FromMilliseconds(3000));
+
         _ = RunTimerAsync();
         base.OnInitialized();
     }
@@ -62,6 +67,23 @@ public partial class VariableRuntimeInfo : IDisposable
         }
         return Task.FromResult(ret);
     }
+    [Inject]
+    private IDispatchService<VariableRuntime> VariableRuntimeDispatchService { get; set; }
+    private SmartTriggerScheduler scheduler;
+
+
+    private Task Refresh(DispatchEntry<VariableRuntime> entry)
+    {
+        scheduler.Trigger();
+        return Task.CompletedTask;
+    }
+
+    private async Task Notify()
+    {
+        if (Disposed) return;
+        if (table != null)
+            await InvokeAsync(table.QueryAsync);
+    }
 
 
     private async Task RunTimerAsync()
@@ -70,8 +92,10 @@ public partial class VariableRuntimeInfo : IDisposable
         {
             try
             {
-                if (table != null)
-                    await table.QueryAsync();
+                //if (table != null)
+                //    await table.QueryAsync();
+
+                await InvokeAsync(StateHasChanged);
             }
             catch (Exception ex)
             {

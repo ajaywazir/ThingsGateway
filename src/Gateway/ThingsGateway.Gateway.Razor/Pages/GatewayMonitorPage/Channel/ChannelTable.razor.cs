@@ -51,7 +51,7 @@ public partial class ChannelTable : IDisposable
             try
             {
                 if (table != null)
-                    await table.QueryAsync();
+                    await InvokeAsync(table.QueryAsync);
             }
             catch (Exception ex)
             {
@@ -59,7 +59,7 @@ public partial class ChannelTable : IDisposable
             }
             finally
             {
-                await Task.Delay(1000);
+                await Task.Delay(5000);
             }
         }
     }
@@ -115,7 +115,7 @@ public partial class ChannelTable : IDisposable
             {
 
                 await Task.Run(() =>GlobalData.ChannelRuntimeService.CopyAsync(channels,devices,AutoRestartThread, default));
-                    await table.QueryAsync();
+                    await InvokeAsync(table.QueryAsync);
 
             }},
             {nameof(ChannelCopyComponent.Model),oneModel },

@@ -202,7 +202,6 @@ public class VariableRuntimeService : IVariableRuntimeService
                     await RuntimeServiceHelper.ChangedDriverAsync(_logger, cancellationToken).ConfigureAwait(false);
                 }
 
-                App.GetService<IDispatchService<DeviceRuntime>>().Dispatch(null);
             }
         }
         finally

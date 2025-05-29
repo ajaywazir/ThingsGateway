@@ -71,6 +71,9 @@ internal sealed class GatewayMonitorHostedService : BackgroundService, IGatewayM
                 }
             }
 
+            GlobalData.ChannelDeviceRuntimeDispatchService.Dispatch(null);
+            GlobalData.VariableRuntimeDispatchService.Dispatch(null);
+
             await ChannelThreadManage.RestartChannelAsync(channelRuntimes).ConfigureAwait(false);
 
 

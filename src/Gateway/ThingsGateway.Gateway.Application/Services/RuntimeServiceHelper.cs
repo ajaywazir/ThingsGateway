@@ -51,6 +51,9 @@ internal static class RuntimeServiceHelper
                 logger.LogWarning(ex, "Init Channel");
             }
         }
+        GlobalData.ChannelDeviceRuntimeDispatchService.Dispatch(null);
+        GlobalData.VariableRuntimeDispatchService.Dispatch(null);
+
     }
 
     public static void Init(List<ChannelRuntime> newChannelRuntimes)
@@ -72,6 +75,7 @@ internal static class RuntimeServiceHelper
             }
 
         }
+        GlobalData.ChannelDeviceRuntimeDispatchService.Dispatch(null);
     }
 
 
@@ -104,6 +108,10 @@ internal static class RuntimeServiceHelper
                 logger.LogWarning(ex, "Init Device");
             }
         }
+
+        GlobalData.ChannelDeviceRuntimeDispatchService.Dispatch(null);
+        GlobalData.VariableRuntimeDispatchService.Dispatch(null);
+
     }
 
     public static void Init(List<DeviceRuntime> newDeviceRuntimes)
@@ -124,6 +132,10 @@ internal static class RuntimeServiceHelper
                 deviceRuntime.VariableRuntimes.ParallelForEach(a => a.Value.Init(newDeviceRuntime));
             }
         }
+
+        GlobalData.ChannelDeviceRuntimeDispatchService.Dispatch(null);
+        GlobalData.VariableRuntimeDispatchService.Dispatch(null);
+
     }
     public static void Init(List<VariableRuntime> newVariableRuntimes)
     {
@@ -138,10 +150,20 @@ internal static class RuntimeServiceHelper
                 newVariableRuntime.Init(deviceRuntime);
             }
         }
+        GlobalData.VariableRuntimeDispatchService.Dispatch(null);
     }
 
 
+    public static void RemoveOldChannelRuntimes(IEnumerable<ChannelRuntime> oldChannelRuntimes)
+    {
+        oldChannelRuntimes.SelectMany(a => a.DeviceRuntimes.SelectMany(a => a.Value.VariableRuntimes)).ParallelForEach(a => a.Value.Dispose());
+        oldChannelRuntimes.SelectMany(a => a.DeviceRuntimes).ParallelForEach(a => a.Value.Dispose());
+        oldChannelRuntimes.ParallelForEach(a => a.Dispose());
 
+        GlobalData.ChannelDeviceRuntimeDispatchService.Dispatch(null);
+        GlobalData.VariableRuntimeDispatchService.Dispatch(null);
+
+    }
 
     public static async Task<List<ChannelRuntime>> GetNewChannelRuntimesAsync(HashSet<long> ids)
     {
@@ -179,6 +201,8 @@ internal static class RuntimeServiceHelper
             });
             deviceRuntime.Dispose();
         }
+        GlobalData.ChannelDeviceRuntimeDispatchService.Dispatch(null);
+        GlobalData.VariableRuntimeDispatchService.Dispatch(null);
 
         return changedDriver;
     }
@@ -221,6 +245,10 @@ internal static class RuntimeServiceHelper
             }
 
         }
+
+
+        GlobalData.ChannelDeviceRuntimeDispatchService.Dispatch(null);
+        GlobalData.VariableRuntimeDispatchService.Dispatch(null);
 
         return changedDriver;
     }
@@ -332,6 +360,7 @@ internal static class RuntimeServiceHelper
             }
         }
 
+        GlobalData.VariableRuntimeDispatchService.Dispatch(null);
     }
 
 
@@ -350,6 +379,7 @@ internal static class RuntimeServiceHelper
                 }
             }
         }
+        GlobalData.VariableRuntimeDispatchService.Dispatch(null);
     }
 
 }

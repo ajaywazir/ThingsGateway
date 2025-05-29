@@ -36,20 +36,13 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
     private readonly IChannelService _channelService;
     private readonly IDeviceService _deviceService;
     private readonly IPluginService _pluginService;
-    private readonly IDispatchService<bool> _allDispatchService;
-    private readonly IDispatchService<Variable> _dispatchService;
 
     /// <inheritdoc cref="IVariableService"/>
-    public VariableService(
-   IDispatchService<Variable> dispatchService,
-   IDispatchService<bool> allDispatchService
-        )
+    public VariableService()
     {
         _channelService = App.RootServices.GetRequiredService<IChannelService>();
         _pluginService = App.RootServices.GetRequiredService<IPluginService>();
         _deviceService = App.RootServices.GetRequiredService<IDeviceService>();
-        _dispatchService = dispatchService;
-        _allDispatchService = allDispatchService;
     }
 
     #region 测试
@@ -230,7 +223,6 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
         {
             _channelService.DeleteChannelFromCache();//刷新缓存
             _deviceService.DeleteDeviceFromCache();
-            _allDispatchService.Dispatch(new());
             DeleteVariableCache();
         }
         else
@@ -297,7 +289,6 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
         }
         finally
         {
-            _dispatchService.Dispatch(new());
 
         }
     }
@@ -318,7 +309,6 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
              .ToList();
 
             var result = (await db.Updateable(data).UpdateColumns(differences.Select(a => a.Key).ToArray()).ExecuteCommandAsync().ConfigureAwait(false)) > 0;
-            _dispatchService.Dispatch(new());
             if (result)
                 DeleteVariableCache();
             return result;
@@ -341,7 +331,6 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
 
         if (result > 0)
             DeleteVariableCache();
-        _dispatchService.Dispatch(new());
     }
 
     [OperDesc("DeleteVariable", isRecordPar: false, localizerType: typeof(Variable))]
@@ -354,7 +343,6 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
                           .WhereIF(dataScope != null && dataScope?.Count > 0, u => dataScope.Contains(u.CreateOrgId))//在指定机构列表查询
              .WhereIF(dataScope?.Count == 0, u => u.CreateUserId == UserManager.UserId)
              .ExecuteCommandAsync().ConfigureAwait(false)) > 0;
-        _dispatchService.Dispatch(new());
 
         if (result)
             DeleteVariableCache();
@@ -428,7 +416,6 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
 
         if (await base.SaveAsync(input, type).ConfigureAwait(false))
         {
-            _dispatchService.Dispatch(new());
             DeleteVariableCache();
             return true;
         }
@@ -493,7 +480,6 @@ internal sealed class VariableService : BaseService<Variable>, IVariableService
         using var db = GetDB();
         await db.BulkCopyAsync(insertData, 100000).ConfigureAwait(false);
         await db.BulkUpdateAsync(upData, 100000).ConfigureAwait(false);
-        _dispatchService.Dispatch(new());
         DeleteVariableCache();
         return variables.Select(a => a.Id).ToHashSet();
     }

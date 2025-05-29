@@ -25,8 +25,6 @@ using ThingsGateway.NewLife;
 
 using TouchSocket.Core;
 
-using Yitter.IdGenerator;
-
 namespace ThingsGateway.Gateway.Application;
 
 /// <summary>
@@ -598,7 +596,7 @@ internal sealed class PluginService : IPluginService
             }
             _ = Task.Run(() =>
             {
-                _dispatchService.Dispatch(new());
+                _dispatchService.Dispatch(null);
             });
         }
     }

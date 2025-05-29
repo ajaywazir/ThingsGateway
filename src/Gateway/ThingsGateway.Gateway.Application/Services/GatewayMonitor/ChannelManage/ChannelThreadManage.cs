@@ -8,8 +8,6 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
-using BootstrapBlazor.Components;
-
 using Microsoft.Extensions.Logging;
 
 using System.Collections.Concurrent;
@@ -21,17 +19,6 @@ namespace ThingsGateway.Gateway.Application;
 internal sealed class ChannelThreadManage : IChannelThreadManage
 {
     private ILogger _logger;
-    private IDispatchService<ChannelRuntime> channelRuntimeDispatchService;
-    private IDispatchService<ChannelRuntime> ChannelRuntimeDispatchService
-    {
-        get
-        {
-            if (channelRuntimeDispatchService == null)
-                channelRuntimeDispatchService = App.GetService<IDispatchService<ChannelRuntime>>();
-
-            return channelRuntimeDispatchService;
-        }
-    }
 
     public ChannelThreadManage()
     {
@@ -78,7 +65,6 @@ internal sealed class ChannelThreadManage : IChannelThreadManage
             await NewChannelLock.WaitAsync().ConfigureAwait(false);
 
             await PrivateRemoveChannelsAsync(Enumerable.Repeat(channelId, 1)).ConfigureAwait(false);
-            ChannelRuntimeDispatchService.Dispatch(null);
         }
         finally
         {
@@ -98,7 +84,6 @@ internal sealed class ChannelThreadManage : IChannelThreadManage
             await NewChannelLock.WaitAsync().ConfigureAwait(false);
 
             await PrivateRemoveChannelsAsync(channelIds).ConfigureAwait(false);
-            ChannelRuntimeDispatchService.Dispatch(null);
         }
         finally
         {
@@ -165,7 +150,6 @@ internal sealed class ChannelThreadManage : IChannelThreadManage
         {
             await NewChannelLock.WaitAsync().ConfigureAwait(false);
             await PrivateRestartChannelAsync(Enumerable.Repeat(channelRuntime, 1)).ConfigureAwait(false);
-            ChannelRuntimeDispatchService.Dispatch(null);
         }
         finally
         {
@@ -183,7 +167,6 @@ internal sealed class ChannelThreadManage : IChannelThreadManage
         {
             await NewChannelLock.WaitAsync().ConfigureAwait(false);
             await PrivateRestartChannelAsync(channelRuntimes).ConfigureAwait(false);
-            ChannelRuntimeDispatchService.Dispatch(null);
         }
         finally
         {

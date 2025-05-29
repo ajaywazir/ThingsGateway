@@ -51,7 +51,7 @@ public partial class DeviceTable : IDisposable
             try
             {
                 if (table != null)
-                    await table.QueryAsync();
+                    await InvokeAsync(table.QueryAsync);
             }
             catch (Exception ex)
             {
@@ -59,7 +59,7 @@ public partial class DeviceTable : IDisposable
             }
             finally
             {
-                await Task.Delay(1000);
+                await Task.Delay(5000);
             }
         }
     }
@@ -115,7 +115,7 @@ public partial class DeviceTable : IDisposable
             {
 
                 await Task.Run(() =>GlobalData.DeviceRuntimeService.CopyAsync(devices,AutoRestartThread, default));
-                    await table.QueryAsync();
+                    await InvokeAsync(table.QueryAsync);
 
             }},
             {nameof(DeviceCopyComponent.Model),oneModel },
@@ -353,7 +353,7 @@ finally
                 await InvokeAsync(async () =>
                 {
                     await ToastService.Default();
-                    await InvokeAsync(table.QueryAsync);
+                    await table.QueryAsync();
                 });
             });
         }

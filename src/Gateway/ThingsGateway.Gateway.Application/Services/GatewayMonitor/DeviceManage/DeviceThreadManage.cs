@@ -38,17 +38,6 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
     /// </summary>
     public static volatile int CycleInterval = ManageHelper.ChannelThreadOptions.MaxCycleInterval;
 
-    private IDispatchService<DeviceRuntime> devicelRuntimeDispatchService;
-    private IDispatchService<DeviceRuntime> DeviceRuntimeDispatchService
-    {
-        get
-        {
-            if (devicelRuntimeDispatchService == null)
-                devicelRuntimeDispatchService = App.GetService<IDispatchService<DeviceRuntime>>();
-
-            return devicelRuntimeDispatchService;
-        }
-    }
     static DeviceThreadManage()
     {
         Task.Factory.StartNew(async () => await SetCycleInterval().ConfigureAwait(false), TaskCreationOptions.LongRunning);
@@ -250,7 +239,6 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
         {
             await NewDeviceLock.WaitAsync().ConfigureAwait(false);
             await PrivateRestartDeviceAsync(Enumerable.Repeat(deviceRuntime, 1), deleteCache).ConfigureAwait(false);
-            DeviceRuntimeDispatchService.Dispatch(null);
         }
         finally
         {
@@ -268,7 +256,6 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
         {
             await NewDeviceLock.WaitAsync().ConfigureAwait(false);
             await PrivateRestartDeviceAsync(deviceRuntimes, deleteCache).ConfigureAwait(false);
-            DeviceRuntimeDispatchService.Dispatch(null);
         }
         finally
         {
@@ -440,7 +427,6 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
             await NewDeviceLock.WaitAsync().ConfigureAwait(false);
 
             await PrivateRemoveDevicesAsync(Enumerable.Repeat(deviceId, 1)).ConfigureAwait(false);
-            DeviceRuntimeDispatchService.Dispatch(null);
         }
         finally
         {
@@ -460,7 +446,6 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
             await NewDeviceLock.WaitAsync().ConfigureAwait(false);
 
             await PrivateRemoveDevicesAsync(deviceIds).ConfigureAwait(false);
-            DeviceRuntimeDispatchService.Dispatch(null);
         }
         finally
         {
@@ -662,6 +647,7 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
         //传入变量
         //newDeviceRuntime.VariableRuntimes.ParallelForEach(a => a.Value.SafeDispose());
         deviceRuntime.VariableRuntimes.ParallelForEach(a => a.Value.Init(newDeviceRuntime));
+        GlobalData.VariableRuntimeDispatchService.Dispatch(null);
     }
 
     /// <inheritdoc/>
@@ -740,6 +726,8 @@ internal sealed class DeviceThreadManage : IAsyncDisposable, IDeviceThreadManage
                 LogMessage?.LogWarning($"device {newDeviceRuntime.Name} cannot found channel with id{newDeviceRuntime.ChannelId}");
 
             newDeviceRuntime.Init(channelRuntime);
+            GlobalData.ChannelDeviceRuntimeDispatchService.Dispatch(null);
+
             await channelRuntime.DeviceThreadManage.RestartDeviceAsync(newDeviceRuntime, false).ConfigureAwait(false);
             channelRuntime.DeviceThreadManage.LogMessage?.LogInformation($"Device {newDeviceRuntime.Name} switched to primary channel");
 

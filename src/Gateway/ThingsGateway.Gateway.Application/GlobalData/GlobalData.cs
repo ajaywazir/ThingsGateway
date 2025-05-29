@@ -8,6 +8,8 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
+using BootstrapBlazor.Components;
+
 using Mapster;
 
 using System.Collections.Concurrent;
@@ -204,6 +206,30 @@ public static class GlobalData
     }
 
     #region 单例服务
+
+
+    private static IDispatchService<ChannelRuntime> channelRuntimeDispatchService;
+    public static IDispatchService<ChannelRuntime> ChannelDeviceRuntimeDispatchService
+    {
+        get
+        {
+            if (channelRuntimeDispatchService == null)
+                channelRuntimeDispatchService = App.GetService<IDispatchService<ChannelRuntime>>();
+
+            return channelRuntimeDispatchService;
+        }
+    }
+    private static IDispatchService<VariableRuntime> variableRuntimeDispatchService;
+    public static IDispatchService<VariableRuntime> VariableRuntimeDispatchService
+    {
+        get
+        {
+            if (variableRuntimeDispatchService == null)
+                variableRuntimeDispatchService = App.GetService<IDispatchService<VariableRuntime>>();
+
+            return variableRuntimeDispatchService;
+        }
+    }
 
     private static ISysUserService sysUserService;
     public static ISysUserService SysUserService

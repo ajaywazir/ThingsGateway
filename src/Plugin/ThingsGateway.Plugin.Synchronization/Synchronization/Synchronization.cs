@@ -22,8 +22,6 @@ using TouchSocket.Dmtp.Rpc;
 using TouchSocket.Rpc;
 using TouchSocket.Sockets;
 
-using Yitter.IdGenerator;
-
 namespace ThingsGateway.Plugin.Synchronization;
 
 

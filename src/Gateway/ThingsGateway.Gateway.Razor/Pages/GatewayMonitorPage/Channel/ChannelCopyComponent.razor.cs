@@ -13,8 +13,6 @@ using Mapster;
 using ThingsGateway.Admin.Application;
 using ThingsGateway.Gateway.Application;
 
-using Yitter.IdGenerator;
-
 namespace ThingsGateway.Gateway.Razor;
 
 public partial class ChannelCopyComponent

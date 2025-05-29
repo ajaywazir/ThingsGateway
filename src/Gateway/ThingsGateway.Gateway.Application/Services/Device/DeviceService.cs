@@ -35,15 +35,11 @@ internal sealed class DeviceService : BaseService<Device>, IDeviceService
 {
     private readonly IChannelService _channelService;
     private readonly IPluginService _pluginService;
-    private readonly IDispatchService<Device> _dispatchService;
 
-    public DeviceService(
-    IDispatchService<Device> dispatchService
-        )
+    public DeviceService()
     {
         _channelService = App.RootServices.GetRequiredService<IChannelService>();
         _pluginService = App.RootServices.GetRequiredService<IPluginService>();
-        _dispatchService = dispatchService;
     }
 
 
@@ -195,7 +191,6 @@ internal sealed class DeviceService : BaseService<Device>, IDeviceService
     public void DeleteDeviceFromCache()
     {
         App.CacheService.Remove(ThingsGatewayCacheConst.Cache_Device);//删除设备缓存
-        _dispatchService.Dispatch(new());
     }
 
     /// <summary>

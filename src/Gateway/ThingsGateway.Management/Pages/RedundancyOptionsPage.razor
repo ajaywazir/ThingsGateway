@@ -15,7 +15,7 @@
 
         <EditComponent ItemsPerRow=1 Model="Model" OnSave="OnSaveRedundancy" />
 
-        <Button IsDisabled=@(Model.IsMaster) OnClick="ForcedSync">@RedundancyLocalizer["ForcedSync"]</Button>
+        <Button IsDisabled=@(Model.IsMaster||(!Model.Enable)) OnClick="ForcedSync">@RedundancyLocalizer["ForcedSync"]</Button>
     </div>
     <div class="col-12 col-md-6 h-100">
 
