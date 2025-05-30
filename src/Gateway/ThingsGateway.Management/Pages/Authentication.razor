@@ -40,7 +40,7 @@
                         </label>
 
                         <label class="form-control">
-                            @(AuthorizeInfo != null ? Localizer["Authorized"] : Localizer["Unauthorized"])
+                            @(AuthorizeInfo?.Auth==true ? Localizer["Authorized"] : Localizer["Unauthorized"])
                         </label>
                     </div>
                 </div>
@@ -50,6 +50,7 @@
                 @if (AuthorizeInfo != null)
                 {
                     <div class="row g-3 form-inline">
+
                         <div class="col-12 col-sm-12">
 
                             <label class="form-label">
@@ -70,7 +71,7 @@
                             </label>
 
                             <label class="form-control">
-                                @AuthorizeInfo?.ExpireTime
+                                @AuthorizeInfo?.RealExpireTime
                             </label>
                         </div>
 

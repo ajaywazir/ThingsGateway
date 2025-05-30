@@ -352,7 +352,12 @@ public abstract class DriverBase : DisposableObject, IDriver
 
     public string GetAuthString()
     {
-        return PluginServiceUtil.IsEducation(GetType()) ? ThingsGateway.Authentication.ProAuthentication.TryGetAuthorizeInfo(out _) ? Localizer["Authorized"] : Localizer["Unauthorized"] : string.Empty;
+        if (PluginServiceUtil.IsEducation(GetType()))
+        {
+            ThingsGateway.Authentication.ProAuthentication.TryGetAuthorizeInfo(out var authorizeInfo);
+            return authorizeInfo.Auth ? Localizer["Authorized"] : Localizer["Unauthorized"];
+        }
+        return string.Empty;
     }
 
     /// <summary>

@@ -55,7 +55,7 @@ public partial class Authentication
     private async Task Unregister()
     {
         ProAuthentication.UnAuthorize();
-        var result = ProAuthentication.TryGetAuthorizeInfo(out var authorizeInfo);
+        _ = ProAuthentication.TryGetAuthorizeInfo(out var authorizeInfo);
         AuthorizeInfo = authorizeInfo;
 
         await InvokeAsync(StateHasChanged);
