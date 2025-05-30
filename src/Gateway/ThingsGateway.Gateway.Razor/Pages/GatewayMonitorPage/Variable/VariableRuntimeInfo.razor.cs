@@ -35,6 +35,15 @@ public partial class VariableRuntimeInfo : IDisposable
 
     [Parameter]
     public IEnumerable<VariableRuntime>? Items { get; set; } = Enumerable.Empty<VariableRuntime>();
+    private IEnumerable<VariableRuntime>? _previousItemsRef;
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!ReferenceEquals(_previousItemsRef, Items))
+        {
+            _previousItemsRef = Items;
+            await Refresh(null);
+        }
+    }
 
     public void Dispose()
     {
@@ -47,7 +56,7 @@ public partial class VariableRuntimeInfo : IDisposable
     {
         VariableRuntimeDispatchService.Subscribe(Refresh);
 
-        scheduler = new SmartTriggerScheduler(Notify, TimeSpan.FromMilliseconds(3000));
+        scheduler = new SmartTriggerScheduler(Notify, TimeSpan.FromMilliseconds(1000));
 
         _ = RunTimerAsync();
         base.OnInitialized();

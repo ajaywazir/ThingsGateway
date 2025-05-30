@@ -8,17 +8,13 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
+using System.Buffers;
 using System.Text;
 
 using ThingsGateway.NewLife.Caching;
 
 namespace ThingsGateway.Foundation;
 
-public class LogDataCache
-{
-    public List<LogData> LogDatas { get; set; }
-    public long Length { get; set; }
-}
 /// <summary>
 /// 日志数据
 /// </summary>
@@ -47,8 +43,19 @@ public class LogData
 
 
 /// <summary>日志文本文件倒序读取</summary>
+
+public class LogDataCache
+{
+    public List<LogData> LogDatas { get; set; }
+    public long Length { get; set; }
+}
+
+/// <summary>高性能日志文件读取器（支持倒序读取）</summary>
 public class TextFileReader
 {
+    private static readonly MemoryCache _cache = new() { Expire = 30 };
+    private static readonly MemoryCache _fileLocks = new();
+    private static readonly ArrayPool<byte> _bytePool = ArrayPool<byte>.Shared;
     /// <summary>
     /// 获取指定目录下所有文件信息
     /// </summary>
@@ -86,158 +93,166 @@ public class TextFileReader
         return result;
     }
 
-    static MemoryCache _cache = new() { Expire = 30 };
+
     public static OperResult<List<LogData>> LastLog(string file, int lineCount = 200)
     {
-        lock (_cache)
-        {
+        if (!File.Exists(file))
+            return new OperResult<List<LogData>>("The file path is invalid");
 
-            OperResult<List<LogData>> result = new(); // 初始化结果对象
+        _fileLocks.SetExpire(file, TimeSpan.FromSeconds(30));
+        var fileLock = _fileLocks.GetOrAdd(file, _ => new object());
+        lock (fileLock)
+        {
             try
             {
-                if (!File.Exists(file)) // 检查文件是否存在
+                var fileInfo = new FileInfo(file);
+                var length = fileInfo.Length;
+                var cacheKey = $"{nameof(TextFileReader)}_{nameof(LastLog)}_{file})";
+                if (_cache.TryGetValue<LogDataCache>(cacheKey, out var cachedData))
                 {
-                    result.OperCode = 999;
-                    result.ErrorMessage = "The file path is invalid";
-                    return result;
-                }
-
-                List<string> txt = new(); // 存储读取的文本内容
-                long ps = 0; // 保存起始位置
-                var key = $"{nameof(TextFileReader)}_{nameof(LastLog)}_{file})";
-                long length = 0;
-                using (var fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                {
-                    length = fs.Length;
-                    var dataCache = _cache.Get<LogDataCache>(key);
-                    if (dataCache != null && dataCache.Length == length)
+                    if (cachedData != null && cachedData.Length == length)
                     {
-                        result.Content = dataCache.LogDatas;
-                        result.OperCode = 0; // 操作状态设为成功
-                        return result; // 返回解析结果
+                        return new OperResult<List<LogData>>() { Content = cachedData.LogDatas };
                     }
-
-                    if (ps <= 0) // 如果起始位置小于等于0，将起始位置设置为文件长度
-                        ps = length - 1;
-
-                    // 循环读取指定行数的文本内容
-                    for (int i = 0; i < lineCount; i++)
+                    else
                     {
-                        ps = InverseReadRow(fs, ps, out var value); // 使用逆序读取
-                        txt.Add(value);
-                        if (ps <= 0) // 如果已经读取到文件开头则跳出循环
-                            break;
+                        _cache.Remove(cacheKey);
                     }
                 }
 
-                // 使用单次 LINQ 操作进行过滤和解析
-                result.Content = txt
-                    .Select(a => ParseCSV(a))
-                    .Where(data => data.Count >= 3)
-                    .Select(data =>
-                    {
-                        var log = new LogData
-                        {
-                            LogTime = data[0].Trim(),
-                            LogLevel = Enum.TryParse(data[1].Trim(), out LogLevel level) ? level : LogLevel.Info,
-                            Message = data[2].Trim(),
-                            ExceptionString = data.Count > 3 ? data[3].Trim() : null
-                        };
-                        return log;
-                    })
-                    .ToList();
+                using var fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
+                var result = ReadLogsInverse(fs, lineCount, fileInfo.Length);
 
-                result.OperCode = 0; // 操作状态设为成功
-                var data = _cache.Set<LogDataCache>(key, new LogDataCache() { Length = length, LogDatas = result.Content });
+                _cache.Set(cacheKey, new LogDataCache
+                {
+                    LogDatas = result,
+                    Length = fileInfo.Length,
+                });
 
-                return result; // 返回解析结果
+                return new OperResult<List<LogData>>() { Content = result };
             }
-            catch (Exception ex) // 捕获异常
+            catch (Exception ex)
             {
-                result = new(ex); // 创建包含异常信息的结果对象
-                return result; // 返回异常结果
+                return new OperResult<List<LogData>>(ex);
             }
         }
     }
 
+    private static List<LogData> ReadLogsInverse(FileStream fs, int lineCount, long length)
+    {
+        length = fs.Length;
+        long ps = 0; // 保存起始位置
+        List<string> txt = new(); // 存储读取的文本内容
+
+        if (ps <= 0) // 如果起始位置小于等于0，将起始位置设置为文件长度
+            ps = length - 1;
+
+        // 循环读取指定行数的文本内容
+        for (int i = 0; i < lineCount; i++)
+        {
+            ps = InverseReadRow(fs, ps, out var value); // 使用逆序读取
+            txt.Add(value);
+            if (ps <= 0) // 如果已经读取到文件开头则跳出循环
+                break;
+        }
+
+        // 使用单次 LINQ 操作进行过滤和解析
+        var result = txt
+              .Select(a => ParseCSV(a))
+                  .Where(data => data.Count >= 3)
+                  .Select(data =>
+                  {
+                      var log = new LogData
+                      {
+                          LogTime = data[0].Trim(),
+                          LogLevel = Enum.TryParse(data[1].Trim(), out LogLevel level) ? level : LogLevel.Info,
+                          Message = data[2].Trim(),
+                          ExceptionString = data.Count > 3 ? data[3].Trim() : null
+                      };
+                      return log;
+                  })
+                  .ToList();
+
+
+        return result; // 返回解析结果
+    }
+
     private static long InverseReadRow(FileStream fs, long position, out string value, int maxRead = 102400)
     {
-        byte n = 0xD; // 换行符
-        byte a = 0xA; // 回车符
+        byte n = 0xD;
+        byte a = 0xA;
         value = string.Empty;
-        if (fs.Length == 0) return 0; // 若文件长度为0，则直接返回0作为新的位置
+
+        if (fs.Length == 0) return 0;
 
         var newPos = position;
-        List<byte> buffer = new List<byte>(maxRead); // 缓存读取的数据
+        byte[] buffer = _bytePool.Rent(maxRead); // 从池中租借字节数组
+        int index = 0;
 
         try
         {
-            var readLength = 0;
-
-            while (true) // 循环读取一行数据，TextFileLogger.Separator行判定
+            while (true)
             {
-                readLength++;
                 if (newPos <= 0)
                     newPos = 0;
 
                 fs.Position = newPos;
                 int byteRead = fs.ReadByte();
 
-                if (byteRead == -1) break; // 到达文件开头时跳出循环
+                if (byteRead == -1) break;
 
-                buffer.Add((byte)byteRead);
-
-                if (byteRead == n || byteRead == a)//判断当前字符是换行符 // TextFileLogger.Separator
-                {
-                    if (MatchSeparator(buffer))
-                    {
-                        // 去掉匹配的指定字符串
-                        buffer.RemoveRange(buffer.Count - TextFileLogger.SeparatorBytes.Length, TextFileLogger.SeparatorBytes.Length);
-                        break;
-                    }
-                }
-
-                if (buffer.Count > maxRead) // 超过最大字节数限制时丢弃数据
+                if (index >= maxRead)
                 {
                     newPos = -1;
                     return newPos;
                 }
+
+                buffer[index++] = (byte)byteRead;
+
+                if (byteRead == n || byteRead == a)
+                {
+                    if (MatchSeparator(buffer, index))
+                    {
+                        index -= TextFileLogger.SeparatorBytes.Length;
+                        break;
+                    }
+                }
+
                 newPos--;
                 if (newPos <= -1)
                     break;
             }
 
-            if (buffer.Count >= 10)
+            if (index >= 10)
             {
-                buffer.Reverse();
-                value = Encoding.UTF8.GetString(buffer.ToArray()); // 转换为字符串
+                Array.Reverse(buffer, 0, index); // 倒序
+                value = Encoding.UTF8.GetString(buffer, 0, index);
             }
 
-            return newPos; // 返回新的读取位置
+            return newPos;
         }
         finally
         {
+            _bytePool.Return(buffer); // 归还数组
         }
     }
 
 
-    private static bool MatchSeparator(List<byte> arr)
+    private static bool MatchSeparator(byte[] arr, int length)
     {
-        if (arr.Count < TextFileLogger.SeparatorBytes.Length)
-        {
+        if (length < TextFileLogger.SeparatorBytes.Length)
             return false;
-        }
-        var pos = arr.Count - 1;
+
+        int pos = length - 1;
         for (int i = 0; i < TextFileLogger.SeparatorBytes.Length; i++)
         {
             if (arr[pos] != TextFileLogger.SeparatorBytes[i])
-            {
                 return false;
-            }
             pos--;
         }
         return true;
     }
+
 
     private static List<string> ParseCSV(string data)
     {

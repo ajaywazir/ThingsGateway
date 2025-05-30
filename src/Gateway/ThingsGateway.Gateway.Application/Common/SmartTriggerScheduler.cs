@@ -75,7 +75,6 @@ public class SmartTriggerScheduler
                     return;
                 }
 
-                // 有新的触发，继续下一轮循环（再执行一次）
             }
         }
     }
