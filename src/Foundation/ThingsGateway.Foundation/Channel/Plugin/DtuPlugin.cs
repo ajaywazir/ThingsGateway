@@ -28,11 +28,12 @@ public class DtuPlugin : PluginBase, ITcpReceivingPlugin
         set
         {
             _heartbeat = value;
-            HeartbeatByte = new ArraySegment<byte>(Encoding.UTF8.GetBytes(value));
+            if (!_heartbeat.IsNullOrEmpty())
+                HeartbeatByte = new ArraySegment<byte>(Encoding.UTF8.GetBytes(value));
         }
     }
     private string _heartbeat;
-    private ArraySegment<byte> HeartbeatByte;
+    private ArraySegment<byte> HeartbeatByte = new();
 
     /// <inheritdoc/>
     public async Task OnTcpReceiving(ITcpSession client, ByteBlockEventArgs e)

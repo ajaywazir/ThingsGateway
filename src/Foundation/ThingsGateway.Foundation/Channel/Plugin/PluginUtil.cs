@@ -47,7 +47,7 @@ public static class PluginUtil
         Action<IPluginManager> action = a => { };
 
         action += GetTcpServicePlugin(channelOptions);
-        if (!channelOptions.Heartbeat.IsNullOrWhiteSpace())
+        //if (!channelOptions.Heartbeat.IsNullOrWhiteSpace())
         {
             action += a =>
             {
