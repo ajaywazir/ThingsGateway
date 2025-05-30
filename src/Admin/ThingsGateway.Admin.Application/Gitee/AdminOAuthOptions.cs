@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication.OAuth;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.OAuth;
+using Microsoft.AspNetCore.Identity;
 
 namespace ThingsGateway.Admin.Application;
 
@@ -9,7 +11,6 @@ public abstract class AdminOAuthOptions : OAuthOptions
     protected AdminOAuthOptions()
     {
         ConfigureClaims();
-
         this.Events.OnRemoteFailure = context =>
         {
             var redirectUri = string.IsNullOrEmpty(HomePath) ? "/" : HomePath;

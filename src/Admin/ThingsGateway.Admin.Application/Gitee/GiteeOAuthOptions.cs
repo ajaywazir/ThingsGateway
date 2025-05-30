@@ -16,6 +16,8 @@ public class GiteeOAuthOptions : AdminOAuthOptions
         this.UserInformationEndpoint = "https://gitee.com/api/v5/user";
         this.HomePath = "/";
         this.CallbackPath = "/signin-gitee";
+        Scope.Add("user_info");
+        Scope.Add("projects");
 
         Events.OnCreatingTicket = async context =>
         {
@@ -53,6 +55,8 @@ public class GiteeOAuthOptions : AdminOAuthOptions
             var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             throw new Exception($"Failed to star repository: {response.StatusCode}, {content}");
         }
+
+
     }
     protected override void ConfigureClaims()
     {

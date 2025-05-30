@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.ResponseCompression;
 using System.Runtime.InteropServices;
 using System.Text;
 
+using ThingsGateway.NewLife.Log;
+
 namespace ThingsGateway.AdminServer;
 
 public class Program
