@@ -32,6 +32,11 @@ public class ClaimConst
     public const string UserId = "UserId";
 
     /// <summary>
+    /// AvatarUrl
+    /// </summary>
+    public const string AvatarUrl = "AvatarUrl";
+
+    /// <summary>
     /// 验证Id
     /// </summary>
     public const string VerificatId = "VerificatId";

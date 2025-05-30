@@ -466,7 +466,7 @@ internal sealed class SysUserService : BaseService<SysUser>, ISysUserService
             var exist = await GetUserByIdAsync(input.Id).ConfigureAwait(false);//获取用户信息
             if (exist != null)
             {
-                var isSuperAdmin = exist.Account == RoleConst.SuperAdmin;//判断是否有超管
+                var isSuperAdmin = exist.Id == RoleConst.SuperAdminId;//判断是否有超管
                 if (isSuperAdmin && !UserManager.SuperAdmin)
                     throw Oops.Bah(Localizer["CanotEditAdminUser"]);
 
@@ -540,7 +540,7 @@ internal sealed class SysUserService : BaseService<SysUser>, ISysUserService
         await CheckApiDataScopeAsync(sysUser.OrgId, sysUser.CreateUserId).ConfigureAwait(false);
         if (sysUser != null)
         {
-            var isSuperAdmin = (sysUser.Account == RoleConst.SuperAdmin || input.GrantInfoList.Any(a => a == RoleConst.SuperAdminRoleId)) && !UserManager.SuperAdmin;//判断是否有超管
+            var isSuperAdmin = (sysUser.Id == RoleConst.SuperAdminId || input.GrantInfoList.Any(a => a == RoleConst.SuperAdminRoleId)) && !UserManager.SuperAdmin;//判断是否有超管
             if (isSuperAdmin)
                 throw Oops.Bah(Localizer["CanotGrantAdmin"]);
 
@@ -660,7 +660,7 @@ internal sealed class SysUserService : BaseService<SysUser>, ISysUserService
     public async Task<bool> DeleteUserAsync(IEnumerable<long> ids)
     {
         using var db = GetDB();
-        var containsSuperAdmin = await db.Queryable<SysUser>().Where(it => it.Account == RoleConst.SuperAdmin && ids.Contains(it.Id)).AnyAsync().ConfigureAwait(false);//判断是否有超管
+        var containsSuperAdmin = await db.Queryable<SysUser>().Where(it => it.Id == RoleConst.SuperAdminId && ids.Contains(it.Id)).AnyAsync().ConfigureAwait(false);//判断是否有超管
         if (containsSuperAdmin)
             throw Oops.Bah(Localizer["CanotDeleteAdminUser"]);
         if (ids.Contains(UserManager.UserId))
@@ -899,7 +899,7 @@ internal sealed class SysUserService : BaseService<SysUser>, ISysUserService
             var tenantId = await _sysOrgService.GetTenantIdByOrgIdAsync(sysUser.OrgId, sysOrgList).ConfigureAwait(false);
             sysUser.TenantId = tenantId;
 
-            if (sysUser.Account == RoleConst.SuperAdmin)
+            if (sysUser.Id == RoleConst.SuperAdminId)
             {
                 var modules = (await _sysResourceService.GetAllAsync().ConfigureAwait(false)).Where(a => a.Category == ResourceCategoryEnum.Module).OrderBy(a => a.SortCode);
                 sysUser.ModuleList = modules.ToList();//模块列表赋值给用户

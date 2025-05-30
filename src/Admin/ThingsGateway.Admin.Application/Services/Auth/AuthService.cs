@@ -12,8 +12,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
 
-using SqlSugar;
-
 using System.Security.Claims;
 
 using ThingsGateway.DataEncryption;
@@ -64,6 +62,10 @@ public class AuthService : IAuthService
         {
             throw Oops.Bah(appConfig.WebsitePolicy.CloseTip);
         }
+
+
+
+
         string? password = input.Password;
         if (isCookie) //openApi登录不再需要解密
         {
@@ -237,25 +239,20 @@ public class AuthService : IAuthService
         var logingEvent = new LoginEvent
         {
             Ip = _appService.RemoteIpAddress,
-            Device = App.GetService<IAppService>().UserAgent?.Platform,
+            Device = _appService.UserAgent?.Platform,
             Expire = expire,
             SysUser = sysUser,
             VerificatId = verificatId
         };
         await WriteTokenToCache(loginPolicy, logingEvent).ConfigureAwait(false);//写入verificat到cache
         await UpdateUser(logingEvent).ConfigureAwait(false);
-        if (sysUser.Account == RoleConst.SuperAdmin)
-        {
-            var modules = (await _sysResourceService.GetAllAsync().ConfigureAwait(false)).Where(a => a.Category == ResourceCategoryEnum.Module).OrderBy(a => a.SortCode);//获取模块列表
-            sysUser.ModuleList = modules.ToList();//模块列表赋值给用户
-        }
+
         //返回结果
         return new LoginOutput
         {
             VerificatId = verificatId,
             Account = sysUser.Account,
             Id = sysUser.Id,
-            ModuleList = sysUser.ModuleList,
             AccessToken = accessToken,
             RefreshToken = refreshToken
         };

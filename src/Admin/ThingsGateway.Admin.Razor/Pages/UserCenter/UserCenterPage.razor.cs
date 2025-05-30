@@ -38,7 +38,7 @@ public partial class UserCenterPage
     protected override async Task OnParametersSetAsync()
     {
         SysUser = AppContext.CurrentUser.Adapt<SysUser>();
-        SysUser.Avatar = AppContext.CurrentUser.Avatar;
+        SysUser.Avatar = AppContext.Avatar;
         WorkbenchInfo = (await UserCenterService.GetLoginWorkbenchAsync(SysUser.Id)).Adapt<WorkbenchInfo>();
 
         await base.OnParametersSetAsync();

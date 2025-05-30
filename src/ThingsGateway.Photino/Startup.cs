@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.DependencyInjection;
@@ -351,12 +350,6 @@ public class Startup : AppStartup
 
         app.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = provider });
         app.UseStaticFiles();
-
-        app.Use(async (context, next) =>
-        {
-            context.Response.Headers.Append("ThingsGateway", "ThingsGateway");
-            await next().ConfigureAwait(false);
-        });
 
 
         // 特定文件类型（文件后缀）处理

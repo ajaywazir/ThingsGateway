@@ -25,39 +25,6 @@ public partial class MainLayout
 {
     [Inject]
     IStringLocalizer<ThingsGateway.Razor._Imports> RazorLocalizer { get; set; }
-    private Task OnRefresh(ContextMenuItem item, object? context)
-    {
-        if (context is TabItem tabItem)
-        {
-            _tab.Refresh(tabItem);
-        }
-        return Task.CompletedTask;
-    }
-
-    private async Task OnClose(ContextMenuItem item, object? context)
-    {
-        if (context is TabItem tabItem)
-        {
-            await _tab.RemoveTab(tabItem);
-        }
-    }
-
-    private Task OnCloseOther(ContextMenuItem item, object? context)
-    {
-        if (context is TabItem tabItem)
-        {
-            _tab.ActiveTab(tabItem);
-        }
-        _tab.CloseOtherTabs();
-        return Task.CompletedTask;
-    }
-
-    private Task OnCloseAll(ContextMenuItem item, object? context)
-    {
-        _tab.CloseAllTabs();
-        return Task.CompletedTask;
-    }
-
 
     private Tab _tab { get; set; }
 

@@ -64,43 +64,51 @@ public partial class Login
         _versionString = $"v{VersionService.Version}";
         return base.OnInitializedAsync();
     }
-
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
     private async Task LoginAsync(EditContext context)
     {
-        var model = loginModel.Adapt<LoginInput>();
-        model.Password = DESEncryption.Encrypt(model.Password);
 
-        try
+        var websiteOptions = App.GetOptions<WebsiteOptions>()!;
+        if (websiteOptions.Demo)
         {
+            NavigationManager.NavigateTo("/api/auth/oauth-login", forceLoad: true);
+        }
+        else
+        {
+            var model = loginModel.Adapt<LoginInput>();
+            model.Password = DESEncryption.Encrypt(model.Password);
 
-            var ret = await AuthRazorService.LoginAsync(model);
-
-            if (ret.Code != 200)
+            try
             {
-                await ToastService.Error(Localizer["LoginErrorh1"], $"{ret.Msg}");
-            }
-            else
-            {
-                await ToastService.Information(Localizer["LoginSuccessh1"], Localizer["LoginSuccessc1"]);
-                await Task.Delay(1000);
 
-                if (ReturnUrl.IsNullOrWhiteSpace() || ReturnUrl == @"/")
+                var ret = await AuthRazorService.LoginAsync(model);
+
+                if (ret.Code != 200)
                 {
-                    await AjaxService.Goto(ReturnUrl ?? "/");
+                    await ToastService.Error(Localizer["LoginErrorh1"], $"{ret.Msg}");
                 }
                 else
                 {
-                    await AjaxService.Goto(ReturnUrl);
+                    await ToastService.Information(Localizer["LoginSuccessh1"], Localizer["LoginSuccessc1"]);
+                    await Task.Delay(1000);
+
+                    if (ReturnUrl.IsNullOrWhiteSpace() || ReturnUrl == @"/")
+                    {
+                        await AjaxService.Goto(ReturnUrl ?? "/");
+                    }
+                    else
+                    {
+                        await AjaxService.Goto(ReturnUrl);
+                    }
                 }
             }
-        }
-        catch
-        {
-            await ToastService.Error(Localizer["LoginErrorh2"], Localizer["LoginErrorc2"]);
+            catch
+            {
+                await ToastService.Error(Localizer["LoginErrorh2"], Localizer["LoginErrorc2"]);
+            }
         }
     }
-
-
 
 
 }

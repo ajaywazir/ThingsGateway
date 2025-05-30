@@ -18,16 +18,10 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 
-using Newtonsoft.Json;
-
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
-
-using ThingsGateway.Admin.Application;
-using ThingsGateway.Admin.Razor;
-using ThingsGateway.Extension;
 
 namespace ThingsGateway.UpgradeServer;
 
@@ -365,12 +359,6 @@ public class Startup : AppStartup
 
         app.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = provider });
         app.UseStaticFiles();
-
-        app.Use(async (context, next) =>
-        {
-            context.Response.Headers.Append("ThingsGateway", "ThingsGateway");
-            await next().ConfigureAwait(false);
-        });
 
 
         // 特定文件类型（文件后缀）处理

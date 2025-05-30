@@ -40,6 +40,8 @@ public class BlazorAppContext
     /// </summary>
     public SysUser CurrentUser { get; private set; }
 
+    public string? Avatar => UserManager.AvatarUrl.IsNullOrEmpty() ? CurrentUser.Avatar : UserManager.AvatarUrl;
+
     /// <summary>
     /// 用户个人菜单
     /// </summary>

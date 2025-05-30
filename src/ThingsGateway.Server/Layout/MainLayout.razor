@@ -47,7 +47,7 @@
                         <CultureChooser />
                     </div>
 
-                    <Logout ImageUrl="@(AppContext.CurrentUser.Avatar??$"{WebsiteConst.DefaultResourceUrl}images/defaultUser.svg")" ShowUserName=false DisplayName="@UserManager.UserAccount" UserName="@UserManager.VerificatId.ToString()" PrefixUserNameText=@AdminLocalizer["CurrentVerificat"]>
+                    <Logout ImageUrl="@(AppContext.Avatar??$"{WebsiteConst.DefaultResourceUrl}images/defaultUser.svg")" ShowUserName=false DisplayName="@UserManager.UserAccount" UserName="@UserManager.VerificatId.ToString()" PrefixUserNameText=@AdminLocalizer["CurrentVerificat"]>
                         <LinkTemplate>
                             <a href=@("/") class="h6"><i class="fa-solid fa-suitcase me-2"></i>@Localizer["系统首页"]</a>
 

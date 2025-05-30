@@ -13,8 +13,6 @@ using Microsoft.Extensions.Localization;
 
 using System.Diagnostics.CodeAnalysis;
 
-using ThingsGateway.Admin.Application;
-
 namespace ThingsGateway.UpgradeServer;
 
 public partial class AccessDenied

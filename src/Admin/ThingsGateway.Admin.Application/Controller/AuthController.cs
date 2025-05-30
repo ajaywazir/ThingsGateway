@@ -8,6 +8,7 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,8 +30,22 @@ public class AuthController : ControllerBase
     [AllowAnonymous]
     public Task<LoginOutput> LoginAsync([FromBody] LoginInput input)
     {
+
         return _authService.LoginAsync(input);
+
     }
+
+    [HttpGet("oauth-login")]
+    [AllowAnonymous]
+    public IActionResult OAuthLogin(string scheme = "Gitee", string returnUrl = "/")
+    {
+        var props = new AuthenticationProperties
+        {
+            RedirectUri = returnUrl
+        };
+        return Challenge(props, scheme);
+    }
+
 
     [HttpPost("logout")]
     [Authorize]

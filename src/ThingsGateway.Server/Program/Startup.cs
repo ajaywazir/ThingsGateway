@@ -29,6 +29,7 @@ using ThingsGateway.Admin.Application;
 using ThingsGateway.Admin.Razor;
 using ThingsGateway.Extension;
 using ThingsGateway.NewLife.Caching;
+using ThingsGateway.Razor;
 
 namespace ThingsGateway.Server;
 
@@ -287,6 +288,18 @@ public class Startup : AppStartup
             a.LoginPath = "/Account/Login/";
         });
 
+        var websiteOptions = App.GetOptions<WebsiteOptions>()!;
+        if (websiteOptions.Demo)
+        {
+            authenticationBuilder.AddOAuth<GiteeOAuthOptions, AdminOAuthHandler<GiteeOAuthOptions>>("Gitee", "Gitee", options =>
+        {
+            var data = App.GetConfig<GiteeOAuthSettings>("GiteeOAuthSettings");
+            options.ClientId = data.ClientId;
+            options.ClientSecret = data.ClientSecret;
+
+        });
+        }
+
         // 添加jwt授权
         authenticationBuilder.AddJwt();
 
@@ -370,13 +383,6 @@ public class Startup : AppStartup
 
         app.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = provider });
         app.UseStaticFiles();
-
-        app.Use(async (context, next) =>
-        {
-            context.Response.Headers.Append("ThingsGateway", "ThingsGateway");
-            await next().ConfigureAwait(false);
-        });
-
 
         // 特定文件类型（文件后缀）处理
         var contentTypeProvider = GetFileExtensionContentTypeProvider();

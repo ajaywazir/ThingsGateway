@@ -27,10 +27,16 @@ public static class UserManager
     /// </summary>
     public static bool SuperAdmin => (_claimsPrincipalService.User?.FindFirst(ClaimConst.SuperAdmin)?.Value).ToBoolean(false);
 
+
     /// <summary>
     /// 当前用户账号
     /// </summary>
     public static string UserAccount => _claimsPrincipalService.User?.FindFirst(ClaimConst.Account)?.Value;
+
+    /// <summary>
+    /// AvatarUrl
+    /// </summary>
+    public static string AvatarUrl => (_claimsPrincipalService.User?.FindFirst(ClaimConst.AvatarUrl)?.Value);
 
     /// <summary>
     /// 当前用户Id

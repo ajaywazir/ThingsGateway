@@ -10,8 +10,6 @@
 
 using System.Reflection;
 
-using ThingsGateway.Admin.Application;
-
 namespace ThingsGateway.Upgrade;
 
 [AppStartup(100000000)]

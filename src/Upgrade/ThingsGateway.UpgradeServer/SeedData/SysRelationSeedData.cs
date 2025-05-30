@@ -8,7 +8,6 @@
 //  QQ群：605534569
 //------------------------------------------------------------------------------
 
-using ThingsGateway.Admin.Application;
 namespace ThingsGateway.Upgrade;
 
 /// <summary>
