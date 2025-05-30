@@ -52,6 +52,7 @@ public class Startup : AppStartup
         services.AddSingleton<IAuthRazorService, HybridAuthRazorService>();
         services.AddSingleton<HybridAppService>();
         services.AddSingleton<IAppService, HybridAppService>(a => a.GetService<HybridAppService>());
+        services.AddSingleton<IClaimsPrincipalService, HybridClaimsPrincipalService>();
 
         services.AddScoped<IPlatformService, HybridPlatformService>();
         services.AddScoped<IGatewayExportService, HybridGatewayExportService>();
